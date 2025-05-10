@@ -1,0 +1,59 @@
+name: Deploy FE App
+
+on:
+    push:
+        branches: ["master", "dev"]
+    pull_request:
+        branches: ["master", "dev"]
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [18.x, 20.x, 22.x]
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "yarn"
+
+            - name: Create .env file
+              run: |
+                  echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
+
+            - name: Install dependencies
+              run: yarn install
+
+            - name: Build Vite app
+              run: yarn build
+
+            - name: Install Netlify CLI
+              run: |
+                  curl -sL https://github.com/netlify/cli/releases/download/v12.5.4/netlify-cli-linux-amd64-12.5.4.tar.gz | tar xz -C /usr/local/bin
+                  netlify --version
+
+            - name: Deploy to Netlify
+              run: |
+                  netlify deploy --prod --dir=./dist --message "Deployed from GitHub Actions 🚀" --auth ${{ secrets.NETLIFY_ACCESS_TOKEN }} --site ${{ secrets.NETLIFY_SITE_ID }}
+
+            - name: Notify success on Discord
+              if: success()
+              run: |
+                  curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d '{"content": "✅ Deployment to Netlify succeeded for Node.js ${{ matrix.node-version }}!"}' \
+                  ${{ secrets.DISCORD_WEBHOOK }}
+
+            - name: Notify failure on Discord
+              if: failure()
+              run: |
+                  curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d '{"content": "❌ Deployment to Netlify failed for Node.js ${{ matrix.node-version }}."}' \
+                  ${{ secrets.DISCORD_WEBHOOK }}
