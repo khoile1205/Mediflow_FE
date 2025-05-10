@@ -1,0 +1,11 @@
+.cache
+.db
+.history
+out
+node_modules
+package.json
+package-lock.json
+yarn.lock
+public
+*.md
+*.mdx
