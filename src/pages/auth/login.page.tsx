@@ -8,12 +8,18 @@ import DynamicForm from "~/components/form/dynamic-form";
 import { useForm } from "~/components/form/hooks/use-form";
 
 const LoginPage: React.FC = () => {
-    const { login } = useAuth();
+    const { login, isLoading } = useAuth();
 
     const form = useForm<LoginParams>();
 
     const handleSubmit = async (value: LoginParams) => {
         await login(value);
+    };
+
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+        if (event.key === "Enter" && !form.formState.isSubmitting) {
+            form.handleSubmit(handleSubmit)();
+        }
     };
 
     return (
@@ -30,10 +36,29 @@ const LoginPage: React.FC = () => {
                     <Typography className="pb-6 pt-5 text-xl font-bold">Đăng nhập</Typography>
                     <DynamicForm form={form} onSubmit={handleSubmit}>
                         <Stack spacing={2} className="mb-8">
-                            <FormItem render="text-input" name="userName" placeholder="Tài khoản" required />
-                            <FormItem render="text-input" name="password" placeholder="Mật khẩu" isPassword required />
+                            <FormItem
+                                render="text-input"
+                                name="userName"
+                                placeholder="Tài khoản"
+                                required
+                                onKeyDown={handleKeyDown}
+                            />
+                            <FormItem
+                                render="text-input"
+                                name="password"
+                                placeholder="Mật khẩu"
+                                isPassword
+                                required
+                                onKeyDown={handleKeyDown}
+                            />
                         </Stack>
-                        <Button variant="contained" fullWidth type="submit" className="!py-3">
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            type="submit"
+                            className="!py-3"
+                            disabled={isLoading || form.formState.isSubmitting}
+                        >
                             <Typography className="text-[16px] text-base font-bold">Đăng nhập</Typography>
                         </Button>
                     </DynamicForm>

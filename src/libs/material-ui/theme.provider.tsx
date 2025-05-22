@@ -6,6 +6,10 @@ import { themePalette } from "./palette";
 
 const theme = createTheme(
     {
+        colorSchemes: {
+            light: true,
+            dark: false,
+        },
         palette: themePalette,
     },
     {

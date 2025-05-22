@@ -6,7 +6,6 @@ export const textFieldTheme: Components = {
             root: {
                 marginTop: 0,
                 borderRadius: "8px",
-                // paddingLeft
             },
         },
     },

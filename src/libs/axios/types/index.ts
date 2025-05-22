@@ -1,3 +1,4 @@
+import { HttpStatusCode } from "axios";
 import { HttpMethod } from "../../../constants/enums";
 
 export type TApiMethod = HttpMethod.GET | HttpMethod.POST | HttpMethod.PUT | HttpMethod.DELETE | HttpMethod.PATCH;
@@ -21,9 +22,9 @@ export interface IApiRequestWithoutBody extends IBaseApiRequest {
 export type TApiRequest = IApiRequestWithBody | IApiRequestWithoutBody;
 
 export interface IBaseApiResponse<T> {
-    statusCode: number;
-    message: string | string[];
-    data: T;
+    StatusCode: HttpStatusCode;
+    Message: string;
+    Data: T;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any
