@@ -2,7 +2,7 @@ import { CalendarMonth, Close } from "@mui/icons-material";
 import { Box, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
-import DatePickerContainer from "../../../libs/date-picker/date-picker.container";
+import DatePickerContainer from "~/libs/date-picker/date-picker.container";
 import { ControllerWrapper, FormErrorMessage } from "../common";
 import { BaseFormItemProps } from "../types/form-item";
 import { TValidationMaxDate, TValidationMinDate } from "../types/validation";
@@ -85,7 +85,7 @@ export const DateRangePickerFormItem: React.FC<DateRangePickerFormItemProps> = (
                                                     <InputAdornment position="end">
                                                         {startDate || endDate ? (
                                                             <Close
-                                                                className="text-[black] cursor-pointer ml-3"
+                                                                className="ml-3 cursor-pointer text-[black]"
                                                                 onClick={handleClear}
                                                             />
                                                         ) : (

@@ -5,7 +5,7 @@ import { User } from "../entities";
 import { useHttpContext } from "./http.context";
 
 export type LoginParams = {
-    email: string;
+    userName: string;
     password: string;
 };
 
@@ -13,7 +13,7 @@ export type AuthContextProps = {
     isLoading: boolean;
     user: User | null;
     error: string;
-    login: (params: LoginParams) => void;
+    login: (params: LoginParams) => Promise<void>;
     logout: () => void;
 };
 

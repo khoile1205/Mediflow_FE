@@ -1,9 +1,9 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { ColDef } from "ag-grid-community";
 import React from "react";
-import DynamicForm from "../../components/form/dynamic-form";
-import FormItem from "../../components/form/form-item";
-import { useForm } from "../../components/form/hooks/use-form";
+import DynamicForm from "~/components/form/dynamic-form";
+import FormItem from "~/components/form/form-item";
+import { useForm } from "~/components/form/hooks/use-form";
 
 const TemplateForm = () => {
     const form = useForm();
@@ -46,11 +46,12 @@ const TemplateForm = () => {
             <DynamicForm form={form} onSubmit={handleSubmit}>
                 <Stack spacing={2}>
                     <FormItem
-                        render="text_input"
+                        render="text-input"
                         name="username"
                         label="Username"
-                        isPassword
                         minLength={3}
+                        required
+                        variant="filled"
                         size="small"
                     />
                     <FormItem
@@ -95,7 +96,7 @@ const TemplateForm = () => {
                         defaultValue="option1"
                     />
                     <FormItem
-                        render="text_area"
+                        render="text-area"
                         name="description"
                         label="Description"
                         placeholder="Enter your text here"
@@ -104,7 +105,7 @@ const TemplateForm = () => {
                         maxLength={200}
                     />
                     <FormItem
-                        render="input_number"
+                        render="input-number"
                         name="numericInput"
                         label="Input Number"
                         placeholder="Enter a number"

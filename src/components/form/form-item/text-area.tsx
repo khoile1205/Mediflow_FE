@@ -1,14 +1,14 @@
 import { Box, TextField, TextFieldProps } from "@mui/material";
 import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { ControllerWrapper } from "../common";
+import FormErrorMessage from "../common/error";
 import { BaseFormItemProps } from "../types/form-item";
 import { TValidationMaxLength, TValidationMinLength, TValidationPattern } from "../types/validation";
-import { mapValidationRules } from "../utils";
-import FormErrorMessage from "../common/error";
 
 type TextAreaUIProps = TextFieldProps & {
     rows?: number;
     maxRows?: number;
+    floatingLabel?: string;
 };
 
 type TextAreaValidationRules = TValidationMinLength & TValidationMaxLength & TValidationPattern;
@@ -21,6 +21,7 @@ export const TextAreaFormItem: React.FC<TextAreaFormItemProps> = ({
     disabled,
     placeholder,
     label = "",
+    floatingLabel = "",
     maxLength,
     minLength = 0,
     pattern,
@@ -29,30 +30,20 @@ export const TextAreaFormItem: React.FC<TextAreaFormItemProps> = ({
     maxRows = 4,
     ...props
 }) => {
-    const {
-        control,
-        formState: { errors },
-    } = useFormContext();
-
-    const rules = mapValidationRules({
-        maxLength,
-        minLength,
-        pattern,
-        required,
-    });
-    const error = errors[name]?.message as string | undefined;
-
     return (
-        <Controller
+        <ControllerWrapper
             name={name}
-            control={control}
+            maxLength={maxLength}
+            minLength={minLength}
+            pattern={pattern}
+            required={required}
             defaultValue={defaultValue ?? ""}
-            rules={rules}
-            render={({ field }) => (
-                <Box style={{ width: "100%" }}>
+            render={({ field, error }) => (
+                <Box className="w-full">
                     <TextField
                         {...field}
-                        label={null}
+                        label={floatingLabel || label || placeholder}
+                        required={required}
                         placeholder={placeholder}
                         fullWidth
                         multiline

@@ -1,4 +1,4 @@
-const authEndpointPrefix = "/auth";
+const authEndpointPrefix = "/authentication";
 
 const authEndpoints = {
     login: `${authEndpointPrefix}/login`,

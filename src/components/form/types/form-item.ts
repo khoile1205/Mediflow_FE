@@ -10,7 +10,7 @@ import { TextAreaFormItemProps } from "../form-item/text-area";
 import { TextFieldFormItemProps } from "../form-item/text-field";
 
 export type FormItemProps =
-    | ({ render: "text_input" } & TextFieldFormItemProps)
+    | ({ render: "text-input" } & TextFieldFormItemProps)
     | ({ render: "select" } & SelectFieldFormItemProps)
     | ({ render: "data-grid" } & AgGridDropdownFormItemProps)
     | ({ render: "checkbox" } & CheckboxFormItemProps)
@@ -18,8 +18,8 @@ export type FormItemProps =
     | ({ render: "date-range-picker" } & DateRangePickerFormItemProps)
     | ({ render: "switch" } & SwitchFormItemProps)
     | ({ render: "radio-group" } & RadioGroupFormItemProps)
-    | ({ render: "text_area" } & TextAreaFormItemProps)
-    | ({ render: "input_number" } & InputNumberFormItemProps);
+    | ({ render: "text-area" } & TextAreaFormItemProps)
+    | ({ render: "input-number" } & InputNumberFormItemProps);
 
 export type BaseFormItemUIProps = {
     name: string;
@@ -28,6 +28,7 @@ export type BaseFormItemUIProps = {
     value?: string;
     defaultValue?: string;
     disabled?: boolean;
+    fullWidth?: boolean;
 };
 
 export type BaseFormItemValidationRules = {

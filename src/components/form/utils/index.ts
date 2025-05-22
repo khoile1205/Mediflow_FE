@@ -16,63 +16,63 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
     const validation: RegisterOptions<TFieldValues, TName> = {};
 
     if (rules.required) {
-        validation.required = "This field is required";
+        validation.required = "Vui lòng không để trống trường này";
     }
 
     if (rules.minLength !== undefined && rules.minLength > 0) {
         validation.minLength = {
             value: rules.minLength,
-            message: `Minimum length is ${rules.minLength}`,
+            message: `Nhập ít nhất ${rules.minLength} ký tự`,
         };
     }
 
     if (rules.maxLength !== undefined) {
         validation.maxLength = {
             value: rules.maxLength,
-            message: `Maximum length is ${rules.maxLength}`,
+            message: `Chỉ được nhập tối đa ${rules.maxLength} ký tự`,
         };
     }
 
     if (rules.minNumber !== undefined) {
         validation.min = {
             value: rules.minNumber,
-            message: `Minimum value is ${rules.minNumber}`,
+            message: `Giá trị phải lớn hơn hoặc bằng ${rules.minNumber}`,
         };
     }
 
     if (rules.maxNumber !== undefined) {
         validation.max = {
             value: rules.maxNumber,
-            message: `Maximum value is ${rules.maxNumber}`,
+            message: `Giá trị phải nhỏ hơn hoặc bằng ${rules.maxNumber}`,
         };
     }
 
     if (rules.pattern) {
         validation.pattern = {
             value: typeof rules.pattern === "string" ? new RegExp(rules.pattern) : rules.pattern,
-            message: "Invalid format",
+            message: "Định dạng không đúng",
         };
     }
 
     if (rules.isEmail) {
         validation.pattern = {
             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: "Invalid email address",
+            message: "Email không hợp lệ",
         };
     }
 
-    if (rules.isPassword) {
-        validation.pattern = {
-            value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
-            message: "Password must include letters and numbers (min 8 characters)",
-        };
-    }
+    // if (rules.isPassword) {
+    //     validation.pattern = {
+    //         value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
+    //         message: "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ và số",
+    //     };
+    // }
 
     if (rules.minDate) {
         validation.validate = (value: Date) => {
             return new Date(value) >= new Date(rules.minDate!)
                 ? true
-                : `Date must be after ${formatDateToDDMMYYYY(rules.minDate!)}`;
+                : `Vui lòng chọn ngày sau ${formatDateToDDMMYYYY(rules.minDate!)}`;
         };
     }
 
@@ -80,7 +80,7 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
         validation.validate = (value: Date) => {
             return new Date(value) <= new Date(rules.maxDate!)
                 ? true
-                : `Date must be before ${formatDateToDDMMYYYY(rules.maxDate!)}`;
+                : `Vui lòng chọn ngày trước ${formatDateToDDMMYYYY(rules.maxDate!)}`;
         };
     }
 

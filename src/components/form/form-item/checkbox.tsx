@@ -19,7 +19,7 @@ type CheckboxUIProps = {
 
 type CheckboxValidationRules = TValidationRequired;
 
-export type CheckboxFormItemProps = BaseFormItemProps & CheckboxUIProps & CheckboxValidationRules;
+export type CheckboxFormItemProps = Omit<BaseFormItemProps, "defaultValue"> & CheckboxUIProps & CheckboxValidationRules;
 
 export const CheckboxFormItem: React.FC<CheckboxFormItemProps> = ({
     name,
