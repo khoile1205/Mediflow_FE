@@ -72,7 +72,7 @@ export const DatePickerFormItem: React.FC<DatePickerFormItemProps> = ({
                                                     <InputAdornment position="end">
                                                         {dateValue ? (
                                                             <Close
-                                                                className="text-[black] cursor-pointer ml-3"
+                                                                className="ml-3 cursor-pointer text-[black]"
                                                                 onClick={handleClearDate}
                                                             />
                                                         ) : (

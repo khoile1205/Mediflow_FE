@@ -1,6 +1,5 @@
 import { Stack } from "@mui/material";
-import React from "react";
-import FormLabel from "../common/label";
+import { FormLabel } from "../common";
 import { FormItemProps } from "../types/form-item";
 import { CheckboxFormItem } from "./checkbox";
 import { DatePickerFormItem } from "./date-picker";
@@ -18,7 +17,7 @@ const FormItem: React.FC<FormItemProps> = (props) => {
 
     const getFormComponent = () => {
         switch (props.render) {
-            case "text_input":
+            case "text-input":
                 return <TextFieldFormItem {...props} />;
             case "select":
                 return <SelectFieldFormItem {...props} />;
@@ -32,9 +31,9 @@ const FormItem: React.FC<FormItemProps> = (props) => {
                 return <SwitchFormItem {...props} />;
             case "radio-group":
                 return <RadioGroupFormItem {...props} />;
-            case "text_area":
+            case "text-area":
                 return <TextAreaFormItem {...props} />;
-            case "input_number":
+            case "input-number":
                 return <InputNumberFormItem {...props} />;
             case "date-range-picker":
                 return <DateRangePickerFormItem {...props} />;

@@ -22,25 +22,23 @@ export const SelectFieldFormItem: React.FC<SelectFieldFormItemProps> = ({
     ...props
 }) => {
     return (
-        <>
-            <ControllerWrapper
-                name={name}
-                required={required}
-                pattern={pattern}
-                defaultValue={defaultValue}
-                render={({ field, error }) => (
-                    <FormControl fullWidth margin="normal" error={!!error}>
-                        <Select {...field} {...props}>
-                            {options.map((opt) => (
-                                <MenuItem key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        <FormErrorMessage errorMessage={error} />
-                    </FormControl>
-                )}
-            />
-        </>
+        <ControllerWrapper
+            name={name}
+            required={required}
+            pattern={pattern}
+            defaultValue={defaultValue}
+            render={({ field, error }) => (
+                <FormControl fullWidth margin="normal" error={!!error}>
+                    <Select {...field} {...props}>
+                        {options.map((opt) => (
+                            <MenuItem key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    <FormErrorMessage errorMessage={error} />
+                </FormControl>
+            )}
+        />
     );
 };

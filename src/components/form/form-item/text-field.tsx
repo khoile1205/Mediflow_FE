@@ -14,6 +14,7 @@ import {
 type TextFieldUIProps = {
     startAdornment?: React.ReactNode;
     endAdornment?: React.ReactNode;
+    floatingLabel?: string;
 };
 
 type TextFieldValidationRules = TValidationMinLength &
@@ -40,17 +41,24 @@ const getAdornmentProps = ({
     startAdornment?: React.ReactNode;
     endAdornment?: React.ReactNode;
 }) => {
-    const start = startAdornment ? <InputAdornment position="start">{startAdornment}</InputAdornment> : undefined;
+    let start: React.ReactNode | undefined = undefined;
+    let end: React.ReactNode | undefined = undefined;
 
-    const end = endAdornment ? (
-        <InputAdornment position="end">{endAdornment}</InputAdornment>
-    ) : isPassword ? (
-        <InputAdornment position="end">
-            <IconButton aria-label="toggle password visibility" onClick={onTogglePassword} edge="end">
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-        </InputAdornment>
-    ) : undefined;
+    if (startAdornment) {
+        start = <InputAdornment position="start">{startAdornment}</InputAdornment>;
+    }
+
+    if (endAdornment) {
+        end = <InputAdornment position="end">{endAdornment}</InputAdornment>;
+    } else if (isPassword) {
+        end = (
+            <InputAdornment position="end">
+                <IconButton aria-label="toggle password visibility" onClick={onTogglePassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+            </InputAdornment>
+        );
+    }
 
     return { startAdornment: start, endAdornment: end };
 };
@@ -61,7 +69,9 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
     disabled,
     placeholder,
     label = "",
+    floatingLabel = "",
     size = "small",
+    fullWidth = true,
     startAdornment = undefined,
     endAdornment = undefined,
     isEmail = false,
@@ -83,17 +93,19 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
             name={name}
             isEmail={isEmail}
             maxLength={maxLength}
-            isPassword={isPassword}
+            // isPassword={isPassword}
             minLength={minLength}
             pattern={pattern}
             required={required}
             defaultValue={defaultValue ?? ""}
             render={({ field, error }) => (
-                <Box>
+                <Box className="w-full">
                     <TextField
                         {...field}
+                        label={floatingLabel || label || placeholder}
                         placeholder={placeholder}
-                        fullWidth
+                        required={required}
+                        fullWidth={fullWidth}
                         type={isPassword && !showPassword ? "password" : "text"}
                         error={!!error}
                         variant="outlined"
@@ -112,7 +124,6 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
                                 endAdornment,
                             }),
                         }}
-                        label={""}
                         {...props}
                     />
                     <FormErrorMessage errorMessage={error} />
