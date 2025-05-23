@@ -12,30 +12,33 @@ import "./index.css";
 import { MaterialUIThemeProvider } from "./libs/material-ui/theme.provider.tsx";
 import { ApplicationRoutes } from "./routes/index.tsx";
 import { AuthContextProvider } from "./contexts/auth.context.tsx";
+import { BrowserRouter } from "react-router";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
-        <HttpContextProvider>
-            <AuthContextProvider>
-                <MaterialUIThemeProvider>
-                    <ApplicationRoutes />
-                    <ToastContainer
-                        position="bottom-right"
-                        autoClose={5000}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                        theme="light"
-                        transition={Zoom}
-                    />
-                </MaterialUIThemeProvider>
-            </AuthContextProvider>
-        </HttpContextProvider>
+        <BrowserRouter basename={import.meta.env.VITE_BASE_URL}>
+            <HttpContextProvider>
+                <AuthContextProvider>
+                    <MaterialUIThemeProvider>
+                        <ApplicationRoutes />
+                        <ToastContainer
+                            position="bottom-right"
+                            autoClose={3000}
+                            hideProgressBar={false}
+                            newestOnTop={false}
+                            closeOnClick
+                            rtl={false}
+                            pauseOnFocusLoss
+                            draggable
+                            pauseOnHover
+                            theme="light"
+                            transition={Zoom}
+                        />
+                    </MaterialUIThemeProvider>
+                </AuthContextProvider>
+            </HttpContextProvider>
+        </BrowserRouter>
     </StrictMode>,
 );
