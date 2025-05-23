@@ -5,16 +5,9 @@ on:
         branches: ["master", "dev"]
 
 jobs:
-    build-and-deploy:
+    notify-start:
         runs-on: ubuntu-latest
-
-        strategy:
-            matrix:
-                node-version: [22.x]
-
         steps:
-            - uses: actions/checkout@v4
-
             - name: Set Start Time
               id: start-time
               run: echo "start_time=$(date +%s)" >> $GITHUB_OUTPUT
@@ -26,6 +19,27 @@ jobs:
                   -d "{\"content\": \"🚀 **mediflow » mediflow-fe - #${{ github.run_number }}** Started by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
                   ${{ secrets.DISCORD_WEBHOOK }}
 
+            - name: Save start time
+              run: |
+                  echo "${{ steps.start-time.outputs.start_time }}" > start_time.txt
+                  mkdir -p artifacts
+                  mv start_time.txt artifacts/
+
+            - name: Upload start time artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: start-time
+                  path: artifacts/start_time.txt
+
+    build:
+        runs-on: ubuntu-latest
+        needs: notify-start
+        strategy:
+            matrix:
+                node-version: [22.x]
+        steps:
+            - uses: actions/checkout@v4
+
             - name: Use Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v4
               with:
@@ -35,6 +49,7 @@ jobs:
             - name: Create .env file
               run: |
                   echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
+                  echo "VITE_BASE_URL=${{ secrets.VITE_BASE_URL }}" >> .env
 
             - name: Install dependencies
               run: yarn install
@@ -42,28 +57,51 @@ jobs:
             - name: Build Vite app
               run: yarn build
 
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: build-artifacts
+                  path: ./dist
+
+    deployment:
+        runs-on: ubuntu-latest
+        needs: build
+
+        steps:
+            - name: Download dist folder
+              uses: actions/download-artifact@v4
+              with:
+                  name: build-artifacts
+                  path: dist
+
             - name: Install Netlify CLI
               run: |
                   yarn global add netlify-cli
 
             - name: Deploy to Netlify
               run: |
-                  netlify deploy --prod --dir=./dist --message "Deployed from GitHub Actions 🚀" --auth ${{ secrets.NETLIFY_ACCESS_TOKEN }} --site ${{ secrets.NETLIFY_SITE_ID }}
+                  netlify deploy --prod --dir=./dist --message "Deployed from GitHub Actions 🚀" --auth ${{ secrets.NETLIFY_ACCESS_TOKEN }} --site ${{ secrets.NETLIFY_SITE_ID }} --build false
 
-            - name: Notify success on Discord
-              if: success()
+    notify-result:
+        runs-on: ubuntu-latest
+        needs: [notify-start, build, deployment]
+        if: always()
+
+        steps:
+            - name: Set Duration
+              id: duration
+              run: echo "end_time=$(date +%s)" >> $GITHUB_OUTPUT
+
+            - name: Notify success
+              if: ${{ needs.build.result == 'success' && needs.deployment.result == 'success' }}
               run: |
-                  end_time=$(date +%s)
-                  duration=$((end_time - ${{ steps.start-time.outputs.start_time }}))
-                  mins=$((duration / 60))
-                  secs=$((duration % 60))
                   curl -H "Content-Type: application/json" \
                   -X POST \
-                  -d "{\"content\": \"✅ **mediflow » mediflow-fe - #${{ github.run_number }}** Success after ${mins} min ${secs} sec ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+                  -d "{\"content\": \"✅ **mediflow » mediflow-fe - #${{ github.run_number }}** Success ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
                   ${{ secrets.DISCORD_WEBHOOK }}
 
-            - name: Notify failure on Discord
-              if: failure()
+            - name: Notify failure
+              if: ${{ needs.build.result != 'success' || needs.deployment.result != 'success' }}
               run: |
                   curl -H "Content-Type: application/json" \
                   -X POST \
