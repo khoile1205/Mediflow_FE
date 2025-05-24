@@ -10,16 +10,31 @@ export interface SidebarTabProps {
     level?: number;
     pathName?: string;
     children?: SidebarTabProps[];
+    onClick?: () => void;
 }
 
-export const SidebarTabItem: React.FC<SidebarTabProps> = ({ icon, label, level = 0, children, pathName }) => {
+export const SidebarTabItem: React.FC<SidebarTabProps> = ({
+    icon,
+    label,
+    level = 0,
+    children,
+    pathName = "",
+    onClick,
+}) => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
 
     const handleNavigate = () => {
-        navigate(pathName);
+        if (onClick) {
+            onClick();
+        } else {
+            if (!pathName) {
+                return;
+            }
+            navigate(pathName);
+        }
     };
 
     const handleToggle = (e: React.MouseEvent) => {
