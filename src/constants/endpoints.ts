@@ -6,4 +6,10 @@ const authEndpoints = {
     me: `${authEndpointPrefix}/me`,
 };
 
-export const endpoints = { authEndpoints };
+const publicEndpoints = {
+    getAllProvinces: "/provinces/getAll?limit=-1",
+    getDistrictsByProvince: (provinceCode: string) => `/districts/getByProvince?provinceCode=${provinceCode}&limit=-1`,
+    getWardsByDistrict: (districtCode: string) => `/wards/getByDistrict?districtCode=${districtCode}&limit=-1`,
+};
+
+export const endpoints = { authEndpoints, publicEndpoints };

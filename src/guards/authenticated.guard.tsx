@@ -12,21 +12,21 @@ const AuthenticatedGuard: React.FC = () => {
     const location = useLocation();
 
     React.useEffect(() => {
-        if (user) {
+        if (!user) {
             sessionStorage.setItem("redirectUrl", location.pathname);
             showToast.warning("Vui lòng đăng nhập để tiếp tục");
             navigate("/login");
         }
     }, [navigate, location.pathname, user]);
 
-    if (isLoading || user) {
+    if (isLoading || !user) {
         return <Spinner />;
     }
 
     return (
         <Box className="flex h-screen w-screen">
             <Sidebar />
-            <Box className="w-full flex-1 overflow-y-auto">
+            <Box className="w-full flex-1 overflow-y-auto p-2">
                 <Outlet />
             </Box>
         </Box>

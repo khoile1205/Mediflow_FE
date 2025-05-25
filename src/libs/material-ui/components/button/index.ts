@@ -17,7 +17,14 @@ export const buttonThemeConfig: Components = {
             },
         },
     },
-    // MuiIconButton: {
-
-    // }
+    MuiButton: {
+        defaultProps: {
+            variant: "outlined",
+        },
+        styleOverrides: {
+            root: {
+                textTransform: "none",
+            },
+        },
+    },
 };

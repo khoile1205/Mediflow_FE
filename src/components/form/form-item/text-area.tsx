@@ -8,7 +8,6 @@ import { TValidationMaxLength, TValidationMinLength, TValidationPattern } from "
 type TextAreaUIProps = TextFieldProps & {
     rows?: number;
     maxRows?: number;
-    floatingLabel?: string;
 };
 
 type TextAreaValidationRules = TValidationMinLength & TValidationMaxLength & TValidationPattern;
@@ -21,7 +20,6 @@ export const TextAreaFormItem: React.FC<TextAreaFormItemProps> = ({
     disabled,
     placeholder,
     label = "",
-    floatingLabel = "",
     maxLength,
     minLength = 0,
     pattern,
@@ -42,7 +40,7 @@ export const TextAreaFormItem: React.FC<TextAreaFormItemProps> = ({
                 <Box className="w-full">
                     <TextField
                         {...field}
-                        label={floatingLabel || label || placeholder}
+                        label={label || placeholder}
                         required={required}
                         placeholder={placeholder}
                         fullWidth

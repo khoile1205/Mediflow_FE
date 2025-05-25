@@ -2,26 +2,30 @@ import { CalendarMonth, Close } from "@mui/icons-material";
 import { Box, FormControl, FormControlProps, IconButton, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
-import DatePickerContainer from "~/libs/date-picker/date-picker.container";
+import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import DatePickerContainer from "../../../libs/date-picker/date-picker.container";
 import { ControllerWrapper, FormErrorMessage } from "../common";
 import { BaseFormItemProps } from "../types/form-item";
-import { TValidationMaxDate, TValidationMinDate } from "../types/validation";
+import { TValidationMaxDate, TValidationMinDate, TValidationRequired } from "../types/validation";
 
-type DateRangePickerValidationRules = TValidationMinDate & TValidationMaxDate;
+type DateTimePickerValidationRules = TValidationRequired & TValidationMinDate & TValidationMaxDate;
 
-export type DateRangePickerFormItemProps = Omit<BaseFormItemProps, "defaultValue"> &
-    DateRangePickerValidationRules & {
-        defaultValue?: { startDate?: Date; endDate?: Date };
-        size?: FormControlProps["size"];
-    };
+type DateTimePickerUIProps = {
+    defaultValue?: Date | string;
+    size?: FormControlProps["size"];
+};
 
-export const DateRangePickerFormItem: React.FC<DateRangePickerFormItemProps> = ({
+export type DateTimePickerFormItemProps = Omit<BaseFormItemProps, "defaultValue"> &
+    DateTimePickerValidationRules &
+    DateTimePickerUIProps;
+
+export const DateTimePickerFormItem: React.FC<DateTimePickerFormItemProps> = ({
     name,
-    placeholder = "Chọn khoảng ngày",
-    defaultValue = { startDate: null, endDate: null },
-    disabled,
-    label = "",
+    placeholder = "Chọn ngày",
     fullWidth = true,
+    label = "",
+    defaultValue = new Date(),
+    disabled,
     size = "small",
     ...validationProps
 }) => {
@@ -33,57 +37,51 @@ export const DateRangePickerFormItem: React.FC<DateRangePickerFormItemProps> = (
             {...validationProps}
             defaultValue={defaultValue}
             render={({ field: { onChange, value, ref }, fieldState, error }) => {
-                const { startDate, endDate } = value || { startDate: null, endDate: null };
+                const dateValue = value ? new Date(value) : null;
 
-                const handleClear = () => {
-                    onChange({ startDate: null, endDate: null });
+                const handleClearDate = () => {
+                    onChange(null);
                     setOpen(false);
                 };
-
-                const formattedRange =
-                    startDate && endDate
-                        ? `${new Date(startDate).toLocaleDateString()} ~ ${new Date(endDate).toLocaleDateString()}`
-                        : "";
 
                 return (
                     <FormControl fullWidth={fullWidth} margin="normal" size={size}>
                         <Box className="relative">
                             <DatePickerContainer className="w-full">
                                 <DatePicker
-                                    selectsRange
-                                    startDate={startDate}
-                                    endDate={endDate}
-                                    onChange={(dates: [Date | null, Date | null]) =>
-                                        onChange({ startDate: dates[0], endDate: dates[1] })
-                                    }
+                                    showTimeSelect
+                                    timeIntervals={15}
+                                    timeFormat="HH:mm"
+                                    selected={dateValue}
+                                    onChange={(date: Date | null) => onChange(date)}
                                     onClickOutside={() => setOpen(false)}
                                     onCalendarOpen={() => setOpen(true)}
                                     onCalendarClose={() => setOpen(false)}
                                     showIcon={false}
                                     open={open}
-                                    dateFormat="dd/MM/yyyy"
+                                    dateFormat={DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"]}
                                     minDate={validationProps.minDate}
                                     maxDate={validationProps.maxDate}
-                                    placeholderText={placeholder}
-                                    disabled={disabled}
                                     popperPlacement="bottom-end"
+                                    disabled={disabled}
                                     customInput={
                                         <TextField
                                             inputRef={ref}
                                             className="w-full"
+                                            size={size}
                                             error={!!fieldState.error}
                                             required={validationProps.required}
                                             disabled={disabled}
-                                            variant="outlined"
-                                            placeholder={placeholder}
                                             label={label ? `${label} ${validationProps.required ? "*" : ""}` : ""}
-                                            value={formattedRange}
+                                            placeholder={placeholder}
+                                            variant="outlined"
                                             slotProps={{
                                                 root: {
                                                     className: "w-full",
                                                 },
                                                 input: {
                                                     readOnly: true,
+                                                    disabled,
                                                     sx: {
                                                         width: "100%",
                                                     },
@@ -94,8 +92,8 @@ export const DateRangePickerFormItem: React.FC<DateRangePickerFormItemProps> = (
                                                                 size="small"
                                                                 className="ml-3"
                                                             >
-                                                                {startDate || endDate ? (
-                                                                    <Close onClick={handleClear} />
+                                                                {dateValue ? (
+                                                                    <Close onClick={handleClearDate} />
                                                                 ) : (
                                                                     <CalendarMonth />
                                                                 )}
@@ -113,8 +111,8 @@ export const DateRangePickerFormItem: React.FC<DateRangePickerFormItemProps> = (
                                         />
                                     }
                                 />
-                                <FormErrorMessage errorMessage={error} />
                             </DatePickerContainer>
+                            <FormErrorMessage errorMessage={error} />
                         </Box>
                     </FormControl>
                 );
