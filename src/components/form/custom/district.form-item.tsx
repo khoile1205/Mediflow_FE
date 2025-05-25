@@ -31,9 +31,8 @@ const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ ...props }) => {
     const handleChange = (event: SelectChangeEvent<unknown>) => {
         const selectedDistrict = event.target.value as string;
         const selected = district.find((p) => p.name === selectedDistrict);
-        console.log(selected);
         form.setValue("district", selectedDistrict);
-        form.setValue("districtCode", selected?.code || "");
+        form.setValue("districtCode", selected?.code ?? "");
     };
 
     React.useEffect(() => {

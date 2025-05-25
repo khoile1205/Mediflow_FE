@@ -20,7 +20,6 @@ type TabType = "pre_vaccination" | "vaccination_indication" | "test_indication" 
 const ReceptionVaccination: React.FC = () => {
     const [tab, setTab] = React.useState<TabType>("pre_vaccination");
     const [isNewPatient, setIsNewPatient] = React.useState<boolean>(false);
-    const [, setIsEditMode] = React.useState<boolean>(false);
 
     const form = useForm();
 
@@ -52,12 +51,7 @@ const ReceptionVaccination: React.FC = () => {
                     }}
                 />
                 <ActionButton label="Tìm kiếm" startIcon={<Search />} />
-                <ActionButton
-                    label="Sửa"
-                    startIcon={<Edit />}
-                    disabled={!isNewPatient}
-                    onClick={() => setIsEditMode(true)}
-                />
+                <ActionButton label="Sửa" startIcon={<Edit />} disabled={!isNewPatient} />
                 <ActionButton
                     label="Lưu"
                     startIcon={<Save />}

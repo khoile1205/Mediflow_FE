@@ -25,9 +25,8 @@ const ProvinceFormItem: React.FC<ProvinceFormItemProps> = ({ ...props }) => {
     const handleChange = (event: SelectChangeEvent<unknown>) => {
         const selectedProvince = event.target.value as string;
         const selected = province.find((p) => p.name === selectedProvince);
-        console.log(selected);
         setValue("province", selectedProvince);
-        setValue("provinceCode", selected?.code || "");
+        setValue("provinceCode", selected?.code ?? "");
     };
 
     React.useEffect(() => {
