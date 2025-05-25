@@ -3,26 +3,18 @@ import React, { PropsWithChildren } from "react";
 import { useNavigate } from "react-router";
 import { APP_STRING } from "~/constants/app.string";
 import { IBaseApiResponse } from "~/libs/axios/types";
+import { login } from "~/services/auth";
+import { TLoginRequest, TLoginResponse } from "~/services/auth/types";
 import { showToast } from "~/utils";
 import { endpoints } from "../constants/endpoints";
 import { HttpMethod } from "../constants/enums";
 import { User } from "../entities";
 import { useHttpContext } from "./http.context";
 
-export type LoginParams = {
-    userName: string;
-    password: string;
-};
-
-export type TLoginResponse = {
-    isSuccess: boolean;
-    message: string;
-};
-
 export type AuthContextProps = {
     isLoading: boolean;
     user: User | null;
-    login: (params: LoginParams) => Promise<void>;
+    login: (params: TLoginRequest) => Promise<void>;
     logout: () => void;
 };
 
@@ -54,14 +46,10 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
         }
     }, []);
 
-    const handleLogin = async (params: LoginParams) => {
+    const handleLogin = async (params: TLoginRequest) => {
         try {
             setIsLoading(true);
-            await callApi<TLoginResponse>({
-                url: endpoints.authEndpoints.login,
-                method: HttpMethod.POST,
-                data: params,
-            });
+            await login(params);
             showToast.success(APP_STRING.LOGIN_SUCCESS);
             await loadUserInfor();
             navigate("/");

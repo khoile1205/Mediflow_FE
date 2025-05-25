@@ -1,18 +1,19 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import React from "react";
-import BackgroundLogin from "~/assets/images/bg_login.png";
 import AppLogo from "~/assets/images/app_logo.png";
-import FormItem from "~/components/form/form-item";
-import { useAuth, LoginParams } from "~/contexts/auth.context";
+import BackgroundLogin from "~/assets/images/bg_login.png";
 import DynamicForm from "~/components/form/dynamic-form";
+import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
+import { useAuth } from "~/contexts/auth.context";
+import { TLoginRequest } from "~/services/auth/types";
 
 const LoginPage: React.FC = () => {
     const { login, isLoading } = useAuth();
 
-    const form = useForm<LoginParams>();
+    const form = useForm<TLoginRequest>();
 
-    const handleSubmit = async (value: LoginParams) => {
+    const handleSubmit = async (value: TLoginRequest) => {
         await login(value);
     };
 

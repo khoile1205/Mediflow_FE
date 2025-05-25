@@ -14,7 +14,6 @@ import {
 type TextFieldUIProps = {
     startAdornment?: React.ReactNode;
     endAdornment?: React.ReactNode;
-    floatingLabel?: string;
 };
 
 type TextFieldValidationRules = TValidationMinLength &
@@ -69,7 +68,6 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
     disabled,
     placeholder,
     label = "",
-    floatingLabel = "",
     size = "small",
     fullWidth = true,
     startAdornment = undefined,
@@ -93,7 +91,6 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
             name={name}
             isEmail={isEmail}
             maxLength={maxLength}
-            // isPassword={isPassword}
             minLength={minLength}
             pattern={pattern}
             required={required}
@@ -102,7 +99,7 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
                 <Box className="w-full">
                     <TextField
                         {...field}
-                        label={floatingLabel || label || placeholder}
+                        label={label || placeholder}
                         placeholder={placeholder}
                         required={required}
                         fullWidth={fullWidth}

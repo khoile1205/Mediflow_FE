@@ -63,7 +63,7 @@ const TemplateForm = () => {
                         colField="make"
                     />
                     <FormItem
-                        render="checkbox"
+                        render="checkbox-group"
                         name="preferences"
                         label="Preferences"
                         options={[

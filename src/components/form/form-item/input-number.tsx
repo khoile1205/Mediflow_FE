@@ -20,7 +20,8 @@ export const InputNumberFormItem: React.FC<InputNumberFormItemProps> = ({
     defaultValue,
     disabled,
     placeholder,
-    label,
+    label = "",
+    fullWidth = true,
     required = false,
     maxNumber = undefined,
     minNumber = 0,
@@ -35,11 +36,11 @@ export const InputNumberFormItem: React.FC<InputNumberFormItemProps> = ({
             minNumber={minNumber}
             defaultValue={defaultValue ?? ""}
             render={({ field, error }) => (
-                <Box>
+                <Box className="w-full">
                     <TextField
                         {...field}
                         placeholder={placeholder}
-                        fullWidth
+                        fullWidth={fullWidth}
                         type="number"
                         size={size}
                         error={!!error}
@@ -50,7 +51,7 @@ export const InputNumberFormItem: React.FC<InputNumberFormItemProps> = ({
                         variant="outlined"
                         disabled={disabled}
                         margin="normal"
-                        label={""}
+                        label={label}
                         {...props}
                     />
                     <FormErrorMessage errorMessage={error} />
