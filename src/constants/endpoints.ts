@@ -3,7 +3,8 @@ const authEndpointPrefix = "/authentication";
 const authEndpoints = {
     login: `${authEndpointPrefix}/login`,
     logout: `${authEndpointPrefix}/logout`,
-    me: `${authEndpointPrefix}/me`,
+    currentUser: `${authEndpointPrefix}/current-user`,
+    refreshToken: `${authEndpointPrefix}/login/refresh-token`,
 };
 
 const publicEndpoints = {
