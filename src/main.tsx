@@ -24,7 +24,7 @@ createRoot(document.getElementById("root")!).render(
                     <MaterialUIThemeProvider>
                         <ApplicationRoutes />
                         <ToastContainer
-                            position="bottom-right"
+                            position="top-right"
                             autoClose={3000}
                             hideProgressBar={false}
                             newestOnTop={false}

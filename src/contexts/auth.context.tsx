@@ -40,7 +40,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
             navigate("/");
         } catch {
             setUser(null);
-            showToast.error(APP_STRING.TOKEN_EXPIRED);
             navigate("/login");
         } finally {
             setIsLoading(false);
@@ -71,8 +70,9 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
         try {
             setIsLoading(true);
             await authService.logout();
-            showToast.success("Đăng xuất thành công");
             navigate("/login");
+            console.log("Logout successfully");
+            showToast.success("Đăng xuất thành công");
             setUser(null);
         } finally {
             setIsLoading(false);
