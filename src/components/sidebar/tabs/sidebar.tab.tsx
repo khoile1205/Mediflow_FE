@@ -26,22 +26,6 @@ export const SidebarTabItem: React.FC<SidebarTabProps> = ({
 
     const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
 
-    const handleNavigate = () => {
-        if (onClick) {
-            onClick();
-        } else {
-            if (!pathName) {
-                return;
-            }
-            navigate(pathName);
-        }
-    };
-
-    const handleToggle = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setIsExpanded((prev) => !prev);
-    };
-
     const active = React.useMemo(() => {
         return location.pathname === pathName;
     }, [location.pathname, pathName]);
@@ -50,6 +34,24 @@ export const SidebarTabItem: React.FC<SidebarTabProps> = ({
         return children && children.length > 0;
     }, [children]);
 
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        if (onClick) {
+            onClick();
+            return;
+        }
+
+        if (pathName) {
+            navigate(pathName);
+            return;
+        }
+
+        if (hasChildren) {
+            setIsExpanded((prev) => !prev);
+        }
+    };
+
     return (
         <Box className={classNames("w-full cursor-pointer rounded-md")}>
             <Box
@@ -57,13 +59,11 @@ export const SidebarTabItem: React.FC<SidebarTabProps> = ({
                 className={classNames("flex flex-col hover:bg-gray-50", {
                     "bg-gray-200": active,
                 })}
+                onClick={handleClick}
             >
-                <Box className="flex items-center justify-start rounded-md p-2" onClick={handleNavigate}>
+                <Box className="flex items-center justify-start rounded-md p-2">
                     {hasChildren ? (
-                        <IconButton
-                            className="rounded-full transition-all duration-200 ease-in-out"
-                            onClick={handleToggle}
-                        >
+                        <IconButton className="rounded-full transition-all duration-200 ease-in-out">
                             {!isExpanded ? (
                                 <KeyboardArrowDown className="text-sm" />
                             ) : (
