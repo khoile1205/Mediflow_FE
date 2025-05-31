@@ -7,17 +7,21 @@ import { Spinner } from "~/components/spinner";
 import { Sidebar } from "~/components/sidebar";
 
 const AuthenticatedGuard: React.FC = () => {
-    const { user, isLoading } = useAuth();
+    const { user, isLoading, isInitialized } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
     React.useEffect(() => {
+        if (!isInitialized) {
+            return;
+        }
+
         if (!user) {
             sessionStorage.setItem("redirectUrl", location.pathname);
             showToast.warning("Vui lòng đăng nhập để tiếp tục");
             navigate("/login");
         }
-    }, [navigate, location.pathname, user]);
+    }, [navigate, location.pathname, user, isInitialized]);
 
     if (isLoading || !user) {
         return <Spinner />;
