@@ -6,10 +6,7 @@ import { IBaseApiResponse } from "~/libs/axios/types";
 import { authService } from "~/services/auth";
 import { TLoginRequest, TLoginResponse } from "~/services/auth/types";
 import { showToast } from "~/utils";
-import { endpoints } from "../constants/endpoints";
-import { HttpMethod } from "../constants/enums";
 import { User } from "../entities";
-import { useHttpContext } from "./http.context";
 
 export type AuthContextProps = {
     isLoading: boolean;
@@ -34,7 +31,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     const [user, setUser] = React.useState<User | null>(null);
     const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
     const navigate = useNavigate();
-    const { callApi } = useHttpContext();
 
     const loadUserInfor = React.useCallback(async () => {
         try {
@@ -44,7 +40,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
             navigate("/");
         } catch {
             setUser(null);
-            showToast.error(APP_STRING.TOKEN_EXPIRED);
             navigate("/login");
         } finally {
             setIsLoading(false);
@@ -74,11 +69,9 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     const handleLogout = async () => {
         try {
             setIsLoading(true);
-            await callApi({
-                url: endpoints.authEndpoints.logout,
-                method: HttpMethod.POST,
-                data: {},
-            });
+            await authService.logout();
+            navigate("/login");
+            showToast.success("Đăng xuất thành công");
             setUser(null);
         } finally {
             setIsLoading(false);

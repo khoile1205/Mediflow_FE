@@ -16,3 +16,8 @@ export type RefreshTokenResponse = {
     IsSuccess: boolean;
     Message: string;
 };
+
+export type LogOutResponse = {
+    IsSuccess: boolean;
+    Message: string;
+};

@@ -21,7 +21,7 @@ const AuthenticatedGuard: React.FC = () => {
             showToast.warning("Vui lòng đăng nhập để tiếp tục");
             navigate("/login");
         }
-    }, [navigate, location.pathname, user, isInitialized]);
+    }, [navigate, location.pathname, isInitialized]);
 
     if (isLoading || !user) {
         return <Spinner />;
