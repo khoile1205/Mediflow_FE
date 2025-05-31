@@ -3,7 +3,7 @@ import { HttpMethod } from "~/constants/enums";
 import { User } from "~/entities";
 import { callApi } from "~/libs/axios/request";
 import { IBaseApiResponse } from "~/libs/axios/types";
-import { RefreshTokenResponse, TLoginRequest, TLoginResponse } from "./types";
+import { LogOutResponse, RefreshTokenResponse, TLoginRequest, TLoginResponse } from "./types";
 
 const login = async (params: TLoginRequest): Promise<IBaseApiResponse<TLoginResponse>> => {
     return await callApi<TLoginResponse>({
@@ -28,4 +28,12 @@ const getCurrentUser = async (): Promise<IBaseApiResponse<User>> => {
     });
 };
 
-export const authService = { login, refreshToken, getCurrentUser };
+const logout = async (): Promise<IBaseApiResponse<LogOutResponse>> => {
+    return await callApi<LogOutResponse>({
+        url: endpoints.authEndpoints.logout,
+        method: HttpMethod.POST,
+        data: null,
+    });
+};
+
+export const authService = { login, logout, refreshToken, getCurrentUser };

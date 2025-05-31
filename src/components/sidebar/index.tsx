@@ -1,8 +1,9 @@
 import { Dashboard, ExitToApp, Home, Inventory2, Paid, People, Settings, Vaccines } from "@mui/icons-material";
 import { Avatar, Box, Drawer, Stack, Typography } from "@mui/material";
 import React from "react";
-import { SidebarTabItem, SidebarTabProps } from "./tabs/sidebar.tab";
 import AppLogo from "~/assets/images/app_logo.png";
+import { useAuth } from "~/contexts/auth.context";
+import { SidebarTabItem, SidebarTabProps } from "./tabs/sidebar.tab";
 
 const sidebarTree: SidebarTabProps[] = [
     {
@@ -52,6 +53,7 @@ const sidebarTree: SidebarTabProps[] = [
 ];
 
 export const Sidebar: React.FC = () => {
+    const { logout } = useAuth();
     return (
         <Drawer
             variant="permanent"
@@ -80,7 +82,7 @@ export const Sidebar: React.FC = () => {
                 </Box>
                 <Stack direction={"column"} sx={{ flexShrink: 0 }} className="p-2">
                     <SidebarTabItem icon={<Settings />} label="Cài đặt" />
-                    <SidebarTabItem icon={<ExitToApp />} label="Đăng xuất" />
+                    <SidebarTabItem icon={<ExitToApp />} label="Đăng xuất" onClick={logout} />
                 </Stack>
             </Stack>
         </Drawer>

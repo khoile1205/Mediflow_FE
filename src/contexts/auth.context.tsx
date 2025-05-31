@@ -74,11 +74,9 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     const handleLogout = async () => {
         try {
             setIsLoading(true);
-            await callApi({
-                url: endpoints.authEndpoints.logout,
-                method: HttpMethod.POST,
-                data: {},
-            });
+            await authService.logout();
+            showToast.success("Đăng xuất thành công");
+            navigate("/login");
             setUser(null);
         } finally {
             setIsLoading(false);
