@@ -6,10 +6,7 @@ import { IBaseApiResponse } from "~/libs/axios/types";
 import { authService } from "~/services/auth";
 import { TLoginRequest, TLoginResponse } from "~/services/auth/types";
 import { showToast } from "~/utils";
-import { endpoints } from "../constants/endpoints";
-import { HttpMethod } from "../constants/enums";
 import { User } from "../entities";
-import { useHttpContext } from "./http.context";
 
 export type AuthContextProps = {
     isLoading: boolean;
@@ -34,7 +31,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     const [user, setUser] = React.useState<User | null>(null);
     const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
     const navigate = useNavigate();
-    const { callApi } = useHttpContext();
 
     const loadUserInfor = React.useCallback(async () => {
         try {
