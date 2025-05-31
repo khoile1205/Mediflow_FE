@@ -71,7 +71,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
             setIsLoading(true);
             await authService.logout();
             navigate("/login");
-            console.log("Logout successfully");
             showToast.success("Đăng xuất thành công");
             setUser(null);
         } finally {
