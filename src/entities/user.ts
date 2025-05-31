@@ -1,9 +1,9 @@
 export interface User {
-    createdAt: number;
-    displayName: string;
+    id: number;
+    code: string;
+    userName: string;
     email: string;
-    id: string;
-    phone: string;
-    role: any;
-    updatedAt: number;
+    name: string;
+    profilePictureUrl: string;
+    roles: string;
 }

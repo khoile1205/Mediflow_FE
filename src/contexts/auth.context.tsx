@@ -3,7 +3,7 @@ import React, { PropsWithChildren } from "react";
 import { useNavigate } from "react-router";
 import { APP_STRING } from "~/constants/app.string";
 import { IBaseApiResponse } from "~/libs/axios/types";
-import { login } from "~/services/auth";
+import { authService } from "~/services/auth";
 import { TLoginRequest, TLoginResponse } from "~/services/auth/types";
 import { showToast } from "~/utils";
 import { endpoints } from "../constants/endpoints";
@@ -13,6 +13,7 @@ import { useHttpContext } from "./http.context";
 
 export type AuthContextProps = {
     isLoading: boolean;
+    isInitialized: boolean;
     user: User | null;
     login: (params: TLoginRequest) => Promise<void>;
     logout: () => void;
@@ -20,6 +21,7 @@ export type AuthContextProps = {
 
 const defaultProvider: AuthContextProps = {
     isLoading: true,
+    isInitialized: false,
     user: null,
     login: () => Promise.resolve(),
     logout: () => {},
@@ -29,29 +31,33 @@ export const AuthContext = React.createContext(defaultProvider);
 
 export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const [user, setUser] = React.useState<User | null>(null);
+    const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
     const navigate = useNavigate();
     const { callApi } = useHttpContext();
-    const [user, setUser] = React.useState<User | null>(null);
 
     const loadUserInfor = React.useCallback(async () => {
         try {
             setIsLoading(true);
-            const response = await callApi<User>({
-                url: endpoints.authEndpoints.me,
-                method: HttpMethod.GET,
-            });
+            const response = await authService.getCurrentUser();
             setUser(response.Data);
+            navigate("/");
+        } catch {
+            setUser(null);
+            showToast.error(APP_STRING.TOKEN_EXPIRED);
+            navigate("/login");
         } finally {
             setIsLoading(false);
+            setIsInitialized(true);
         }
     }, []);
 
     const handleLogin = async (params: TLoginRequest) => {
         try {
             setIsLoading(true);
-            await login(params);
-            showToast.success(APP_STRING.LOGIN_SUCCESS);
+            await authService.login(params);
             await loadUserInfor();
+            showToast.success(APP_STRING.LOGIN_SUCCESS);
             navigate("/");
         } catch (error) {
             const axiosError = error as AxiosError<IBaseApiResponse<TLoginResponse>>;
@@ -87,12 +93,16 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
         initializeUser();
     }, []);
 
-    const value = {
-        isLoading,
-        user,
-        login: handleLogin,
-        logout: handleLogout,
-    };
+    const value = React.useMemo(
+        () => ({
+            isLoading,
+            isInitialized,
+            user,
+            login: handleLogin,
+            logout: handleLogout,
+        }),
+        [isLoading, isInitialized, user, handleLogin, handleLogout],
+    );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
