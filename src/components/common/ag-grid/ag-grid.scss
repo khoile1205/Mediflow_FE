@@ -1,0 +1,38 @@
+.ag-data-grid {
+    .ag-header-cell-center {
+        .ag-header-cell-label {
+            justify-content: center;
+        }
+    }
+
+    .ag-cell {
+        border-right: 1px solid #e0e0e0;
+        border-bottom: 1px solid #e0e0e0;
+
+        &.ag-selection-checkbox-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &.ag-cell-left {
+            text-align: start;
+        }
+
+        &.ag-cell-center {
+            text-align: center;
+        }
+
+        &.ag-cell-end {
+            text-align: end;
+        }
+    }
+
+    .ag-row:last-child .ag-cell {
+        border-bottom: none;
+    }
+
+    .ag-cell:last-of-type {
+        border-right: none;
+    }
+}

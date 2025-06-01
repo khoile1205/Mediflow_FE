@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import React from "react";
-import { Sidebar } from "~/components/sidebar";
+import { Sidebar } from "~/components/layout/sidebar";
 
 const TemplateLayout: React.FC = () => {
     return (

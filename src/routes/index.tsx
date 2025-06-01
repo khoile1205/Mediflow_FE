@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Routes } from "react-router";
 import { AuthenticatedRoutes } from "./authenticated.route";
 import { PublicRoutes } from "./public.route";
-import { Spinner } from "~/components/spinner";
+import { Spinner } from "~/components/layout/spinner";
 
 export const ApplicationRoutes = () => {
     return (

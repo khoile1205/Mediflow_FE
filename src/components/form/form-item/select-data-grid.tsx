@@ -2,7 +2,7 @@ import { FormControl, FormHelperText, Popover, TextField } from "@mui/material";
 import { ColDef } from "ag-grid-community";
 import { AgGridReactProps } from "ag-grid-react";
 import React from "react";
-import { AgDataGrid, useAgGrid } from "../../ag-grid";
+import { AgDataGrid, useAgGrid } from "../../common/ag-grid";
 import { ControllerWrapper, FormErrorMessage } from "../common";
 import { BaseFormItemProps } from "../types/form-item";
 
