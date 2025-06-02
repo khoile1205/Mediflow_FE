@@ -47,7 +47,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
         }
     }, []);
 
-    const handleLogin = async (params: TLoginRequest) => {
+    const handleLogin = React.useCallback(async (params: TLoginRequest) => {
         try {
             setIsLoading(true);
             await authService.login(params);
@@ -64,19 +64,19 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
-    const handleLogout = async () => {
+    const handleLogout = React.useCallback(async () => {
         try {
             setIsLoading(true);
             await authService.logout();
             navigate("/login");
-            showToast.success("Đăng xuất thành công");
+            showToast.success(APP_STRING.LOGOUT_SUCCESS);
             setUser(null);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     const initializeUser = async () => {
         await loadUserInfor();

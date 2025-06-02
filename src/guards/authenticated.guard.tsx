@@ -3,8 +3,8 @@ import React from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { showToast } from "~/utils";
 import { useAuth } from "../contexts/auth.context";
-import { Spinner } from "~/components/spinner";
-import { Sidebar } from "~/components/sidebar";
+import { Spinner } from "~/components/layout/spinner";
+import { Sidebar } from "~/components/layout/sidebar";
 
 const AuthenticatedGuard: React.FC = () => {
     const { user, isLoading, isInitialized } = useAuth();

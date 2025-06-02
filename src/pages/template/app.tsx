@@ -1,6 +1,6 @@
 import React from "react";
 import { ColDef } from "ag-grid-community";
-import { AgDataGrid, useAgGrid } from "../../components/ag-grid";
+import { AgDataGrid, useAgGrid } from "../../components/common/ag-grid";
 
 const ExamplePage = () => {
     const agGrid = useAgGrid({});

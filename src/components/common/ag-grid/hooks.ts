@@ -1,5 +1,6 @@
 import { ColDef, GridApi, GridOptions, GridReadyEvent, RowDataTransaction, themeQuartz } from "ag-grid-community";
 import React from "react";
+import { GRID_STYLE_CONFIG } from "./config";
 
 // Define interface for hook props
 interface UseAgGridProps<T> {
@@ -17,7 +18,7 @@ interface UseAgGridResult<T> {
     gridOptions: GridOptions;
     onGridReady: (params: GridReadyEvent) => void;
     onRowDataChanged: (params: RowDataTransaction) => void;
-    gridApi: React.RefObject<GridApi | null>;
+    gridApi: GridApi | null;
     refreshCells: () => void;
 }
 
@@ -38,8 +39,14 @@ export const useAgGrid = <T>({
             filter: false,
             resizable: true,
             flex: 1,
-            minWidth: 100,
+            minWidth: GRID_STYLE_CONFIG.GRID_DIMENSIONS.MIN_WIDTH_COLUMN,
+            cellStyle: {
+                height: GRID_STYLE_CONFIG.GRID_DIMENSIONS.ROW_HEIGHT,
+            },
             headerClass: "ag-header-cell-center",
+            headerStyle: {
+                height: GRID_STYLE_CONFIG.GRID_DIMENSIONS.HEADER_HEIGHT,
+            },
         }),
         [],
     );
@@ -50,11 +57,11 @@ export const useAgGrid = <T>({
             theme: themeQuartz,
             rowSelection,
             suppressRowClickSelection,
-            animateRows: true,
+            animateRows: false,
             rowMultiSelectWithClick: rowSelection === "multiple",
-            enableCellTextSelection: true,
+            enableCellTextSelection: false,
             suppressContextMenu: false,
-            domLayout: "autoHeight",
+            domLayout: "normal",
             suppressMovableColumns: true,
             defaultColDef,
             columnDefs: initialColumnDefs,
@@ -65,11 +72,8 @@ export const useAgGrid = <T>({
     // Handle grid ready event
     const onGridReady = React.useCallback(
         (params: GridReadyEvent) => {
-            gridApi.current = params.api;
-
-            // params.api.sizeColumnsToFit();
-            if (autoSizeColumns) {
-                // params.api.autoSizeAllColumns();
+            if (!gridApi.current) {
+                gridApi.current = params.api;
             }
 
             // Apply default sort if provided
@@ -105,7 +109,7 @@ export const useAgGrid = <T>({
         gridOptions,
         onGridReady,
         onRowDataChanged: handleRowDataChanged,
-        gridApi,
+        gridApi: gridApi.current,
         refreshCells,
     };
 };
