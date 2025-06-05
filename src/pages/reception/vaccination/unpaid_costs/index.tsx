@@ -1,5 +1,6 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import React from "react";
+import { formatCurrencyVND } from "~/utils/currency";
 
 interface UnpaidCostsProps {
     consultationFee?: number;
@@ -28,35 +29,35 @@ export const UnpaidCosts: React.FC<UnpaidCostsProps> = ({
                 <Grid size={12}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography>Giá công tư vấn:</Typography>
-                        <Typography fontWeight="bold">{consultationFee.toLocaleString()} đ</Typography>
+                        <Typography fontWeight="bold">{formatCurrencyVND(consultationFee)}</Typography>
                     </Stack>
                 </Grid>
 
                 <Grid size={12}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography>Giá công khám:</Typography>
-                        <Typography fontWeight="bold">{examinationFee.toLocaleString()} đ</Typography>
+                        <Typography fontWeight="bold">{formatCurrencyVND(examinationFee)}</Typography>
                     </Stack>
                 </Grid>
 
                 <Grid size={12}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography>Giá công tiêm:</Typography>
-                        <Typography fontWeight="bold">{injectionFee.toLocaleString()} đ</Typography>
+                        <Typography fontWeight="bold">{formatCurrencyVND(injectionFee)}</Typography>
                     </Stack>
                 </Grid>
 
                 <Grid size={12}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography>Giá vaccine:</Typography>
-                        <Typography fontWeight="bold">{vaccineFee.toLocaleString()} đ</Typography>
+                        <Typography fontWeight="bold">{formatCurrencyVND(vaccineFee)}</Typography>
                     </Stack>
                 </Grid>
 
                 <Grid size={12}>
                     <Stack direction="row" justifyContent="space-between">
                         <Typography>Giá xét nghiệm:</Typography>
-                        <Typography fontWeight="bold">{testFee.toLocaleString()} đ</Typography>
+                        <Typography fontWeight="bold">{formatCurrencyVND(testFee)}</Typography>
                     </Stack>
                 </Grid>
 
@@ -66,7 +67,7 @@ export const UnpaidCosts: React.FC<UnpaidCostsProps> = ({
                             Tạm tính tổng các chi phí chưa thanh toán:
                         </Typography>
                         <Typography variant="h6" color="error" fontWeight="bold">
-                            {totalUnpaid.toLocaleString()} đ
+                            {formatCurrencyVND(totalUnpaid)}
                         </Typography>
                     </Stack>
                 </Grid>
