@@ -1,5 +1,5 @@
 import { AddCircle, Clear, Edit, Save, Search, Undo } from "@mui/icons-material";
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Box, Grid, Stack } from "@mui/material";
 import React from "react";
 import { ActionButton } from "~/components/common/action-button";
 import DistrictFormItem from "~/components/form/custom/district.form-item";
@@ -9,11 +9,10 @@ import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import { PHONE_NUMBER_PATTERN } from "~/components/form/validation/pattern";
-import { formatCurrencyVND } from "~/utils/currency";
-import { VaccinationIndication } from "./vaccination_indication";
 import { PreVaccination } from "./pre-vaccination";
 import { TestIndication } from "./test_indication";
 import { UnpaidCosts } from "./unpaid_costs";
+import { VaccinationIndication } from "./vaccination_indication";
 
 type TabType = "pre_vaccination" | "vaccination_indication" | "test_indication" | "unpaid_costs";
 
@@ -204,56 +203,7 @@ const ReceptionVaccination: React.FC = () => {
                 </Grid>
             </Box>
 
-            <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-2 border p-2">
-                <Box className="flex items-center">
-                    <Typography className="font-semibold">Tạm tính tổng các chi phí chưa thanh toán:</Typography>
-                    <Typography className="ps-2 font-semibold">{formatCurrencyVND(650000)}</Typography>
-                </Box>
-                <Grid container spacing={0.5} className="mt-2">
-                    <Grid size={12}>
-                        <Grid container spacing={1}>
-                            <Grid size={3}>
-                                <Typography className="font-semibold">Dịch vụ sử dụng</Typography>
-                            </Grid>
-                            <Grid size={3}>
-                                <Typography className="font-semibold">Giá dịch vụ</Typography>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid size={12}>
-                        <Grid container spacing={1}>
-                            <Grid size={3}>
-                                <Typography className="ms-2 font-semibold">Xét nghiệm</Typography>
-                            </Grid>
-                            <Grid size={3}>
-                                <Typography className="ms-2 font-semibold">{formatCurrencyVND(200000)}</Typography>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid size={12}>
-                        <Grid container spacing={1}>
-                            <Grid size={3}>
-                                <Typography className="ms-2 font-semibold">Khám bệnh</Typography>
-                            </Grid>
-                            <Grid size={3}>
-                                <Typography className="ms-2 font-semibold">{formatCurrencyVND(150000)}</Typography>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid size={12}>
-                        <Grid container spacing={1}>
-                            <Grid size={3}>
-                                <Typography className="ms-2 font-semibold">Tiêm viêm gan B</Typography>
-                            </Grid>
-                            <Grid size={3}>
-                                <Typography className="ms-2 font-semibold">{formatCurrencyVND(300000)}</Typography>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Box>
-
-            <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-2 border p-2">
+            <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-5 border p-2">
                 <Stack spacing={5} direction="row" width="100%">
                     <ActionButton
                         label="Khám sàng lọc"
