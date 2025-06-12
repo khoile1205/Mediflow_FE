@@ -17,7 +17,6 @@ const ExamplePage = () => {
 
     return (
         <div style={{ width: "100%", height: "100vh", padding: "20px" }}>
-            <h1>Ag Grid Example</h1>
             <AgDataGrid {...agGrid} columnDefs={columnDefs} rowData={rowData} />
         </div>
     );

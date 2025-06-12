@@ -2,11 +2,13 @@ import { AddCircle, Delete } from "@mui/icons-material";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { ColDef } from "ag-grid-community";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActionButton } from "~/components/common/action-button";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
+import i18n from "~/configs/i18n";
 
 interface TableRowData {
     key: string;
@@ -24,6 +26,7 @@ interface TestIndicationProps {
 }
 
 export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
+    const { t } = useTranslation();
     const form = useForm();
     const agGrid = useAgGrid<TableRowData>({ rowSelection: "multiple" });
 
@@ -36,24 +39,24 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
                 pinned: true,
                 resizable: false,
             },
-            { field: "requestId", headerName: "Số phiếu yêu cầu" },
-            { field: "serviceCode", headerName: "Mã dịch vụ" },
-            { field: "serviceName", headerName: "Tên dịch vụ" },
-            { field: "quantity", headerName: "Số lượng", cellClass: "ag-cell-center" },
+            { field: "requestId", headerName: t(i18n.translationKey.requestNumber) },
+            { field: "serviceCode", headerName: t(i18n.translationKey.serviceCode) },
+            { field: "serviceName", headerName: t(i18n.translationKey.serviceName) },
+            { field: "quantity", headerName: t(i18n.translationKey.quantity), cellClass: "ag-cell-center" },
             {
                 field: "unitPrice",
-                headerName: "Đơn giá",
+                headerName: t(i18n.translationKey.unitPrice),
                 cellClass: "ag-cell-center",
                 valueFormatter: (params) => params.value.toLocaleString("vi-VN") + "₫",
             },
             {
-                headerName: "Thành tiền",
+                headerName: t(i18n.translationKey.totalAmount),
                 cellClass: "ag-cell-center",
                 valueGetter: (params) => params.data.quantity * params.data.unitPrice,
                 valueFormatter: (params) => params.value.toLocaleString("vi-VN") + "₫",
             },
-            { field: "invoiceDate", headerName: "Ngày hóa đơn" },
-            { field: "payment", headerName: "Thanh toán" },
+            { field: "invoiceDate", headerName: t(i18n.translationKey.invoiceDate) },
+            { field: "payment", headerName: t(i18n.translationKey.payment) },
         ],
         [],
     );
@@ -63,16 +66,16 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
             <Stack spacing={2} direction="column" className="pt-3">
                 <Box>
                     <Typography variant="subtitle2" className="ms-2 text-lg font-bold">
-                        Chỉ định xét nghiệm
+                        {t(i18n.translationKey.examinationIndication)}
                     </Typography>
                     <Box className="mt-2 border p-5" sx={{ borderColor: "primary.main", borderRadius: 2 }}>
                         <Grid container spacing={2.5}>
                             <Grid size={12}>
                                 <FormItem
                                     render="select"
-                                    label="Chỉ định theo nhóm bệnh"
+                                    label={t(i18n.translationKey.orderByDiseaseGroup)}
                                     name="diseaseGroup"
-                                    placeholder="Chọn nhóm bệnh"
+                                    placeholder={t(i18n.translationKey.selectDiseaseGroup)}
                                     disabled={disabled}
                                     options={[{ label: "", value: "" }]}
                                 />
@@ -81,9 +84,9 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
                             <Grid size={8}>
                                 <FormItem
                                     render="select"
-                                    label="Chỉ định xét nghiệm"
+                                    label={t(i18n.translationKey.examinationIndication)}
                                     name="testService"
-                                    placeholder="Chọn dịch vụ xét nghiệm"
+                                    placeholder={t(i18n.translationKey.selectExaminationService)}
                                     disabled={disabled}
                                     options={[{ label: "", value: "" }]}
                                 />
@@ -92,9 +95,9 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
                             <Grid size={4}>
                                 <FormItem
                                     render="select"
-                                    label="Phòng ban"
+                                    label={t(i18n.translationKey.department)}
+                                    placeholder={t(i18n.translationKey.selectDepartment)}
                                     name="department"
-                                    placeholder="Chọn phòng ban"
                                     disabled={disabled}
                                     options={[{ label: "", value: "" }]}
                                 />
@@ -103,9 +106,9 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
                             <Grid size={12}>
                                 <FormItem
                                     render="select"
-                                    label="Nhóm dịch vụ"
                                     name="serviceGroup"
-                                    placeholder="Chọn nhóm dịch vụ"
+                                    label={t(i18n.translationKey.serviceGroup)}
+                                    placeholder={t(i18n.translationKey.selectServiceGroup)}
                                     disabled={disabled}
                                     options={[{ label: "", value: "" }]}
                                 />
@@ -114,13 +117,17 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
                             <Grid size={12}>
                                 <Stack direction="row" spacing={2}>
                                     <ActionButton
-                                        label="Thêm theo nhóm"
+                                        label={t(i18n.translationKey.addByGroup)}
                                         startIcon={<AddCircle />}
                                         disabled={disabled}
                                     />
-                                    <ActionButton label="Thêm dịch vụ" startIcon={<AddCircle />} disabled={disabled} />
                                     <ActionButton
-                                        label="Xóa"
+                                        label={t(i18n.translationKey.addHospitalService)}
+                                        startIcon={<AddCircle />}
+                                        disabled={disabled}
+                                    />
+                                    <ActionButton
+                                        label={t(i18n.translationKey.delete)}
                                         startIcon={<Delete />}
                                         color="error"
                                         disabled={disabled}
@@ -133,7 +140,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
 
                 <Box>
                     <Typography variant="subtitle2" className="ms-2 text-lg font-bold">
-                        Danh sách chỉ định xét nghiệm
+                        {t(i18n.translationKey.examinationIndicationList)}
                     </Typography>
                     <Box className="mt-2 border p-5" sx={{ borderColor: "primary.main", borderRadius: 2 }}>
                         <AgDataGrid

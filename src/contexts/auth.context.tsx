@@ -1,12 +1,13 @@
 import { AxiosError } from "axios";
 import React, { PropsWithChildren } from "react";
 import { useNavigate } from "react-router";
-import { APP_STRING } from "~/constants/app.string";
 import { IBaseApiResponse } from "~/libs/axios/types";
 import { authService } from "~/services/auth";
 import { TLoginRequest, TLoginResponse } from "~/services/auth/types";
 import { showToast } from "~/utils";
 import { User } from "../entities";
+import i18n from "~/configs/i18n";
+import { useTranslation } from "react-i18next";
 
 export type AuthContextProps = {
     isLoading: boolean;
@@ -27,6 +28,7 @@ const defaultProvider: AuthContextProps = {
 export const AuthContext = React.createContext(defaultProvider);
 
 export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [user, setUser] = React.useState<User | null>(null);
     const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
@@ -37,10 +39,8 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
             setIsLoading(true);
             const response = await authService.getCurrentUser();
             setUser(response.Data);
-            navigate("/");
         } catch {
             setUser(null);
-            navigate("/login");
         } finally {
             setIsLoading(false);
             setIsInitialized(true);
@@ -52,15 +52,15 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
             setIsLoading(true);
             await authService.login(params);
             await loadUserInfor();
-            showToast.success(APP_STRING.LOGIN_SUCCESS);
+            showToast.success(t(i18n.translationKey.loginSuccessfully));
             navigate("/");
         } catch (error) {
             const axiosError = error as AxiosError<IBaseApiResponse<TLoginResponse>>;
             if (!axiosError.response) {
-                showToast.error(APP_STRING.SOMETHING_WENT_WRONG);
+                showToast.error(t(i18n.translationKey.somethingWentWrong));
                 return;
             }
-            showToast.error(axiosError.response.data.Message);
+            showToast.error(t(axiosError.response.data.Message));
         } finally {
             setIsLoading(false);
         }
@@ -71,7 +71,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
             setIsLoading(true);
             await authService.logout();
             navigate("/login");
-            showToast.success(APP_STRING.LOGOUT_SUCCESS);
+            showToast.success(t(i18n.translationKey.logoutSuccessfully));
             setUser(null);
         } finally {
             setIsLoading(false);

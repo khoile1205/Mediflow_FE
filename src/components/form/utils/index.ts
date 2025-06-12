@@ -2,6 +2,7 @@ import { FieldValues, Path, RegisterOptions } from "react-hook-form";
 import { TValidationRules } from "../types/validation";
 import { BaseOption } from "../types/form-item";
 import { formatDateToDDMMYYYY } from "../../../utils/date-time";
+import i18n from "~/configs/i18n";
 
 export const toBaseOption = <T>(source: T[], options: { label: keyof T; value: keyof T }): BaseOption[] => {
     return source.map((item) => ({
@@ -16,48 +17,48 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
     const validation: RegisterOptions<TFieldValues, TName> = {};
 
     if (rules.required) {
-        validation.required = "Vui lòng không để trống trường này";
+        validation.required = i18n.t(i18n.translationKey.requiredField);
     }
 
     if (rules.minLength !== undefined && rules.minLength > 0) {
         validation.minLength = {
             value: rules.minLength,
-            message: `Nhập ít nhất ${rules.minLength} ký tự`,
+            message: i18n.t(i18n.translationKey.enterAtLeastMinLengthCharacter, { min_length: rules.minLength }),
         };
     }
 
     if (rules.maxLength !== undefined) {
         validation.maxLength = {
             value: rules.maxLength,
-            message: `Chỉ được nhập tối đa ${rules.maxLength} ký tự`,
+            message: i18n.t(i18n.translationKey.onlyEnterUpToMaxLengthCharacter, { max_length: rules.maxLength }),
         };
     }
 
     if (rules.minNumber !== undefined) {
         validation.min = {
             value: rules.minNumber,
-            message: `Giá trị phải lớn hơn hoặc bằng ${rules.minNumber}`,
+            message: i18n.t(i18n.translationKey.valueMustBeGreaterThanOrEqualTo, { value: rules.minNumber }),
         };
     }
 
     if (rules.maxNumber !== undefined) {
         validation.max = {
             value: rules.maxNumber,
-            message: `Giá trị phải nhỏ hơn hoặc bằng ${rules.maxNumber}`,
+            message: i18n.t(i18n.translationKey.valueMustBeLessThanOrEqualTo, { value: rules.maxNumber }),
         };
     }
 
     if (rules.pattern) {
         validation.pattern = {
             value: typeof rules.pattern === "string" ? new RegExp(rules.pattern) : rules.pattern,
-            message: "Định dạng không đúng",
+            message: i18n.t(i18n.translationKey.invalidFormat),
         };
     }
 
     if (rules.isEmail) {
         validation.pattern = {
             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: "Email không hợp lệ",
+            message: i18n.t(i18n.translationKey.invalidEmail),
         };
     }
 
@@ -70,17 +71,17 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
 
     if (rules.minDate) {
         validation.validate = (value: Date) => {
-            return new Date(value) >= new Date(rules.minDate!)
+            return new Date(value) >= new Date(rules.minDate)
                 ? true
-                : `Vui lòng chọn ngày sau ${formatDateToDDMMYYYY(rules.minDate!)}`;
+                : i18n.t(i18n.translationKey.pleaseSelectADateAfter, { date: formatDateToDDMMYYYY(rules.minDate) });
         };
     }
 
     if (rules.maxDate) {
         validation.validate = (value: Date) => {
-            return new Date(value) <= new Date(rules.maxDate!)
+            return new Date(value) <= new Date(rules.maxDate)
                 ? true
-                : `Vui lòng chọn ngày trước ${formatDateToDDMMYYYY(rules.maxDate!)}`;
+                : i18n.t(i18n.translationKey.pleaseSelectADateBefore, { date: formatDateToDDMMYYYY(rules.maxDate) });
         };
     }
 

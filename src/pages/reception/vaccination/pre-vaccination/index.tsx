@@ -1,23 +1,28 @@
 import { Box, Grid, InputAdornment, Stack, Typography } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import FormItem from "~/components/form/form-item";
+import i18n from "~/configs/i18n";
 
 interface PreVaccinationProps {
     disabled?: boolean;
 }
+
 export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
+    const { t } = useTranslation();
+
     return (
         <Stack className="pt-3" spacing={2} direction="column">
             <Box>
                 <Typography variant="subtitle2" className="ms-2 text-lg">
-                    Khám sàng lọc đối với trẻ trên 1 tháng tuổi
+                    {t(i18n.translationKey.screeningForChildrenOver1Month)}
                 </Typography>
                 <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-2 border p-5">
                     <Grid container spacing={2.5}>
                         <Grid size={12 / 5}>
                             <FormItem
                                 render="text-input"
-                                label="Họ tên bố mẹ"
+                                label={t(i18n.translationKey.parentName)}
                                 required
                                 name="parentName"
                                 disabled={disabled}
@@ -26,7 +31,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                         <Grid size={12 / 5}>
                             <FormItem
                                 render="text-input"
-                                label="Số điện thoại"
+                                label={t(i18n.translationKey.phoneNumber)}
                                 required
                                 name="parentPhoneNumber"
                                 disabled={disabled}
@@ -35,13 +40,17 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                         <Grid size={12 / 5}>
                             <FormItem
                                 render="input-number"
-                                label="Cân nặng"
+                                label={t(i18n.translationKey.weight)}
                                 required
                                 name="kidWeight"
                                 disabled={disabled}
                                 slotProps={{
                                     input: {
-                                        endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                {t(i18n.translationKey.unitKg)}
+                                            </InputAdornment>
+                                        ),
                                     },
                                 }}
                             />
@@ -49,13 +58,17 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                         <Grid size={12 / 5}>
                             <FormItem
                                 render="input-number"
-                                label="Thân nhiệt"
+                                label={t(i18n.translationKey.temperature)}
                                 required
                                 name="kidTemperature"
                                 disabled={disabled}
                                 slotProps={{
                                     input: {
-                                        endAdornment: <InputAdornment position="end">°C</InputAdornment>,
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                {t(i18n.translationKey.unitCelsius)}
+                                            </InputAdornment>
+                                        ),
                                     },
                                 }}
                             />
@@ -64,18 +77,18 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                             <Stack direction="row" spacing={2} alignItems="center">
                                 <FormItem
                                     render="input-number"
-                                    label="Huyết áp"
+                                    label={t(i18n.translationKey.bloodPressure)}
                                     name="systolicBloodPressure"
                                     disabled={disabled}
                                 />
                                 <Typography>/</Typography>
                                 <FormItem
                                     render="input-number"
-                                    label="Huyết áp"
+                                    label={t(i18n.translationKey.bloodPressure)}
                                     name="diastolicBloodPressure"
                                     disabled={disabled}
                                 />
-                                <Typography>mmHg</Typography>
+                                <Typography>{t(i18n.translationKey.unitMmhg)}</Typography>
                             </Stack>
                         </Grid>
                         <Grid size={12}>
@@ -84,7 +97,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="checkbox"
                                         name="severeReactionPreviousVaccination"
-                                        label="Sốt phản ứng nặng trong lần tiêm chủng trước"
+                                        label={t(i18n.translationKey.severeReactionPreviousVaccination)}
                                         disabled={disabled}
                                     />
                                 </Grid>
@@ -92,7 +105,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="checkbox"
                                         name="acuteOrChronicDisease"
-                                        label="Đang mắc bệnh cấp tính hoặc bệnh mạn tính tiến triển"
+                                        label={t(i18n.translationKey.acuteOrChronicDisease)}
                                         disabled={disabled}
                                     />
                                 </Grid>
@@ -100,7 +113,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="checkbox"
                                         name="recentImmunosuppressiveTreatment"
-                                        label="Đang hoặc mới kết thúc điều trị Corticoid/hoá trị/miễn dịch"
+                                        label={t(i18n.translationKey.recentImmunosuppressiveTreatment)}
                                         disabled={disabled}
                                     />
                                 </Grid>
@@ -108,7 +121,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="checkbox"
                                         name="abnormalTemperatureOrVitals"
-                                        label="Sốt/hạ thân nhiệt bất thường (≥ 39,5°C hoặc < 35°C) hoặc nhịp thở, nhịp tim, SpO2 bất thường"
+                                        label={t(i18n.translationKey.abnormalTemperatureOrVitals)}
                                         disabled={disabled}
                                     />
                                 </Grid>
@@ -116,7 +129,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="checkbox"
                                         name="abnormalHeartSound"
-                                        label="Nghe tim bất thường"
+                                        label={t(i18n.translationKey.abnormalHeartSound)}
                                         disabled={disabled}
                                     />
                                 </Grid>
@@ -124,7 +137,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="checkbox"
                                         name="heartValveAbnormality"
-                                        label="Hẹp van tim hoặc bất thường van tim"
+                                        label={t(i18n.translationKey.heartValveAbnormality)}
                                         disabled={disabled}
                                     />
                                 </Grid>
@@ -132,7 +145,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="checkbox"
                                         name="abnormalDisorder"
-                                        label="Rối loạn bất thường (týp II hoặc kích thích)"
+                                        label={t(i18n.translationKey.abnormalDisorder)}
                                         disabled={disabled}
                                     />
                                 </Grid>
@@ -140,7 +153,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="checkbox"
                                         name="weightUnder2000g"
-                                        label="Cân nặng dưới 2000g"
+                                        label={t(i18n.translationKey.weightUnder2000g)}
                                         disabled={disabled}
                                     />
                                 </Grid>
@@ -148,7 +161,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="checkbox"
                                         name="otherContraindications"
-                                        label="Có các chống chỉ định khác"
+                                        label={t(i18n.translationKey.otherContraindications)}
                                         disabled={disabled}
                                     />
                                 </Grid>
@@ -159,7 +172,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
             </Box>
             <Box>
                 <Typography variant="subtitle2" className="ms-2 text-lg">
-                    Kết luận
+                    {t(i18n.translationKey.conclusion)}
                 </Typography>
                 <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-2 border p-5">
                     <Grid container spacing={2}>
@@ -167,7 +180,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                             <FormItem
                                 render="checkbox"
                                 name="eligibleForVaccination"
-                                label="Chỉ định tiêm chủng ngay (tất cả chỉ số/điểm đo đều bình thường)"
+                                label={t(i18n.translationKey.eligibleForVaccination)}
                                 disabled={disabled}
                             />
                         </Grid>
@@ -175,7 +188,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                             <FormItem
                                 render="checkbox"
                                 name="contraindicatedForVaccination"
-                                label="Chống chỉ định tiêm chủng (có điểm bất thường tại mục 1.8)"
+                                label={t(i18n.translationKey.contraindicatedForVaccination)}
                                 disabled={disabled}
                             />
                         </Grid>
@@ -183,7 +196,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                             <FormItem
                                 render="checkbox"
                                 name="postponeVaccination"
-                                label="Tạm hoãn tiêm chủng (có bất kỳ một chỉ số/điểm bất thường tại các mục 1, 2, 3, 4, 5, 6, 7)"
+                                label={t(i18n.translationKey.postponeVaccination)}
                                 disabled={disabled}
                             />
                         </Grid>
@@ -191,7 +204,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                             <FormItem
                                 render="checkbox"
                                 name="referToHospital"
-                                label="Đề nghị khám sàng lọc tại bệnh viện"
+                                label={t(i18n.translationKey.referToHospital)}
                                 disabled={disabled}
                             />
                         </Grid>

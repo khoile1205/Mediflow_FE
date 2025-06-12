@@ -2,10 +2,11 @@ import { Box } from "@mui/material";
 import { AgGridReact, AgGridReactProps } from "ag-grid-react";
 import classNames from "classnames";
 import React from "react";
-import { AG_GRID_STRING } from "~/constants/app.string";
 import "./ag-grid.scss";
 import { GRID_STYLE_CONFIG } from "./config";
 import { useAgGrid } from "./hooks";
+import { useTranslation } from "react-i18next";
+import i18n from "~/configs/i18n";
 
 type AgDataGridProps = Omit<AgGridReactProps, "columnDefs" | "rowData"> & {
     columnDefs: NonNullable<AgGridReactProps["columnDefs"]>;
@@ -21,6 +22,7 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
     className = "",
     ...props
 }) => {
+    const { t } = useTranslation();
     const getHeightDataGrid = () => {
         const { MIN_HEIGHT, MAX_ROWS, HEADER_HEIGHT, ROW_HEIGHT, SCROLLBAR_HEIGHT } = GRID_STYLE_CONFIG.GRID_DIMENSIONS;
         const pinnedBottomRowData = gridOptions?.pinnedBottomRowData ?? [];
@@ -43,7 +45,7 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
                 rowData={rowData}
                 defaultColDef={defaultColDef}
                 ensureDomOrder
-                overlayNoRowsTemplate={AG_GRID_STRING.NO_ROWS_TO_SHOW}
+                overlayNoRowsTemplate={t(i18n.translationKey.noDataToDisplay)}
                 {...props}
             />
         </Box>

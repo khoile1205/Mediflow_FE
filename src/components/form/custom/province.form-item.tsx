@@ -6,10 +6,13 @@ import { toBaseOption } from "../utils";
 import { BaseFormItemProps } from "../types/form-item";
 import { SelectChangeEvent, SelectProps } from "@mui/material";
 import { useFormContext } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import i18n from "~/configs/i18n";
 
 type ProvinceFormItemProps = Omit<BaseFormItemProps, "render" | "name"> & SelectProps;
 
 const ProvinceFormItem: React.FC<ProvinceFormItemProps> = ({ ...props }) => {
+    const { t } = useTranslation();
     const { setValue } = useFormContext();
     const [province, setProvince] = React.useState<TAdministrativeUnit[]>([]);
 
@@ -36,7 +39,7 @@ const ProvinceFormItem: React.FC<ProvinceFormItemProps> = ({ ...props }) => {
     return (
         <FormItem
             name="province"
-            label="Tỉnh thành"
+            label={t(i18n.translationKey.province)}
             render="select"
             options={toBaseOption<TAdministrativeUnit>(province, {
                 label: "name_with_type",

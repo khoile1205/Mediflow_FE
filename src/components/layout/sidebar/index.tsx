@@ -1,51 +1,48 @@
-import { Dashboard, ExitToApp, Home, Inventory2, Paid, People, Settings, Vaccines } from "@mui/icons-material";
+import { Dashboard, ExitToApp, Home, Inventory2, Paid, Vaccines } from "@mui/icons-material";
 import { Avatar, Box, Drawer, Stack, Typography } from "@mui/material";
 import React from "react";
 import AppLogo from "~/assets/images/app_logo.png";
+import i18n from "~/configs/i18n";
 import { useAuth } from "~/contexts/auth.context";
+import { ChangeLanguageTab } from "./tabs/change-lang.tab";
 import { SidebarTabItem, SidebarTabProps } from "./tabs/sidebar.tab";
 
 const sidebarTree: SidebarTabProps[] = [
     {
         icon: <Home />,
-        label: "Trang chủ",
+        labelKey: i18n.translationKey.home,
         pathName: "/",
     },
     {
         icon: <Dashboard />,
-        label: "Tiếp nhận",
+        labelKey: i18n.translationKey.reception,
         children: [
             {
-                label: "Tiêm chủng",
+                labelKey: i18n.translationKey.vaccination,
                 pathName: "/reception/vaccination",
             },
             {
-                label: "Bệnh nhân",
+                labelKey: i18n.translationKey.patient,
                 pathName: "/reception/patient",
             },
         ],
     },
     {
         icon: <Paid />,
-        label: "Viện phí",
+        labelKey: i18n.translationKey.hospitalFee,
         pathName: "/finance",
     },
     {
         icon: <Vaccines />,
-        label: "Tiêm chủng",
+        labelKey: i18n.translationKey.vaccination,
         pathName: "/vaccination",
     },
     {
-        icon: <People />,
-        label: "Bệnh nhân",
-        pathName: "/patient",
-    },
-    {
         icon: <Inventory2 />,
-        label: "Kho dược",
+        labelKey: i18n.translationKey.pharmacy,
         children: [
             {
-                label: "Nhập dược",
+                labelKey: i18n.translationKey.importPharmacy,
                 pathName: "/pharmacy/import",
             },
         ],
@@ -76,13 +73,13 @@ export const Sidebar: React.FC = () => {
                     <Typography className="ml-3 truncate text-[16px]">MediFlows</Typography>
                 </Box>
                 <Box className="no-scrollbar w-full flex-1 overflow-y-auto overflow-x-hidden p-2">
-                    {sidebarTree.map((item, idx) => (
-                        <SidebarTabItem key={item.label + idx} {...item} level={0} />
+                    {sidebarTree.map((sideBar, idx) => (
+                        <SidebarTabItem key={sideBar.labelKey + idx} {...sideBar} level={0} />
                     ))}
                 </Box>
                 <Stack direction={"column"} sx={{ flexShrink: 0 }} className="p-2">
-                    <SidebarTabItem icon={<Settings />} label="Cài đặt" />
-                    <SidebarTabItem icon={<ExitToApp />} label="Đăng xuất" onClick={logout} />
+                    <ChangeLanguageTab />
+                    <SidebarTabItem icon={<ExitToApp />} labelKey={i18n.translationKey.signOut} onClick={logout} />
                 </Stack>
             </Stack>
         </Drawer>

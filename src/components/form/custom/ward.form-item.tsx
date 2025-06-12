@@ -6,10 +6,14 @@ import { TAdministrativeUnit } from "~/services/vn-public-api/types";
 import FormItem from "../form-item";
 import { BaseFormItemProps } from "../types/form-item";
 import { toBaseOption } from "../utils";
+import { useTranslation } from "react-i18next";
+import i18n from "~/configs/i18n";
 
 type WardFormItemProps = Omit<BaseFormItemProps, "render" | "name"> & SelectProps;
 
 const WardFormItem: React.FC<WardFormItemProps> = ({ ...props }) => {
+    const { t } = useTranslation();
+
     const form = useFormContext();
     const [wards, setWards] = React.useState<TAdministrativeUnit[]>([]);
 
@@ -35,7 +39,7 @@ const WardFormItem: React.FC<WardFormItemProps> = ({ ...props }) => {
     return (
         <FormItem
             name="ward"
-            label="Xã phường"
+            label={t(i18n.translationKey.ward)}
             render="select"
             options={toBaseOption<TAdministrativeUnit>(wards, {
                 label: "name_with_type",

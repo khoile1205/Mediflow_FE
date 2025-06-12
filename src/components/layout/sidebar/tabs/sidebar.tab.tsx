@@ -2,25 +2,27 @@ import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { Box, Collapse, IconButton, Typography } from "@mui/material";
 import classNames from "classnames";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 
 export interface SidebarTabProps {
     icon?: React.ReactNode;
-    label: string;
+    labelKey: string;
     level?: number;
     pathName?: string;
     children?: SidebarTabProps[];
-    onClick?: () => void;
+    onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
 }
 
 export const SidebarTabItem: React.FC<SidebarTabProps> = ({
     icon,
-    label,
+    labelKey,
     level = 0,
     children,
     pathName = "",
     onClick,
 }) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -34,11 +36,11 @@ export const SidebarTabItem: React.FC<SidebarTabProps> = ({
         return children && children.length > 0;
     }, [children]);
 
-    const handleClick = (e: React.MouseEvent) => {
+    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
         e.stopPropagation();
 
         if (onClick) {
-            onClick();
+            onClick(e);
             return;
         }
 
@@ -79,14 +81,14 @@ export const SidebarTabItem: React.FC<SidebarTabProps> = ({
                             "font-bold": active,
                         })}
                     >
-                        {label}
+                        {t(labelKey)}
                     </Typography>
                 </Box>
             </Box>
             {hasChildren && (
                 <Collapse in={isExpanded} timeout="auto" unmountOnExit>
                     {children.map((child, idx) => (
-                        <SidebarTabItem key={child.label + idx} level={level + 1} {...child} />
+                        <SidebarTabItem key={child.labelKey + idx} level={level + 1} {...child} />
                     ))}
                 </Collapse>
             )}
