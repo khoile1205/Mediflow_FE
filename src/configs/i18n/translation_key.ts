@@ -13,6 +13,7 @@ const validationTranslationKey = {
 const applicationTranslationKey = {
     login: "LOGIN",
     username: "USERNAME",
+    // NOSONAR
     password: "PASSWORD",
     pleaseLoginToContinue: "PLEASE_LOGIN_TO_CONTINUE",
     somethingWentWrong: "SOMETHING_WENT_WRONG",
@@ -153,7 +154,9 @@ const exceptionTranslationKey = {
     notFoundUserWithEmail: "NOT_FOUND_USER_WITH_EMAIL",
     invalidLoginCredential: "INVALID_LOGIN_CREDENTIAL",
     failedUpdateUserWithId: "FAILED_UPDATE_USER_WITH_ID",
+    // NOSONAR
     failedResetPassword: "FAILED_RESET_PASSWORD",
+    // NOSONAR
     failedChangePassword: "FAILED_CHANGE_PASSWORD",
     failedAssignRoleToUser: "FAILED_ASSIGN_ROLE_TO_USER",
     notFoundRoleWithId: "NOT_FOUND_ROLE_WITH_ID",
