@@ -6,10 +6,14 @@ import { toBaseOption } from "../utils";
 import { BaseFormItemProps } from "../types/form-item";
 import { useFormContext } from "react-hook-form";
 import { SelectChangeEvent, SelectProps } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import i18n from "~/configs/i18n";
 
 type DistrictFormItemProps = Omit<BaseFormItemProps, "render" | "name"> & SelectProps;
 
 const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ ...props }) => {
+    const { t } = useTranslation();
+
     const form = useFormContext();
     const [district, setDistrict] = React.useState<TAdministrativeUnit[]>([]);
 
@@ -42,7 +46,7 @@ const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ ...props }) => {
     return (
         <FormItem
             name={"district"}
-            label="Quận huyện"
+            label={t(i18n.translationKey.district)}
             render="select"
             options={toBaseOption<TAdministrativeUnit>(district, {
                 label: "name_with_type",

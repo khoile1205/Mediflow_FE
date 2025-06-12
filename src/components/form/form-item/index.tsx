@@ -14,6 +14,8 @@ import { TextAreaFormItem } from "./text-area";
 import { TextFieldFormItem } from "./text-field";
 
 const FormItem: React.FC<FormItemProps> = (props) => {
+    // TODO: move the controller wrapper logic to a common place
+
     const getFormComponent = () => {
         switch (props.render) {
             case "text-input":

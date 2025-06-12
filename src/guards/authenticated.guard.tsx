@@ -5,8 +5,11 @@ import { showToast } from "~/utils";
 import { useAuth } from "../contexts/auth.context";
 import { Spinner } from "~/components/layout/spinner";
 import { Sidebar } from "~/components/layout/sidebar";
+import { useTranslation } from "react-i18next";
+import i18n from "~/configs/i18n";
 
 const AuthenticatedGuard: React.FC = () => {
+    const { t } = useTranslation();
     const { user, isLoading, isInitialized } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
@@ -18,7 +21,7 @@ const AuthenticatedGuard: React.FC = () => {
 
         if (!user) {
             sessionStorage.setItem("redirectUrl", location.pathname);
-            showToast.warning("Vui lòng đăng nhập để tiếp tục");
+            showToast.warning(t(i18n.translationKey.pleaseLoginToContinue));
             navigate("/login");
         }
     }, [navigate, location.pathname, isInitialized]);

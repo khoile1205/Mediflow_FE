@@ -80,6 +80,7 @@ export const DateRangePickerFormItem: React.FC<DateRangePickerFormItemProps> = (
                                             placeholder={placeholder}
                                             label={renderLabel}
                                             value={formattedRange}
+                                            size={size}
                                             slotProps={{
                                                 root: {
                                                     className: "w-full",

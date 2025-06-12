@@ -13,6 +13,7 @@ import { MaterialUIThemeProvider } from "./libs/material-ui/theme.provider.tsx";
 import { ApplicationRoutes } from "./routes/index.tsx";
 import { AuthContextProvider } from "./contexts/auth.context.tsx";
 import { BrowserRouter } from "react-router";
+import "~/configs/i18n";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

@@ -2,12 +2,14 @@ import { AddCircle, Edit } from "@mui/icons-material";
 import { Box, Button, Grid, Stack, TextField, TextFieldProps, Typography } from "@mui/material";
 import { ColDef } from "ag-grid-community";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActionButton } from "~/components/common/action-button";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import SearchBox from "~/components/common/search-box";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
+import i18n from "~/configs/i18n";
 import { AttachedServiceFee, HospitalFee } from "~/entities/hospital-fee";
 
 const ReadonlyTextField: React.FC<TextFieldProps> = ({ slotProps, ...props }) => {
@@ -31,14 +33,15 @@ const ReadonlyTextField: React.FC<TextFieldProps> = ({ slotProps, ...props }) =>
 };
 
 const HospitalFeePage: React.FC = () => {
+    const { t } = useTranslation();
     const hospitalFeeForm = useForm();
 
     const unpaidPatientAgGrid = useAgGrid({});
     const unpaidPatientColumnDefs = React.useMemo(() => {
         return [
-            { field: "patientId", headerName: "Mã y tế" },
-            { field: "patientName", headerName: "Tên bệnh nhân" },
-            { field: "patientDOB", headerName: "Năm sinh" },
+            { field: "patientId", headerName: t(i18n.translationKey.medicalCode) },
+            { field: "patientName", headerName: t(i18n.translationKey.patientName) },
+            { field: "patientDOB", headerName: t(i18n.translationKey.yearOfBirth) },
         ];
     }, []);
 
@@ -47,27 +50,27 @@ const HospitalFeePage: React.FC = () => {
         () => [
             {
                 field: "content",
-                headerName: "Nội dung",
+                headerName: t(i18n.translationKey.content),
             },
             {
                 field: "quantity",
-                headerName: "Số lượng",
+                headerName: t(i18n.translationKey.quantity),
                 cellClass: "ag-cell-center",
             },
             {
                 field: "beforeDiscount",
-                headerName: "Thành tiền trước chiết khấu",
+                headerName: t(i18n.translationKey.amountBeforeDiscount),
                 cellClass: "ag-cell-center",
             },
             {
                 field: "support",
-                headerName: "Số tiền trợ",
+                headerName: t(i18n.translationKey.discountAmount),
                 cellClass: "ag-cell-center",
             },
 
             {
                 field: "cost",
-                headerName: "Thành tiền sau chiết khấu",
+                headerName: t(i18n.translationKey.amountAfterDiscount),
                 cellClass: "ag-cell-center",
             },
         ],
@@ -86,27 +89,27 @@ const HospitalFeePage: React.FC = () => {
             },
             {
                 field: "content",
-                headerName: "Nội dung",
+                headerName: t(i18n.translationKey.content),
             },
             {
                 field: "quantity",
-                headerName: "Số lượng",
+                headerName: t(i18n.translationKey.quantity),
                 cellClass: "ag-cell-center",
             },
             {
                 field: "beforeDiscount",
-                headerName: "Thành tiền trước chiết khấu",
+                headerName: t(i18n.translationKey.amountBeforeDiscount),
                 cellClass: "ag-cell-center",
             },
             {
                 field: "support",
-                headerName: "Số tiền trợ",
+                headerName: t(i18n.translationKey.discountAmount),
                 cellClass: "ag-cell-center",
             },
 
             {
                 field: "cost",
-                headerName: "Thành tiền sau chiết khấu",
+                headerName: t(i18n.translationKey.amountAfterDiscount),
                 cellClass: "ag-cell-center",
             },
         ],
@@ -126,16 +129,20 @@ const HospitalFeePage: React.FC = () => {
         <Box>
             <DynamicForm form={hospitalFeeForm}>
                 <Stack spacing={1} direction="row" width="100%" className="px-4 py-5">
-                    <ActionButton label="Thanh toán" startIcon={<AddCircle />} />
-                    <ActionButton label="In hóa đơn" startIcon={<Edit />} />
-                    <ActionButton label="Xóa chỉ định thanh toán" />
+                    <ActionButton label={t(i18n.translationKey.payment)} startIcon={<AddCircle />} />
+                    <ActionButton label={t(i18n.translationKey.printInvoice)} startIcon={<Edit />} />
+                    <ActionButton label={t(i18n.translationKey.deletePaymentOrder)} />
                 </Stack>
                 <Box className="mt-3 flex bg-[#F6F8D5] p-3">
                     <Box className="me-3 basis-1/4">
                         <Button fullWidth className="rounded-2xl" size="large" variant="contained">
-                            Làm mới danh sách
+                            {t(i18n.translationKey.refreshList)}
                         </Button>
-                        <SearchBox onChange={handleSearch} className="mt-6" />
+                        <SearchBox
+                            onChange={handleSearch}
+                            className="mt-6"
+                            placeholder={t(i18n.translationKey.enterMedicalCode)}
+                        />
                         <AgDataGrid
                             className="mt-3"
                             columnDefs={unpaidPatientColumnDefs}
@@ -146,10 +153,13 @@ const HospitalFeePage: React.FC = () => {
                     <Box className="flex-1">
                         <Box className="flex">
                             <Stack className="me-2 basis-1/4" direction="column" spacing={2}>
-                                <ReadonlyTextField label="Mã y tế" placeholder="CDCDN250000013" />
-                                <ReadonlyTextField label="Số hoá đơn" />
                                 <ReadonlyTextField
-                                    label="Giá trị hoá đơn"
+                                    label={t(i18n.translationKey.medicalCode)}
+                                    placeholder="CDCDN250000013"
+                                />
+                                <ReadonlyTextField label={t(i18n.translationKey.invoiceNumber)} />
+                                <ReadonlyTextField
+                                    label={t(i18n.translationKey.invoiceValue)}
                                     slotProps={{
                                         input: {
                                             endAdornment: "VND",
@@ -160,28 +170,40 @@ const HospitalFeePage: React.FC = () => {
                                 <FormItem
                                     render="select"
                                     name="paidType"
-                                    label="Hình thức thanh toán"
+                                    label={t(i18n.translationKey.paymentMethod)}
                                     options={[
                                         {
-                                            label: "Thanh toán bằng tiền mặt",
+                                            label: t(i18n.translationKey.payByCash),
                                             value: "cash",
                                         },
                                         {
-                                            label: "Thanh toán bằng thẻ ATM",
+                                            label: t(i18n.translationKey.payByAtm),
                                             value: "atm",
                                         },
                                         {
-                                            label: "Thanh toán bằng chuyển khoản",
+                                            label: t(i18n.translationKey.payByTransfer),
                                             value: "transfer",
                                         },
                                     ]}
                                 />
                                 <Box className="px-3">
                                     <Stack direction="row" className="mt-2 justify-between">
-                                        <FormItem render="checkbox" name="isPaid" label="Phiếu thu" />
-                                        <FormItem render="checkbox" name="isRefund" label="Hoàn trả" />
+                                        <FormItem
+                                            render="checkbox"
+                                            name="isPaid"
+                                            label={t(i18n.translationKey.receipt)}
+                                        />
+                                        <FormItem
+                                            render="checkbox"
+                                            name="isRefund"
+                                            label={t(i18n.translationKey.refund)}
+                                        />
                                     </Stack>
-                                    <FormItem render="checkbox" name="isCancel" label="Huỷ hoá đơn" />
+                                    <FormItem
+                                        render="checkbox"
+                                        name="isCancel"
+                                        label={t(i18n.translationKey.cancelInvoice)}
+                                    />
                                 </Box>
                             </Stack>
                             <Box className="me-2 flex-1">
@@ -189,34 +211,40 @@ const HospitalFeePage: React.FC = () => {
                                     <Grid size={12}>
                                         <Grid container spacing={2}>
                                             <Grid size={4}>
-                                                <ReadonlyTextField label="Họ và tên" placeholder="NGUYỄN VĂN A" />
+                                                <ReadonlyTextField
+                                                    label={t(i18n.translationKey.fullName)}
+                                                    placeholder="NGUYỄN VĂN A"
+                                                />
                                             </Grid>
                                             <Grid size={2}>
-                                                <ReadonlyTextField label="Tuổi" />
+                                                <ReadonlyTextField label={t(i18n.translationKey.age)} />
                                             </Grid>
                                             <Grid size={2}>
-                                                <ReadonlyTextField label="Năm sinh" placeholder="2007" />
+                                                <ReadonlyTextField
+                                                    label={t(i18n.translationKey.yearOfBirth)}
+                                                    placeholder="2007"
+                                                />
                                             </Grid>
                                             <Grid size={4}>
-                                                <ReadonlyTextField label="Số hoá đơn" />
+                                                <ReadonlyTextField label={t(i18n.translationKey.invoiceNumber)} />
                                             </Grid>
                                         </Grid>
                                     </Grid>
                                     <Grid size={12}>
-                                        <ReadonlyTextField multiline rows={4} label="Địa chỉ" />
+                                        <ReadonlyTextField multiline rows={4} label={t(i18n.translationKey.address)} />
                                     </Grid>
                                     <Grid size={12}>
                                         <Grid container spacing={2}>
                                             <Grid size={6}>
-                                                <ReadonlyTextField label="Mã số thuế" />
+                                                <ReadonlyTextField label={t(i18n.translationKey.taxCode)} />
                                             </Grid>
                                             <Grid size={6}>
-                                                <ReadonlyTextField label="Mã ATM" />
+                                                <ReadonlyTextField label={t(i18n.translationKey.atmCode)} />
                                             </Grid>
                                         </Grid>
                                     </Grid>
                                     <Grid size={12}>
-                                        <ReadonlyTextField multiline rows={4} label="Tên đơn vị" />
+                                        <ReadonlyTextField multiline rows={4} label={t(i18n.translationKey.unitName)} />
                                     </Grid>
                                 </Grid>
                             </Box>
@@ -224,11 +252,15 @@ const HospitalFeePage: React.FC = () => {
 
                         <Box className="mt-4 flex">
                             <Box className="me-5 flex items-center">
-                                <Typography className="mr-2 font-bold">Trạng thái HDDT:</Typography>
+                                <Typography className="mr-2 font-bold">
+                                    {t(i18n.translationKey.einvoiceStatus)}:
+                                </Typography>
                                 <Typography className="font-bold">_ _</Typography>
                             </Box>
                             <Box className="flex items-center">
-                                <Typography className="mr-2 font-bold">Số HDDT:</Typography>
+                                <Typography className="mr-2 font-bold">
+                                    {t(i18n.translationKey.einvoiceNumber)}:
+                                </Typography>
                                 <Typography className="font-bold">_ _</Typography>
                             </Box>
                         </Box>
@@ -237,7 +269,7 @@ const HospitalFeePage: React.FC = () => {
             </DynamicForm>
             <Stack className="mt-4" direction="column" spacing={3}>
                 <Box>
-                    <Typography className="mb-2 ms-3 font-bold">Dịch vụ thanh toán</Typography>
+                    <Typography className="mb-2 ms-3 font-bold">{t(i18n.translationKey.hospitalService)}</Typography>
                     <AgDataGrid
                         columnDefs={hospitalFeeColumnDefs}
                         rowData={[]}
@@ -250,7 +282,9 @@ const HospitalFeePage: React.FC = () => {
                     />
                 </Box>
                 <Box>
-                    <Typography className="mb-2 ms-3 font-bold">Dịch vụ đính kèm</Typography>
+                    <Typography className="mb-2 ms-3 font-bold">
+                        {t(i18n.translationKey.medicalAttachedService)}
+                    </Typography>
                     <AgDataGrid
                         columnDefs={attachedServiceColumnDefs}
                         rowData={[]}

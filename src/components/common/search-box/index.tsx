@@ -18,7 +18,6 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onChange, delay = 500, ...props }
 
     return (
         <TextField
-            placeholder="Nhập mã y tế"
             fullWidth
             size="small"
             variant="outlined"

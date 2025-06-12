@@ -1,9 +1,9 @@
 import { AxiosError, AxiosInstance, HttpStatusCode, InternalAxiosRequestConfig } from "axios";
-import { APP_STRING } from "~/constants/app.string";
 import { endpoints } from "~/constants/endpoints";
 import { authService } from "~/services/auth";
 import { showToast } from "~/utils";
 import { IBaseApiResponse } from "../types";
+import i18n from "~/configs/i18n";
 
 interface RetryableAxiosRequestConfig extends InternalAxiosRequestConfig {
     _retry?: boolean;
@@ -50,11 +50,12 @@ export class TokenRefresher {
                         return this.axiosInstance(originalRequest);
                     } catch (error) {
                         const refreshError = error as AxiosError<IBaseApiResponse<unknown>>;
-                        const message = refreshError.response.data.Message || APP_STRING.TOKEN_EXPIRED;
+                        const messageKey = refreshError.response.data.Message || i18n.translationKey.tokenExpired;
 
                         this.processQueue(refreshError);
                         this.redirectToLoginPage();
-                        showToast.error(message);
+
+                        showToast.error(i18n.t(messageKey));
 
                         return Promise.reject(refreshError);
                     } finally {

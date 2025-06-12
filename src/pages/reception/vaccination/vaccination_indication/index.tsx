@@ -2,11 +2,13 @@ import { AddCircle, Delete, DoNotDisturb, Done } from "@mui/icons-material";
 import { Box, Checkbox, FormControlLabel, Grid, IconButton, Stack, Typography } from "@mui/material";
 import { ColDef } from "ag-grid-community";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActionButton } from "~/components/common/action-button";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
+import i18n from "~/configs/i18n"; // Adjust the path to your i18n setup
 
 interface TableRowData {
     type: string;
@@ -23,6 +25,7 @@ interface TableRowData {
 }
 
 export const VaccinationIndication: React.FC = () => {
+    const { t } = useTranslation();
     const form = useForm();
     const agGrid = useAgGrid<TableRowData>({ rowSelection: "multiple" });
 
@@ -34,17 +37,17 @@ export const VaccinationIndication: React.FC = () => {
             pinned: true,
             resizable: false,
         },
-        { field: "type", headerName: "Loại vắc xin/huyết thanh" },
-        { field: "name", headerName: "Tên vắc xin/huyết thanh" },
-        { field: "quantity", headerName: "Số lượng", cellClass: "ag-cell-center" },
-        { field: "dose", headerName: "Mũi thứ" },
-        { field: "usage", headerName: "Cho sử dụng" },
-        { field: "usageDate", headerName: "Ngày sử dụng" },
-        { field: "invoiceDate", headerName: "Ngày hóa đơn" },
-        { field: "appointmentDate", headerName: "Ngày hẹn" },
-        { field: "payment", headerName: "Thanh toán" },
-        { field: "confirmation", headerName: "Xác nhận tiêm chủng" },
-        { field: "note", headerName: "Ghi chú" },
+        { field: "type", headerName: t(i18n.translationKey.vaccineSerumType) },
+        { field: "name", headerName: t(i18n.translationKey.vaccineSerumName) },
+        { field: "quantity", headerName: t(i18n.translationKey.quantity), cellClass: "ag-cell-center" },
+        { field: "dose", headerName: t(i18n.translationKey.doseNumber) },
+        { field: "usage", headerName: t(i18n.translationKey.allowUsage) },
+        { field: "usageDate", headerName: t(i18n.translationKey.usageDate) },
+        { field: "invoiceDate", headerName: t(i18n.translationKey.invoiceDate) },
+        { field: "appointmentDate", headerName: t(i18n.translationKey.appointmentDate) },
+        { field: "payment", headerName: t(i18n.translationKey.payment) },
+        { field: "confirmation", headerName: t(i18n.translationKey.vaccinationConfirmation) },
+        { field: "note", headerName: t(i18n.translationKey.note) },
     ];
 
     return (
@@ -52,7 +55,7 @@ export const VaccinationIndication: React.FC = () => {
             <Stack spacing={2} className="pt-3">
                 <Box>
                     <Typography variant="subtitle2" className="ms-2 text-lg font-bold">
-                        Chỉ định tiêm chủng
+                        {t(i18n.translationKey.vaccinationIndication)}
                     </Typography>
                     <Box className="mt-2 border p-5" sx={{ borderColor: "grey.300", borderRadius: 2 }}>
                         <Grid container spacing={2.5} alignItems="flex-start">
@@ -60,8 +63,8 @@ export const VaccinationIndication: React.FC = () => {
                                 <FormItem
                                     render="select"
                                     name="vaccine"
-                                    label="Vắc xin"
-                                    placeholder="Chọn vắc xin"
+                                    label={t(i18n.translationKey.vaccine)}
+                                    placeholder={t(i18n.translationKey.selectVaccine)}
                                     options={[]}
                                     size="small"
                                     fullWidth
@@ -75,7 +78,7 @@ export const VaccinationIndication: React.FC = () => {
                                 <FormItem
                                     render="input-number"
                                     name="quantity"
-                                    label="Số lượng"
+                                    label={t(i18n.translationKey.quantity)}
                                     placeholder="0"
                                     size="small"
                                     fullWidth
@@ -89,8 +92,8 @@ export const VaccinationIndication: React.FC = () => {
                                 <FormItem
                                     render="select"
                                     name="dose"
-                                    label="Mũi thứ"
-                                    placeholder="Chọn mũi"
+                                    label={t(i18n.translationKey.doseNumber)}
+                                    placeholder={t(i18n.translationKey.selectDose)}
                                     options={[]}
                                     size="small"
                                     fullWidth
@@ -104,7 +107,7 @@ export const VaccinationIndication: React.FC = () => {
                                 <FormItem
                                     render="date-picker"
                                     name="appointmentDate"
-                                    label="Ngày hẹn"
+                                    label={t(i18n.translationKey.appointmentDate)}
                                     size="small"
                                     fullWidth
                                 />
@@ -113,8 +116,8 @@ export const VaccinationIndication: React.FC = () => {
                                 <FormItem
                                     render="text-input"
                                     name="note"
-                                    label="Ghi chú"
-                                    placeholder="Ghi chú"
+                                    label={t(i18n.translationKey.note)}
+                                    placeholder={t(i18n.translationKey.note)}
                                     size="small"
                                     fullWidth
                                     inputProps={{
@@ -136,7 +139,7 @@ export const VaccinationIndication: React.FC = () => {
                                 >
                                     <Stack direction="row" spacing={1}>
                                         <ActionButton
-                                            label="Thêm mới"
+                                            label={t(i18n.translationKey.addNew)}
                                             startIcon={<AddCircle />}
                                             size="small"
                                             variant="outlined"
@@ -148,7 +151,7 @@ export const VaccinationIndication: React.FC = () => {
                                             }}
                                         />
                                         <ActionButton
-                                            label="Xoá"
+                                            label={t(i18n.translationKey.delete)}
                                             startIcon={<Delete />}
                                             size="small"
                                             variant="outlined"
@@ -160,7 +163,7 @@ export const VaccinationIndication: React.FC = () => {
                                             }}
                                         />
                                         <ActionButton
-                                            label="Xoá các chỉ định đã chọn"
+                                            label={t(i18n.translationKey.deleteSelectedIndications)}
                                             startIcon={<Delete />}
                                             size="small"
                                             color="error"
@@ -170,11 +173,13 @@ export const VaccinationIndication: React.FC = () => {
                                     </Stack>
                                     <FormControlLabel
                                         control={<Checkbox defaultChecked sx={{ p: 0.5 }} />}
-                                        label={<Typography fontWeight="bold">Sử dụng hôm nay</Typography>}
+                                        label={
+                                            <Typography fontWeight="bold">{t(i18n.translationKey.useToday)}</Typography>
+                                        }
                                     />
                                     <Stack direction="row" spacing={1}>
                                         <ActionButton
-                                            label="Đồng ý sử dụng"
+                                            label={t(i18n.translationKey.approveUsage)}
                                             startIcon={<Done />}
                                             size="small"
                                             color="success"
@@ -182,7 +187,7 @@ export const VaccinationIndication: React.FC = () => {
                                             sx={{ borderRadius: 4, px: 2 }}
                                         />
                                         <ActionButton
-                                            label="Không đồng ý sử dụng"
+                                            label={t(i18n.translationKey.disapproveUsage)}
                                             startIcon={<DoNotDisturb />}
                                             size="small"
                                             variant="outlined"
@@ -202,7 +207,7 @@ export const VaccinationIndication: React.FC = () => {
 
                 <Box>
                     <Typography variant="subtitle2" className="ms-2 text-lg font-bold">
-                        Danh sách chỉ định tiêm chủng
+                        {t(i18n.translationKey.vaccinationIndicationList)}
                     </Typography>
                     <Box className="mt-2 border p-5" sx={{ borderColor: "grey.300", borderRadius: 2 }}>
                         <AgDataGrid columnDefs={columnDefs} rowData={[]} {...agGrid} />

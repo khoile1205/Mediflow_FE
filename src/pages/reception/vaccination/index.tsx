@@ -13,10 +13,13 @@ import { PreVaccination } from "./pre-vaccination";
 import { TestIndication } from "./test_indication";
 import { UnpaidCosts } from "./unpaid_costs";
 import { VaccinationIndication } from "./vaccination_indication";
+import i18n from "~/configs/i18n";
+import { useTranslation } from "react-i18next";
 
-type TabType = "pre_vaccination" | "vaccination_indication" | "test_indication" | "unpaid_costs";
+type TabType = "pre_vaccination" | "vaccination_indication" | "examination_indication" | "unpaid_costs";
 
 const ReceptionVaccination: React.FC = () => {
+    const { t } = useTranslation();
     const [tab, setTab] = React.useState<TabType>("pre_vaccination");
     const [isNewPatient, setIsNewPatient] = React.useState<boolean>(false);
 
@@ -43,24 +46,34 @@ const ReceptionVaccination: React.FC = () => {
         <DynamicForm form={form}>
             <Stack spacing={1} direction="row" width="100%" className="px-4 py-5">
                 <ActionButton
-                    label="Thêm mới"
+                    label={t(i18n.translationKey.addNew)}
                     startIcon={<AddCircle />}
                     onClick={() => {
                         setIsNewPatient(true);
                     }}
                 />
-                <ActionButton label="Tìm kiếm" startIcon={<Search />} />
-                <ActionButton label="Sửa" startIcon={<Edit />} disabled={!isNewPatient} />
+                <ActionButton label={t(i18n.translationKey.search)} startIcon={<Search />} />
+                <ActionButton label={t(i18n.translationKey.edit)} startIcon={<Edit />} disabled={!isNewPatient} />
                 <ActionButton
-                    label="Lưu"
+                    label={t(i18n.translationKey.save)}
                     startIcon={<Save />}
                     disabled={!isNewPatient}
                     onClick={form.handleSubmit(onSavePatient)}
                 />
-                <ActionButton label="Xóa" startIcon={<Clear />} disabled={!isNewPatient} onClick={handleReset} />
-                <ActionButton label="Hủy" startIcon={<Undo />} disabled={!isNewPatient} onClick={handleCancel} />
+                <ActionButton
+                    label={t(i18n.translationKey.delete)}
+                    startIcon={<Clear />}
+                    disabled={!isNewPatient}
+                    onClick={handleReset}
+                />
+                <ActionButton
+                    label={t(i18n.translationKey.cancel)}
+                    startIcon={<Undo />}
+                    disabled={!isNewPatient}
+                    onClick={handleCancel}
+                />
                 {/* <ActionButton label="Nhập kết quả thử" disabled={!isNewPatient} /> */}
-                <ActionButton label="Xóa chỉ định thanh toán" disabled={!isNewPatient} />
+                <ActionButton label={t(i18n.translationKey.deletePaymentOrder)} disabled={!isNewPatient} />
             </Stack>
 
             <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-2 border px-2 pt-4">
@@ -71,8 +84,8 @@ const ReceptionVaccination: React.FC = () => {
                                 <FormItem
                                     name="patientId"
                                     render="text-input"
-                                    placeholder="Mã y tế"
-                                    label="Mã y tế"
+                                    placeholder={t(i18n.translationKey.medicalCode)}
+                                    label={t(i18n.translationKey.medicalCode)}
                                     required
                                     disabled={isDisabledInput}
                                 />
@@ -81,8 +94,8 @@ const ReceptionVaccination: React.FC = () => {
                                 <FormItem
                                     name="fullName"
                                     render="text-input"
-                                    placeholder="Họ và tên"
-                                    label="Họ và tên"
+                                    placeholder={t(i18n.translationKey.fullName)}
+                                    label={t(i18n.translationKey.fullName)}
                                     required
                                     disabled={isDisabledInput}
                                 />
@@ -91,13 +104,13 @@ const ReceptionVaccination: React.FC = () => {
                                 <FormItem
                                     name="gender"
                                     render="select"
-                                    placeholder="Giới tính"
-                                    label="Giới tính"
+                                    placeholder={t(i18n.translationKey.gender)}
+                                    label={t(i18n.translationKey.gender)}
                                     size="small"
                                     required
                                     options={[
-                                        { label: "Nam", value: "male" },
-                                        { label: "Nữ", value: "female" },
+                                        { label: t(i18n.translationKey.male), value: "male" },
+                                        { label: t(i18n.translationKey.female), value: "female" },
                                     ]}
                                     disabled={isDisabledInput}
                                 />
@@ -106,9 +119,9 @@ const ReceptionVaccination: React.FC = () => {
                                 <FormItem
                                     name="dateOfBirth"
                                     render="date-picker"
-                                    placeholder="Ngày sinh"
+                                    placeholder={t(i18n.translationKey.dateOfBirth)}
+                                    label={t(i18n.translationKey.dateOfBirth)}
                                     required
-                                    label="Ngày sinh"
                                     defaultValue={new Date()}
                                     disabled={isDisabledInput}
                                 />
@@ -122,8 +135,8 @@ const ReceptionVaccination: React.FC = () => {
                                 <FormItem
                                     name="address"
                                     render="text-input"
-                                    placeholder="Địa chỉ cụ thể"
-                                    label="Địa chỉ cụ thể"
+                                    placeholder={t(i18n.translationKey.address)}
+                                    label={t(i18n.translationKey.address)}
                                     required
                                     disabled={isDisabledInput}
                                 />
@@ -133,7 +146,7 @@ const ReceptionVaccination: React.FC = () => {
                                     <FormItem
                                         name="isForeigned"
                                         render="switch"
-                                        label="Bệnh nhân nước ngoài"
+                                        label={t(i18n.translationKey.foreignPatient)}
                                         defaultValue={true}
                                         disabled={isDisabledInput}
                                     />
@@ -157,8 +170,8 @@ const ReceptionVaccination: React.FC = () => {
                                 <FormItem
                                     name="phoneNumber"
                                     render="text-input"
-                                    placeholder="Số điện thoại"
-                                    label="Số điện thoại"
+                                    placeholder={t(i18n.translationKey.phoneNumber)}
+                                    label={t(i18n.translationKey.phoneNumber)}
                                     required
                                     pattern={PHONE_NUMBER_PATTERN}
                                     disabled={isDisabledInput}
@@ -173,7 +186,8 @@ const ReceptionVaccination: React.FC = () => {
                                 <FormItem
                                     render="date-time-picker"
                                     name="receptionTime"
-                                    label="Thời gian tiếp nhận"
+                                    placeholder={t(i18n.translationKey.receptionTime)}
+                                    label={t(i18n.translationKey.receptionTime)}
                                     required
                                     defaultValue={new Date()}
                                     disabled={isDisabledInput}
@@ -182,10 +196,11 @@ const ReceptionVaccination: React.FC = () => {
                             <Grid size={3}>
                                 <FormItem
                                     render="select"
-                                    label="Loại bệnh nhân"
+                                    placeholder={t(i18n.translationKey.patientType)}
+                                    label={t(i18n.translationKey.patientType)}
                                     name="service"
                                     size="small"
-                                    options={[{ label: "Test", value: "Test" }]}
+                                    options={[{ label: "", value: "" }]}
                                     required
                                     disabled={isDisabledInput}
                                 />
@@ -194,7 +209,7 @@ const ReceptionVaccination: React.FC = () => {
                                 <FormItem
                                     render="switch"
                                     name="isPregnant"
-                                    label="Có thai"
+                                    label={t(i18n.translationKey.pregnant)}
                                     disabled={isDisabledInput}
                                 />
                             </Grid>
@@ -206,22 +221,22 @@ const ReceptionVaccination: React.FC = () => {
             <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-5 border p-2">
                 <Stack spacing={5} direction="row" width="100%">
                     <ActionButton
-                        label="Khám sàng lọc"
+                        label={t(i18n.translationKey.preScreening)}
                         startIcon={<AddCircle />}
                         onClick={() => setTab("pre_vaccination")}
                     />
                     <ActionButton
-                        label="Chỉ định tiêm chủng"
+                        label={t(i18n.translationKey.vaccinationIndication)}
                         startIcon={<Edit />}
                         onClick={() => setTab("vaccination_indication")}
                     />
                     <ActionButton
-                        label="Chỉ định xét nghiệm"
+                        label={t(i18n.translationKey.examinationIndication)}
                         startIcon={<Save />}
-                        onClick={() => setTab("test_indication")}
+                        onClick={() => setTab("examination_indication")}
                     />
                     <ActionButton
-                        label="Chi phí chưa thanh toán"
+                        label={t(i18n.translationKey.unpaidCost)}
                         startIcon={<Clear />}
                         onClick={() => setTab("unpaid_costs")}
                     />
@@ -230,7 +245,7 @@ const ReceptionVaccination: React.FC = () => {
 
             {tab === "pre_vaccination" && <PreVaccination disabled={isDisabledInput} />}
             {tab === "vaccination_indication" && <VaccinationIndication />}
-            {tab === "test_indication" && <TestIndication />}
+            {tab === "examination_indication" && <TestIndication />}
             {tab === "unpaid_costs" && <UnpaidCosts />}
         </DynamicForm>
     );
