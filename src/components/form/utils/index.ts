@@ -1,8 +1,9 @@
 import { FieldValues, Path, RegisterOptions } from "react-hook-form";
 import { TValidationRules } from "../types/validation";
 import { BaseOption } from "../types/form-item";
-import { formatDateToDDMMYYYY } from "../../../utils/date-time";
 import i18n from "~/configs/i18n";
+import { formatDate } from "~/utils/date-time";
+import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 
 export const toBaseOption = <T>(source: T[], options: { label: keyof T; value: keyof T }): BaseOption[] => {
     return source.map((item) => ({
@@ -73,7 +74,9 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
         validation.validate = (value: Date) => {
             return new Date(value) >= new Date(rules.minDate)
                 ? true
-                : i18n.t(i18n.translationKey.pleaseSelectADateAfter, { date: formatDateToDDMMYYYY(rules.minDate) });
+                : i18n.t(i18n.translationKey.pleaseSelectADateAfter, {
+                      date: formatDate(rules.minDate, DATE_TIME_FORMAT["dd/MM/yyyy"]),
+                  });
         };
     }
 
@@ -81,7 +84,9 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
         validation.validate = (value: Date) => {
             return new Date(value) <= new Date(rules.maxDate)
                 ? true
-                : i18n.t(i18n.translationKey.pleaseSelectADateBefore, { date: formatDateToDDMMYYYY(rules.maxDate) });
+                : i18n.t(i18n.translationKey.pleaseSelectADateBefore, {
+                      date: formatDate(rules.maxDate, DATE_TIME_FORMAT["dd/MM/yyyy"]),
+                  });
         };
     }
 

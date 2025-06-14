@@ -2,24 +2,26 @@ import { HttpStatusCode } from "axios";
 import { HttpMethod } from "../../../constants/enums";
 
 export type TApiMethod = HttpMethod.GET | HttpMethod.POST | HttpMethod.PUT | HttpMethod.DELETE | HttpMethod.PATCH;
+export type TApiRequest = IMutationRequest | IQueryRequest;
 
 export interface IBaseApiRequest {
     url: string;
     method: TApiMethod;
 }
 
-export interface IApiRequestWithBody extends IBaseApiRequest {
+export interface IMutationRequest extends IBaseApiRequest {
     method: HttpMethod.POST | HttpMethod.PUT | HttpMethod.PATCH;
     data: IApiRequestBody;
 }
 
-export interface IApiRequestWithoutBody extends IBaseApiRequest {
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any
+export interface IApiRequestBody extends Record<string, any> {}
+
+export interface IQueryRequest extends IBaseApiRequest {
     method: HttpMethod.GET | HttpMethod.DELETE;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     params?: Record<string, any>;
 }
-
-export type TApiRequest = IApiRequestWithBody | IApiRequestWithoutBody;
 
 export interface IBaseApiResponse<T> {
     StatusCode: HttpStatusCode;
@@ -27,5 +29,17 @@ export interface IBaseApiResponse<T> {
     Data: T;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any
-export interface IApiRequestBody extends Record<string, any> {}
+export interface IPaginationRequest {
+    pageIndex?: number;
+    pageSize?: number;
+}
+
+export interface IPagination<T> {
+    pageIndex: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+    data: T[];
+}

@@ -8,6 +8,13 @@ export const textFieldTheme: Components = {
                 borderRadius: "8px",
             },
         },
+        defaultProps: {
+            slotProps: {
+                inputLabel: {
+                    shrink: true,
+                },
+            },
+        },
     },
     MuiFilledInput: {
         styleOverrides: {

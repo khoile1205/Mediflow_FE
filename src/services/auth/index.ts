@@ -7,7 +7,7 @@ import { LogOutResponse, RefreshTokenResponse, TLoginRequest, TLoginResponse } f
 
 const login = async (params: TLoginRequest): Promise<IBaseApiResponse<TLoginResponse>> => {
     return await callApi<TLoginResponse>({
-        url: endpoints.authEndpoints.login,
+        url: endpoints.auth.login,
         method: HttpMethod.POST,
         data: params,
     });
@@ -15,7 +15,7 @@ const login = async (params: TLoginRequest): Promise<IBaseApiResponse<TLoginResp
 
 const refreshToken = async (): Promise<IBaseApiResponse<RefreshTokenResponse>> => {
     return await callApi<RefreshTokenResponse>({
-        url: endpoints.authEndpoints.refreshToken,
+        url: endpoints.auth.refreshToken,
         method: HttpMethod.POST,
         data: null,
     });
@@ -23,14 +23,14 @@ const refreshToken = async (): Promise<IBaseApiResponse<RefreshTokenResponse>> =
 
 const getCurrentUser = async (): Promise<IBaseApiResponse<User>> => {
     return await callApi<User>({
-        url: endpoints.authEndpoints.currentUser,
+        url: endpoints.auth.currentUser,
         method: HttpMethod.GET,
     });
 };
 
 const logout = async (): Promise<IBaseApiResponse<LogOutResponse>> => {
     return await callApi<LogOutResponse>({
-        url: endpoints.authEndpoints.logout,
+        url: endpoints.auth.logout,
         method: HttpMethod.POST,
         data: null,
     });

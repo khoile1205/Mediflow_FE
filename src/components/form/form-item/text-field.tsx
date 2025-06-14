@@ -1,4 +1,4 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { HighlightOff, Visibility, VisibilityOff } from "@mui/icons-material";
 import { Box, IconButton, InputAdornment, TextField, TextFieldProps } from "@mui/material";
 import React from "react";
 import { ControllerWrapper, FormErrorMessage } from "../common";
@@ -33,12 +33,16 @@ const getAdornmentProps = ({
     onTogglePassword,
     startAdornment,
     endAdornment,
+    hasValue,
+    onClear,
 }: {
     isPassword: boolean;
     showPassword: boolean;
     onTogglePassword: () => void;
     startAdornment?: React.ReactNode;
     endAdornment?: React.ReactNode;
+    hasValue: boolean;
+    onClear: () => void;
 }) => {
     let start: React.ReactNode | undefined = undefined;
     let end: React.ReactNode | undefined = undefined;
@@ -54,6 +58,14 @@ const getAdornmentProps = ({
             <InputAdornment position="end">
                 <IconButton aria-label="toggle password visibility" onClick={onTogglePassword} edge="end">
                     {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+            </InputAdornment>
+        );
+    } else if (hasValue) {
+        end = (
+            <InputAdornment position="end">
+                <IconButton aria-label="clear input" onClick={onClear} edge="end">
+                    <HighlightOff />
                 </IconButton>
             </InputAdornment>
         );
@@ -119,6 +131,8 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
                                 onTogglePassword: handleTogglePasswordVisibility,
                                 startAdornment,
                                 endAdornment,
+                                hasValue: !!field.value,
+                                onClear: () => field.onChange(""),
                             }),
                         }}
                         {...props}

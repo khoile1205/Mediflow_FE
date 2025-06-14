@@ -44,6 +44,7 @@ export const InputNumberFormItem: React.FC<InputNumberFormItemProps> = ({
                         type="number"
                         size={size}
                         error={!!error}
+                        required={required}
                         sx={{
                             marginTop: 0,
                         }}
