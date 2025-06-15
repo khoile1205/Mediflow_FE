@@ -1,4 +1,4 @@
-import { FormControl, FormHelperText, Popover, TextField } from "@mui/material";
+import { FormControl, Popover, TextField } from "@mui/material";
 import { ColDef } from "ag-grid-community";
 import { AgGridReactProps } from "ag-grid-react";
 import React from "react";
@@ -7,18 +7,28 @@ import { ControllerWrapper, FormErrorMessage } from "../common";
 import { BaseFormItemProps } from "../types/form-item";
 
 export type AgGridDropdownFormItemProps<T extends object = any> = BaseFormItemProps &
-    AgGridReactProps & {
-        columnDefs: ColDef[];
+    AgGridReactProps &
+    Partial<React.ComponentProps<typeof AgDataGrid>> & {
+        columnDefs: ColDef<T>[];
         rowData: T[];
-        colField?: keyof T; // Optional, inferred from rowData
+        colField?: keyof T;
+        onPageChange?: (newPageIndex: number) => void;
     };
 
-export const AgGridDropdownFormItem = <T extends object = any>({
+export const AgGridDropdownFormItem = <T extends object>({
     name,
     required = false,
     columnDefs,
     rowData,
     colField,
+    fullWidth = true,
+    disabled = false,
+    placeholder = "",
+    label = "",
+    totalItems = 0,
+    pageSize = 10,
+    pageIndex = 1,
+    onPageChange,
     ...props
 }: AgGridDropdownFormItemProps<T>) => {
     const agGrid = useAgGrid<T>({});
@@ -38,6 +48,15 @@ export const AgGridDropdownFormItem = <T extends object = any>({
         [colField],
     );
 
+    const handlePageChange = React.useCallback(
+        (newPageIndex: number) => {
+            if (onPageChange) {
+                onPageChange?.(newPageIndex);
+            }
+        },
+        [onPageChange],
+    );
+
     return (
         <ControllerWrapper
             name={name}
@@ -47,13 +66,20 @@ export const AgGridDropdownFormItem = <T extends object = any>({
                     <>
                         <FormControl fullWidth margin="normal" error={!!error} required={required}>
                             <TextField
-                                value={field.value}
+                                {...field}
+                                value={field.value ?? ""}
                                 onClick={() => setOpen(true)}
+                                error={!!error}
                                 inputRef={anchorRef}
                                 slotProps={{ input: { readOnly: true } }}
                                 size="small"
+                                label={label}
+                                disabled={disabled}
+                                placeholder={placeholder}
+                                fullWidth={fullWidth}
+                                required={required}
                             />
-                            <FormHelperText>{error}</FormHelperText>
+                            <FormErrorMessage errorMessage={error} />
                         </FormControl>
                         <Popover
                             open={open}
@@ -64,7 +90,7 @@ export const AgGridDropdownFormItem = <T extends object = any>({
                                 paper: {
                                     sx: {
                                         width: "100%",
-                                        maxWidth: "400px",
+                                        maxWidth: "600px",
                                         height: "100%",
                                         maxHeight: "400px",
                                         overflowY: "auto",
@@ -77,10 +103,13 @@ export const AgGridDropdownFormItem = <T extends object = any>({
                                 {...props}
                                 columnDefs={columnDefs}
                                 rowData={rowData}
+                                totalItems={totalItems}
+                                pageSize={pageSize}
+                                pageIndex={pageIndex}
+                                onPageChange={handlePageChange}
                                 onRowClicked={(e) => handleRowClick(e, field.onChange)}
                             />
                         </Popover>
-                        <FormErrorMessage errorMessage={error} />
                     </>
                 );
             }}

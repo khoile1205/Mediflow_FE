@@ -3,20 +3,20 @@ import { vnPublicApiAxios } from "~/libs/axios/public-api/vn.axios-instance";
 import { TVnPublicApiResponse } from "./types";
 
 const getAllProvinces = async () => {
-    const response = await vnPublicApiAxios.get<TVnPublicApiResponse>(endpoints.publicEndpoints.getAllProvinces);
+    const response = await vnPublicApiAxios.get<TVnPublicApiResponse>(endpoints.publicApi.getAllProvinces);
     return response.data;
 };
 
 const getDistrictsByProvince = async (provinceCode: string) => {
     const response = await vnPublicApiAxios.get<TVnPublicApiResponse>(
-        `${endpoints.publicEndpoints.getDistrictsByProvince(provinceCode)}`,
+        `${endpoints.publicApi.getDistrictsByProvince(provinceCode)}`,
     );
     return response.data;
 };
 
 const getWardsByDistrict = async (districtCode: string) => {
     const response = await vnPublicApiAxios.get<TVnPublicApiResponse>(
-        `${endpoints.publicEndpoints.getWardsByDistrict(districtCode)}`,
+        `${endpoints.publicApi.getWardsByDistrict(districtCode)}`,
     );
     return response.data;
 };

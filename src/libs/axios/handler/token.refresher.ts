@@ -30,9 +30,7 @@ export class TokenRefresher {
                 const originalRequest = error.config as RetryableAxiosRequestConfig;
                 const isUnauthorizedResponse = error.response?.status === HttpStatusCode.Unauthorized;
                 const isRetryable =
-                    originalRequest &&
-                    originalRequest._retry &&
-                    error.config?.url !== endpoints.authEndpoints.refreshToken;
+                    originalRequest && originalRequest._retry && error.config?.url !== endpoints.auth.refreshToken;
 
                 if (isUnauthorizedResponse && isRetryable) {
                     if (this.isRefreshing) {

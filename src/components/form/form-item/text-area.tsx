@@ -24,6 +24,7 @@ export const TextAreaFormItem: React.FC<TextAreaFormItemProps> = ({
     minLength = 0,
     pattern,
     required = false,
+    fullWidth = true,
     rows = 4,
     maxRows = 4,
     ...props
@@ -43,7 +44,7 @@ export const TextAreaFormItem: React.FC<TextAreaFormItemProps> = ({
                         label={label || placeholder}
                         required={required}
                         placeholder={placeholder}
-                        fullWidth
+                        fullWidth={fullWidth}
                         multiline
                         rows={rows}
                         maxRows={maxRows}

@@ -1,3 +1,20 @@
+import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+
+export const formatDate = (date: Date | string, format: DATE_TIME_FORMAT): string => {
+    switch (format) {
+        case DATE_TIME_FORMAT["dd/MM/yyyy"]:
+            return formatDateToDDMMYYYY(date);
+        case DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"]:
+            return formatDateToDDMMYYYYHHMMSS(date);
+        case DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]:
+            return formatDateToDDMMYYYYHHMM(date);
+        case DATE_TIME_FORMAT["HH:mm:ss"]:
+            return formatDateToHHMMSS(date);
+        case DATE_TIME_FORMAT["yyyy-MM-dd"]:
+            return formatDateToYYYYMMDD(date);
+    }
+};
+
 const formatDateToDDMMYYYY = (date: Date | string): string => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
@@ -5,30 +22,7 @@ const formatDateToDDMMYYYY = (date: Date | string): string => {
     const year = d.getFullYear();
     return `${day}/${month}/${year}`;
 };
-const formatDateToYYYYMMDD = (date: Date | string): string => {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-};
-const formatDateToMMDDYYYY = (date: Date | string): string => {
-    const d = new Date(date);
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${month}/${day}/${year}`;
-};
-const formatDateToYYYYMMDDHHMMSS = (date: Date | string): string => {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    const hours = String(d.getHours()).padStart(2, "0");
-    const minutes = String(d.getMinutes()).padStart(2, "0");
-    const seconds = String(d.getSeconds()).padStart(2, "0");
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-};
+
 const formatDateToDDMMYYYYHHMMSS = (date: Date | string): string => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
@@ -39,25 +33,7 @@ const formatDateToDDMMYYYYHHMMSS = (date: Date | string): string => {
     const seconds = String(d.getSeconds()).padStart(2, "0");
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 };
-const formatDateToMMDDYYYYHHMMSS = (date: Date | string): string => {
-    const d = new Date(date);
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    const year = d.getFullYear();
-    const hours = String(d.getHours()).padStart(2, "0");
-    const minutes = String(d.getMinutes()).padStart(2, "0");
-    const seconds = String(d.getSeconds()).padStart(2, "0");
-    return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
-};
-const formatDateToYYYYMMDDHHMM = (date: Date | string): string => {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    const hours = String(d.getHours()).padStart(2, "0");
-    const minutes = String(d.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
-};
+
 const formatDateToDDMMYYYYHHMM = (date: Date | string): string => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
@@ -67,24 +43,19 @@ const formatDateToDDMMYYYYHHMM = (date: Date | string): string => {
     const minutes = String(d.getMinutes()).padStart(2, "0");
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 };
-const formatDateToMMDDYYYYHHMM = (date: Date | string): string => {
+
+const formatDateToHHMMSS = (date: Date | string): string => {
     const d = new Date(date);
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    const year = d.getFullYear();
     const hours = String(d.getHours()).padStart(2, "0");
     const minutes = String(d.getMinutes()).padStart(2, "0");
-    return `${month}/${day}/${year} ${hours}:${minutes}`;
+    const seconds = String(d.getSeconds()).padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
 };
 
-export {
-    formatDateToDDMMYYYY,
-    formatDateToYYYYMMDD,
-    formatDateToMMDDYYYY,
-    formatDateToYYYYMMDDHHMMSS,
-    formatDateToDDMMYYYYHHMMSS,
-    formatDateToMMDDYYYYHHMMSS,
-    formatDateToYYYYMMDDHHMM,
-    formatDateToDDMMYYYYHHMM,
-    formatDateToMMDDYYYYHHMM,
+const formatDateToYYYYMMDD = (date: Date | string): string => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
 };

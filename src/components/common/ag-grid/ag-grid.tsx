@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Pagination } from "@mui/material";
 import { AgGridReact, AgGridReactProps } from "ag-grid-react";
 import classNames from "classnames";
 import React from "react";
@@ -11,6 +11,10 @@ import i18n from "~/configs/i18n";
 type AgDataGridProps = Omit<AgGridReactProps, "columnDefs" | "rowData"> & {
     columnDefs: NonNullable<AgGridReactProps["columnDefs"]>;
     rowData: NonNullable<AgGridReactProps["rowData"]>;
+    totalItems?: number;
+    pageSize?: number;
+    pageIndex?: number;
+    onPageChange?: (newPageIndex: number) => void;
 } & Pick<ReturnType<typeof useAgGrid>, "onGridReady">;
 
 const AgDataGrid: React.FC<AgDataGridProps> = ({
@@ -20,9 +24,16 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
     onGridReady,
     gridOptions,
     className = "",
+    totalItems,
+    pageSize = 10,
+    pageIndex = 1,
+    onPageChange,
     ...props
 }) => {
     const { t } = useTranslation();
+
+    const totalPages = React.useMemo(() => Math.ceil((totalItems || 0) / pageSize), [totalItems, pageSize]);
+
     const getHeightDataGrid = () => {
         const { MIN_HEIGHT, MAX_ROWS, HEADER_HEIGHT, ROW_HEIGHT, SCROLLBAR_HEIGHT } = GRID_STYLE_CONFIG.GRID_DIMENSIONS;
         const pinnedBottomRowData = gridOptions?.pinnedBottomRowData ?? [];
@@ -48,6 +59,19 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
                 overlayNoRowsTemplate={t(i18n.translationKey.noDataToDisplay)}
                 {...props}
             />
+
+            {totalItems !== undefined && totalItems > pageSize && (
+                <Box display="flex" justifyContent="flex-end" mt={2}>
+                    <Pagination
+                        count={totalPages}
+                        page={pageIndex}
+                        onChange={(_, newPage) => onPageChange?.(newPage)}
+                        color="primary"
+                        shape="rounded"
+                        size="small"
+                    />
+                </Box>
+            )}
         </Box>
     );
 };

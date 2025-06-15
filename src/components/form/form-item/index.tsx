@@ -12,6 +12,7 @@ import { AgGridDropdownFormItem } from "./select-data-grid";
 import { SwitchFormItem } from "./switch";
 import { TextAreaFormItem } from "./text-area";
 import { TextFieldFormItem } from "./text-field";
+import { AutocompleteFieldFormItem } from "./auto-complete";
 
 const FormItem: React.FC<FormItemProps> = (props) => {
     // TODO: move the controller wrapper logic to a common place
@@ -42,6 +43,9 @@ const FormItem: React.FC<FormItemProps> = (props) => {
                 return <DateRangePickerFormItem {...props} />;
             case "date-time-picker":
                 return <DateTimePickerFormItem {...props} />;
+            case "autocomplete":
+                return <AutocompleteFieldFormItem {...props} />;
+
             default:
                 return null;
         }

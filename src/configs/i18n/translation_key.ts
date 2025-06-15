@@ -13,7 +13,6 @@ const validationTranslationKey = {
 const applicationTranslationKey = {
     login: "LOGIN",
     username: "USERNAME",
-    // NOSONAR
     password: "PASSWORD",
     pleaseLoginToContinue: "PLEASE_LOGIN_TO_CONTINUE",
     somethingWentWrong: "SOMETHING_WENT_WRONG",
@@ -147,6 +146,32 @@ const applicationTranslationKey = {
     vietnamese: "VIETNAMESE",
     english: "ENGLISH",
     enterMedicalCode: "ENTER_MEDICAL_CODE",
+    inventory: "INVENTORY",
+    documentCode: "DOCUMENT_CODE",
+    documentNumber: "DOCUMENT_NUMBER",
+    importDate: "IMPORT_DATE",
+    supplier: "SUPPLIER",
+    warehouseNote: "WAREHOUSE_NOTE",
+    basedOn: "BASED_ON",
+    endAt: "END_AT",
+    receiver: "RECEIVER",
+    pharmaceuticalInformation: "PHARMACEUTICAL_INFORMATION",
+    medicineName: "MEDICINE_NAME",
+    batchNumber: "BATCH_NUMBER",
+    expiryDate: "EXPIRY_DATE",
+    sgkCpnk: "SGK_CPNK",
+    manufacturer: "MANUFACTURER",
+    countryOfOrigin: "COUNTRY_OF_MANUFACTURER",
+    noCharge: "NO_CHARGE",
+    warehouseImport: "WAREHOUSE_IMPORT",
+    source: "SOURCE",
+    unit: "UNIT",
+    index: "INDEX",
+    pleaseSelectRowToDelete: "PLEASE_SELECT_ROW_TO_DELETE",
+    addNewDocument: "ADD_NEW_DOCUMENT",
+    supplierCode: "SUPPLIER_CODE",
+    pleaseAddPharmaceuticalInformation: "PLEASE_ADD_PHARMACEUTICAL_INFORMATION",
+    documentCreateSuccessfully: "DOCUMENT_CREATE_SUCCESSFULLY",
 };
 
 const exceptionTranslationKey = {
@@ -154,9 +179,7 @@ const exceptionTranslationKey = {
     notFoundUserWithEmail: "NOT_FOUND_USER_WITH_EMAIL",
     invalidLoginCredential: "INVALID_LOGIN_CREDENTIAL",
     failedUpdateUserWithId: "FAILED_UPDATE_USER_WITH_ID",
-    // NOSONAR
     failedResetPassword: "FAILED_RESET_PASSWORD",
-    // NOSONAR
     failedChangePassword: "FAILED_CHANGE_PASSWORD",
     failedAssignRoleToUser: "FAILED_ASSIGN_ROLE_TO_USER",
     notFoundRoleWithId: "NOT_FOUND_ROLE_WITH_ID",

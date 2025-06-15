@@ -67,11 +67,6 @@ export const VaccinationIndication: React.FC = () => {
                                     placeholder={t(i18n.translationKey.selectVaccine)}
                                     options={[]}
                                     size="small"
-                                    fullWidth
-                                    inputProps={{
-                                        variant: "outlined",
-                                        InputLabelProps: { shrink: true },
-                                    }}
                                 />
                             </Grid>
                             <Grid size={2}>
@@ -81,11 +76,6 @@ export const VaccinationIndication: React.FC = () => {
                                     label={t(i18n.translationKey.quantity)}
                                     placeholder="0"
                                     size="small"
-                                    fullWidth
-                                    inputProps={{
-                                        variant: "outlined",
-                                        InputLabelProps: { shrink: true },
-                                    }}
                                 />
                             </Grid>
                             <Grid size={2}>
@@ -96,11 +86,6 @@ export const VaccinationIndication: React.FC = () => {
                                     placeholder={t(i18n.translationKey.selectDose)}
                                     options={[]}
                                     size="small"
-                                    fullWidth
-                                    inputProps={{
-                                        variant: "outlined",
-                                        InputLabelProps: { shrink: true },
-                                    }}
                                 />
                             </Grid>
                             <Grid size={2}>
@@ -109,7 +94,6 @@ export const VaccinationIndication: React.FC = () => {
                                     name="appointmentDate"
                                     label={t(i18n.translationKey.appointmentDate)}
                                     size="small"
-                                    fullWidth
                                 />
                             </Grid>
                             <Grid size={3}>
@@ -119,7 +103,6 @@ export const VaccinationIndication: React.FC = () => {
                                     label={t(i18n.translationKey.note)}
                                     placeholder={t(i18n.translationKey.note)}
                                     size="small"
-                                    fullWidth
                                     inputProps={{
                                         variant: "outlined",
                                         InputLabelProps: { shrink: true },

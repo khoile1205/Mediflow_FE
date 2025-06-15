@@ -1,8 +1,7 @@
-export const DATE_TIME_FORMAT = {
-    "YYYY-MM-DD": "YYYY-MM-DD",
-    "HH:mm:ss": "HH:mm:ss",
-    "YYYY-MM-DD HH:mm:ss": "YYYY-MM-DD HH:mm:ss",
-    "YYYY-MM-DD HH:mm": "YYYY-MM-DD HH:mm",
-    "dd/MM/yyyy": "dd/MM/yyyy",
-    "dd/MM/yyyy HH:mm:ss": "dd/MM/yyyy HH:mm:ss",
-};
+export enum DATE_TIME_FORMAT {
+    "HH:mm:ss" = "HH:mm:ss",
+    "dd/MM/yyyy HH:mm:ss" = "dd/MM/yyyy HH:mm:ss",
+    "dd/MM/yyyy HH:mm" = "dd/MM/yyyy HH:mm",
+    "dd/MM/yyyy" = "dd/MM/yyyy",
+    "yyyy-MM-dd" = "yyyy-MM-dd",
+}

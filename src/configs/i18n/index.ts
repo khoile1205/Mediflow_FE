@@ -10,8 +10,8 @@ reactI18n
     .use(LanguageDetector)
     .use(initReactI18next)
     .init({
-        lng: I18N_LANGUAGE.ENGLISH,
-        fallbackLng: I18N_LANGUAGE.ENGLISH,
+        lng: I18N_LANGUAGE.VIETNAMESE,
+        fallbackLng: I18N_LANGUAGE.VIETNAMESE,
         debug: import.meta.env.MODE === "development",
         interpolation: { escapeValue: false },
         backend: { loadPath: "/locales/{{lng}}/{{ns}}.json" },
