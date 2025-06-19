@@ -214,5 +214,6 @@
     "ADD_NEW_DOCUMENT": "Add new document",
     "SUPPLIER_CODE": "Supplier code",
     "PLEASE_ADD_PHARMACEUTICAL_INFORMATION": "Please add the pharmaceutical information",
-    "DOCUMENT_CREATE_SUCCESSFULLY": "Document created successfully."
+    "DOCUMENT_CREATE_SUCCESSFULLY": "Document created successfully.",
+    "VACCINATION_HISTORY": "Vaccination history"
 }

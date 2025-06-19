@@ -35,7 +35,16 @@ const sidebarTree: SidebarTabProps[] = [
     {
         icon: <Vaccines />,
         labelKey: i18n.translationKey.vaccination,
-        pathName: "/vaccination",
+        children: [
+            {
+                labelKey: i18n.translationKey.vaccination,
+                pathName: "/vaccination",
+            },
+            {
+                labelKey: i18n.translationKey.vaccinationHistory,
+                pathName: "/vaccination/history",
+            },
+        ],
     },
     {
         icon: <Inventory2 />,
