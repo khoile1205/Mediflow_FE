@@ -172,6 +172,7 @@ const applicationTranslationKey = {
     supplierCode: "SUPPLIER_CODE",
     pleaseAddPharmaceuticalInformation: "PLEASE_ADD_PHARMACEUTICAL_INFORMATION",
     documentCreateSuccessfully: "DOCUMENT_CREATE_SUCCESSFULLY",
+    vaccinationHistory: "VACCINATION_HISTORY",
 };
 
 const exceptionTranslationKey = {
