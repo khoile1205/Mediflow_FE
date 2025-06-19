@@ -10,6 +10,7 @@
     "NO_DATA_TO_DISPLAY": "No data to display",
     "LOADING": "Loading...",
     "MEDICAL_CODE": "Medical code",
+    "VACCINATION_NUMBER": "Vaccination Number",
     "PATIENT_NAME": "Patient name",
     "YEAR_OF_BIRTH": "Year of birth",
     "CONTENT": "Content",
@@ -215,5 +216,7 @@
     "SUPPLIER_CODE": "Supplier code",
     "PLEASE_ADD_PHARMACEUTICAL_INFORMATION": "Please add the pharmaceutical information",
     "DOCUMENT_CREATE_SUCCESSFULLY": "Document created successfully.",
+    "INJECTION_DATE": "Injection date",
+    "INSTRUCTED_DOCTOR": "Instructed doctor",
     "VACCINATION_HISTORY": "Vaccination history"
 }
