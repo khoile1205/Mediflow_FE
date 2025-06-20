@@ -4,6 +4,7 @@ import LandingBackground from "~/pages/landing";
 import ReceptionVaccination from "~/pages/reception/vaccination";
 import HospitalFeePage from "~/pages/hospital-fee";
 import ImportInventoryFromSupplier from "~/pages/pharmacy/import_from_supplier";
+import PatientVaccinationHistory from "~/pages/reception/vaccination/patient_vaccination_history";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -11,6 +12,9 @@ export const AuthenticatedRoutes = (
         <Route path="/authenticated" element={<div>Authenticated Area</div>} />
         <Route path="/reception">
             <Route path="vaccination" element={<ReceptionVaccination />} />
+        </Route>
+        <Route path="/vaccination">
+            <Route path="history" element={<PatientVaccinationHistory />} />
         </Route>
         <Route path="/finance" element={<HospitalFeePage />} />
         <Route path="/pharmacy">

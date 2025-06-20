@@ -22,6 +22,7 @@ const applicationTranslationKey = {
     noDataToDisplay: "NO_DATA_TO_DISPLAY",
     loading: "LOADING",
     medicalCode: "MEDICAL_CODE",
+    vaccinationNumber: "VACCINATION_NUMBER",
     patientName: "PATIENT_NAME",
     yearOfBirth: "YEAR_OF_BIRTH",
     content: "CONTENT",
@@ -117,6 +118,9 @@ const applicationTranslationKey = {
     vaccineSerumName: "VACCINE_SERUM_NAME",
     allowUsage: "ALLOW_USAGE",
     usageDate: "USAGE_DATE",
+    injectionDate: "INJECTION_DATE",
+    instructedDoctor: "INSTRUCTED_DOCTOR",
+    vaccinationHistory: "VACCINATION_HISTORY",
     vaccinationConfirmation: "VACCINATION_CONFIRMATION",
     search: "SEARCH",
     edit: "EDIT",
@@ -172,7 +176,6 @@ const applicationTranslationKey = {
     supplierCode: "SUPPLIER_CODE",
     pleaseAddPharmaceuticalInformation: "PLEASE_ADD_PHARMACEUTICAL_INFORMATION",
     documentCreateSuccessfully: "DOCUMENT_CREATE_SUCCESSFULLY",
-    vaccinationHistory: "VACCINATION_HISTORY",
 };
 
 const exceptionTranslationKey = {
