@@ -1,9 +1,13 @@
 import { authEndpoints } from "./auth";
+import { hospitalServiceEndpoints } from "./hospital-service";
 import { inventoryEndpoints } from "./inventory";
 import { publicApiEndpoints } from "./public-api";
+import { receptionEndpoints } from "./reception";
 
 export const endpoints = {
     inventory: inventoryEndpoints,
     auth: authEndpoints,
     publicApi: publicApiEndpoints,
+    hospitalService: hospitalServiceEndpoints,
+    reception: receptionEndpoints,
 };

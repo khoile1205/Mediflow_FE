@@ -8,6 +8,7 @@ export type AutocompleteFieldFormItemProps = BaseFormItemProps & {
     options: BaseOption[];
     size?: "small" | "medium";
     placeholder?: string;
+    onInputChange?: (event: React.SyntheticEvent<Element, Event>, value: string) => void;
 } & Omit<React.ComponentProps<typeof Autocomplete<BaseOption, false, false, false>>, "options" | "renderInput">;
 
 export const AutocompleteFieldFormItem: React.FC<AutocompleteFieldFormItemProps> = ({
@@ -18,6 +19,7 @@ export const AutocompleteFieldFormItem: React.FC<AutocompleteFieldFormItemProps>
     options,
     size = "small",
     placeholder = "",
+    onInputChange,
     ...props
 }) => {
     return (
@@ -40,6 +42,9 @@ export const AutocompleteFieldFormItem: React.FC<AutocompleteFieldFormItemProps>
                             value={selectedOption}
                             onChange={(_, newValue) => {
                                 field.onChange(newValue ? newValue.value : null);
+                            }}
+                            onInputChange={(event, value) => {
+                                onInputChange?.(event, value);
                             }}
                             renderInput={(params) => (
                                 <TextField

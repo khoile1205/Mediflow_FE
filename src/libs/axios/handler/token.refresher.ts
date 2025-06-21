@@ -48,7 +48,7 @@ export class TokenRefresher {
                         return this.axiosInstance(originalRequest);
                     } catch (error) {
                         const refreshError = error as AxiosError<IBaseApiResponse<unknown>>;
-                        const messageKey = refreshError.response.data.Message || i18n.translationKey.tokenExpired;
+                        const messageKey = refreshError.response.data.MessageKey || i18n.translationKey.tokenExpired;
 
                         this.processQueue(refreshError);
                         this.redirectToLoginPage();

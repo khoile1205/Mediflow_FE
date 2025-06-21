@@ -1,5 +1,12 @@
 import { HttpStatusCode } from "axios";
-import { HttpMethod } from "../../../constants/enums";
+
+export enum HttpMethod {
+    GET = "get",
+    POST = "post",
+    PUT = "put",
+    DELETE = "delete",
+    PATCH = "patch",
+}
 
 export type TApiMethod = HttpMethod.GET | HttpMethod.POST | HttpMethod.PUT | HttpMethod.DELETE | HttpMethod.PATCH;
 export type TApiRequest = IMutationRequest | IQueryRequest;
@@ -25,7 +32,7 @@ export interface IQueryRequest extends IBaseApiRequest {
 
 export interface IBaseApiResponse<T> {
     StatusCode: HttpStatusCode;
-    Message: string;
+    MessageKey: string;
     Data: T;
 }
 

@@ -1,15 +1,16 @@
 import React from "react";
-import FormItem from "../form-item";
-import { TAdministrativeUnit } from "~/services/vn-public-api/types";
-import { getAllProvinces } from "~/services/vn-public-api";
-import { toBaseOption } from "../utils";
-import { BaseFormItemProps } from "../types/form-item";
-import { SelectChangeEvent, SelectProps } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import i18n from "~/configs/i18n";
+import { getAllProvinces } from "~/services/vn-public-api";
+import { TAdministrativeUnit } from "~/services/vn-public-api/types";
+import FormItem from "../form-item";
+import { AutocompleteFieldFormItemProps } from "../form-item/auto-complete";
+import { toBaseOption } from "../utils";
 
-type ProvinceFormItemProps = Omit<BaseFormItemProps, "render" | "name"> & SelectProps;
+type ProvinceFormItemProps = Omit<AutocompleteFieldFormItemProps, "render" | "name" | "options"> & {
+    name?: string;
+};
 
 const ProvinceFormItem: React.FC<ProvinceFormItemProps> = ({ ...props }) => {
     const { t } = useTranslation();
@@ -25,10 +26,9 @@ const ProvinceFormItem: React.FC<ProvinceFormItemProps> = ({ ...props }) => {
         }
     };
 
-    const handleChange = (event: SelectChangeEvent<unknown>) => {
-        const selectedProvince = event.target.value as string;
-        const selected = province.find((p) => p.name === selectedProvince);
-        setValue("province", selectedProvince);
+    const handleChange = (_: React.SyntheticEvent<Element, Event>, value: string) => {
+        const selected = province.find((p) => p.name_with_type == value);
+        setValue(props.name ?? "province", value);
         setValue("provinceCode", selected?.code ?? "");
     };
 
@@ -38,14 +38,14 @@ const ProvinceFormItem: React.FC<ProvinceFormItemProps> = ({ ...props }) => {
 
     return (
         <FormItem
-            name="province"
+            name={props.name ?? "province"}
             label={t(i18n.translationKey.province)}
-            render="select"
+            render="autocomplete"
             options={toBaseOption<TAdministrativeUnit>(province, {
                 label: "name_with_type",
                 value: "name",
             })}
-            onChange={handleChange}
+            onInputChange={handleChange}
             {...props}
         />
     );
