@@ -218,5 +218,8 @@
     "DOCUMENT_CREATE_SUCCESSFULLY": "Document created successfully.",
     "INJECTION_DATE": "Injection date",
     "INSTRUCTED_DOCTOR": "Instructed doctor",
-    "VACCINATION_HISTORY": "Vaccination history"
+    "VACCINATION_HISTORY": "Vaccination history",
+    "SERVICE_TYPE": "Service type",
+    "IDENTITY_CARD": "Identity card",
+    "PASSPORT": "Passport"
 }

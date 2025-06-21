@@ -218,5 +218,8 @@
     "DOCUMENT_CREATE_SUCCESSFULLY": "Tạo chứng từ thành công",
     "INJECTION_DATE": "Ngày tiêm",
     "INSTRUCTED_DOCTOR": "Y/Bác sĩ chỉ định",
-    "VACCINATION_HISTORY": "Lịch sử tiêm chủng"
+    "VACCINATION_HISTORY": "Lịch sử tiêm chủng",
+    "SERVICE_TYPE": "Loại dịch vụ",
+    "IDENTITY_CARD": "Căn cước công dân",
+    "PASSPORT": "Hộ chiếu"
 }

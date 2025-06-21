@@ -1,9 +1,8 @@
 import { endpoints } from "~/constants/endpoints";
-import { HttpMethod } from "~/constants/enums";
 import { Manufacture, ManufactureCountry } from "~/entities/medicine";
 import { callApi } from "~/libs/axios/request";
 import { IDocumentImportMedicineSupplierResponse, ImportMedicineFromSupplierDocumentRequest } from "./types";
-import { IPaginationRequest, IPagination } from "~/libs/axios/types";
+import { IPaginationRequest, IPagination, HttpMethod } from "~/libs/axios/types";
 import { Supplier } from "~/entities/supplier";
 
 const getAllManufacturers = async () => {

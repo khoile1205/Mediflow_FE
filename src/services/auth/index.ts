@@ -1,9 +1,8 @@
 import { endpoints } from "~/constants/endpoints";
-import { HttpMethod } from "~/constants/enums";
-import { User } from "~/entities";
 import { callApi } from "~/libs/axios/request";
-import { IBaseApiResponse } from "~/libs/axios/types";
+import { HttpMethod, IBaseApiResponse } from "~/libs/axios/types";
 import { LogOutResponse, RefreshTokenResponse, TLoginRequest, TLoginResponse } from "./types";
+import { Staff } from "~/entities";
 
 const login = async (params: TLoginRequest): Promise<IBaseApiResponse<TLoginResponse>> => {
     return await callApi<TLoginResponse>({
@@ -21,8 +20,8 @@ const refreshToken = async (): Promise<IBaseApiResponse<RefreshTokenResponse>> =
     });
 };
 
-const getCurrentUser = async (): Promise<IBaseApiResponse<User>> => {
-    return await callApi<User>({
+const getCurrentUser = async (): Promise<IBaseApiResponse<Staff>> => {
+    return await callApi<Staff>({
         url: endpoints.auth.currentUser,
         method: HttpMethod.GET,
     });

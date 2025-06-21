@@ -1,15 +1,16 @@
 import React from "react";
-import FormItem from "../form-item";
-import { TAdministrativeUnit } from "~/services/vn-public-api/types";
-import { getDistrictsByProvince } from "~/services/vn-public-api";
-import { toBaseOption } from "../utils";
-import { BaseFormItemProps } from "../types/form-item";
 import { useFormContext } from "react-hook-form";
-import { SelectChangeEvent, SelectProps } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import i18n from "~/configs/i18n";
+import { getDistrictsByProvince } from "~/services/vn-public-api";
+import { TAdministrativeUnit } from "~/services/vn-public-api/types";
+import FormItem from "../form-item";
+import { AutocompleteFieldFormItemProps } from "../form-item/auto-complete";
+import { toBaseOption } from "../utils";
 
-type DistrictFormItemProps = Omit<BaseFormItemProps, "render" | "name"> & SelectProps;
+type DistrictFormItemProps = Omit<AutocompleteFieldFormItemProps, "render" | "name" | "options"> & {
+    name?: string;
+};
 
 const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ ...props }) => {
     const { t } = useTranslation();
@@ -21,6 +22,7 @@ const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ ...props }) => {
         const selectedProvinceCode = form.getValues("provinceCode");
 
         if (!selectedProvinceCode) {
+            setDistrict([]);
             return;
         }
 
@@ -32,10 +34,9 @@ const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ ...props }) => {
         }
     };
 
-    const handleChange = (event: SelectChangeEvent<unknown>) => {
-        const selectedDistrict = event.target.value as string;
-        const selected = district.find((p) => p.name === selectedDistrict);
-        form.setValue("district", selectedDistrict);
+    const handleChange = (_: React.SyntheticEvent<Element, Event>, value: string) => {
+        const selected = district.find((p) => p.name_with_type === value);
+        form.setValue(props.name ?? "district", value);
         form.setValue("districtCode", selected?.code ?? "");
     };
 
@@ -45,14 +46,14 @@ const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ ...props }) => {
 
     return (
         <FormItem
-            name={"district"}
+            name={props.name ?? "district"}
             label={t(i18n.translationKey.district)}
-            render="select"
+            render="autocomplete"
             options={toBaseOption<TAdministrativeUnit>(district, {
                 label: "name_with_type",
                 value: "name",
             })}
-            onChange={handleChange}
+            onInputChange={handleChange}
             {...props}
         />
     );

@@ -5,14 +5,14 @@ import { IBaseApiResponse } from "~/libs/axios/types";
 import { authService } from "~/services/auth";
 import { TLoginRequest, TLoginResponse } from "~/services/auth/types";
 import { showToast } from "~/utils";
-import { User } from "../entities";
 import i18n from "~/configs/i18n";
 import { useTranslation } from "react-i18next";
+import { Staff } from "~/entities/person-info.entity";
 
 export type AuthContextProps = {
     isLoading: boolean;
     isInitialized: boolean;
-    user: User | null;
+    user: Staff | null;
     login: (params: TLoginRequest) => Promise<void>;
     logout: () => void;
 };
@@ -30,7 +30,7 @@ export const AuthContext = React.createContext(defaultProvider);
 export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
-    const [user, setUser] = React.useState<User | null>(null);
+    const [user, setUser] = React.useState<Staff | null>(null);
     const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
     const navigate = useNavigate();
 
@@ -53,14 +53,17 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
             await authService.login(params);
             await loadUserInfor();
             showToast.success(t(i18n.translationKey.loginSuccessfully));
-            navigate("/");
+
+            const redirectUrl = sessionStorage.getItem("redirectUrl");
+            sessionStorage.removeItem("redirectUrl");
+            navigate(redirectUrl ?? "/");
         } catch (error) {
             const axiosError = error as AxiosError<IBaseApiResponse<TLoginResponse>>;
             if (!axiosError.response) {
                 showToast.error(t(i18n.translationKey.somethingWentWrong));
                 return;
             }
-            showToast.error(t(axiosError.response.data.Message));
+            showToast.error(t(axiosError.response.data.MessageKey));
         } finally {
             setIsLoading(false);
         }
