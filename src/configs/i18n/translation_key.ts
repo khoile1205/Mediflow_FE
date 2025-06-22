@@ -182,6 +182,15 @@ const applicationTranslationKey = {
     departmentCode: "DEPARTMENT_CODE",
     reset: "RESET",
     receive: "RECEIVE",
+    testResult: "TEST_RESULT",
+    testStartTime: "TEST_START_TIME",
+    sendToCustomer: "SEND_TO_CUSTOMER",
+    confirmStart: "CONFIRM_START",
+    confirmInjectedToday: "CONFIRM_INJECTED_TODAY",
+    cancelConfirm: "CANCEL_CONFIRMATION",
+    saveNote: "SAVE_NOTE",
+    confirmSelectedDose: "CONFIRM_SELECTED_DOSE",
+    transferSelectedDose: "TRANSFER_SELECTED_DOSE",
 };
 
 const exceptionTranslationKey = {

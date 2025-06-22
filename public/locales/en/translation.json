@@ -266,5 +266,14 @@
     "INVALID_SERVICE_TYPE": "Service type is invalid.",
     "PLEASE_SELECT_DISEASE_GROUP_BEFORE_ADDING": "Please select a disease group before adding.",
     "PLEASE_SELECT_SERVICE_BEFORE_ADDING": "Please select a service before adding.",
-    "RESET": "Reset"
+    "RESET": "Reset",
+    "TEST_RESULT": "Test result",
+    "TEST_START_TIME": "Test start time",
+    "SEND_TO_CUSTOMER": "Send to customer",
+    "CONFIRM_START": "Confirm start of test",
+    "CONFIRM_INJECTED_TODAY": "Confirm vaccinated today",
+    "CANCEL_CONFIRMATION": "Cancel vaccination confirmation",
+    "SAVE_NOTE": "Save note",
+    "CONFIRM_SELECTED_DOSE": "Confirm selected dose(s)",
+    "TRANSFER_SELECTED_DOSE": "Transfer selected dose(s) to customer inventory"
 }
