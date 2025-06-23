@@ -28,3 +28,6 @@ dist-ssr
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Local Netlify folder
+.netlify
