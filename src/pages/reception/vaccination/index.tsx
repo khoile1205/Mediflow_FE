@@ -1,6 +1,7 @@
-import { AddCircle, Clear, Edit, Save, Search, Undo } from "@mui/icons-material";
+import { AddCircle, Clear, Edit, RestartAlt, Save, Search, Undo } from "@mui/icons-material";
 import { Box, Grid, Stack } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActionButton } from "~/components/common/action-button";
 import DistrictFormItem from "~/components/form/custom/district.form-item";
 import ProvinceFormItem from "~/components/form/custom/province.form-item";
@@ -8,38 +9,40 @@ import WardFormItem from "~/components/form/custom/ward.form-item";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
+import { toBaseOption } from "~/components/form/utils";
 import { PHONE_NUMBER_PATTERN, VIETNAMESE_ID_CARD_PATTERN } from "~/components/form/validation/pattern";
+import { PatientSelectModal } from "~/components/modal/patient-select.modal";
+import i18n from "~/configs/i18n";
+import { Gender } from "~/constants/enums";
+import { Patient } from "~/entities";
+import { ServiceGroup } from "~/entities/hospital-service.entity";
+import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
+import { hospitalServiceService } from "~/services/hospital-service";
+import { receptionService } from "~/services/reception";
+import { PatientReceptionRequest } from "~/services/reception/types";
+import { showToast } from "~/utils";
 import { PreVaccination } from "./pre-vaccination";
 import { TestIndication } from "./test_indication";
+import { PatientReceptionFormValue } from "./types";
 import { UnpaidCosts } from "./unpaid_costs";
 import { VaccinationIndication } from "./vaccination_indication";
-import i18n from "~/configs/i18n";
-import { useTranslation } from "react-i18next";
-import { Gender } from "~/constants/enums";
-import { ServiceGroup } from "~/entities/hospital-service.entity";
-import { hospitalServiceService } from "~/services/hospital-service";
-import { showToast } from "~/utils";
-import { getAxiosErrorMessage } from "~/libs/axios/helper";
-import { toBaseOption } from "~/components/form/utils";
-import { PatientReceptionFormValue } from "./types";
-import { PatientReceptionRequest } from "~/services/reception/types";
-import { receptionService } from "~/services/reception";
 
 type TabType = "pre_vaccination" | "vaccination_indication" | "examination_indication" | "unpaid_costs";
 
 const ReceptionVaccination: React.FC = () => {
     const { t } = useTranslation();
     const [tab, setTab] = React.useState<TabType>("pre_vaccination");
-    const [isNewPatient, setIsNewPatient] = React.useState<boolean>(false);
+    const [isRecepting, setIsRecepting] = React.useState<boolean>(false);
+    const [receptionId] = React.useState<number | null>(null);
     const [serviceGroup, setServiceGroup] = React.useState<ServiceGroup[]>([]);
-    const [isSelectedPatient, setIsSelectedPatient] = React.useState<boolean>(false);
+    const [isOpenPatientSelectModal, setIsOpenPatientSelectModal] = React.useState<boolean>(false);
 
     const form = useForm<PatientReceptionFormValue>({
         defaultValues: {
             code: "",
             name: "",
             gender: Gender.MALE,
-            dob: null,
+            dob: new Date(),
             phoneNumber: "",
             identityCard: "",
             addressDetail: "",
@@ -58,23 +61,42 @@ const ReceptionVaccination: React.FC = () => {
         form.reset();
         // TODO: Call API for generating new patient ID
         form.setValue("code", generatePatientCode());
-        setIsNewPatient(true);
+        setIsRecepting(true);
     };
 
     const generatePatientCode = () => {
         // TODO: Implement patient code generation logic
-        return "PATIENT-" + new Date().getTime();
+        return "CDCDN" + new Date().getTime();
+    };
+
+    const handleSelectPatient = (patient: Patient) => {
+        form.reset();
+        form.setValue("patientId", patient.id);
+        form.setValue("code", patient.code);
+        form.setValue("name", patient.name);
+        form.setValue("addressDetail", patient.addressDetail);
+        form.setValue("gender", patient.gender);
+        form.setValue("dob", patient.dob ? new Date(patient.dob) : null);
+        form.setValue("phoneNumber", patient.phoneNumber);
+        form.setValue("identityCard", patient.identityCard);
+        form.setValue("province", patient.province);
+        form.setValue("district", patient.district);
+        form.setValue("ward", patient.ward);
+        form.setValue("receptionDate", new Date());
+        form.setValue("serviceTypeId", null);
+        setIsRecepting(true);
     };
 
     const handleCancel = () => {
         form.reset();
-        setIsNewPatient(false);
-        setIsSelectedPatient(false);
+        setIsRecepting(false);
     };
 
     const handleReset = () => {
+        const patientCode = form.getValues("code");
+
         form.reset();
-        setIsSelectedPatient(false);
+        form.setValue("code", patientCode);
     };
 
     const onSavePatient = async () => {
@@ -83,7 +105,7 @@ const ReceptionVaccination: React.FC = () => {
             const patientReceptionBody: PatientReceptionRequest = getPatientReceptionBody();
             await receptionService.createPatientReception(patientReceptionBody);
         } catch (error) {
-            showToast.error(getAxiosErrorMessage(error));
+            showToast.error(getAxiosErrorMessageKey(error));
         }
     };
 
@@ -96,6 +118,7 @@ const ReceptionVaccination: React.FC = () => {
                 dob: form.getValues("dob"),
                 phoneNumber: form.getValues("phoneNumber"),
                 identityCard: form.getValues("identityCard"),
+                // email: "dinhkhoi.le3@gmail.com",
                 addressDetail: form.getValues("addressDetail"),
                 province: form.getValues("province"),
                 district: form.getValues("district"),
@@ -104,22 +127,12 @@ const ReceptionVaccination: React.FC = () => {
                 isForeigner: form.getValues("isForeigner"),
             },
             createReceptionDTO: {
-                patientId: form.getValues("patientId"),
+                patientId: form.getValues("patientId") ?? 0,
                 receptionDate: form.getValues("receptionDate"),
                 serviceTypeId: form.getValues("serviceTypeId"),
             },
-            patientId: form.getValues("patientId") || undefined,
+            patientId: form.getValues("patientId") ?? 0,
         };
-    };
-
-    const isDisabledInput = React.useMemo(() => {
-        return !isNewPatient;
-    }, [isNewPatient]);
-
-    const handleServiceGroupInputChange = (_: React.SyntheticEvent<Element, Event>, value: string) => {
-        if (value.length > 0) {
-            getServiceGroup(value);
-        }
     };
 
     const getServiceGroup = async (searchTerms: string) => {
@@ -127,7 +140,7 @@ const ReceptionVaccination: React.FC = () => {
             const response = await hospitalServiceService.getAllHospitalServiceGroup({ searchTerms });
             setServiceGroup(response.Data || []);
         } catch (error) {
-            showToast.error(getAxiosErrorMessage(error));
+            showToast.error(getAxiosErrorMessageKey(error));
         }
     };
 
@@ -150,7 +163,7 @@ const ReceptionVaccination: React.FC = () => {
         const MAX_AGE_FOR_PRESCREENING = 5;
         const dob = form.watch("dob");
 
-        if (!isSelectedPatient || !dob) return true;
+        if (!receptionId || !dob) return true;
 
         const today = new Date();
         let age = today.getFullYear() - dob.getFullYear();
@@ -160,7 +173,11 @@ const ReceptionVaccination: React.FC = () => {
         }
 
         return age >= MAX_AGE_FOR_PRESCREENING;
-    }, [form.watch("dob"), isSelectedPatient]);
+    }, [form.watch("dob"), receptionId]);
+
+    const isEnableProcessSubtask = React.useMemo(() => {
+        return isRecepting && receptionId != null;
+    }, [isRecepting, receptionId]);
 
     return (
         <>
@@ -171,27 +188,33 @@ const ReceptionVaccination: React.FC = () => {
                         startIcon={<AddCircle />}
                         onClick={handleAddNewPatient}
                     />
-                    <ActionButton label={t(i18n.translationKey.search)} startIcon={<Search />} />
-                    <ActionButton label={t(i18n.translationKey.edit)} startIcon={<Edit />} disabled={!isNewPatient} />
                     <ActionButton
-                        label={t(i18n.translationKey.save)}
+                        label={t(i18n.translationKey.search)}
+                        startIcon={<Search />}
+                        onClick={() => {
+                            setIsOpenPatientSelectModal(true);
+                        }}
+                    />
+                    {/* <ActionButton label={t(i18n.translationKey.edit)} startIcon={<Edit />} disabled={!isRecepting} /> */}
+                    <ActionButton
+                        label={t(i18n.translationKey.reception)}
                         startIcon={<Save />}
-                        disabled={!isNewPatient}
+                        disabled={!isRecepting}
                         onClick={form.handleSubmit(onSavePatient)}
                     />
                     <ActionButton
-                        label={t(i18n.translationKey.delete)}
-                        startIcon={<Clear />}
-                        disabled={!isNewPatient}
+                        label={t(i18n.translationKey.reset)}
+                        startIcon={<RestartAlt />}
+                        disabled={!isRecepting}
                         onClick={handleReset}
                     />
                     <ActionButton
                         label={t(i18n.translationKey.cancel)}
                         startIcon={<Undo />}
-                        disabled={!isNewPatient}
+                        disabled={!isRecepting}
                         onClick={handleCancel}
                     />
-                    <ActionButton label={t(i18n.translationKey.deletePaymentOrder)} disabled={!isNewPatient} />
+                    {/* <ActionButton label={t(i18n.translationKey.deletePaymentOrder)} disabled={!isRecepting} /> */}
                 </Stack>
 
                 <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-2 border px-2 pt-4">
@@ -205,7 +228,12 @@ const ReceptionVaccination: React.FC = () => {
                                         placeholder={t(i18n.translationKey.medicalCode)}
                                         label={t(i18n.translationKey.medicalCode)}
                                         required
-                                        disabled={isDisabledInput}
+                                        slotProps={{
+                                            input: {
+                                                readOnly: true,
+                                            },
+                                        }}
+                                        disabled={!isRecepting}
                                     />
                                 </Grid>
                                 <Grid size={3}>
@@ -215,7 +243,7 @@ const ReceptionVaccination: React.FC = () => {
                                         placeholder={t(i18n.translationKey.fullName)}
                                         label={t(i18n.translationKey.fullName)}
                                         required
-                                        disabled={isDisabledInput}
+                                        disabled={!isRecepting}
                                     />
                                 </Grid>
                                 <Grid size={3}>
@@ -230,7 +258,7 @@ const ReceptionVaccination: React.FC = () => {
                                             { label: t(i18n.translationKey.male), value: Gender.MALE },
                                             { label: t(i18n.translationKey.female), value: Gender.FEMALE },
                                         ]}
-                                        disabled={isDisabledInput}
+                                        disabled={!isRecepting}
                                     />
                                 </Grid>
                                 <Grid size={3}>
@@ -240,7 +268,7 @@ const ReceptionVaccination: React.FC = () => {
                                         placeholder={`${t(i18n.translationKey.identityCard)}/${t(i18n.translationKey.passport)}`}
                                         label={`${t(i18n.translationKey.identityCard)}/${t(i18n.translationKey.passport)}`}
                                         required
-                                        disabled={isDisabledInput}
+                                        disabled={!isRecepting}
                                         pattern={VIETNAMESE_ID_CARD_PATTERN}
                                     />
                                 </Grid>
@@ -258,7 +286,7 @@ const ReceptionVaccination: React.FC = () => {
                                         required
                                         defaultValue={new Date()}
                                         maxDate={new Date()}
-                                        disabled={isDisabledInput}
+                                        disabled={!isRecepting}
                                     />
                                 </Grid>
                                 <Grid size={3}>
@@ -269,7 +297,7 @@ const ReceptionVaccination: React.FC = () => {
                                         label={t(i18n.translationKey.phoneNumber)}
                                         required
                                         pattern={PHONE_NUMBER_PATTERN}
-                                        disabled={isDisabledInput}
+                                        disabled={!isRecepting}
                                     />
                                 </Grid>
                                 <Grid size={3}>
@@ -279,7 +307,7 @@ const ReceptionVaccination: React.FC = () => {
                                             render="switch"
                                             label={t(i18n.translationKey.foreignPatient)}
                                             defaultValue={true}
-                                            disabled={isDisabledInput}
+                                            disabled={!isRecepting}
                                         />
                                     </Box>
                                 </Grid>
@@ -289,7 +317,7 @@ const ReceptionVaccination: React.FC = () => {
                                             render="switch"
                                             name="isPregnant"
                                             label={t(i18n.translationKey.pregnant)}
-                                            disabled={isDisabledInput || form.watch("gender") === Gender.MALE}
+                                            disabled={isRecepting || form.watch("gender") === Gender.MALE}
                                         />
                                     </Box>
                                 </Grid>
@@ -299,13 +327,13 @@ const ReceptionVaccination: React.FC = () => {
                         <Grid size={12}>
                             <Grid container spacing={1}>
                                 <Grid size={4}>
-                                    <ProvinceFormItem name="province" size="small" disabled={isDisabledInput} />
+                                    <ProvinceFormItem name="province" size="small" disabled={!isRecepting} />
                                 </Grid>
                                 <Grid size={4}>
-                                    <DistrictFormItem name="district" size="small" disabled={isDisabledInput} />
+                                    <DistrictFormItem name="district" size="small" disabled={!isRecepting} />
                                 </Grid>
                                 <Grid size={4}>
-                                    <WardFormItem name="ward" size="small" disabled={isDisabledInput} />
+                                    <WardFormItem name="ward" size="small" disabled={!isRecepting} />
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -317,7 +345,7 @@ const ReceptionVaccination: React.FC = () => {
                                 placeholder={t(i18n.translationKey.address)}
                                 label={t(i18n.translationKey.address)}
                                 required
-                                disabled={isDisabledInput}
+                                disabled={!isRecepting}
                             />
                         </Grid>
 
@@ -331,7 +359,7 @@ const ReceptionVaccination: React.FC = () => {
                                         label={t(i18n.translationKey.receptionTime)}
                                         required
                                         defaultValue={new Date()}
-                                        disabled={isDisabledInput}
+                                        disabled={!isRecepting}
                                     />
                                 </Grid>
                                 <Grid size={3}>
@@ -342,12 +370,11 @@ const ReceptionVaccination: React.FC = () => {
                                         name="serviceTypeId"
                                         size="small"
                                         options={toBaseOption<ServiceGroup>(serviceGroup, {
-                                            label: "GroupName",
-                                            value: "Id",
+                                            label: "groupName",
+                                            value: "id",
                                         })}
-                                        // required
-                                        onInputChange={handleServiceGroupInputChange}
-                                        disabled={isDisabledInput}
+                                        required
+                                        disabled={!isRecepting}
                                     />
                                 </Grid>
                             </Grid>
@@ -382,8 +409,15 @@ const ReceptionVaccination: React.FC = () => {
             </DynamicForm>
             {tab === "pre_vaccination" && <PreVaccination disabled={isDisabledPrescreening} />}
             {tab === "vaccination_indication" && <VaccinationIndication />}
-            {tab === "examination_indication" && <TestIndication />}
+            {tab === "examination_indication" && (
+                <TestIndication disabled={!isEnableProcessSubtask} receptionId={receptionId} />
+            )}
             {tab === "unpaid_costs" && <UnpaidCosts />}
+            <PatientSelectModal
+                open={isOpenPatientSelectModal}
+                onClose={() => setIsOpenPatientSelectModal(false)}
+                onSelect={handleSelectPatient}
+            />
         </>
     );
 };

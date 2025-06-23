@@ -24,7 +24,12 @@ interface TableRowData {
     note: string;
 }
 
-export const VaccinationIndication: React.FC = () => {
+interface VaccinationIndicationProps {
+    disabled?: boolean;
+    receptionId?: number;
+}
+
+export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({ disabled = false }) => {
     const { t } = useTranslation();
     const form = useForm();
     const agGrid = useAgGrid<TableRowData>({ rowSelection: "multiple" });
@@ -61,48 +66,48 @@ export const VaccinationIndication: React.FC = () => {
                         <Grid container spacing={2.5} alignItems="flex-start">
                             <Grid size={3}>
                                 <FormItem
+                                    disabled={disabled}
                                     render="select"
                                     name="vaccine"
                                     label={t(i18n.translationKey.vaccine)}
                                     placeholder={t(i18n.translationKey.selectVaccine)}
                                     options={[]}
-                                    size="small"
                                 />
                             </Grid>
                             <Grid size={2}>
                                 <FormItem
+                                    disabled={disabled}
                                     render="input-number"
                                     name="quantity"
                                     label={t(i18n.translationKey.quantity)}
                                     placeholder="0"
-                                    size="small"
                                 />
                             </Grid>
                             <Grid size={2}>
                                 <FormItem
+                                    disabled={disabled}
                                     render="select"
                                     name="dose"
                                     label={t(i18n.translationKey.doseNumber)}
                                     placeholder={t(i18n.translationKey.selectDose)}
                                     options={[]}
-                                    size="small"
                                 />
                             </Grid>
                             <Grid size={2}>
                                 <FormItem
+                                    disabled={disabled}
                                     render="date-picker"
                                     name="appointmentDate"
                                     label={t(i18n.translationKey.appointmentDate)}
-                                    size="small"
                                 />
                             </Grid>
                             <Grid size={3}>
                                 <FormItem
+                                    disabled={disabled}
                                     render="text-input"
                                     name="note"
                                     label={t(i18n.translationKey.note)}
                                     placeholder={t(i18n.translationKey.note)}
-                                    size="small"
                                     inputProps={{
                                         variant: "outlined",
                                         InputLabelProps: { shrink: true },

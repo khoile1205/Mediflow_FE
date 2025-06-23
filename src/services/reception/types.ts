@@ -1,4 +1,5 @@
 import { Gender } from "~/constants/enums";
+import { TestExaminationGroupType } from "~/pages/reception/vaccination/types";
 
 export interface PatientReceptionRequest {
     createPatientCommand: {
@@ -21,4 +22,12 @@ export interface PatientReceptionRequest {
         serviceTypeId: number;
     };
     patientId?: number;
+}
+
+export interface ServiceReceptionRequest {
+    receptionId: number;
+    services: number[];
+    groupType: TestExaminationGroupType;
+    groupId: number;
+    defaultQuantity: number;
 }

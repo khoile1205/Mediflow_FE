@@ -52,6 +52,9 @@ export const DateRangePickerFormItem: React.FC<DateRangePickerFormItemProps> = (
                         <Box className="relative">
                             <DatePickerContainer className="w-full">
                                 <DatePicker
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="select"
                                     selectsRange
                                     startDate={startDate}
                                     endDate={endDate}

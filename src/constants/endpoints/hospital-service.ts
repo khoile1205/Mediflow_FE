@@ -1,12 +1,14 @@
-const serviceGroupEndpointPrefix = "service-group";
+const hospitalServiceEndpointPrefix = "hospital-service";
+
+const serviceGroupEndpointPrefix = `${hospitalServiceEndpointPrefix}/service-groups`;
 const serviceGroupEndpoints = {
-    standard: `${serviceGroupEndpointPrefix}/`,
+    getServiceGroupsWithPagination: `${serviceGroupEndpointPrefix}/`,
     getAll: `${serviceGroupEndpointPrefix}/all`,
 };
 
-const diseaseGroupEndpointPrefix = "disease-groups";
+const diseaseGroupEndpointPrefix = `${hospitalServiceEndpointPrefix}/disease-groups`;
 const diseaseGroupEndpoints = {
-    standard: `${diseaseGroupEndpointPrefix}/`,
+    getDiseaseGroupWithPagination: `${diseaseGroupEndpointPrefix}/`,
     getAll: `${diseaseGroupEndpointPrefix}/all`,
 };
 
