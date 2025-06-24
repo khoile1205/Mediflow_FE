@@ -275,5 +275,6 @@
     "CANCEL_CONFIRMATION": "Cancel vaccination confirmation",
     "SAVE_NOTE": "Save note",
     "CONFIRM_SELECTED_DOSE": "Confirm selected dose(s)",
-    "TRANSFER_SELECTED_DOSE": "Transfer selected dose(s) to customer inventory"
+    "TRANSFER_SELECTED_DOSE": "Transfer selected dose(s) to customer inventory",
+    "FIND_PATIENT": "Find patient"
 }

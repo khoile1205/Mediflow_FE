@@ -191,6 +191,7 @@ const applicationTranslationKey = {
     saveNote: "SAVE_NOTE",
     confirmSelectedDose: "CONFIRM_SELECTED_DOSE",
     transferSelectedDose: "TRANSFER_SELECTED_DOSE",
+    findPatient: "FIND_PATIENT",
 };
 
 const exceptionTranslationKey = {

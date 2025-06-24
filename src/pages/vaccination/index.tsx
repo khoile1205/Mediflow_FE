@@ -1,9 +1,8 @@
-import { Box, Button, Grid, Stack, TextField, TextFieldProps, Typography } from "@mui/material";
+import { Box, Button, Grid, Stack, TextField, TextFieldProps } from "@mui/material";
 import { ColDef } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
-import SearchBox from "~/components/common/search-box";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
@@ -13,12 +12,8 @@ const ReadonlyTextField: React.FC<TextFieldProps> = ({ slotProps, ...props }) =>
     return (
         <TextField
             slotProps={{
-                input: {
-                    readOnly: true,
-                },
-                inputLabel: {
-                    shrink: true,
-                },
+                input: { readOnly: true },
+                inputLabel: { shrink: true },
                 ...slotProps,
             }}
             variant="outlined"
@@ -82,25 +77,52 @@ const VaccinationPage: React.FC = () => {
             <DynamicForm form={patientForm}>
                 <Box className="flex h-full basis-1/3 flex-col bg-[#F6F8D5] p-3">
                     <Stack spacing={2} className="flex-grow">
+                        <ReadonlyTextField label={t(i18n.translationKey.vaccinationNumber)} />
+
                         <Grid container spacing={2} alignItems="center">
-                            <Grid size={6}>
-                                <ReadonlyTextField label={t(i18n.translationKey.vaccinationNumber)} />
+                            <Grid size={8}>
+                                <TextField
+                                    label={t(i18n.translationKey.findPatient)}
+                                    placeholder={t(i18n.translationKey.findPatient)}
+                                    size="small"
+                                    fullWidth
+                                    onChange={(e) => handleSearch(e.target.value)}
+                                />
                             </Grid>
-                            <Grid size={6}>
-                                <SearchBox onChange={handleSearch} placeholder={t(i18n.translationKey.search)} />
+                            <Grid size={4}>
+                                <Button
+                                    fullWidth
+                                    sx={{
+                                        backgroundColor: "white",
+                                        color: "black",
+                                        fontWeight: 400,
+                                        borderRadius: "12px",
+                                        border: "1px solid black",
+                                        textTransform: "none",
+                                        px: 2,
+                                        py: 1,
+                                        minWidth: "unset",
+                                        width: "fit-content",
+                                        height: "40px",
+                                        minHeight: "40px",
+                                    }}
+                                >
+                                    {t(i18n.translationKey.refreshList)}
+                                </Button>
                             </Grid>
                         </Grid>
-                        <Button fullWidth variant="contained" size="small">
-                            {t(i18n.translationKey.refreshList)}
-                        </Button>
+
                         <AgDataGrid
                             columnDefs={patientColumnDefs}
                             rowData={[]}
                             {...patientAgGrid}
                             className="h-[100px]"
                         />
+
+                        <ReadonlyTextField label={t(i18n.translationKey.vaccinationNumber)} />
                         <ReadonlyTextField label={t(i18n.translationKey.medicalCode)} />
                         <ReadonlyTextField label={t(i18n.translationKey.patientName)} />
+
                         <Grid container spacing={2}>
                             <Grid size={6}>
                                 <ReadonlyTextField label={t(i18n.translationKey.dateOfBirth)} />
@@ -109,6 +131,7 @@ const VaccinationPage: React.FC = () => {
                                 <ReadonlyTextField label={t(i18n.translationKey.gender)} />
                             </Grid>
                         </Grid>
+
                         <ReadonlyTextField label={t(i18n.translationKey.weight)} />
                     </Stack>
                 </Box>
@@ -116,52 +139,66 @@ const VaccinationPage: React.FC = () => {
 
             <Box className="flex h-full flex-1 flex-col p-3">
                 <DynamicForm form={vaccineForm}>
-                    <Stack spacing={2} className="flex-grow">
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid size={6}>
-                                <FormItem
-                                    render="select"
-                                    name="batchCode"
-                                    label={t(i18n.translationKey.batchNumber)}
-                                    options={[]}
-                                    size="small"
-                                />
-                            </Grid>
-                            <Grid size={6}>
-                                <Typography className="font-bold">HD: {t(i18n.translationKey.expiryDate)}</Typography>
-                            </Grid>
+                    <Grid container spacing={2}>
+                        <Grid size={6}>
+                            <Stack spacing={2}>
+                                <Grid container spacing={2} alignItems="center">
+                                    <Grid size={7}>
+                                        <FormItem
+                                            render="select"
+                                            name="batchCode"
+                                            label={t(i18n.translationKey.batchNumber)}
+                                            options={[]}
+                                        />
+                                    </Grid>
+                                    <Grid size={5}>
+                                        <ReadonlyTextField label={t(i18n.translationKey.expiryDate)} />
+                                    </Grid>
+                                    <Grid size={12}>
+                                        <ReadonlyTextField label={t(i18n.translationKey.testStartTime)} />
+                                    </Grid>
+                                    <Grid size={12}>
+                                        <ReadonlyTextField label={t(i18n.translationKey.injectionDate)} />
+                                    </Grid>
+                                    <Grid size={12}>
+                                        <ReadonlyTextField label={t(i18n.translationKey.note)} multiline rows={2} />
+                                    </Grid>
+                                </Grid>
+
+                                <Button fullWidth sx={{ textTransform: "none" }}>
+                                    {t(i18n.translationKey.transferSelectedDose)}
+                                </Button>
+                            </Stack>
                         </Grid>
 
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid size={6}>
-                                <ReadonlyTextField label={t(i18n.translationKey.testStartTime)} />
-                            </Grid>
-                            <Grid size={6}>
-                                <ReadonlyTextField label={t(i18n.translationKey.injectionDate)} />
-                            </Grid>
+                        <Grid size={4}>
+                            <Stack spacing={3.35}>
+                                <Button>{t(i18n.translationKey.sendToCustomer)}</Button>
+                                <Button>{t(i18n.translationKey.confirmStart)}</Button>
+                                <Button>{t(i18n.translationKey.confirmInjectedToday)}</Button>
+                                <Button>{t(i18n.translationKey.saveNote)}</Button>
+                                <Button>{t(i18n.translationKey.confirmSelectedDose)}</Button>
+                            </Stack>
                         </Grid>
 
-                        <ReadonlyTextField label={t(i18n.translationKey.note)} multiline rows={2} />
+                        <Grid size={2}>
+                            <Box height="100%" display="flex" flexDirection="column" justifyContent="center">
+                                <Stack spacing={11}>
+                                    <Button>{t(i18n.translationKey.cancelConfirm)}</Button>
+                                    <Button>{t(i18n.translationKey.vaccinationHistory)}</Button>
+                                </Stack>
+                            </Box>
+                        </Grid>
+                    </Grid>
 
-                        <Button variant="contained">{t(i18n.translationKey.transferSelectedDose)}</Button>
-                        <Button variant="contained">{t(i18n.translationKey.confirmSelectedDose)}</Button>
-
-                        <Box mt={2} display="flex" flexWrap="wrap" gap={4} width="100%">
-                            <Button variant="outlined">{t(i18n.translationKey.sendToCustomer)}</Button>
-                            <Button variant="outlined">{t(i18n.translationKey.confirmStart)}</Button>
-                            <Button variant="outlined">{t(i18n.translationKey.confirmInjectedToday)}</Button>
-                            <Button variant="outlined">{t(i18n.translationKey.cancelConfirm)}</Button>
-                            <Button variant="outlined">{t(i18n.translationKey.saveNote)}</Button>
-                            <Button variant="outlined">{t(i18n.translationKey.vaccinationHistory)}</Button>
-                        </Box>
-
+                    <Box mt={2}>
                         <AgDataGrid
                             columnDefs={vaccineColumnDefs}
                             rowData={[]}
                             {...vaccineAgGrid}
                             className="ag-theme-alpine h-[300px]"
                         />
-                    </Stack>
+                    </Box>
                 </DynamicForm>
             </Box>
         </Box>

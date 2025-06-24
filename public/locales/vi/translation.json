@@ -275,5 +275,6 @@
     "CANCEL_CONFIRMATION": "Hủy xác nhận tiêm",
     "SAVE_NOTE": "Lưu ghi chú",
     "CONFIRM_SELECTED_DOSE": "Tiêm các mũi đã chọn",
-    "TRANSFER_SELECTED_DOSE": "Chuyển kho khách các mũi đã chọn"
+    "TRANSFER_SELECTED_DOSE": "Chuyển kho khách các mũi đã chọn",
+    "FIND_PATIENT": "Tìm bệnh nhân"
 }
