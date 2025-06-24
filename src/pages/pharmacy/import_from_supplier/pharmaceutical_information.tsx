@@ -13,7 +13,7 @@ import { toBaseOption } from "~/components/form/utils";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { Manufacture, ManufactureCountry, Medicine } from "~/entities/medicine";
-import { getAxiosErrorMessage } from "~/libs/axios/helper";
+import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
 import { IPagination } from "~/libs/axios/types";
 import { inventoryService } from "~/services/inventory";
 import { medicineService } from "~/services/medicine";
@@ -195,7 +195,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
             const response = await medicineService.getMedicinesWithPagination({ pageIndex: 1, pageSize: 3 });
             setMedicineDataGrid(response.Data);
         } catch (error) {
-            showToast.error(getAxiosErrorMessage(error));
+            showToast.error(getAxiosErrorMessageKey(error));
         }
     };
 
@@ -204,7 +204,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
             const response = await inventoryService.getAllManufacturers();
             setListManufacturers(response.Data);
         } catch (error) {
-            showToast.error(getAxiosErrorMessage(error));
+            showToast.error(getAxiosErrorMessageKey(error));
         }
     };
 
@@ -213,7 +213,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
             const response = await inventoryService.getAllManufactureCountries();
             setListCountries(response.Data);
         } catch (error) {
-            showToast.error(getAxiosErrorMessage(error));
+            showToast.error(getAxiosErrorMessageKey(error));
         }
     };
 

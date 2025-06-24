@@ -2,7 +2,7 @@ import axios, { AxiosError } from "axios";
 import { IBaseApiResponse } from "../types";
 import i18n from "~/configs/i18n";
 
-export const getAxiosErrorMessage = (error: unknown): string => {
+export const getAxiosErrorMessageKey = (error: unknown): string => {
     if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<IBaseApiResponse<unknown>>;
         if (!axiosError.response) {

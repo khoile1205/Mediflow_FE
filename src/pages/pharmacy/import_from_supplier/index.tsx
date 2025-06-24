@@ -8,7 +8,7 @@ import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
 import { Supplier } from "~/entities/supplier";
-import { getAxiosErrorMessage } from "~/libs/axios/helper";
+import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
 import { IPagination } from "~/libs/axios/types";
 import { inventoryService } from "~/services/inventory";
 import { showToast } from "~/utils";
@@ -63,7 +63,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
             form.setValue("documentCode", documentCode);
             form.setValue("documentNumber", documentNumber);
         } catch (error) {
-            showToast.error(getAxiosErrorMessage(error));
+            showToast.error(getAxiosErrorMessageKey(error));
         }
     };
 
@@ -90,7 +90,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
             setIsAddNew(false);
             form.reset(form.formState.defaultValues);
         } catch (error) {
-            showToast.error(getAxiosErrorMessage(error));
+            showToast.error(getAxiosErrorMessageKey(error));
         }
     };
 
@@ -135,7 +135,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
             const response = await inventoryService.getListSupplier({ pageIndex, pageSize });
             setSupplierPaginationData(response.Data);
         } catch (error) {
-            showToast.error(getAxiosErrorMessage(error));
+            showToast.error(getAxiosErrorMessageKey(error));
         }
     };
 

@@ -8,7 +8,18 @@ import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
+import { toBaseOption } from "~/components/form/utils";
 import i18n from "~/configs/i18n";
+import { I18N_LANGUAGE } from "~/configs/i18n/types";
+import { Department, DiseaseGroup, ServiceGroup } from "~/entities";
+import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
+import { IPagination } from "~/libs/axios/types";
+import { hospitalServiceService } from "~/services/hospital-service";
+import { departmentService } from "~/services/management/department";
+import { showToast } from "~/utils";
+import { formatCurrencyVND } from "~/utils/currency";
+import { TestExaminationGroupType, TestExaminationIndicationFormValue } from "../types";
+import { receptionService } from "~/services/reception";
 
 interface TableRowData {
     key: string;
@@ -22,14 +33,26 @@ interface TableRowData {
 }
 
 interface TestIndicationProps {
+    receptionId?: number;
     disabled?: boolean;
 }
 
-export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
-    const { t } = useTranslation();
-    const form = useForm();
-    const agGrid = useAgGrid<TableRowData>({ rowSelection: "multiple" });
+export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, receptionId }) => {
+    const { t, i18n: reactI18n } = useTranslation();
+    const form = useForm<TestExaminationIndicationFormValue>({
+        defaultValues: {
+            receptionId: receptionId || 0,
+            services: [],
+            groupId: 0,
+            defaultQuantity: 1,
+        },
+    });
+    // TODO: change to service type
+    const [_, setHospitalServiceGroup] = React.useState<ServiceGroup[]>([]);
+    const [hospitalDiseaseGroup, setHospitalDiseaseGroup] = React.useState<DiseaseGroup[]>([]);
+    const [departmentPagination, setDepartmentPagination] = React.useState<IPagination<Department>>();
 
+    const agGrid = useAgGrid<TableRowData>({ rowSelection: "multiple" });
     const columnDefs: ColDef<TableRowData>[] = React.useMemo(
         () => [
             {
@@ -47,19 +70,87 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
                 field: "unitPrice",
                 headerName: t(i18n.translationKey.unitPrice),
                 cellClass: "ag-cell-center",
-                valueFormatter: (params) => params.value.toLocaleString("vi-VN") + "₫",
+                valueFormatter: (params) => formatCurrencyVND(params.value),
             },
             {
                 headerName: t(i18n.translationKey.totalAmount),
                 cellClass: "ag-cell-center",
                 valueGetter: (params) => params.data.quantity * params.data.unitPrice,
-                valueFormatter: (params) => params.value.toLocaleString("vi-VN") + "₫",
+                valueFormatter: (params) => formatCurrencyVND(params.value),
             },
             { field: "invoiceDate", headerName: t(i18n.translationKey.invoiceDate) },
             { field: "payment", headerName: t(i18n.translationKey.payment) },
         ],
         [],
     );
+
+    // TODO: implement the logic to add service reception by disease group and service group
+    const handleAddDiseaseGroup = async (data: TestExaminationIndicationFormValue) => {
+        if (!data.groupId) {
+            showToast.error(t(i18n.translationKey.pleaseSelectDiseaseGroupBeforeAdding));
+            return;
+        }
+
+        try {
+            await receptionService.addServiceReception({
+                receptionId: data.receptionId,
+                services: data.services,
+                groupType: TestExaminationGroupType.DISEASE_GROUP,
+                groupId: data.groupId,
+                defaultQuantity: data.defaultQuantity,
+            });
+        } catch (error) {
+            showToast.error(t(getAxiosErrorMessageKey(error)));
+        }
+    };
+
+    // TODO: implement the logic to add service reception by service group
+    const handleAddServiceGroup = (data: TestExaminationIndicationFormValue) => {
+        if (!data.services.length) {
+            showToast.error(t(i18n.translationKey.pleaseSelectServiceBeforeAdding));
+            return;
+        }
+    };
+
+    const getAllHospitalServiceGroups = async (searchTerms: string = "") => {
+        try {
+            const response = await hospitalServiceService.getAllHospitalServiceGroup({ searchTerms });
+            setHospitalServiceGroup(response.Data);
+        } catch (error) {
+            showToast.error(t(getAxiosErrorMessageKey(error)));
+        }
+    };
+
+    const getAllHospitalDiseaseGroups = async (searchTerms: string = "") => {
+        try {
+            const response = await hospitalServiceService.getAllHospitalDiseaseGroup({ searchTerms });
+            setHospitalDiseaseGroup(response.Data);
+        } catch (error) {
+            showToast.error(t(getAxiosErrorMessageKey(error)));
+        }
+    };
+
+    const getListDepartments = async (pageIndex: number = 1) => {
+        try {
+            const response = await departmentService.getDepartmentWithPagination({ pageIndex });
+            setDepartmentPagination(response.Data);
+        } catch (error) {
+            showToast.error(t(getAxiosErrorMessageKey(error)));
+        }
+    };
+
+    const initializeData = async () => {
+        await Promise.all([
+            getAllHospitalServiceGroups(),
+            getAllHospitalDiseaseGroups(),
+            getListDepartments(),
+            // getAllHospitalService(),
+        ]);
+    };
+
+    React.useEffect(() => {
+        initializeData();
+    }, []);
 
     return (
         <DynamicForm form={form}>
@@ -72,20 +163,23 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
                         <Grid container spacing={2.5}>
                             <Grid size={12}>
                                 <FormItem
-                                    render="select"
+                                    render="autocomplete"
                                     label={t(i18n.translationKey.orderByDiseaseGroup)}
                                     name="diseaseGroup"
                                     placeholder={t(i18n.translationKey.selectDiseaseGroup)}
                                     disabled={disabled}
-                                    options={[{ label: "", value: "" }]}
+                                    options={toBaseOption<DiseaseGroup>(hospitalDiseaseGroup, {
+                                        label: "groupName",
+                                        value: "id",
+                                    })}
                                 />
                             </Grid>
 
-                            <Grid size={8}>
+                            <Grid size={7}>
                                 <FormItem
                                     render="select"
                                     label={t(i18n.translationKey.examinationIndication)}
-                                    name="testService"
+                                    name="services"
                                     placeholder={t(i18n.translationKey.selectExaminationService)}
                                     disabled={disabled}
                                     options={[{ label: "", value: "" }]}
@@ -94,23 +188,42 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
 
                             <Grid size={4}>
                                 <FormItem
-                                    render="select"
+                                    render="data-grid"
                                     label={t(i18n.translationKey.department)}
                                     placeholder={t(i18n.translationKey.selectDepartment)}
                                     name="department"
                                     disabled={disabled}
-                                    options={[{ label: "", value: "" }]}
+                                    columnDefs={[
+                                        { field: "code", headerName: t(i18n.translationKey.departmentCode) },
+                                        {
+                                            field: "departmentName",
+                                            headerName: t(i18n.translationKey.department),
+                                            valueGetter: (params) => {
+                                                const lang = reactI18n.language;
+                                                return lang === I18N_LANGUAGE.VIETNAMESE
+                                                    ? params.data.name
+                                                    : params.data.nameInEnglish;
+                                            },
+                                        },
+                                    ]}
+                                    rowData={departmentPagination?.data ?? []}
+                                    pageIndex={departmentPagination?.pageIndex ?? 1}
+                                    pageSize={departmentPagination?.pageSize ?? 10}
+                                    colField={
+                                        reactI18n.language === I18N_LANGUAGE.VIETNAMESE ? "name" : "nameInEnglish"
+                                    }
                                 />
                             </Grid>
 
-                            <Grid size={12}>
+                            <Grid size={1}>
                                 <FormItem
-                                    render="select"
-                                    name="serviceGroup"
-                                    label={t(i18n.translationKey.serviceGroup)}
-                                    placeholder={t(i18n.translationKey.selectServiceGroup)}
+                                    render="input-number"
+                                    name="defaultQuantity"
+                                    label={t(i18n.translationKey.quantity)}
+                                    placeholder={t(i18n.translationKey.quantity)}
                                     disabled={disabled}
-                                    options={[{ label: "", value: "" }]}
+                                    required
+                                    minNumber={1}
                                 />
                             </Grid>
 
@@ -119,11 +232,13 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled }) => {
                                     <ActionButton
                                         label={t(i18n.translationKey.addByGroup)}
                                         startIcon={<AddCircle />}
+                                        onClick={form.handleSubmit(handleAddDiseaseGroup)}
                                         disabled={disabled}
                                     />
                                     <ActionButton
                                         label={t(i18n.translationKey.addHospitalService)}
                                         startIcon={<AddCircle />}
+                                        onClick={form.handleSubmit(handleAddServiceGroup)}
                                         disabled={disabled}
                                     />
                                     <ActionButton

@@ -18,3 +18,14 @@ export interface PatientReceptionFormValue {
     receptionDate: Date;
     serviceTypeId: number;
 }
+
+export enum TestExaminationGroupType {
+    SERVICE_GROUP = "servicegroup",
+    DISEASE_GROUP = "diseasegroup",
+}
+export interface TestExaminationIndicationFormValue {
+    receptionId: number;
+    services: number[];
+    groupId: number;
+    defaultQuantity: number;
+}

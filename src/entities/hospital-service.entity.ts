@@ -1,10 +1,10 @@
 export interface ServiceGroup {
-    Id: number;
-    GroupName: string;
+    id: number;
+    groupName: string;
 }
 
 export interface DiseaseGroup {
-    Id: number;
-    GroupName: string;
-    Description: string;
+    id: number;
+    groupName: string;
+    description: string;
 }

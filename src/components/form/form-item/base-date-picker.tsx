@@ -53,6 +53,9 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
                         <Box className="relative">
                             <DatePickerContainer className="w-full">
                                 <DatePicker
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="scroll"
                                     showTimeSelect={mode === "datetime"}
                                     timeIntervals={15}
                                     timeFormat="HH:mm"
