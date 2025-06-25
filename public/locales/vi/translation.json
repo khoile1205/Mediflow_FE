@@ -266,5 +266,15 @@
     "INVALID_SERVICE_TYPE": "Loại dịch vụ không hợp lệ.",
     "PLEASE_SELECT_DISEASE_GROUP_BEFORE_ADDING": "Vui lòng chọn nhóm bệnh trước khi thêm.",
     "PLEASE_SELECT_SERVICE_BEFORE_ADDING": "Vui lòng chọn dịch vụ trước khi thêm.",
-    "RESET": "Đặt lại"
+    "RESET": "Đặt lại",
+    "TEST_RESULT": "Kết quả thử",
+    "TEST_START_TIME": "Thời gian bắt đầu thử",
+    "SEND_TO_CUSTOMER": "Gửi kho khách",
+    "CONFIRM_START": "Xác nhận bắt đầu thử",
+    "CONFIRM_INJECTED_TODAY": "Xác nhận đã tiêm hôm nay",
+    "CANCEL_CONFIRMATION": "Hủy xác nhận tiêm",
+    "SAVE_NOTE": "Lưu ghi chú",
+    "CONFIRM_SELECTED_DOSE": "Tiêm các mũi đã chọn",
+    "TRANSFER_SELECTED_DOSE": "Chuyển kho khách các mũi đã chọn",
+    "FIND_PATIENT": "Tìm bệnh nhân"
 }
