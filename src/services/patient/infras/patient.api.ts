@@ -2,7 +2,7 @@ import { endpoints } from "~/constants/endpoints";
 import { Patient } from "~/entities";
 import { callApi } from "~/libs/axios/request";
 import { HttpMethod, IPagination } from "~/libs/axios/types";
-import { GetPatientWithPaginationRequest } from "./infras/types";
+import { GetPatientWithPaginationRequest } from "./types";
 
 const generatePatientIdentifier = async () => {
     return;
@@ -28,7 +28,7 @@ const getListPatientWithPagination = async ({
     });
 };
 
-export const patientService = {
+export const patientApi = {
     generatePatientIdentifier,
     getListPatientWithPagination,
 };

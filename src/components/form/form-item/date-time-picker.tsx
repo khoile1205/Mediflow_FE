@@ -3,16 +3,17 @@ import { BaseDatePickerFormItem, BaseDatePickerFormItemProps } from "./base-date
 
 export type DateTimePickerFormItemProps = Omit<BaseDatePickerFormItemProps, "mode">;
 
-export const DateTimePickerFormItem: React.FC<DateTimePickerFormItemProps> = ({ ...props }) => {
+export const DateTimePickerFormItem: React.FC<DateTimePickerFormItemProps> = ({ datePickerProps, ...props }) => {
     return (
         <BaseDatePickerFormItem
-            mode="date"
+            {...props}
+            mode="datetime"
             datePickerProps={{
                 dateFormat: DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"],
                 timeFormat: "HH:mm",
                 timeIntervals: 15,
+                ...datePickerProps,
             }}
-            {...props}
         />
     );
 };

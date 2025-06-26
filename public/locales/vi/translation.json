@@ -276,5 +276,8 @@
     "SAVE_NOTE": "Lưu ghi chú",
     "CONFIRM_SELECTED_DOSE": "Tiêm các mũi đã chọn",
     "TRANSFER_SELECTED_DOSE": "Chuyển kho khách các mũi đã chọn",
-    "FIND_PATIENT": "Tìm bệnh nhân"
+    "FIND_PATIENT": "Tìm bệnh nhân",
+    "EMAIL": "Email",
+    "CREATE_SERVICE_RECEPTION_SUCCESSFULLY": "Tạo tiếp nhận dịch vụ thành công",
+    "PATIENT_RECEPTION_SUCCESSFULLY": "Tiếp nhận bệnh nhân thành công"
 }

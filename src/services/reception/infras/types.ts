@@ -24,6 +24,11 @@ export interface PatientReceptionRequest {
     patientId?: number;
 }
 
+export interface PatientReceptionResponse {
+    patientId: number;
+    receptionId: number;
+}
+
 export interface ServiceReceptionRequest {
     receptionId: number;
     services: number[];

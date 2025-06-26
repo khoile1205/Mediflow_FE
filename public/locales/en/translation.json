@@ -276,5 +276,8 @@
     "SAVE_NOTE": "Save note",
     "CONFIRM_SELECTED_DOSE": "Confirm selected dose(s)",
     "TRANSFER_SELECTED_DOSE": "Transfer selected dose(s) to customer inventory",
-    "FIND_PATIENT": "Find patient"
+    "FIND_PATIENT": "Find patient",
+    "EMAIL": "Email",
+    "CREATE_SERVICE_RECEPTION_SUCCESSFULLY": "Service reception created successfully.",
+    "PATIENT_RECEPTION_SUCCESSFULLY": "Patient reception successfully"
 }

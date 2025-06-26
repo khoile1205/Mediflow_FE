@@ -1,10 +1,17 @@
-import { callApi } from "~/libs/axios/request";
-import { PatientReceptionRequest, ServiceReceptionRequest } from "./types";
 import { endpoints } from "~/constants/endpoints";
+import { callApi } from "~/libs/axios/request";
 import { HttpMethod } from "~/libs/axios/types";
+import { PatientReceptionRequest, PatientReceptionResponse, ServiceReceptionRequest } from "./types";
+
+const generatePatientIdentifier = async () => {
+    return await callApi<string>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.generatePatientIdentifier,
+        method: HttpMethod.GET,
+    });
+};
 
 const createPatientReception = async (data: PatientReceptionRequest) => {
-    return await callApi({
+    return await callApi<PatientReceptionResponse>({
         url: endpoints.reception.vaccinationReceptionEndpoints.patientReception,
         method: HttpMethod.POST,
         data,
@@ -19,7 +26,8 @@ const addServiceReception = async (data: ServiceReceptionRequest) => {
     });
 };
 
-export const receptionService = {
+export const receptionApis = {
+    generatePatientIdentifier,
     createPatientReception,
     addServiceReception,
 };

@@ -16,14 +16,12 @@ import { useTranslation } from "react-i18next";
 import i18n from "~/configs/i18n";
 import { DEFAULT_PAGINATION_PARAMS } from "~/constants/pagination";
 import { Patient } from "~/entities";
-import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
-import { IPagination } from "~/libs/axios/types";
-import { patientService } from "~/services/patient";
-import { showToast } from "~/utils";
+import { useQueryPatients } from "~/services/patient/hooks";
 import { AgDataGrid, useAgGrid } from "../common/ag-grid";
 import DynamicForm from "../form/dynamic-form";
 import FormItem from "../form/form-item";
 import { useForm } from "../form/hooks/use-form";
+
 type PatientSearchForm = {
     patientCode?: string;
     patientName?: string;
@@ -36,18 +34,31 @@ interface PatientSelectModalProps {
     onSelect?: (patient?: Patient) => void;
 }
 
+const defaultPatientSearchForm: PatientSearchForm = {
+    patientCode: "",
+    patientName: "",
+    patientPhoneNumber: "",
+};
 export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, onSelect, onClose }) => {
     const { t } = useTranslation();
-    const [listPatientWithPagination, setListPatientWithPagination] = React.useState<IPagination<Patient>>();
     const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null);
-
+    const [searchParams, setSearchParams] = React.useState<PatientSearchForm>(defaultPatientSearchForm);
     const patientSelectForm = useForm<PatientSearchForm>({
-        defaultValues: {
-            patientCode: "",
-            patientName: "",
-            patientPhoneNumber: "",
+        defaultValues: defaultPatientSearchForm,
+    });
+
+    const {
+        data: { listPatients, pageIndex, pageSize },
+        isLoading,
+    } = useQueryPatients({
+        isEnabled: open,
+        query: {
+            pageIndex: DEFAULT_PAGINATION_PARAMS.PAGE_INDEX,
+            pageSize: DEFAULT_PAGINATION_PARAMS.PAGE_SIZE,
+            ...searchParams,
         },
     });
+
     const listPatientAgGrid = useAgGrid<Patient>({});
 
     const handleSelectPatient = (params: RowSelectedEvent<Patient>) => {
@@ -69,43 +80,27 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
 
     const handleCloseForm = () => {
         patientSelectForm.reset();
+        setSearchParams(defaultPatientSearchForm);
         onClose();
     };
 
-    const getListPatientWithPagination = async (pageIndex: number, pageSize: number, filters?: PatientSearchForm) => {
-        try {
-            const response = await patientService.getListPatientWithPagination({
-                pageIndex,
-                pageSize,
-                ...filters,
-            });
-            setListPatientWithPagination(response.Data);
-        } catch (error) {
-            showToast.error(getAxiosErrorMessageKey(error));
-        }
-    };
-
     const handleSearchPatient = async (data: PatientSearchForm) => {
-        const { patientCode, patientName, patientPhoneNumber } = data;
-        await getListPatientWithPagination(DEFAULT_PAGINATION_PARAMS.PAGE_INDEX, DEFAULT_PAGINATION_PARAMS.PAGE_SIZE, {
-            patientCode: patientCode?.trim(),
-            patientName: patientName?.trim(),
-            patientPhoneNumber: patientPhoneNumber?.trim(),
-        });
+        const newSearchParams = {
+            patientCode: data.patientCode?.trim() ?? "",
+            patientName: data.patientName?.trim() ?? "",
+            patientPhoneNumber: data.patientPhoneNumber?.trim() ?? "",
+        };
+        setSearchParams(newSearchParams);
+        patientSelectForm.reset(newSearchParams);
     };
 
-    React.useEffect(() => {
-        if (open) {
-            getListPatientWithPagination(DEFAULT_PAGINATION_PARAMS.PAGE_INDEX, DEFAULT_PAGINATION_PARAMS.PAGE_SIZE);
-        }
-    }, [open]);
     return (
         <Dialog open={open} maxWidth="lg" fullWidth>
             <DialogTitle>
                 <Box className="flex items-center justify-between">
                     <Typography>Chọn bệnh nhân</Typography>
                     <IconButton>
-                        <Close onClick={() => patientSelectForm.reset()} />
+                        <Close onClick={handleCloseForm} />
                     </IconButton>
                 </Box>
             </DialogTitle>
@@ -145,6 +140,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
                             onClick={patientSelectForm.handleSubmit(handleSearchPatient)}
                             size="small"
                             className="mb-2"
+                            disabled={isLoading}
                         >
                             {t(i18n.translationKey.search)}
                         </Button>
@@ -172,9 +168,9 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
                             headerName: t(i18n.translationKey.phoneNumber),
                         },
                     ]}
-                    rowData={listPatientWithPagination?.data ?? []}
-                    pageIndex={listPatientWithPagination?.pageIndex ?? 0}
-                    pageSize={listPatientWithPagination?.pageSize ?? 10}
+                    rowData={listPatients}
+                    pageIndex={pageIndex}
+                    pageSize={pageSize}
                     className="mt-4"
                     onRowSelected={handleSelectPatient}
                     {...listPatientAgGrid}
