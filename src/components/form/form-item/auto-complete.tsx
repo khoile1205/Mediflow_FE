@@ -41,11 +41,14 @@ export const AutocompleteFieldFormItem: React.FC<AutocompleteFieldFormItemProps>
                             }}
                             value={selectedOption}
                             onChange={(_, newValue) => {
-                                field.onChange(newValue ? newValue.value : null);
+                                if (!props.readOnly) {
+                                    field.onChange(newValue ? newValue.value : null);
+                                }
                             }}
                             onInputChange={(event, value) => {
                                 onInputChange?.(event, value);
                             }}
+                            openOnFocus={!props.readOnly}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}

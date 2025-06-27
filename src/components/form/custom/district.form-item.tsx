@@ -12,22 +12,20 @@ type DistrictFormItemProps = Omit<AutocompleteFieldFormItemProps, "render" | "na
     name?: string;
 };
 
-const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ ...props }) => {
+const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ name = "district", ...props }) => {
     const { t } = useTranslation();
-
     const form = useFormContext();
     const [district, setDistrict] = React.useState<TAdministrativeUnit[]>([]);
+    const provinceCode = form.watch("provinceCode");
+    const districtFormValue = form.watch(name);
 
-    const getDistricts = async () => {
-        const selectedProvinceCode = form.getValues("provinceCode");
-
-        if (!selectedProvinceCode) {
+    const getDistricts = async (code: string) => {
+        if (!code) {
             setDistrict([]);
             return;
         }
-
         try {
-            const response = await getDistrictsByProvince(selectedProvinceCode);
+            const response = await getDistrictsByProvince(code);
             setDistrict(response.data.data);
         } catch (error) {
             console.error("Failed to fetch districts:", error);
@@ -36,17 +34,31 @@ const DistrictFormItem: React.FC<DistrictFormItemProps> = ({ ...props }) => {
 
     const handleChange = (_: React.SyntheticEvent<Element, Event>, value: string) => {
         const selected = district.find((p) => p.name_with_type === value);
-        form.setValue(props.name ?? "district", value);
+        form.setValue(name, value);
         form.setValue("districtCode", selected?.code ?? "");
     };
 
     React.useEffect(() => {
-        getDistricts();
-    }, [form.watch("provinceCode")]);
+        if (provinceCode) {
+            getDistricts(provinceCode);
+        } else {
+            setDistrict([]);
+        }
+    }, [provinceCode]);
+
+    React.useEffect(() => {
+        if (districtFormValue && district.length > 0) {
+            const selected = district.find((d) => d.name === districtFormValue);
+            if (selected) {
+                form.setValue("districtCode", selected.code);
+                form.setValue(name, selected.name);
+            }
+        }
+    }, [districtFormValue, district]);
 
     return (
         <FormItem
-            name={props.name ?? "district"}
+            name={name}
             label={t(i18n.translationKey.district)}
             render="autocomplete"
             options={toBaseOption<TAdministrativeUnit>(district, {

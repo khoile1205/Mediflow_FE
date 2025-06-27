@@ -7,6 +7,7 @@ export interface PatientReceptionFormValue {
     name: string;
     gender: Gender;
     dob: Date;
+    email: string;
     phoneNumber: string;
     identityCard: string;
     addressDetail: string;

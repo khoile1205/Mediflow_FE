@@ -29,7 +29,11 @@ export const SwitchFormItem: React.FC<SwitchFormItemProps> = ({
                             control={
                                 <Switch
                                     checked={field.value}
-                                    onChange={field.onChange}
+                                    onChange={(_, checked) => {
+                                        if (!switchProps.readOnly) {
+                                            field.onChange(checked);
+                                        }
+                                    }}
                                     disabled={disabled}
                                     {...switchProps}
                                 />

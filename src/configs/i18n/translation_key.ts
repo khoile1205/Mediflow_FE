@@ -192,6 +192,9 @@ const applicationTranslationKey = {
     confirmSelectedDose: "CONFIRM_SELECTED_DOSE",
     transferSelectedDose: "TRANSFER_SELECTED_DOSE",
     findPatient: "FIND_PATIENT",
+    email: "EMAIL",
+    createServiceReceptionSuccessfully: "CREATE_SERVICE_RECEPTION_SUCCESSFULLY",
+    patientReceptionSuccessfully: "PATIENT_RECEPTION_SUCCESSFULLY",
 };
 
 const exceptionTranslationKey = {

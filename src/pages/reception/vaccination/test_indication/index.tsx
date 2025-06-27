@@ -19,7 +19,7 @@ import { departmentService } from "~/services/management/department";
 import { showToast } from "~/utils";
 import { formatCurrencyVND } from "~/utils/currency";
 import { TestExaminationGroupType, TestExaminationIndicationFormValue } from "../types";
-import { receptionService } from "~/services/reception";
+import { useMutationAddServiceReception } from "~/services/reception/hooks/mutations";
 
 interface TableRowData {
     key: string;
@@ -47,6 +47,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
             defaultQuantity: 1,
         },
     });
+    const { mutate: addServiceReception } = useMutationAddServiceReception();
     // TODO: change to service type
     const [_, setHospitalServiceGroup] = React.useState<ServiceGroup[]>([]);
     const [hospitalDiseaseGroup, setHospitalDiseaseGroup] = React.useState<DiseaseGroup[]>([]);
@@ -92,7 +93,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
         }
 
         try {
-            await receptionService.addServiceReception({
+            await addServiceReception({
                 receptionId: data.receptionId,
                 services: data.services,
                 groupType: TestExaminationGroupType.DISEASE_GROUP,

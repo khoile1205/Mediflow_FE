@@ -9,6 +9,7 @@ export interface PersonInfo extends BaseEntity {
     phoneNumber: string;
     address: string;
     gender?: Gender;
+    email?: string;
 }
 
 export interface Staff extends PersonInfo {
