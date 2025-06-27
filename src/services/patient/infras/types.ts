@@ -1,7 +1,8 @@
 import { IPaginationRequest } from "~/libs/axios/types";
 
 export interface GetPatientWithPaginationRequest extends IPaginationRequest {
-    patientCode?: string;
-    patientName?: string;
-    patientPhoneNumber?: string;
+    code?: string;
+    name?: string;
+    phoneNumber?: string;
+    identityCard?: string;
 }

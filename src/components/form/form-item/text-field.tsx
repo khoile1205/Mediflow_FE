@@ -137,7 +137,7 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
                         }}
                         {...props}
                     />
-                    <FormErrorMessage errorMessage={error} />
+                    <FormErrorMessage errorMessage={error} label={label} />
                 </Box>
             )}
         />

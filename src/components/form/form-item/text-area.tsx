@@ -55,7 +55,7 @@ export const TextAreaFormItem: React.FC<TextAreaFormItemProps> = ({
                         margin="normal"
                         {...props}
                     />
-                    <FormErrorMessage errorMessage={error} />
+                    <FormErrorMessage errorMessage={error} label={label} />
                 </Box>
             )}
         />

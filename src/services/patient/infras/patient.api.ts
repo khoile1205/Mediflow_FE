@@ -11,9 +11,7 @@ const generatePatientIdentifier = async () => {
 const getListPatientWithPagination = async ({
     pageIndex = 1,
     pageSize = 10,
-    patientCode,
-    patientName,
-    patientPhoneNumber,
+    ...params
 }: GetPatientWithPaginationRequest) => {
     return await callApi<IPagination<Patient>>({
         url: endpoints.patient.getListPatientWithPagination,
@@ -21,9 +19,7 @@ const getListPatientWithPagination = async ({
         params: {
             pageIndex,
             pageSize,
-            patientCode,
-            patientName,
-            patientPhoneNumber,
+            ...params,
         },
     });
 };

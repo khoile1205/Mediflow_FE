@@ -43,7 +43,7 @@ export const SelectFieldFormItem: React.FC<SelectFieldFormItemProps> = ({
                             </MenuItem>
                         ))}
                     </Select>
-                    <FormErrorMessage errorMessage={error} />
+                    <FormErrorMessage errorMessage={error} label={label} />
                 </FormControl>
             )}
         />

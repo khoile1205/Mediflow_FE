@@ -11,6 +11,6 @@ const getDepartmentWithPagination = async ({ pageIndex = 1, pageSize = 10 }: IPa
     });
 };
 
-export const departmentService = {
+export const departmentApis = {
     getDepartmentWithPagination,
 };

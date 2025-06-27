@@ -55,7 +55,7 @@ export const InputNumberFormItem: React.FC<InputNumberFormItemProps> = ({
                         label={label}
                         {...props}
                     />
-                    <FormErrorMessage errorMessage={error} />
+                    <FormErrorMessage errorMessage={error} label={label} />
                 </Box>
             )}
         />

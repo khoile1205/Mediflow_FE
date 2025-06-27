@@ -12,4 +12,9 @@ const diseaseGroupEndpoints = {
     getAll: `${diseaseGroupEndpointPrefix}/all`,
 };
 
-export const hospitalServiceEndpoints = { serviceGroupEndpoints, diseaseGroupEndpoints };
+const serviceEndpointPrefix = `${hospitalServiceEndpointPrefix}/services`;
+const serviceEndpoints = {
+    getAll: `${serviceEndpointPrefix}/all`,
+};
+
+export const hospitalServiceEndpoints = { serviceGroupEndpoints, diseaseGroupEndpoints, serviceEndpoints };

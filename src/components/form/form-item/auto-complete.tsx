@@ -61,7 +61,7 @@ export const AutocompleteFieldFormItem: React.FC<AutocompleteFieldFormItemProps>
                             )}
                             {...props}
                         />
-                        <FormErrorMessage errorMessage={error} />
+                        <FormErrorMessage errorMessage={error} label={label} />
                     </FormControl>
                 );
             }}
