@@ -88,6 +88,7 @@ const TemplateForm = () => {
                         render="radio-group"
                         name="radioOptions"
                         label="Radio Group"
+                        required
                         direction="horizontal"
                         options={[
                             { label: "Option 1", value: "option1" },

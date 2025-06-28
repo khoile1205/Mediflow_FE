@@ -119,7 +119,7 @@ export const DateRangePickerFormItem: React.FC<DateRangePickerFormItemProps> = (
                                         />
                                     }
                                 />
-                                <FormErrorMessage errorMessage={error} />
+                                <FormErrorMessage errorMessage={error} label={label} />
                             </DatePickerContainer>
                         </Box>
                     </FormControl>

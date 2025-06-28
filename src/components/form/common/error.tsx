@@ -1,11 +1,14 @@
 import { FormHelperText } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 interface FormErrorMessageProps {
     errorMessage?: string;
+    label?: string;
 }
 
-const FormErrorMessage: React.FC<FormErrorMessageProps> = ({ errorMessage }) => {
+const FormErrorMessage: React.FC<FormErrorMessageProps> = ({ errorMessage, label }) => {
+    const { t } = useTranslation();
     if (!errorMessage) {
         return null;
     }
@@ -22,7 +25,7 @@ const FormErrorMessage: React.FC<FormErrorMessageProps> = ({ errorMessage }) => 
                 display: "block",
             }}
         >
-            {errorMessage}
+            {t(errorMessage, { field: label })}
         </FormHelperText>
     );
 };

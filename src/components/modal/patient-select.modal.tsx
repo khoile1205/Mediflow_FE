@@ -14,8 +14,8 @@ import { RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "~/configs/i18n";
-import { DEFAULT_PAGINATION_PARAMS } from "~/constants/pagination";
 import { Patient } from "~/entities";
+import { usePagination } from "~/hooks";
 import { useQueryPatients } from "~/services/patient/hooks";
 import { AgDataGrid, useAgGrid } from "../common/ag-grid";
 import DynamicForm from "../form/dynamic-form";
@@ -23,9 +23,10 @@ import FormItem from "../form/form-item";
 import { useForm } from "../form/hooks/use-form";
 
 type PatientSearchForm = {
-    patientCode?: string;
-    patientName?: string;
-    patientPhoneNumber?: string;
+    code?: string;
+    name?: string;
+    phoneNumber?: string;
+    identityCard?: string;
 };
 
 interface PatientSelectModalProps {
@@ -35,12 +36,14 @@ interface PatientSelectModalProps {
 }
 
 const defaultPatientSearchForm: PatientSearchForm = {
-    patientCode: "",
-    patientName: "",
-    patientPhoneNumber: "",
+    code: "",
+    name: "",
+    phoneNumber: "",
+    identityCard: "",
 };
 export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, onSelect, onClose }) => {
     const { t } = useTranslation();
+    const { pageIndex, pageSize, handlePageChange } = usePagination();
     const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null);
     const [searchParams, setSearchParams] = React.useState<PatientSearchForm>(defaultPatientSearchForm);
     const patientSelectForm = useForm<PatientSearchForm>({
@@ -48,13 +51,13 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
     });
 
     const {
-        data: { listPatients, pageIndex, pageSize },
+        data: { listPatients, totalItems },
         isLoading,
     } = useQueryPatients({
         isEnabled: open,
         query: {
-            pageIndex: DEFAULT_PAGINATION_PARAMS.PAGE_INDEX,
-            pageSize: DEFAULT_PAGINATION_PARAMS.PAGE_SIZE,
+            pageIndex,
+            pageSize,
             ...searchParams,
         },
     });
@@ -86,16 +89,17 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
 
     const handleSearchPatient = async (data: PatientSearchForm) => {
         const newSearchParams = {
-            patientCode: data.patientCode?.trim() ?? "",
-            patientName: data.patientName?.trim() ?? "",
-            patientPhoneNumber: data.patientPhoneNumber?.trim() ?? "",
+            code: data.code?.trim() ?? "",
+            name: data.name?.trim() ?? "",
+            phoneNumber: data.phoneNumber?.trim() ?? "",
+            identityCard: data.identityCard?.trim() ?? "",
         };
         setSearchParams(newSearchParams);
         patientSelectForm.reset(newSearchParams);
     };
 
     return (
-        <Dialog open={open} maxWidth="lg" fullWidth>
+        <Dialog open={open} maxWidth="lg" fullWidth onClose={handleCloseForm}>
             <DialogTitle>
                 <Box className="flex items-center justify-between">
                     <Typography>Chọn bệnh nhân</Typography>
@@ -104,7 +108,7 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
                     </IconButton>
                 </Box>
             </DialogTitle>
-            <DialogContent>
+            <DialogContent className="no-scrollbar h-full">
                 <DynamicForm form={patientSelectForm}>
                     <Stack className="flex rounded-lg border border-gray-100 p-4" spacing={2} direction="row">
                         <Stack
@@ -119,20 +123,26 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
                         >
                             <FormItem
                                 render="text-input"
-                                name="patientCode"
+                                name="code"
                                 label={t(i18n.translationKey.medicalCode)}
                                 className="mb-0"
                             />
                             <FormItem
                                 render="text-input"
-                                name="patientName"
+                                name="name"
                                 label={t(i18n.translationKey.patientName)}
                                 className="mb-0"
                             />
                             <FormItem
                                 render="text-input"
-                                name="patientPhoneNumber"
+                                name="phoneNumber"
                                 label={t(i18n.translationKey.phoneNumber)}
+                                className="mb-0"
+                            />
+                            <FormItem
+                                render="text-input"
+                                name="identityCard"
+                                label={t(i18n.translationKey.identityCard)}
                                 className="mb-0"
                             />
                         </Stack>
@@ -146,35 +156,43 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
                         </Button>
                     </Stack>
                 </DynamicForm>
-                <AgDataGrid
-                    columnDefs={[
-                        {
-                            checkboxSelection: true,
-                            headerCheckboxSelection: true,
-                            width: 50,
-                            pinned: true,
-                            resizable: false,
-                        },
-                        {
-                            field: "code",
-                            headerName: t(i18n.translationKey.medicalCode),
-                        },
-                        {
-                            field: "name",
-                            headerName: t(i18n.translationKey.patientName),
-                        },
-                        {
-                            field: "phoneNumber",
-                            headerName: t(i18n.translationKey.phoneNumber),
-                        },
-                    ]}
-                    rowData={listPatients}
-                    pageIndex={pageIndex}
-                    pageSize={pageSize}
-                    className="mt-4"
-                    onRowSelected={handleSelectPatient}
-                    {...listPatientAgGrid}
-                />
+                <Box flex={1} mt={2}>
+                    <AgDataGrid
+                        columnDefs={[
+                            {
+                                checkboxSelection: true,
+                                headerCheckboxSelection: true,
+                                width: 50,
+                                pinned: true,
+                                resizable: false,
+                            },
+                            {
+                                field: "code",
+                                headerName: t(i18n.translationKey.medicalCode),
+                            },
+                            {
+                                field: "name",
+                                headerName: t(i18n.translationKey.patientName),
+                            },
+                            {
+                                field: "phoneNumber",
+                                headerName: t(i18n.translationKey.phoneNumber),
+                            },
+                            {
+                                field: "identityCard",
+                                headerName: t(i18n.translationKey.identityCard),
+                            },
+                        ]}
+                        rowData={listPatients}
+                        pagination
+                        pageSize={pageSize}
+                        pageIndex={pageIndex}
+                        totalItems={totalItems}
+                        onRowSelected={handleSelectPatient}
+                        onPageChange={handlePageChange}
+                        {...listPatientAgGrid}
+                    />
+                </Box>
             </DialogContent>
             <DialogActions>
                 <Box className="flex items-center justify-end gap-2 p-4">

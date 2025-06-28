@@ -27,6 +27,7 @@ export const CheckboxGroupFormItem: React.FC<CheckboxGroupFormItemProps> = ({
     name,
     required = false,
     options,
+    label = "",
     defaultValue = [],
     direction = "horizontal",
     checkboxProps,
@@ -62,7 +63,7 @@ export const CheckboxGroupFormItem: React.FC<CheckboxGroupFormItemProps> = ({
                                 label={label}
                             />
                         ))}
-                        <FormErrorMessage errorMessage={error} />
+                        <FormErrorMessage errorMessage={error} label={label} />
                     </FormGroup>
                 );
             }}

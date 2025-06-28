@@ -26,7 +26,11 @@ export enum TestExaminationGroupType {
 }
 export interface TestExaminationIndicationFormValue {
     receptionId: number;
-    services: number[];
+    services: {
+        serviceId: number;
+        quantity: number;
+    }[];
+    serviceId?: number;
     groupId: number;
     defaultQuantity: number;
 }

@@ -12,7 +12,6 @@ export type AgGridDropdownFormItemProps<T extends object = any> = BaseFormItemPr
         columnDefs: ColDef<T>[];
         rowData: T[];
         colField?: keyof T;
-        onPageChange?: (newPageIndex: number) => void;
     };
 
 export const AgGridDropdownFormItem = <T extends object>({
@@ -49,9 +48,9 @@ export const AgGridDropdownFormItem = <T extends object>({
     );
 
     const handlePageChange = React.useCallback(
-        (newPageIndex: number) => {
+        (newPageIndex: number, newPageSize: number) => {
             if (onPageChange) {
-                onPageChange?.(newPageIndex);
+                onPageChange?.(newPageIndex, newPageSize);
             }
         },
         [onPageChange],
@@ -79,7 +78,7 @@ export const AgGridDropdownFormItem = <T extends object>({
                                 fullWidth={fullWidth}
                                 required={required}
                             />
-                            <FormErrorMessage errorMessage={error} />
+                            <FormErrorMessage errorMessage={error} label={label} />
                         </FormControl>
                         <Popover
                             open={open}

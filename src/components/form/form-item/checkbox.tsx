@@ -1,6 +1,6 @@
-import { Checkbox, CheckboxProps, FormControl, FormControlLabel, FormHelperText } from "@mui/material";
+import { Checkbox, CheckboxProps, FormControl, FormControlLabel } from "@mui/material";
 import React from "react";
-import { ControllerWrapper } from "../common";
+import { ControllerWrapper, FormErrorMessage } from "../common";
 import { BaseFormItemProps } from "../types/form-item";
 import { TValidationRequired } from "../types/validation";
 
@@ -39,7 +39,7 @@ export const CheckboxFormItem: React.FC<SingleCheckboxFormItemProps> = ({
                         }
                         label={label}
                     />
-                    {error && <FormHelperText>{error}</FormHelperText>}
+                    <FormErrorMessage errorMessage={error} label={label} />
                 </FormControl>
             )}
         />

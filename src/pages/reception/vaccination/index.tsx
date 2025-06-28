@@ -15,30 +15,33 @@ import { PatientSelectModal } from "~/components/modal/patient-select.modal";
 import i18n from "~/configs/i18n";
 import { Gender } from "~/constants/enums";
 import { Patient } from "~/entities";
-import { ServiceGroup } from "~/entities/hospital-service.entity";
-import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
-import { hospitalServiceService } from "~/services/hospital-service";
+import { ServiceType } from "~/entities/service-type.entity";
+import { useGeneratePatientCode, useMutationPatientReception } from "~/services/reception/hooks/mutations";
+import { useQueryReceptionUnpaidServices, useQueryServiceTypes } from "~/services/reception/hooks/queries";
 import { PatientReceptionRequest } from "~/services/reception/infras/types";
-import { showToast } from "~/utils";
 import { PreVaccination } from "./pre-vaccination";
 import { TestIndication } from "./test_indication";
 import { PatientReceptionFormValue } from "./types";
 import { UnpaidCosts } from "./unpaid_costs";
 import { VaccinationIndication } from "./vaccination_indication";
-import { useMutationPatientReception } from "~/services/reception/hooks/mutations";
-import { useGeneratePatientCode } from "~/services/reception/hooks/queries";
 
 type TabType = "pre_vaccination" | "vaccination_indication" | "examination_indication" | "unpaid_costs";
 
 const ReceptionVaccination: React.FC = () => {
-    const { t } = useTranslation();
-    const { mutateAsync: createPatientReception } = useMutationPatientReception();
-    const { mutateAsync: generatePatientCode } = useGeneratePatientCode();
     const [tab, setTab] = React.useState<TabType>("pre_vaccination");
     const [isRecepting, setIsRecepting] = React.useState<boolean>(false);
     const [receptionId, setReceptionId] = React.useState<number | null>(null);
-    const [serviceGroup, setServiceGroup] = React.useState<ServiceGroup[]>([]);
     const [isOpenPatientSelectModal, setIsOpenPatientSelectModal] = React.useState<boolean>(false);
+
+    const { t } = useTranslation();
+
+    // Mutation hooks
+    const { mutateAsync: createPatientReception } = useMutationPatientReception();
+    const { mutateAsync: generatePatientCode } = useGeneratePatientCode();
+
+    // Queries hooks
+    const { data: serviceTypes } = useQueryServiceTypes();
+    const { data: unpaidServices } = useQueryReceptionUnpaidServices(receptionId);
 
     const form = useForm<PatientReceptionFormValue>({
         defaultValues: {
@@ -103,14 +106,10 @@ const ReceptionVaccination: React.FC = () => {
     };
 
     const onSavePatient = async () => {
-        try {
-            const patientReceptionBody: PatientReceptionRequest = getPatientReceptionBody();
-            const { patientId, receptionId } = await createPatientReception(patientReceptionBody);
-            form.setValue("patientId", patientId);
-            setReceptionId(receptionId);
-        } catch (error) {
-            showToast.error(getAxiosErrorMessageKey(error));
-        }
+        const patientReceptionBody: PatientReceptionRequest = getPatientReceptionBody();
+        const { patientId, receptionId } = await createPatientReception(patientReceptionBody);
+        form.setValue("patientId", patientId);
+        setReceptionId(receptionId);
     };
 
     const getPatientReceptionBody = () => {
@@ -138,23 +137,6 @@ const ReceptionVaccination: React.FC = () => {
             patientId: form.getValues("patientId") ?? 0,
         };
     };
-
-    const getServiceGroup = async (searchTerms: string) => {
-        try {
-            const response = await hospitalServiceService.getAllHospitalServiceGroup({ searchTerms });
-            setServiceGroup(response.Data || []);
-        } catch (error) {
-            showToast.error(getAxiosErrorMessageKey(error));
-        }
-    };
-
-    const initializeData = async () => {
-        await Promise.allSettled([getServiceGroup("")]);
-    };
-
-    React.useEffect(() => {
-        initializeData();
-    }, []);
 
     React.useEffect(() => {
         if (form.watch("gender") === Gender.MALE) {
@@ -398,8 +380,8 @@ const ReceptionVaccination: React.FC = () => {
                                 placeholder={t(i18n.translationKey.serviceType)}
                                 label={t(i18n.translationKey.serviceType)}
                                 name="serviceTypeId"
-                                options={toBaseOption<ServiceGroup>(serviceGroup, {
-                                    label: "groupName",
+                                options={toBaseOption<ServiceType>(serviceTypes, {
+                                    label: "name",
                                     value: "id",
                                 })}
                                 required
@@ -438,7 +420,11 @@ const ReceptionVaccination: React.FC = () => {
             {tab === "pre_vaccination" && <PreVaccination disabled={isDisabledPrescreening} />}
             {tab === "vaccination_indication" && <VaccinationIndication />}
             {tab === "examination_indication" && (
-                <TestIndication disabled={!isEnableProcessSubtask} receptionId={receptionId} />
+                <TestIndication
+                    disabled={!isEnableProcessSubtask}
+                    receptionId={receptionId}
+                    unpaidServices={unpaidServices.services}
+                />
             )}
             {tab === "unpaid_costs" && <UnpaidCosts />}
             <PatientSelectModal

@@ -11,50 +11,55 @@ import { useForm } from "~/components/form/hooks/use-form";
 import { toBaseOption } from "~/components/form/utils";
 import i18n from "~/configs/i18n";
 import { I18N_LANGUAGE } from "~/configs/i18n/types";
-import { Department, DiseaseGroup, ServiceGroup } from "~/entities";
-import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
-import { IPagination } from "~/libs/axios/types";
-import { hospitalServiceService } from "~/services/hospital-service";
-import { departmentService } from "~/services/management/department";
+import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { DiseaseGroup, Service } from "~/entities";
+import { usePagination } from "~/hooks";
+import { useQueryHospitalDiseaseGroup, useQueryHospitalServices } from "~/services/hospital-service/hooks/queries";
+import { useQueryDepartmentsWithPagination } from "~/services/management/department/hooks/queries";
+import { useMutationAddServiceReception } from "~/services/reception/hooks/mutations";
+import { ReceptionUnpaidService } from "~/services/reception/infras/types";
 import { showToast } from "~/utils";
 import { formatCurrencyVND } from "~/utils/currency";
+import { formatDate } from "~/utils/date-time";
 import { TestExaminationGroupType, TestExaminationIndicationFormValue } from "../types";
-import { useMutationAddServiceReception } from "~/services/reception/hooks/mutations";
-
-interface TableRowData {
-    key: string;
-    requestId: string;
-    serviceCode: string;
-    serviceName: string;
-    quantity: number;
-    unitPrice: number;
-    invoiceDate: string;
-    payment: string;
-}
 
 interface TestIndicationProps {
     receptionId?: number;
     disabled?: boolean;
+    unpaidServices?: ReceptionUnpaidService[];
 }
 
-export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, receptionId }) => {
+export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, receptionId, unpaidServices = [] }) => {
     const { t, i18n: reactI18n } = useTranslation();
+    const { pageIndex, pageSize, handlePageChange } = usePagination();
+
+    // Queries hooks
+    const {
+        data: { hospitalDiseaseGroups },
+    } = useQueryHospitalDiseaseGroup();
+    const {
+        data: { hospitalServices },
+    } = useQueryHospitalServices();
+    const {
+        data: { listDepartments, totalItems },
+    } = useQueryDepartmentsWithPagination({
+        pageIndex,
+        pageSize,
+    });
+
+    // Mutations hooks
+    const { mutateAsync: addServiceReception } = useMutationAddServiceReception();
+
     const form = useForm<TestExaminationIndicationFormValue>({
         defaultValues: {
-            receptionId: receptionId || 0,
             services: [],
             groupId: 0,
             defaultQuantity: 1,
         },
     });
-    const { mutate: addServiceReception } = useMutationAddServiceReception();
-    // TODO: change to service type
-    const [_, setHospitalServiceGroup] = React.useState<ServiceGroup[]>([]);
-    const [hospitalDiseaseGroup, setHospitalDiseaseGroup] = React.useState<DiseaseGroup[]>([]);
-    const [departmentPagination, setDepartmentPagination] = React.useState<IPagination<Department>>();
 
-    const agGrid = useAgGrid<TableRowData>({ rowSelection: "multiple" });
-    const columnDefs: ColDef<TableRowData>[] = React.useMemo(
+    const agGrid = useAgGrid<ReceptionUnpaidService>({ rowSelection: "multiple" });
+    const columnDefs: ColDef<ReceptionUnpaidService>[] = React.useMemo(
         () => [
             {
                 checkboxSelection: true,
@@ -63,9 +68,8 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                 pinned: true,
                 resizable: false,
             },
-            { field: "requestId", headerName: t(i18n.translationKey.requestNumber) },
-            { field: "serviceCode", headerName: t(i18n.translationKey.serviceCode) },
-            { field: "serviceName", headerName: t(i18n.translationKey.serviceName) },
+            { field: "requestNumber", headerName: t(i18n.translationKey.requestNumber), cellClass: "ag-cell-center" },
+            { field: "serviceName", headerName: t(i18n.translationKey.serviceName), cellClass: "ag-cell-center" },
             { field: "quantity", headerName: t(i18n.translationKey.quantity), cellClass: "ag-cell-center" },
             {
                 field: "unitPrice",
@@ -79,8 +83,12 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                 valueGetter: (params) => params.data.quantity * params.data.unitPrice,
                 valueFormatter: (params) => formatCurrencyVND(params.value),
             },
-            { field: "invoiceDate", headerName: t(i18n.translationKey.invoiceDate) },
-            { field: "payment", headerName: t(i18n.translationKey.payment) },
+            {
+                field: "createdAt",
+                cellClass: "ag-cell-center",
+                headerName: t(i18n.translationKey.invoiceDate),
+                valueFormatter: (params) => formatDate(params.value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
+            },
         ],
         [],
     );
@@ -91,67 +99,34 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
             showToast.error(t(i18n.translationKey.pleaseSelectDiseaseGroupBeforeAdding));
             return;
         }
+        await addServiceReception({
+            receptionId,
+            services: [],
+            groupType: TestExaminationGroupType.DISEASE_GROUP,
+            groupId: data.groupId,
+            defaultQuantity: data.defaultQuantity,
+        });
 
-        try {
-            await addServiceReception({
-                receptionId: data.receptionId,
-                services: data.services,
-                groupType: TestExaminationGroupType.DISEASE_GROUP,
-                groupId: data.groupId,
-                defaultQuantity: data.defaultQuantity,
-            });
-        } catch (error) {
-            showToast.error(t(getAxiosErrorMessageKey(error)));
-        }
+        form.reset();
     };
 
     // TODO: implement the logic to add service reception by service group
-    const handleAddServiceGroup = (data: TestExaminationIndicationFormValue) => {
-        if (!data.services.length) {
+    const handleAddServiceGroup = async (data: TestExaminationIndicationFormValue) => {
+        if (!data.serviceId) {
             showToast.error(t(i18n.translationKey.pleaseSelectServiceBeforeAdding));
             return;
         }
-    };
 
-    const getAllHospitalServiceGroups = async (searchTerms: string = "") => {
-        try {
-            const response = await hospitalServiceService.getAllHospitalServiceGroup({ searchTerms });
-            setHospitalServiceGroup(response.Data);
-        } catch (error) {
-            showToast.error(t(getAxiosErrorMessageKey(error)));
-        }
-    };
+        await addServiceReception({
+            receptionId,
+            services: [{ quantity: data.defaultQuantity, serviceId: data.serviceId }],
+            groupType: TestExaminationGroupType.SERVICE_GROUP,
+            groupId: data.groupId,
+            defaultQuantity: data.defaultQuantity,
+        });
 
-    const getAllHospitalDiseaseGroups = async (searchTerms: string = "") => {
-        try {
-            const response = await hospitalServiceService.getAllHospitalDiseaseGroup({ searchTerms });
-            setHospitalDiseaseGroup(response.Data);
-        } catch (error) {
-            showToast.error(t(getAxiosErrorMessageKey(error)));
-        }
+        form.reset();
     };
-
-    const getListDepartments = async (pageIndex: number = 1) => {
-        try {
-            const response = await departmentService.getDepartmentWithPagination({ pageIndex });
-            setDepartmentPagination(response.Data);
-        } catch (error) {
-            showToast.error(t(getAxiosErrorMessageKey(error)));
-        }
-    };
-
-    const initializeData = async () => {
-        await Promise.all([
-            getAllHospitalServiceGroups(),
-            getAllHospitalDiseaseGroups(),
-            getListDepartments(),
-            // getAllHospitalService(),
-        ]);
-    };
-
-    React.useEffect(() => {
-        initializeData();
-    }, []);
 
     return (
         <DynamicForm form={form}>
@@ -166,10 +141,10 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                                 <FormItem
                                     render="autocomplete"
                                     label={t(i18n.translationKey.orderByDiseaseGroup)}
-                                    name="diseaseGroup"
+                                    name="groupId"
                                     placeholder={t(i18n.translationKey.selectDiseaseGroup)}
                                     disabled={disabled}
-                                    options={toBaseOption<DiseaseGroup>(hospitalDiseaseGroup, {
+                                    options={toBaseOption<DiseaseGroup>(hospitalDiseaseGroups, {
                                         label: "groupName",
                                         value: "id",
                                     })}
@@ -180,10 +155,13 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                                 <FormItem
                                     render="select"
                                     label={t(i18n.translationKey.examinationIndication)}
-                                    name="services"
+                                    name="serviceId"
                                     placeholder={t(i18n.translationKey.selectExaminationService)}
                                     disabled={disabled}
-                                    options={[{ label: "", value: "" }]}
+                                    options={toBaseOption<Service>(hospitalServices, {
+                                        label: "serviceName",
+                                        value: "id",
+                                    })}
                                 />
                             </Grid>
 
@@ -207,9 +185,12 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                                             },
                                         },
                                     ]}
-                                    rowData={departmentPagination?.data ?? []}
-                                    pageIndex={departmentPagination?.pageIndex ?? 1}
-                                    pageSize={departmentPagination?.pageSize ?? 10}
+                                    pagination
+                                    rowData={listDepartments}
+                                    pageIndex={pageIndex}
+                                    pageSize={pageSize}
+                                    totalItems={totalItems}
+                                    onPageChange={handlePageChange}
                                     colField={
                                         reactI18n.language === I18N_LANGUAGE.VIETNAMESE ? "name" : "nameInEnglish"
                                     }
@@ -261,7 +242,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                     <Box className="mt-2 border p-5" sx={{ borderColor: "primary.main", borderRadius: 2 }}>
                         <AgDataGrid
                             columnDefs={columnDefs}
-                            rowData={[]}
+                            rowData={unpaidServices}
                             {...agGrid}
                             gridOptions={{
                                 ...agGrid.gridOptions,

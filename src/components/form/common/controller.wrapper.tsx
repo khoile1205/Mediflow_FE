@@ -23,6 +23,8 @@ type ControllerWrapperProps<TFieldValues extends FieldValues, TName extends Path
     name: TName;
     render: (props: ControllerFormItemRenderProps<TFieldValues, TName>) => React.ReactElement;
     defaultValue?: FieldPathValue<TFieldValues, TName>;
+} & {
+    label?: string;
 };
 
 const ControllerWrapper = <TFieldValues extends FieldValues, TName extends Path<TFieldValues>>({

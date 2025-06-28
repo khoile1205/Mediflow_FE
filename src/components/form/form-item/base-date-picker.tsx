@@ -123,7 +123,7 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
                                     }
                                 />
                             </DatePickerContainer>
-                            <FormErrorMessage errorMessage={error} />
+                            <FormErrorMessage errorMessage={error} label={label} />
                         </Box>
                     </FormControl>
                 );

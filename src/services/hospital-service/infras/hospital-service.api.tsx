@@ -1,5 +1,5 @@
 import { endpoints } from "~/constants/endpoints";
-import { DiseaseGroup, ServiceGroup } from "~/entities";
+import { DiseaseGroup, Service, ServiceGroup } from "~/entities";
 import { callApi } from "~/libs/axios/request";
 import { HttpMethod } from "~/libs/axios/types";
 import { ISearchParam } from "./types";
@@ -20,11 +20,15 @@ const getAllHospitalDiseaseGroup = async ({ searchTerms = "" }: ISearchParam) =>
     });
 };
 
-// const getAllHospitalServices = async () => {
-//     return await callApi<Service>
-// };
+const getAllHospitalServices = async () => {
+    return await callApi<Service[]>({
+        url: `${endpoints.hospitalService.serviceEndpoints.getAll}`,
+        method: HttpMethod.GET,
+    });
+};
 
-export const hospitalServiceService = {
+export const hospitalServiceApis = {
     getAllHospitalServiceGroup,
     getAllHospitalDiseaseGroup,
+    getAllHospitalServices,
 };

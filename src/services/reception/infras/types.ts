@@ -31,8 +31,26 @@ export interface PatientReceptionResponse {
 
 export interface ServiceReceptionRequest {
     receptionId: number;
-    services: number[];
+    services: {
+        serviceId: number;
+        quantity: number;
+    }[];
     groupType: TestExaminationGroupType;
     groupId: number;
     defaultQuantity: number;
+}
+
+export interface ReceptionUnpaidServicesResponse {
+    services: ReceptionUnpaidService[];
+    // vaccinations: Vaccination[]
+}
+
+export interface ReceptionUnpaidService {
+    id: number;
+    requestNumber: string;
+    serviceId: number;
+    serviceName: string;
+    quantity: number;
+    unitPrice: number;
+    createdAt: string;
 }

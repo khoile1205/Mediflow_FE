@@ -28,9 +28,10 @@ export const useQueryPatients = ({
             const patientApiResponse = await patientApi.getListPatientWithPagination({
                 pageIndex: query.pageIndex,
                 pageSize: query.pageSize,
-                patientCode: query.patientCode.trim(),
-                patientName: query.patientName.trim(),
-                patientPhoneNumber: query.patientPhoneNumber.trim(),
+                code: query.code.trim(),
+                name: query.name.trim(),
+                phoneNumber: query.phoneNumber.trim(),
+                identityCard: query.identityCard.trim(),
             });
             return patientApiResponse;
         },
@@ -43,18 +44,13 @@ export const useQueryPatients = ({
         return transformData(response);
     }, [isError, isLoading, response]);
 
-    const pageSize = React.useMemo(() => {
+    const totalItems = React.useMemo(() => {
         if (isError || isLoading || !response) return 0;
-        return response.Data.pageSize;
-    }, [isError, isLoading, response]);
-
-    const pageIndex = React.useMemo(() => {
-        if (isError || isLoading || !response) return 0;
-        return response.Data.pageIndex;
+        return response.Data.totalItems;
     }, [isError, isLoading, response]);
 
     return {
-        data: { listPatients, pageSize, pageIndex },
+        data: { listPatients, totalItems },
         isError,
         isLoading,
         refetch,
