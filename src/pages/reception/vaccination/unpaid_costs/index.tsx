@@ -4,26 +4,37 @@ import { useTranslation } from "react-i18next";
 import DynamicForm from "~/components/form/dynamic-form";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
+// import { useQueryReceptionUnpaidServices } from "~/services/reception/hooks/queries";
 import { formatCurrencyVND } from "~/utils/currency";
 
 interface UnpaidCostsProps {
-    consultationFee?: number;
-    examinationFee?: number;
-    injectionFee?: number;
-    vaccineFee?: number;
-    testFee?: number;
-    totalUnpaid?: number;
+    receptionId?: number;
 }
 
-export const UnpaidCosts: React.FC<UnpaidCostsProps> = ({
-    consultationFee = 0,
-    examinationFee = 0,
-    injectionFee = 0,
-    vaccineFee = 0,
-    testFee = 0,
-    totalUnpaid = 0,
-}) => {
+export const UnpaidCosts: React.FC<UnpaidCostsProps> = () => {
     const { t } = useTranslation();
+    // const { data: unpaidServices } = useQueryReceptionUnpaidServices(receptionId);
+
+    const consultationFee = React.useMemo(() => {
+        return 0;
+    }, []);
+
+    const examinationFee = React.useMemo(() => {
+        return 0;
+    }, []);
+    const injectionFee = React.useMemo(() => {
+        return 0;
+    }, []);
+    const vaccineFee = React.useMemo(() => {
+        return 0;
+    }, []);
+    const testFee = React.useMemo(() => {
+        return 0;
+    }, []);
+
+    const totalUnpaid = React.useMemo(() => {
+        return consultationFee + examinationFee + injectionFee + vaccineFee + testFee;
+    }, [consultationFee, examinationFee, injectionFee, vaccineFee, testFee]);
     const form = useForm();
     return (
         <DynamicForm form={form}>

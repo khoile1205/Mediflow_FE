@@ -9,6 +9,8 @@ const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
             staleTime: DEFAULT_STALE_TIME,
+            refetchOnWindowFocus: false,
+            retry: false,
         },
         mutations: {
             onError: (error) => {

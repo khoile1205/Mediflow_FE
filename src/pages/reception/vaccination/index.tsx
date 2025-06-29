@@ -3,8 +3,7 @@ import { Box, Grid, Stack } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActionButton } from "~/components/common/action-button";
-import DistrictFormItem from "~/components/form/custom/district.form-item";
-import ProvinceFormItem from "~/components/form/custom/province.form-item";
+import { DistrictFormItem, ProvinceFormItem } from "~/components/form/custom";
 import WardFormItem from "~/components/form/custom/ward.form-item";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
@@ -17,11 +16,11 @@ import { Gender } from "~/constants/enums";
 import { Patient } from "~/entities";
 import { ServiceType } from "~/entities/service-type.entity";
 import { useGeneratePatientCode, useMutationPatientReception } from "~/services/reception/hooks/mutations";
-import { useQueryReceptionUnpaidServices, useQueryServiceTypes } from "~/services/reception/hooks/queries";
+import { useQueryServiceTypes } from "~/services/reception/hooks/queries";
 import { PatientReceptionRequest } from "~/services/reception/infras/types";
 import { PreVaccination } from "./pre-vaccination";
 import { TestIndication } from "./test_indication";
-import { PatientReceptionFormValue } from "./types";
+import { PatientReceptionFormValue, VaccinationPrescreeningFormValue } from "./types";
 import { UnpaidCosts } from "./unpaid_costs";
 import { VaccinationIndication } from "./vaccination_indication";
 
@@ -41,9 +40,9 @@ const ReceptionVaccination: React.FC = () => {
 
     // Queries hooks
     const { data: serviceTypes } = useQueryServiceTypes();
-    const { data: unpaidServices } = useQueryReceptionUnpaidServices(receptionId);
 
-    const form = useForm<PatientReceptionFormValue>({
+    // Form setup
+    const patientReceptionForm = useForm<PatientReceptionFormValue>({
         defaultValues: {
             code: "",
             name: "",
@@ -64,102 +63,126 @@ const ReceptionVaccination: React.FC = () => {
         },
     });
 
+    const vaccinationPrescreeningForm = useForm<VaccinationPrescreeningFormValue>({
+        defaultValues: {
+            parentFullName: "",
+            parentPhoneNumber: "",
+            weightKg: 0,
+            bodyTemperatureC: 0,
+            bloodPressureSystolic: 0,
+            bloodPressureDiastolic: 0,
+            hasSevereFeverAfterPreviousVaccination: false,
+            hasAcuteOrChronicDisease: false,
+            isOnOrRecentlyEndedCorticosteroids: false,
+            hasAbnormalTemperatureOrVitals: false,
+            hasAbnormalHeartSound: false,
+            hasHeartValveDisorder: false,
+            hasNeurologicalAbnormalities: false,
+            isUnderweightBelow2000g: false,
+            hasOtherContraindications: false,
+            isEligibleForVaccination: false,
+            isContraindicatedForVaccination: false,
+            isVaccinationDeferred: false,
+            isReferredToHospital: false,
+        },
+    });
+
     const handleAddNewPatient = async () => {
-        form.reset();
+        patientReceptionForm.reset();
         const patientCode = await generatePatientCode();
-        form.setValue("code", patientCode);
+        patientReceptionForm.setValue("code", patientCode);
         setIsRecepting(true);
     };
 
     const handleSelectPatient = (patient: Patient) => {
-        form.reset();
+        patientReceptionForm.reset();
 
-        form.setValue("patientId", patient.id, { shouldValidate: true });
-        form.setValue("code", patient.code, { shouldValidate: true });
-        form.setValue("name", patient.name, { shouldValidate: true });
-        form.setValue("addressDetail", patient.addressDetail, { shouldValidate: true });
-        form.setValue("gender", patient.gender, { shouldValidate: true });
-        form.setValue("email", patient.email, { shouldValidate: true });
-        form.setValue("dob", patient.dob ? new Date(patient.dob) : null);
-        form.setValue("phoneNumber", patient.phoneNumber, { shouldValidate: true });
-        form.setValue("identityCard", patient.identityCard, { shouldValidate: true });
-        form.setValue("province", patient.province, { shouldValidate: true });
-        form.setValue("district", patient.district, { shouldValidate: true });
-        form.setValue("ward", patient.ward, { shouldValidate: true });
-        form.setValue("receptionDate", new Date(), { shouldValidate: true });
-        form.setValue("serviceTypeId", null, { shouldValidate: true });
+        patientReceptionForm.setValue("patientId", patient.id, { shouldValidate: true });
+        patientReceptionForm.setValue("code", patient.code, { shouldValidate: true });
+        patientReceptionForm.setValue("name", patient.name, { shouldValidate: true });
+        patientReceptionForm.setValue("addressDetail", patient.addressDetail, { shouldValidate: true });
+        patientReceptionForm.setValue("gender", patient.gender, { shouldValidate: true });
+        patientReceptionForm.setValue("email", patient.email, { shouldValidate: true });
+        patientReceptionForm.setValue("dob", patient.dob ? new Date(patient.dob) : null);
+        patientReceptionForm.setValue("phoneNumber", patient.phoneNumber, { shouldValidate: true });
+        patientReceptionForm.setValue("identityCard", patient.identityCard, { shouldValidate: true });
+        patientReceptionForm.setValue("province", patient.province, { shouldValidate: true });
+        patientReceptionForm.setValue("district", patient.district, { shouldValidate: true });
+        patientReceptionForm.setValue("ward", patient.ward, { shouldValidate: true });
+        patientReceptionForm.setValue("receptionDate", new Date(), { shouldValidate: true });
+        patientReceptionForm.setValue("serviceTypeId", null, { shouldValidate: true });
 
         setIsRecepting(true);
     };
 
     const handleCancel = () => {
-        form.reset();
+        patientReceptionForm.reset();
         setIsRecepting(false);
         setReceptionId(null);
     };
 
     const handleReset = () => {
-        const patientCode = form.getValues("code");
+        const patientCode = patientReceptionForm.getValues("code");
 
-        form.reset();
-        form.setValue("code", patientCode);
+        patientReceptionForm.reset();
+        patientReceptionForm.setValue("code", patientCode);
     };
 
     const onSavePatient = async () => {
         const patientReceptionBody: PatientReceptionRequest = getPatientReceptionBody();
         const { patientId, receptionId } = await createPatientReception(patientReceptionBody);
-        form.setValue("patientId", patientId);
+        patientReceptionForm.setValue("patientId", patientId);
         setReceptionId(receptionId);
     };
 
     const getPatientReceptionBody = () => {
         return {
             createPatientCommand: {
-                code: form.getValues("code"),
-                name: form.getValues("name"),
-                gender: form.getValues("gender"),
-                dob: form.getValues("dob"),
-                phoneNumber: form.getValues("phoneNumber"),
-                identityCard: form.getValues("identityCard"),
-                email: form.getValues("email"),
-                addressDetail: form.getValues("addressDetail"),
-                province: form.getValues("province"),
-                district: form.getValues("district"),
-                ward: form.getValues("ward"),
-                isPregnant: form.getValues("isPregnant"),
-                isForeigner: form.getValues("isForeigner"),
+                code: patientReceptionForm.getValues("code"),
+                name: patientReceptionForm.getValues("name"),
+                gender: patientReceptionForm.getValues("gender"),
+                dob: patientReceptionForm.getValues("dob"),
+                phoneNumber: patientReceptionForm.getValues("phoneNumber"),
+                identityCard: patientReceptionForm.getValues("identityCard"),
+                email: patientReceptionForm.getValues("email"),
+                addressDetail: patientReceptionForm.getValues("addressDetail"),
+                province: patientReceptionForm.getValues("province"),
+                district: patientReceptionForm.getValues("district"),
+                ward: patientReceptionForm.getValues("ward"),
+                isPregnant: patientReceptionForm.getValues("isPregnant"),
+                isForeigner: patientReceptionForm.getValues("isForeigner"),
             },
             createReceptionDTO: {
-                patientId: form.getValues("patientId") ?? 0,
-                receptionDate: form.getValues("receptionDate"),
-                serviceTypeId: form.getValues("serviceTypeId"),
+                patientId: patientReceptionForm.getValues("patientId") ?? 0,
+                receptionDate: patientReceptionForm.getValues("receptionDate"),
+                serviceTypeId: patientReceptionForm.getValues("serviceTypeId"),
             },
-            patientId: form.getValues("patientId") ?? 0,
+            patientId: patientReceptionForm.getValues("patientId") ?? 0,
         };
     };
 
     React.useEffect(() => {
-        if (form.watch("gender") === Gender.MALE) {
-            form.setValue("isPregnant", false);
+        if (patientReceptionForm.watch("gender") === Gender.MALE) {
+            patientReceptionForm.setValue("isPregnant", false);
         }
-    }, [form.watch("gender")]);
+    }, [patientReceptionForm.watch("gender")]);
 
     // TODO: Ask for PO for the age of kid need to prescreening
-    const isDisabledPrescreening = React.useMemo(() => {
-        const MAX_AGE_FOR_PRESCREENING = 5;
-        const dob = form.watch("dob");
+    // const isDisabledPrescreening = React.useMemo(() => {
+    //     const MAX_AGE_FOR_PRESCREENING = 5;
+    //     const dob = patientReceptionForm.watch("dob");
 
-        if (!receptionId || !dob) return true;
+    //     if (!receptionId || !dob) return true;
 
-        const today = new Date();
-        let age = today.getFullYear() - dob.getFullYear();
-        const m = today.getMonth() - dob.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-            age--;
-        }
+    //     const today = new Date();
+    //     let age = today.getFullYear() - dob.getFullYear();
+    //     const m = today.getMonth() - dob.getMonth();
+    //     if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+    //         age--;
+    //     }
 
-        return age >= MAX_AGE_FOR_PRESCREENING;
-    }, [form.watch("dob"), receptionId]);
+    //     return age >= MAX_AGE_FOR_PRESCREENING;
+    // }, [patientReceptionForm.watch("dob"), receptionId]);
 
     const isEnableProcessSubtask = React.useMemo(() => {
         return isRecepting && receptionId != null;
@@ -167,7 +190,7 @@ const ReceptionVaccination: React.FC = () => {
 
     return (
         <>
-            <DynamicForm form={form}>
+            <DynamicForm form={patientReceptionForm} preConditionSubmit={isRecepting}>
                 <Stack spacing={1} direction="row" width="100%" className="px-4 py-5">
                     <ActionButton
                         label={t(i18n.translationKey.addNew)}
@@ -187,7 +210,11 @@ const ReceptionVaccination: React.FC = () => {
                         label={t(i18n.translationKey.reception)}
                         startIcon={<Save />}
                         disabled={receptionId != null}
-                        onClick={form.handleSubmit(onSavePatient)}
+                        onClick={() => {
+                            if (isRecepting) {
+                                patientReceptionForm.handleSubmit(onSavePatient)();
+                            }
+                        }}
                     />
                     <ActionButton
                         label={t(i18n.translationKey.reset)}
@@ -332,7 +359,7 @@ const ReceptionVaccination: React.FC = () => {
                                         readOnly: receptionId != null,
                                     }}
                                     label={t(i18n.translationKey.pregnant)}
-                                    disabled={isRecepting || form.watch("gender") === Gender.MALE}
+                                    disabled={isRecepting || patientReceptionForm.watch("gender") === Gender.MALE}
                                 />
                             </Box>
                         </Grid>
@@ -417,13 +444,15 @@ const ReceptionVaccination: React.FC = () => {
                     </Stack>
                 </Box>
             </DynamicForm>
-            {tab === "pre_vaccination" && <PreVaccination disabled={isDisabledPrescreening} />}
+            {tab === "pre_vaccination" && (
+                <PreVaccination receptionId={receptionId} form={vaccinationPrescreeningForm} />
+            )}
             {tab === "vaccination_indication" && <VaccinationIndication />}
             {tab === "examination_indication" && (
                 <TestIndication
                     disabled={!isEnableProcessSubtask}
                     receptionId={receptionId}
-                    unpaidServices={unpaidServices.services}
+                    isReferredToHospital={vaccinationPrescreeningForm.watch("isReferredToHospital")}
                 />
             )}
             {tab === "unpaid_costs" && <UnpaidCosts />}

@@ -16,6 +16,7 @@ const ReceptionQueryKey = {
     GENERATE_PATIENT_IDENTIFIER: "generatePatientIdentifier",
     GET_SERVICE_TYPES: "getServiceTypes",
     GET_UNPAID_SERVICES: "getUnpaidServices",
+    GET_SERVICE_RECEPTION_BY_RECEPTION_ID: "getServiceReceptionByReceptionId",
 };
 
 const DepartmentQueryKey = {

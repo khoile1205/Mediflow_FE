@@ -56,6 +56,7 @@ const applicationTranslationKey = {
     screeningForChildrenOver1Month: "SCREENING_FOR_CHILDREN_OVER_1_MONTH",
     conclusion: "CONCLUSION",
     parentName: "PARENT_NAME",
+    parentPhoneNumber: "PARENT_PHONE_NUMBER",
     phoneNumber: "PHONE_NUMBER",
     weight: "WEIGHT",
     temperature: "TEMPERATURE",
@@ -195,6 +196,10 @@ const applicationTranslationKey = {
     email: "EMAIL",
     createServiceReceptionSuccessfully: "CREATE_SERVICE_RECEPTION_SUCCESSFULLY",
     patientReceptionSuccessfully: "PATIENT_RECEPTION_SUCCESSFULLY",
+    createVaccinationPrescreeningSuccessfully: "CREATE_VACCINATION_PRESCREENING_SUCCESSFULLY",
+    deleteServiceReceptionSuccessfully: "DELETE_SERVICE_RECEPTION_SUCCESSFULLY",
+    updateVaccinationPrescreeningSuccessfully: "UPDATE_VACCINATION_PRESCREENING_SUCCESSFULLY",
+    noNeedToTakeReferExam: "NO_NEED_TO_TAKE_REFER_EXAM",
 };
 
 const exceptionTranslationKey = {

@@ -34,3 +34,25 @@ export interface TestExaminationIndicationFormValue {
     groupId: number;
     defaultQuantity: number;
 }
+
+export interface VaccinationPrescreeningFormValue {
+    parentFullName: string;
+    parentPhoneNumber: string;
+    weightKg: number;
+    bodyTemperatureC: number;
+    bloodPressureSystolic: number;
+    bloodPressureDiastolic: number;
+    hasSevereFeverAfterPreviousVaccination: boolean;
+    hasAcuteOrChronicDisease: boolean;
+    isOnOrRecentlyEndedCorticosteroids: boolean;
+    hasAbnormalTemperatureOrVitals: boolean;
+    hasAbnormalHeartSound: boolean;
+    hasHeartValveDisorder: boolean;
+    hasNeurologicalAbnormalities: boolean;
+    isUnderweightBelow2000g: boolean;
+    hasOtherContraindications: boolean;
+    isEligibleForVaccination: boolean;
+    isContraindicatedForVaccination: boolean;
+    isVaccinationDeferred: boolean;
+    isReferredToHospital: boolean;
+}

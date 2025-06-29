@@ -5,12 +5,21 @@ interface Props<T extends FieldValues = FieldValues> extends React.PropsWithChil
     form: UseFormReturn<T>;
     direction?: "row" | "column";
     onSubmit?: (data: T) => void;
+    preConditionSubmit?: boolean;
 }
 
-const DynamicForm = <T extends FieldValues = FieldValues>({ form, children, onSubmit }: Props<T>) => {
+const DynamicForm = <T extends FieldValues = FieldValues>({
+    form,
+    children,
+    onSubmit,
+    preConditionSubmit,
+}: Props<T>) => {
     const { handleSubmit } = form;
 
     const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+        if (!preConditionSubmit) {
+            return;
+        }
         e.preventDefault();
         e.stopPropagation();
         if (onSubmit) {

@@ -16,8 +16,12 @@ import { DiseaseGroup, Service } from "~/entities";
 import { usePagination } from "~/hooks";
 import { useQueryHospitalDiseaseGroup, useQueryHospitalServices } from "~/services/hospital-service/hooks/queries";
 import { useQueryDepartmentsWithPagination } from "~/services/management/department/hooks/queries";
-import { useMutationAddServiceReception } from "~/services/reception/hooks/mutations";
-import { ReceptionUnpaidService } from "~/services/reception/infras/types";
+import {
+    useMutationAddServiceReception,
+    useMutationDeleteServiceReception,
+} from "~/services/reception/hooks/mutations";
+import { useQueryServiceReceptionByReceptionId } from "~/services/reception/hooks/queries";
+import { VaccinationServiceReception } from "~/services/reception/infras/types";
 import { showToast } from "~/utils";
 import { formatCurrencyVND } from "~/utils/currency";
 import { formatDate } from "~/utils/date-time";
@@ -26,14 +30,18 @@ import { TestExaminationGroupType, TestExaminationIndicationFormValue } from "..
 interface TestIndicationProps {
     receptionId?: number;
     disabled?: boolean;
-    unpaidServices?: ReceptionUnpaidService[];
+    isReferredToHospital?: boolean;
 }
 
-export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, receptionId, unpaidServices = [] }) => {
+export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, receptionId, isReferredToHospital }) => {
     const { t, i18n: reactI18n } = useTranslation();
     const { pageIndex, pageSize, handlePageChange } = usePagination();
 
+    const [selectedRowsCount, setSelectedRowsCount] = React.useState<number>(0);
+
     // Queries hooks
+    const { listServiceReception } = useQueryServiceReceptionByReceptionId(receptionId);
+
     const {
         data: { hospitalDiseaseGroups },
     } = useQueryHospitalDiseaseGroup();
@@ -49,7 +57,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
 
     // Mutations hooks
     const { mutateAsync: addServiceReception } = useMutationAddServiceReception();
-
+    const { mutateAsync: deleteServiceReception } = useMutationDeleteServiceReception();
     const form = useForm<TestExaminationIndicationFormValue>({
         defaultValues: {
             services: [],
@@ -58,8 +66,8 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
         },
     });
 
-    const agGrid = useAgGrid<ReceptionUnpaidService>({ rowSelection: "multiple" });
-    const columnDefs: ColDef<ReceptionUnpaidService>[] = React.useMemo(
+    const agGrid = useAgGrid<VaccinationServiceReception>({ rowSelection: "multiple" });
+    const columnDefs: ColDef<VaccinationServiceReception>[] = React.useMemo(
         () => [
             {
                 checkboxSelection: true,
@@ -84,7 +92,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                 valueFormatter: (params) => formatCurrencyVND(params.value),
             },
             {
-                field: "createdAt",
+                field: "invoiceDate",
                 cellClass: "ag-cell-center",
                 headerName: t(i18n.translationKey.invoiceDate),
                 valueFormatter: (params) => formatDate(params.value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
@@ -93,12 +101,28 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
         [],
     );
 
-    // TODO: implement the logic to add service reception by disease group and service group
+    const onSubmitVaccinationPrescreening = async (
+        data: TestExaminationIndicationFormValue,
+        type: TestExaminationGroupType,
+    ) => {
+        if (!isReferredToHospital) {
+            showToast.info(t(i18n.translationKey.noNeedToTakeReferExam));
+            return;
+        }
+
+        if (type === TestExaminationGroupType.DISEASE_GROUP) {
+            await handleAddDiseaseGroup(data);
+        } else {
+            await handleAddServiceGroup(data);
+        }
+    };
+
     const handleAddDiseaseGroup = async (data: TestExaminationIndicationFormValue) => {
         if (!data.groupId) {
             showToast.error(t(i18n.translationKey.pleaseSelectDiseaseGroupBeforeAdding));
             return;
         }
+
         await addServiceReception({
             receptionId,
             services: [],
@@ -110,7 +134,6 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
         form.reset();
     };
 
-    // TODO: implement the logic to add service reception by service group
     const handleAddServiceGroup = async (data: TestExaminationIndicationFormValue) => {
         if (!data.serviceId) {
             showToast.error(t(i18n.translationKey.pleaseSelectServiceBeforeAdding));
@@ -126,6 +149,19 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
         });
 
         form.reset();
+    };
+
+    const handleDeleteServiceReception = async () => {
+        const selectedServices = agGrid.gridApi.getSelectedRows();
+        const listServiceIds = selectedServices.map((row) => row.serviceId);
+        await deleteServiceReception({
+            receptionId,
+            listServiceIds,
+        });
+    };
+
+    const handleSelectionChanged = () => {
+        setSelectedRowsCount(agGrid.gridApi.getSelectedRows().length);
     };
 
     return (
@@ -214,20 +250,31 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                                     <ActionButton
                                         label={t(i18n.translationKey.addByGroup)}
                                         startIcon={<AddCircle />}
-                                        onClick={form.handleSubmit(handleAddDiseaseGroup)}
+                                        onClick={form.handleSubmit((data) =>
+                                            onSubmitVaccinationPrescreening(
+                                                data,
+                                                TestExaminationGroupType.DISEASE_GROUP,
+                                            ),
+                                        )}
                                         disabled={disabled}
                                     />
                                     <ActionButton
                                         label={t(i18n.translationKey.addHospitalService)}
                                         startIcon={<AddCircle />}
-                                        onClick={form.handleSubmit(handleAddServiceGroup)}
+                                        onClick={form.handleSubmit((data) =>
+                                            onSubmitVaccinationPrescreening(
+                                                data,
+                                                TestExaminationGroupType.SERVICE_GROUP,
+                                            ),
+                                        )}
                                         disabled={disabled}
                                     />
                                     <ActionButton
                                         label={t(i18n.translationKey.delete)}
                                         startIcon={<Delete />}
+                                        onClick={handleDeleteServiceReception}
                                         color="error"
-                                        disabled={disabled}
+                                        disabled={disabled || selectedRowsCount === 0}
                                     />
                                 </Stack>
                             </Grid>
@@ -242,12 +289,10 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                     <Box className="mt-2 border p-5" sx={{ borderColor: "primary.main", borderRadius: 2 }}>
                         <AgDataGrid
                             columnDefs={columnDefs}
-                            rowData={unpaidServices}
+                            rowData={listServiceReception}
                             {...agGrid}
-                            gridOptions={{
-                                ...agGrid.gridOptions,
-                                pinnedBottomRowData: [],
-                            }}
+                            onSelectionChanged={handleSelectionChanged}
+                            // pinnedBottomRowData={[]}
                         />
                     </Box>
                 </Box>
