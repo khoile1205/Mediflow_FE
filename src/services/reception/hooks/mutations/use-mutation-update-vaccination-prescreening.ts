@@ -5,8 +5,6 @@ import { receptionApis } from "../../infras";
 import { VaccinationPreScreeningRequest } from "../../infras/types";
 
 export const useMutationUpdateVaccinationPrescreening = () => {
-    // const queryClient = useQueryClient();
-
     return useMutation({
         mutationFn: async ({
             vaccinationPrescreeningId,

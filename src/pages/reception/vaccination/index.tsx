@@ -190,7 +190,7 @@ const ReceptionVaccination: React.FC = () => {
 
     return (
         <>
-            <DynamicForm form={patientReceptionForm} preConditionSubmit={isRecepting}>
+            <DynamicForm form={patientReceptionForm}>
                 <Stack spacing={1} direction="row" width="100%" className="px-4 py-5">
                     <ActionButton
                         label={t(i18n.translationKey.addNew)}

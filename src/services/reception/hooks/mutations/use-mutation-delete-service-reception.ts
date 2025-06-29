@@ -12,11 +12,11 @@ export const useMutationDeleteServiceReception = () => {
             const response = await receptionApis.deleteServiceReceptionById(receptionId, listServiceIds);
             return response.Data;
         },
-        onSuccess: () => {
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({
-                queryKey: [QueryKey.RECEPTION.GET_SERVICE_RECEPTION_BY_RECEPTION_ID],
+                queryKey: [QueryKey.RECEPTION.GET_SERVICE_RECEPTION_BY_RECEPTION_ID, variables.receptionId],
             });
-            showToast.success(i18n.t(i18n.t(i18n.translationKey.deleteServiceReceptionSuccessfully)));
+            showToast.success(i18n.t(i18n.translationKey.deleteServiceReceptionSuccessfully));
         },
     });
 };
