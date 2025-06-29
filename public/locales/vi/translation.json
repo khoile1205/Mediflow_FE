@@ -44,6 +44,7 @@
     "SCREENING_FOR_CHILDREN_OVER_1_MONTH": "Khám sàng lọc đối với trẻ trên 1 tháng tuổi",
     "CONCLUSION": "Kết luận",
     "PARENT_NAME": "Họ tên bố mẹ",
+    "PARENT_PHONE_NUMBER": "Số điện thoại bố mẹ",
     "PHONE_NUMBER": "Số điện thoại",
     "WEIGHT": "Cân nặng",
     "TEMPERATURE": "Thân nhiệt",
@@ -279,5 +280,9 @@
     "FIND_PATIENT": "Tìm bệnh nhân",
     "EMAIL": "Email",
     "CREATE_SERVICE_RECEPTION_SUCCESSFULLY": "Tạo tiếp nhận dịch vụ thành công",
-    "PATIENT_RECEPTION_SUCCESSFULLY": "Tiếp nhận bệnh nhân thành công"
+    "PATIENT_RECEPTION_SUCCESSFULLY": "Tiếp nhận bệnh nhân thành công",
+    "CREATE_VACCINATION_PRESCREENING_SUCCESSFULLY": "Tạo khám sàng lọc tiêm chủng thành công.",
+    "UPDATE_VACCINATION_PRESCREENING_SUCCESSFULLY": "Cập nhật khám sàng lọc tiêm chủng thành công.",
+    "NO_NEED_TO_TAKE_REFER_EXAM": "Không cần thực hiện khám sàng lọc tại bệnh viện",
+    "DELETE_SERVICE_RECEPTION_SUCCESSFULLY": "Xóa tiếp nhận dịch vụ thành công."
 }

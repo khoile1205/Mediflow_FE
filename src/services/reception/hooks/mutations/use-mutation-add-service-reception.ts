@@ -14,7 +14,7 @@ export const useMutationAddServiceReception = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [QueryKey.RECEPTION.GET_UNPAID_SERVICES],
+                queryKey: [QueryKey.RECEPTION.GET_SERVICE_RECEPTION_BY_RECEPTION_ID],
             });
             showToast.success(i18n.t(i18n.translationKey.createServiceReceptionSuccessfully));
         },

@@ -54,3 +54,38 @@ export interface ReceptionUnpaidService {
     unitPrice: number;
     createdAt: string;
 }
+
+export interface VaccinationPreScreeningRequest {
+    parentFullName: string;
+    parentPhoneNumber: string;
+    weightKg: number;
+    bodyTemperatureC: number;
+    bloodPressureSystolic: number;
+    bloodPressureDiastolic: number;
+    hasSevereFeverAfterPreviousVaccination: boolean;
+    hasAcuteOrChronicDisease: boolean;
+    isOnOrRecentlyEndedCorticosteroids: boolean;
+    hasAbnormalTemperatureOrVitals: boolean;
+    hasAbnormalHeartSound: boolean;
+    hasHeartValveDisorder: boolean;
+    hasNeurologicalAbnormalities: boolean;
+    isUnderweightBelow2000g: boolean;
+    hasOtherContraindications: boolean;
+    isEligibleForVaccination: boolean;
+    isContraindicatedForVaccination: boolean;
+    isVaccinationDeferred: boolean;
+    isReferredToHospital: boolean;
+    receptionId: number;
+}
+
+export interface VaccinationServiceReception {
+    id: number;
+    serviceId: number;
+    quantity: number;
+    unitPrice: number;
+    invoiceDate: string;
+    paymentStatus: string;
+    requestNumber: string;
+    serviceCode: string;
+    serviceName: string;
+}

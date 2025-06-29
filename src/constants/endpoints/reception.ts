@@ -8,7 +8,14 @@ const vaccinationReceptionEndpoints = {
     getUnpaidServices: (receptionId?: number) => {
         return `${vaccinationReceptionEndpointPrefix}/receptions/${receptionId}/unpaid-services`;
     },
-    deleteServiceReception: (receptionId: number) => {
+    createPrevaccinationReport: `${vaccinationReceptionEndpointPrefix}/screening-evaluations`,
+    updateVaccinationPrescreening: (vaccinationPrescreeningId: number) => {
+        return `${vaccinationReceptionEndpointPrefix}/screening-evaluations/${vaccinationPrescreeningId}`;
+    },
+    getServiceReceptionByReceptionId: (receptionId: number) => {
+        return `${vaccinationReceptionEndpointPrefix}/receptions/${receptionId}/services`;
+    },
+    deleteServiceReceptionByReceptionId: (receptionId: number) => {
         return `${vaccinationReceptionEndpointPrefix}/request-forms/${receptionId}/services`;
     },
 };

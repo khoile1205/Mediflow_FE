@@ -6,6 +6,8 @@ import {
     PatientReceptionResponse,
     ReceptionUnpaidServicesResponse,
     ServiceReceptionRequest,
+    VaccinationPreScreeningRequest,
+    VaccinationServiceReception,
 } from "./types";
 import { ServiceType } from "~/entities/service-type.entity";
 
@@ -46,10 +48,39 @@ const getUnpaidServices = async (receptionId?: number) => {
     });
 };
 
-const deleteServiceReception = async (receptionId: number) => {
+const createPrevaccinationReport = async (data: VaccinationPreScreeningRequest) => {
+    return await callApi<number>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.createPrevaccinationReport,
+        method: HttpMethod.POST,
+        data,
+    });
+};
+const updateVaccinationPrescreening = async (
+    vaccinationPrescreeningId: number,
+    data: VaccinationPreScreeningRequest,
+) => {
+    return await callApi<number>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.updateVaccinationPrescreening(vaccinationPrescreeningId),
+        method: HttpMethod.POST,
+        data: {
+            ...data,
+            id: vaccinationPrescreeningId,
+        },
+    });
+};
+
+const getServiceReceptionByReceptionId = async (receptionId: number) => {
+    return await callApi<VaccinationServiceReception[]>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.getServiceReceptionByReceptionId(receptionId),
+        method: HttpMethod.GET,
+    });
+};
+
+const deleteServiceReceptionById = async (receptionId: number, listServiceIds: number[]) => {
     return await callApi({
-        url: endpoints.reception.vaccinationReceptionEndpoints.deleteServiceReception(receptionId),
-        method: HttpMethod.DELETE,
+        url: endpoints.reception.vaccinationReceptionEndpoints.deleteServiceReceptionByReceptionId(receptionId),
+        method: HttpMethod.POST,
+        data: listServiceIds,
     });
 };
 
@@ -59,5 +90,8 @@ export const receptionApis = {
     addServiceReception,
     getAllServiceTypes,
     getUnpaidServices,
-    deleteServiceReception,
+    createPrevaccinationReport,
+    updateVaccinationPrescreening,
+    getServiceReceptionByReceptionId,
+    deleteServiceReceptionById,
 };

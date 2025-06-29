@@ -15,10 +15,10 @@ interface UseAgGridProps<T> {
 // Define interface for hook return value
 interface UseAgGridResult<T> {
     defaultColDef: ColDef<T>;
-    gridOptions: GridOptions;
+    gridOptions: GridOptions<T>;
     onGridReady: (params: GridReadyEvent) => void;
     onRowDataChanged: (params: RowDataTransaction) => void;
-    gridApi: GridApi | null;
+    gridApi: GridApi<T> | null;
     refreshCells: () => void;
 }
 

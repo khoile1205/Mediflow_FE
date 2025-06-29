@@ -44,6 +44,7 @@
     "SCREENING_FOR_CHILDREN_OVER_1_MONTH": "Screening for children over 1 month old",
     "CONCLUSION": "Conclusion",
     "PARENT_NAME": "Parent's name",
+    "PARENT_PHONE_NUMBER": "Parent's phone number",
     "PHONE_NUMBER": "Phone number",
     "WEIGHT": "Weight",
     "TEMPERATURE": "Temperature",
@@ -279,5 +280,9 @@
     "FIND_PATIENT": "Find patient",
     "EMAIL": "Email",
     "CREATE_SERVICE_RECEPTION_SUCCESSFULLY": "Service reception created successfully.",
-    "PATIENT_RECEPTION_SUCCESSFULLY": "Patient reception successfully"
+    "PATIENT_RECEPTION_SUCCESSFULLY": "Patient reception successfully",
+    "CREATE_VACCINATION_PRESCREENING_SUCCESSFULLY": "Created vaccination pre-screening successfully.",
+    "UPDATE_VACCINATION_PRESCREENING_SUCCESSFULLY": "Update vaccination pre-screening successfully.",
+    "NO_NEED_TO_TAKE_REFER_EXAM": "No need to take referral examination",
+    "DELETE_SERVICE_RECEPTION_SUCCESSFULLY": "Service reception deleted successfully."
 }

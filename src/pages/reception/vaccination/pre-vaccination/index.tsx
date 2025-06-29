@@ -1,18 +1,71 @@
-import { Box, Grid, InputAdornment, Stack, Typography } from "@mui/material";
+import { Box, Button, Grid, InputAdornment, Stack, Typography } from "@mui/material";
 import React from "react";
+import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
-import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
+import {
+    useMutationCreatePreVaccination,
+    useMutationUpdateVaccinationPrescreening,
+} from "~/services/reception/hooks/mutations";
+import { VaccinationPreScreeningRequest } from "~/services/reception/infras/types";
+import { VaccinationPrescreeningFormValue } from "../types";
+import { useConclusionCheckboxStatus } from "./use-conclusion-checkbox-status";
 
 interface PreVaccinationProps {
-    disabled?: boolean;
+    receptionId?: number;
+    form: UseFormReturn<VaccinationPrescreeningFormValue>;
 }
 
-export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
+export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, form }) => {
     const { t } = useTranslation();
-    const form = useForm();
+
+    const { mutateAsync: createVaccinationPrescreening } = useMutationCreatePreVaccination();
+    const { mutateAsync: updateVaccinationPrescreening } = useMutationUpdateVaccinationPrescreening();
+    const [vaccinationPrescreeningId, setVaccinationPrescreeningId] = React.useState<number | null>(null);
+
+    const { isEligibleEnabled, isContraindicatedEnabled, isDeferredEnabled } = useConclusionCheckboxStatus(form);
+
+    const onSubmitPreVaccinationForm = async (data: VaccinationPrescreeningFormValue) => {
+        const prevaccinationRequest = getPrevaccinationRequest(data);
+        if (!vaccinationPrescreeningId) {
+            handleCreateVaccinationPrescreening(prevaccinationRequest);
+            return;
+        }
+        handleUpdateVaccinationPrescreening(prevaccinationRequest);
+    };
+
+    const getPrevaccinationRequest = (data: VaccinationPrescreeningFormValue): VaccinationPreScreeningRequest => {
+        return {
+            ...data,
+            weightKg: Number(data.weightKg),
+            bodyTemperatureC: Number(data.bodyTemperatureC),
+            bloodPressureSystolic: Number(data.bloodPressureSystolic),
+            bloodPressureDiastolic: Number(data.bloodPressureDiastolic),
+            receptionId: Number(receptionId),
+        };
+    };
+
+    const handleCreateVaccinationPrescreening = async (prevaccinationRequest: VaccinationPreScreeningRequest) => {
+        const response = await createVaccinationPrescreening(prevaccinationRequest);
+        setVaccinationPrescreeningId(response);
+    };
+
+    const handleUpdateVaccinationPrescreening = async (prevaccinationRequest: VaccinationPreScreeningRequest) => {
+        await updateVaccinationPrescreening({
+            vaccinationPrescreeningId,
+            data: prevaccinationRequest,
+        });
+    };
+
+    React.useEffect(() => {
+        if (receptionId) {
+            form.setValue("isEligibleForVaccination", isEligibleEnabled);
+            form.setValue("isContraindicatedForVaccination", isContraindicatedEnabled);
+            form.setValue("isVaccinationDeferred", isDeferredEnabled);
+        }
+    }, [isEligibleEnabled, isContraindicatedEnabled, isDeferredEnabled, receptionId]);
 
     return (
         <DynamicForm form={form}>
@@ -27,18 +80,16 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                 <FormItem
                                     render="text-input"
                                     label={t(i18n.translationKey.parentName)}
-                                    required
-                                    name="parentName"
-                                    disabled={disabled}
+                                    name="parentFullName"
+                                    disabled={!receptionId}
                                 />
                             </Grid>
                             <Grid size={12 / 5}>
                                 <FormItem
                                     render="text-input"
-                                    label={t(i18n.translationKey.phoneNumber)}
-                                    required
+                                    label={t(i18n.translationKey.parentPhoneNumber)}
                                     name="parentPhoneNumber"
-                                    disabled={disabled}
+                                    disabled={!receptionId}
                                 />
                             </Grid>
                             <Grid size={12 / 5}>
@@ -46,8 +97,9 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     render="input-number"
                                     label={t(i18n.translationKey.weight)}
                                     required
-                                    name="kidWeight"
-                                    disabled={disabled}
+                                    name="weightKg"
+                                    minNumber={1}
+                                    disabled={!receptionId}
                                     slotProps={{
                                         input: {
                                             endAdornment: (
@@ -64,8 +116,9 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     render="input-number"
                                     label={t(i18n.translationKey.temperature)}
                                     required
-                                    name="kidTemperature"
-                                    disabled={disabled}
+                                    name="bodyTemperatureC"
+                                    minNumber={1}
+                                    disabled={!receptionId}
                                     slotProps={{
                                         input: {
                                             endAdornment: (
@@ -82,15 +135,15 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <FormItem
                                         render="input-number"
                                         label={t(i18n.translationKey.bloodPressure)}
-                                        name="systolicBloodPressure"
-                                        disabled={disabled}
+                                        name="bloodPressureSystolic"
+                                        disabled={!receptionId}
                                     />
                                     <Typography>/</Typography>
                                     <FormItem
                                         render="input-number"
                                         label={t(i18n.translationKey.bloodPressure)}
-                                        name="diastolicBloodPressure"
-                                        disabled={disabled}
+                                        name="bloodPressureDiastolic"
+                                        disabled={!receptionId}
                                     />
                                     <Typography>{t(i18n.translationKey.unitMmhg)}</Typography>
                                 </Stack>
@@ -100,73 +153,73 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
-                                            name="severeReactionPreviousVaccination"
+                                            name="hasSevereFeverAfterPreviousVaccination"
                                             label={t(i18n.translationKey.severeReactionPreviousVaccination)}
-                                            disabled={disabled}
+                                            disabled={!receptionId}
                                         />
                                     </Grid>
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
-                                            name="acuteOrChronicDisease"
+                                            name="hasAcuteOrChronicDisease"
                                             label={t(i18n.translationKey.acuteOrChronicDisease)}
-                                            disabled={disabled}
+                                            disabled={!receptionId}
                                         />
                                     </Grid>
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
-                                            name="recentImmunosuppressiveTreatment"
+                                            name="isOnOrRecentlyEndedCorticosteroids"
                                             label={t(i18n.translationKey.recentImmunosuppressiveTreatment)}
-                                            disabled={disabled}
+                                            disabled={!receptionId}
                                         />
                                     </Grid>
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
-                                            name="abnormalTemperatureOrVitals"
+                                            name="hasAbnormalTemperatureOrVitals"
                                             label={t(i18n.translationKey.abnormalTemperatureOrVitals)}
-                                            disabled={disabled}
+                                            disabled={!receptionId}
                                         />
                                     </Grid>
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
-                                            name="abnormalHeartSound"
+                                            name="hasAbnormalHeartSound"
                                             label={t(i18n.translationKey.abnormalHeartSound)}
-                                            disabled={disabled}
+                                            disabled={!receptionId}
                                         />
                                     </Grid>
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
-                                            name="heartValveAbnormality"
+                                            name="hasHeartValveDisorder"
                                             label={t(i18n.translationKey.heartValveAbnormality)}
-                                            disabled={disabled}
+                                            disabled={!receptionId}
                                         />
                                     </Grid>
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
-                                            name="abnormalDisorder"
+                                            name="hasNeurologicalAbnormalities"
                                             label={t(i18n.translationKey.abnormalDisorder)}
-                                            disabled={disabled}
+                                            disabled={!receptionId}
                                         />
                                     </Grid>
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
-                                            name="weightUnder2000g"
+                                            name="isUnderweightBelow2000g"
                                             label={t(i18n.translationKey.weightUnder2000g)}
-                                            disabled={disabled}
+                                            disabled={!receptionId}
                                         />
                                     </Grid>
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
-                                            name="otherContraindications"
+                                            name="hasOtherContraindications"
                                             label={t(i18n.translationKey.otherContraindications)}
-                                            disabled={disabled}
+                                            disabled={!receptionId}
                                         />
                                     </Grid>
                                 </Grid>
@@ -174,6 +227,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                         </Grid>
                     </Box>
                 </Box>
+
                 <Box>
                     <Typography variant="subtitle2" className="ms-2 text-lg">
                         {t(i18n.translationKey.conclusion)}
@@ -183,36 +237,46 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ disabled }) => {
                             <Grid size={6}>
                                 <FormItem
                                     render="checkbox"
-                                    name="eligibleForVaccination"
+                                    name="isEligibleForVaccination"
                                     label={t(i18n.translationKey.eligibleForVaccination)}
-                                    disabled={disabled}
+                                    disabled={!receptionId || isContraindicatedEnabled || isDeferredEnabled}
                                 />
                             </Grid>
                             <Grid size={6}>
                                 <FormItem
                                     render="checkbox"
-                                    name="contraindicatedForVaccination"
+                                    name="isContraindicatedForVaccination"
                                     label={t(i18n.translationKey.contraindicatedForVaccination)}
-                                    disabled={disabled}
+                                    disabled={!receptionId || isContraindicatedEnabled}
                                 />
                             </Grid>
                             <Grid size={6}>
                                 <FormItem
                                     render="checkbox"
-                                    name="postponeVaccination"
+                                    name="isVaccinationDeferred"
                                     label={t(i18n.translationKey.postponeVaccination)}
-                                    disabled={disabled}
+                                    disabled={!receptionId || isDeferredEnabled}
                                 />
                             </Grid>
                             <Grid size={6}>
                                 <FormItem
                                     render="checkbox"
-                                    name="referToHospital"
+                                    name="isReferredToHospital"
                                     label={t(i18n.translationKey.referToHospital)}
-                                    disabled={disabled}
+                                    disabled={!receptionId}
                                 />
                             </Grid>
                         </Grid>
+                        <Box mt={2} display="flex" justifyContent="flex-end">
+                            <Button
+                                disabled={!receptionId}
+                                variant="contained"
+                                color="primary"
+                                onClick={form.handleSubmit(onSubmitPreVaccinationForm)}
+                            >
+                                {t(i18n.translationKey.save)}
+                            </Button>
+                        </Box>
                     </Box>
                 </Box>
             </Stack>

@@ -18,7 +18,6 @@ export const useQueryReceptionUnpaidServices = (receptionId?: number) => {
             return await receptionApis.getUnpaidServices(receptionId);
         },
         enabled: !!receptionId,
-        retry: false,
     });
 
     const unpaidServices = React.useMemo(() => {
