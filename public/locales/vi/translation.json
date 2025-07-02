@@ -284,5 +284,20 @@
     "CREATE_VACCINATION_PRESCREENING_SUCCESSFULLY": "Tạo khám sàng lọc tiêm chủng thành công.",
     "UPDATE_VACCINATION_PRESCREENING_SUCCESSFULLY": "Cập nhật khám sàng lọc tiêm chủng thành công.",
     "NO_NEED_TO_TAKE_REFER_EXAM": "Không cần thực hiện khám sàng lọc tại bệnh viện",
-    "DELETE_SERVICE_RECEPTION_SUCCESSFULLY": "Xóa tiếp nhận dịch vụ thành công."
+    "DELETE_SERVICE_RECEPTION_SUCCESSFULLY": "Xóa tiếp nhận dịch vụ thành công.",
+    "INJECTION_COMPLETE_TIME": "Thời gian tiêm xong",
+    "CONFIRM_FOLLOW_UP": "Xác nhận theo dõi",
+    "NEGATIVE": "Âm tính",
+    "POSITIVE": "Dương tính",
+    "REACTION_OCCURRED": "Xảy ra phản ứng",
+    "POST_VACCINATION_RESULT": "Kết quả sau tiêm",
+    "COMMON_REACTIONS": "Phản ứng thông thường",
+    "FEVER_OVER_39": "Sốt > 39°C",
+    "PAIN_AT_INJECTION_SITE": "Sưng đau tại chỗ khi tiêm",
+    "OTHER": "Khác",
+    "OTHER_SYMPTOMS": "Các triệu chứng khác",
+    "REACTION_AFTER_INJECTION_TIME": "Thời gian phản ứng sau khi tiêm",
+    "NO": "STT",
+    "REACTION_DATE": "Ngày phản ứng",
+    "AFTER_INJECTION": "Sau tiêm"
 }

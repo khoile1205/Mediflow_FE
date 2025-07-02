@@ -284,5 +284,20 @@
     "CREATE_VACCINATION_PRESCREENING_SUCCESSFULLY": "Created vaccination pre-screening successfully.",
     "UPDATE_VACCINATION_PRESCREENING_SUCCESSFULLY": "Update vaccination pre-screening successfully.",
     "NO_NEED_TO_TAKE_REFER_EXAM": "No need to take referral examination",
-    "DELETE_SERVICE_RECEPTION_SUCCESSFULLY": "Service reception deleted successfully."
+    "DELETE_SERVICE_RECEPTION_SUCCESSFULLY": "Service reception deleted successfully.",
+    "INJECTION_COMPLETE_TIME": "Injection Complete Time",
+    "CONFIRM_FOLLOW_UP": "Confirm Follow-up",
+    "NEGATIVE": "Negative",
+    "POSITIVE": "Positive",
+    "REACTION_OCCURRED": "Reaction Occurred",
+    "POST_VACCINATION_RESULT": "Post-vaccination Result",
+    "COMMON_REACTIONS": "Common Reactions",
+    "FEVER_OVER_39": "Fever over 39°C",
+    "PAIN_AT_INJECTION_SITE": "Pain at Injection Site",
+    "OTHER": "Other",
+    "OTHER_SYMPTOMS": "Other Symptoms",
+    "REACTION_AFTER_INJECTION_TIME": "Time of reaction after injection",
+    "NO": "No",
+    "REACTION_DATE": "Reaction date",
+    "AFTER_INJECTION": "Follow-up after injection"
 }
