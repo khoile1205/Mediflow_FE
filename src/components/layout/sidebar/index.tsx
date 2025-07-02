@@ -1,4 +1,4 @@
-import { Dashboard, ExitToApp, Home, Inventory2, Paid, Vaccines } from "@mui/icons-material";
+import { AccessTime, Dashboard, ExitToApp, Home, Inventory2, Paid, Vaccines } from "@mui/icons-material";
 import { Avatar, Box, Drawer, Stack, Typography } from "@mui/material";
 import React from "react";
 import AppLogo from "~/assets/images/app_logo.png";
@@ -43,6 +43,7 @@ const sidebarTree: SidebarTabProps[] = [
             {
                 labelKey: i18n.translationKey.AfterInjection,
                 pathName: "/vaccination/post-injection",
+                icon: <AccessTime />,
             },
             {
                 labelKey: i18n.translationKey.vaccinationHistory,

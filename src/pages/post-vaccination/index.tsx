@@ -163,6 +163,7 @@ const PostVaccinationPage: React.FC = () => {
                                 render="date-time-picker"
                                 name="injectionCompleteTime"
                                 label={t(i18n.translationKey.injectionCompleteTime)}
+                                disabled
                             />
                         </Grid>
 
@@ -234,6 +235,7 @@ const PostVaccinationPage: React.FC = () => {
                                 render="date-time-picker"
                                 name="reactionAfterInjectionTime"
                                 label={t(i18n.translationKey.reactionAfterInjectionTime)}
+                                disabled
                             />
                         </Grid>
 
