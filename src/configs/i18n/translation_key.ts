@@ -292,6 +292,20 @@ const exceptionTranslationKey = {
     invalidServiceType: "INVALID_SERVICE_TYPE",
     pleaseSelectDiseaseGroupBeforeAdding: "PLEASE_SELECT_DISEASE_GROUP_BEFORE_ADDING",
     pleaseSelectServiceBeforeAdding: "PLEASE_SELECT_SERVICE_BEFORE_ADDING",
+    injectionCompleteTime: "INJECTION_COMPLETE_TIME",
+    confirmFollowUp: "CONFIRM_FOLLOW_UP",
+    negative: "NEGATIVE",
+    positive: "POSITIVE",
+    reactionOccurred: "REACTION_OCCURRED",
+    postVaccinationResult: "POST_VACCINATION_RESULT",
+    commonReactions: "COMMON_REACTIONS",
+    feverOver39: "FEVER_OVER_39",
+    painAtInjectionSite: "PAIN_AT_INJECTION_SITE",
+    other: "OTHER",
+    otherSymptoms: "OTHER_SYMPTOMS",
+    reactionAfterInjectionTime: "REACTION_AFTER_INJECTION_TIME",
+    no: "NO",
+    reactionDate: "REACTION_DATE",
 };
 
 export const TRANSLATION_KEY = {
