@@ -298,5 +298,6 @@
     "OTHER_SYMPTOMS": "Các triệu chứng khác",
     "REACTION_AFTER_INJECTION_TIME": "Thời gian phản ứng sau khi tiêm",
     "NO": "STT",
-    "REACTION_DATE": "Ngày phản ứng"
+    "REACTION_DATE": "Ngày phản ứng",
+    "AFTER_INJECTION": "Sau tiêm"
 }

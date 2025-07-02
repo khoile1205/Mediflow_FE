@@ -1,49 +1,13 @@
-import { Box, Button, Grid, Stack, TextField, Typography, MenuItem } from "@mui/material";
+import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { ColDef } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
+import SearchBox from "~/components/common/search-box";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
-
-const ReadonlyTextField: React.FC<any> = (props) => (
-    <TextField
-        variant="outlined"
-        size="small"
-        fullWidth
-        slotProps={{
-            input: {
-                readOnly: true,
-            },
-        }}
-        {...props}
-    />
-);
-
-const ReadonlySelectField: React.FC<any> = ({ value, label, ...props }) => (
-    <TextField
-        variant="outlined"
-        size="small"
-        fullWidth
-        select
-        label={label}
-        value={value}
-        slotProps={{
-            select: {
-                IconComponent: ExpandMoreIcon,
-            },
-            input: {
-                readOnly: true,
-            },
-        }}
-        {...props}
-    >
-        <MenuItem value={value}>{value}</MenuItem>
-    </TextField>
-);
 
 const PostVaccinationPage: React.FC = () => {
     const { t } = useTranslation();
@@ -54,7 +18,7 @@ const PostVaccinationPage: React.FC = () => {
     const reactionAgGrid = useAgGrid({});
 
     const patientColumnDefs: ColDef[] = [
-        { headerName: t(i18n.translationKey.no), field: "no", width: 70 },
+        { headerName: t(i18n.translationKey.no), field: "no", width: 30 },
         { headerName: t(i18n.translationKey.patientName), field: "patientName" },
         { headerName: t(i18n.translationKey.dateOfBirth), field: "dob" },
     ];
@@ -64,7 +28,7 @@ const PostVaccinationPage: React.FC = () => {
             {
                 field: "no",
                 headerName: t(i18n.translationKey.no),
-                width: 70,
+                width: 30,
                 headerStyle: { backgroundColor: "#98D2C0" },
             },
             {
@@ -115,32 +79,16 @@ const PostVaccinationPage: React.FC = () => {
             <DynamicForm form={patientForm}>
                 <Box className="flex h-full basis-1/3 flex-col bg-[#F6F8D5] p-3">
                     <Stack spacing={2} className="flex-grow">
-                        <ReadonlyTextField label={t(i18n.translationKey.vaccinationNumber)} />
+                        <FormItem
+                            render="text-input"
+                            name="vaccinationNumber"
+                            label={t(i18n.translationKey.vaccinationNumber)}
+                            slotProps={{ input: { readOnly: true } }}
+                        />
 
                         <Grid container spacing={1} alignItems="center">
-                            <Grid size={8}>
-                                <TextField
-                                    label={t(i18n.translationKey.findPatient)}
-                                    size="small"
-                                    fullWidth
-                                    onChange={(e) => handleSearch(e.target.value)}
-                                />
-                            </Grid>
-                            <Grid size={4}>
-                                <Button
-                                    fullWidth
-                                    sx={{
-                                        backgroundColor: "white",
-                                        color: "black",
-                                        fontWeight: 400,
-                                        borderRadius: "8px",
-                                        border: "1px solid black",
-                                        textTransform: "none",
-                                        height: "40px",
-                                    }}
-                                >
-                                    {t(i18n.translationKey.refreshList)}
-                                </Button>
+                            <Grid size={12}>
+                                <SearchBox onChange={handleSearch} label={t(i18n.translationKey.findPatient)} />
                             </Grid>
                         </Grid>
 
@@ -151,17 +99,45 @@ const PostVaccinationPage: React.FC = () => {
                             className="h-[210px]"
                         />
 
-                        <ReadonlyTextField label={t(i18n.translationKey.medicalCode)} />
+                        <FormItem
+                            render="text-input"
+                            name="medicalCode"
+                            label={t(i18n.translationKey.medicalCode)}
+                            slotProps={{ input: { readOnly: true } }}
+                        />
+
                         <Grid container spacing={1}>
                             <Grid size={6}>
-                                <ReadonlyTextField label={t(i18n.translationKey.dateOfBirth)} />
+                                <FormItem
+                                    render="text-input"
+                                    name="dob"
+                                    label={t(i18n.translationKey.dateOfBirth)}
+                                    slotProps={{ input: { readOnly: true } }}
+                                />
                             </Grid>
                             <Grid size={6}>
-                                <ReadonlyTextField label={t(i18n.translationKey.gender)} />
+                                <FormItem
+                                    render="text-input"
+                                    name="gender"
+                                    label={t(i18n.translationKey.gender)}
+                                    slotProps={{ input: { readOnly: true } }}
+                                />
                             </Grid>
                         </Grid>
-                        <ReadonlyTextField label={t(i18n.translationKey.vaccinationNumber)} />
-                        <ReadonlyTextField label={t(i18n.translationKey.patientName)} />
+
+                        <FormItem
+                            render="text-input"
+                            name="vaccinationNumberDuplicate"
+                            label={t(i18n.translationKey.vaccinationNumber)}
+                            slotProps={{ input: { readOnly: true } }}
+                        />
+
+                        <FormItem
+                            render="text-input"
+                            name="patientName"
+                            label={t(i18n.translationKey.patientName)}
+                            slotProps={{ input: { readOnly: true } }}
+                        />
                     </Stack>
 
                     <Box className="mt-4 flex gap-2">
@@ -183,9 +159,10 @@ const PostVaccinationPage: React.FC = () => {
                 <DynamicForm form={followUpForm}>
                     <Grid container spacing={2}>
                         <Grid size={12}>
-                            <ReadonlySelectField
+                            <FormItem
+                                render="date-time-picker"
+                                name="injectionCompleteTime"
                                 label={t(i18n.translationKey.injectionCompleteTime)}
-                                value="20/01/2025 15:30:29"
                             />
                         </Grid>
 
@@ -253,9 +230,10 @@ const PostVaccinationPage: React.FC = () => {
                         </Grid>
 
                         <Grid size={12}>
-                            <ReadonlySelectField
+                            <FormItem
+                                render="date-time-picker"
+                                name="reactionAfterInjectionTime"
                                 label={t(i18n.translationKey.reactionAfterInjectionTime)}
-                                value="20/01/2025 15:45:29"
                             />
                         </Grid>
 
@@ -308,13 +286,12 @@ const PostVaccinationPage: React.FC = () => {
                         </Grid>
 
                         <Grid size={12}>
-                            <TextField
+                            <FormItem
+                                render="text-input"
+                                name="otherSymptoms"
                                 label={t(i18n.translationKey.otherSymptoms)}
                                 multiline
                                 rows={2}
-                                size="small"
-                                fullWidth
-                                value=""
                             />
                         </Grid>
                     </Grid>

@@ -298,5 +298,6 @@
     "OTHER_SYMPTOMS": "Other Symptoms",
     "REACTION_AFTER_INJECTION_TIME": "Time of reaction after injection",
     "NO": "No",
-    "REACTION_DATE": "Reaction date"
+    "REACTION_DATE": "Reaction date",
+    "AFTER_INJECTION": "Follow-up after injection"
 }
