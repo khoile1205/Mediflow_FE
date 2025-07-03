@@ -1,3 +1,3 @@
 export type ISearchParam = {
-    searchTerms?: string;
+    searchTerm?: string;
 };

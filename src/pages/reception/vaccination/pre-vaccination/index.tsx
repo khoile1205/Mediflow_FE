@@ -18,6 +18,7 @@ interface PreVaccinationProps {
     form: UseFormReturn<VaccinationPrescreeningFormValue>;
 }
 
+// TODO: research for under 1 month old children pre-screening form
 export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, form }) => {
     const { t } = useTranslation();
 
@@ -99,6 +100,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     required
                                     name="weightKg"
                                     minNumber={1}
+                                    maxNumber={form.watch("isUnderweightBelow2000g") ? 2 : undefined}
                                     disabled={!receptionId}
                                     slotProps={{
                                         input: {
@@ -136,6 +138,8 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                         render="input-number"
                                         label={t(i18n.translationKey.bloodPressure)}
                                         name="bloodPressureSystolic"
+                                        required
+                                        minNumber={1}
                                         disabled={!receptionId}
                                     />
                                     <Typography>/</Typography>
@@ -143,6 +147,8 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                         render="input-number"
                                         label={t(i18n.translationKey.bloodPressure)}
                                         name="bloodPressureDiastolic"
+                                        required
+                                        minNumber={1}
                                         disabled={!receptionId}
                                     />
                                     <Typography>{t(i18n.translationKey.unitMmhg)}</Typography>
@@ -239,7 +245,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     render="checkbox"
                                     name="isEligibleForVaccination"
                                     label={t(i18n.translationKey.eligibleForVaccination)}
-                                    disabled={!receptionId || isContraindicatedEnabled || isDeferredEnabled}
+                                    disabled={!receptionId}
                                 />
                             </Grid>
                             <Grid size={6}>
@@ -247,7 +253,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     render="checkbox"
                                     name="isContraindicatedForVaccination"
                                     label={t(i18n.translationKey.contraindicatedForVaccination)}
-                                    disabled={!receptionId || isContraindicatedEnabled}
+                                    disabled={!receptionId}
                                 />
                             </Grid>
                             <Grid size={6}>
@@ -255,9 +261,10 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     render="checkbox"
                                     name="isVaccinationDeferred"
                                     label={t(i18n.translationKey.postponeVaccination)}
-                                    disabled={!receptionId || isDeferredEnabled}
+                                    disabled={!receptionId}
                                 />
                             </Grid>
+                            {/* TODO: change the word  */}
                             <Grid size={6}>
                                 <FormItem
                                     render="checkbox"

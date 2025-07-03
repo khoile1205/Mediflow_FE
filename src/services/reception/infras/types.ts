@@ -42,7 +42,7 @@ export interface ServiceReceptionRequest {
 
 export interface ReceptionUnpaidServicesResponse {
     services: ReceptionUnpaidService[];
-    // vaccinations: Vaccination[]
+    vaccinations: ReceptionVaccinationService[];
 }
 
 export interface ReceptionUnpaidService {
@@ -53,6 +53,16 @@ export interface ReceptionUnpaidService {
     quantity: number;
     unitPrice: number;
     createdAt: string;
+}
+export interface ReceptionVaccinationService {
+    id: number;
+    requestNumber: string;
+    vaccineId: number;
+    vaccineTypeName: string;
+    vaccineName: string;
+    quantity: number;
+    unitPrice: number;
+    createdAt: Date;
 }
 
 export interface VaccinationPreScreeningRequest {
@@ -88,4 +98,50 @@ export interface VaccinationServiceReception {
     requestNumber: string;
     serviceCode: string;
     serviceName: string;
+}
+
+export interface VaccinationIndicateReception {
+    id: number;
+    appointmentDate: Date;
+    vaccineId: number;
+    vaccineName?: string;
+    vaccineTypeName?: string;
+    isConfirmed: boolean;
+    note?: string;
+    invoiceDate: Date;
+    quantity: number;
+    testResultEntry?: string;
+    status: PaymentStatus;
+    receptionId: number;
+    scheduledDate: Date;
+    isReadyToUse: boolean;
+    doctorId: number;
+    requestNumber: string;
+    unitPrice: number;
+}
+
+export enum PaymentStatus {
+    NotPaid,
+    Paid,
+    Refunded,
+    AdjustedOut,
+}
+
+export interface AddVaccinationIndicateReceptionRequest {
+    receptionId: number;
+    vaccineId: number;
+    quantity: number;
+    isReadyToUse: boolean;
+    scheduledDate?: Date;
+    appointmentDate: Date;
+    note?: string;
+}
+
+export interface UpdateVaccinationIndicateReceptionRequest {
+    id: number;
+    quantity: number;
+    isReadyToUse: boolean;
+    scheduledDate?: Date;
+    appointmentDate: Date;
+    note?: string;
 }

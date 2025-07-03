@@ -1,5 +1,17 @@
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 
+export function getPreviousDate(baseDate: Date = new Date()): Date {
+    const date = new Date(baseDate);
+    date.setDate(date.getDate() - 1);
+    return date;
+}
+
+export function getNextDate(baseDate: Date = new Date()): Date {
+    const date = new Date(baseDate);
+    date.setDate(date.getDate() + 1);
+    return date;
+}
+
 export const formatDate = (date: Date | string, format: DATE_TIME_FORMAT): string => {
     switch (format) {
         case DATE_TIME_FORMAT["dd/MM/yyyy"]:

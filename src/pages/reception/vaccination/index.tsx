@@ -7,7 +7,6 @@ import { DistrictFormItem, ProvinceFormItem } from "~/components/form/custom";
 import WardFormItem from "~/components/form/custom/ward.form-item";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
-import { useForm } from "~/components/form/hooks/use-form";
 import { toBaseOption } from "~/components/form/utils";
 import { EMAIL_PATTERN, PHONE_NUMBER_PATTERN, VIETNAMESE_ID_CARD_PATTERN } from "~/components/form/validation/pattern";
 import { PatientSelectModal } from "~/components/modal/patient-select.modal";
@@ -20,9 +19,9 @@ import { useQueryServiceTypes } from "~/services/reception/hooks/queries";
 import { PatientReceptionRequest } from "~/services/reception/infras/types";
 import { PreVaccination } from "./pre-vaccination";
 import { TestIndication } from "./test_indication";
-import { PatientReceptionFormValue, VaccinationPrescreeningFormValue } from "./types";
 import { UnpaidCosts } from "./unpaid_costs";
 import { VaccinationIndication } from "./vaccination_indication";
+import { useCreateVaccinationForm } from "./hooks";
 
 type TabType = "pre_vaccination" | "vaccination_indication" | "examination_indication" | "unpaid_costs";
 
@@ -42,50 +41,7 @@ const ReceptionVaccination: React.FC = () => {
     const { data: serviceTypes } = useQueryServiceTypes();
 
     // Form setup
-    const patientReceptionForm = useForm<PatientReceptionFormValue>({
-        defaultValues: {
-            code: "",
-            name: "",
-            gender: Gender.MALE,
-            dob: new Date(),
-            phoneNumber: "",
-            identityCard: "",
-            addressDetail: "",
-            email: "",
-            province: "",
-            district: "",
-            ward: "",
-            isPregnant: false,
-            isForeigner: false,
-            patientId: null,
-            receptionDate: new Date(),
-            serviceTypeId: null,
-        },
-    });
-
-    const vaccinationPrescreeningForm = useForm<VaccinationPrescreeningFormValue>({
-        defaultValues: {
-            parentFullName: "",
-            parentPhoneNumber: "",
-            weightKg: 0,
-            bodyTemperatureC: 0,
-            bloodPressureSystolic: 0,
-            bloodPressureDiastolic: 0,
-            hasSevereFeverAfterPreviousVaccination: false,
-            hasAcuteOrChronicDisease: false,
-            isOnOrRecentlyEndedCorticosteroids: false,
-            hasAbnormalTemperatureOrVitals: false,
-            hasAbnormalHeartSound: false,
-            hasHeartValveDisorder: false,
-            hasNeurologicalAbnormalities: false,
-            isUnderweightBelow2000g: false,
-            hasOtherContraindications: false,
-            isEligibleForVaccination: false,
-            isContraindicatedForVaccination: false,
-            isVaccinationDeferred: false,
-            isReferredToHospital: false,
-        },
-    });
+    const { patientReceptionForm, vaccinationPrescreeningForm, vaccinationIndicationForm } = useCreateVaccinationForm();
 
     const handleAddNewPatient = async () => {
         patientReceptionForm.reset();
@@ -119,6 +75,9 @@ const ReceptionVaccination: React.FC = () => {
         patientReceptionForm.reset();
         setIsRecepting(false);
         setReceptionId(null);
+
+        vaccinationIndicationForm.reset();
+        vaccinationPrescreeningForm.reset();
     };
 
     const handleReset = () => {
@@ -447,7 +406,13 @@ const ReceptionVaccination: React.FC = () => {
             {tab === "pre_vaccination" && (
                 <PreVaccination receptionId={receptionId} form={vaccinationPrescreeningForm} />
             )}
-            {tab === "vaccination_indication" && <VaccinationIndication />}
+            {tab === "vaccination_indication" && (
+                <VaccinationIndication
+                    receptionId={receptionId}
+                    isAllowedToVaccinate={vaccinationPrescreeningForm.watch("isEligibleForVaccination")}
+                    form={vaccinationIndicationForm}
+                />
+            )}
             {tab === "examination_indication" && (
                 <TestIndication
                     disabled={!isEnableProcessSubtask}
@@ -455,7 +420,7 @@ const ReceptionVaccination: React.FC = () => {
                     isReferredToHospital={vaccinationPrescreeningForm.watch("isReferredToHospital")}
                 />
             )}
-            {tab === "unpaid_costs" && <UnpaidCosts />}
+            {tab === "unpaid_costs" && <UnpaidCosts receptionId={receptionId} />}
             <PatientSelectModal
                 open={isOpenPatientSelectModal}
                 onClose={() => setIsOpenPatientSelectModal(false)}

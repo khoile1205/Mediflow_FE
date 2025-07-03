@@ -5,9 +5,17 @@ import DatePicker from "react-datepicker";
 import DatePickerContainer from "../../../libs/date-picker/date-picker.container";
 import { ControllerWrapper, FormErrorMessage } from "../common";
 import { BaseFormItemProps } from "../types/form-item";
-import { TValidationMaxDate, TValidationMinDate } from "../types/validation";
+import {
+    TValidationMaxDate,
+    TValidationMinDate,
+    TValidationNoFutureDate,
+    TValidationNoPastDate,
+} from "../types/validation";
 
-type BaseDatePickerValidationRules = TValidationMinDate & TValidationMaxDate;
+type BaseDatePickerValidationRules = TValidationMinDate &
+    TValidationMaxDate &
+    TValidationNoFutureDate &
+    TValidationNoPastDate;
 
 type BaseDatePickerUIProps = {
     defaultValue?: Date | string;
@@ -35,6 +43,17 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
     const [open, setOpen] = useState(false);
 
     const renderLabel = label ? `${label} ${validationProps.required ? "*" : ""}` : "";
+
+    const minDate = React.useMemo(() => {
+        if (validationProps.noPastDate) return new Date();
+        return validationProps.minDate;
+    }, [validationProps.noPastDate, validationProps.minDate]);
+
+    const maxDate = React.useMemo(() => {
+        if (validationProps.noFutureDate) return new Date();
+        return validationProps.maxDate;
+    }, [validationProps.noFutureDate, validationProps.maxDate]);
+
     return (
         <ControllerWrapper
             name={name}
@@ -70,8 +89,8 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
                                     showIcon={false}
                                     open={!datePickerProps?.readOnly && open}
                                     dateFormat={datePickerProps.dateFormat}
-                                    minDate={validationProps.minDate}
-                                    maxDate={validationProps.maxDate}
+                                    minDate={minDate}
+                                    maxDate={maxDate}
                                     readOnly={datePickerProps.readOnly}
                                     placeholderText={placeholder}
                                     popperPlacement="bottom-end"

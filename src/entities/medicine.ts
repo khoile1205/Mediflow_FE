@@ -3,7 +3,6 @@ export interface Medicine {
     medicineCode: string;
     medicineName: string;
     unit: string;
-    manufacturer: Manufacture | null;
     activeIngredient: string;
     usageInstructions: string;
     concentration: string;
@@ -13,6 +12,7 @@ export interface Medicine {
     nationalMedicineCode: string;
     description: string;
     note: string;
+    unitPrice: number;
     registrationNumber: string;
     medicineTypeId: number;
     vaccineTypeId: number;

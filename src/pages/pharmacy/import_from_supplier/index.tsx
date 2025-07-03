@@ -225,7 +225,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                         totalItems={supplierPaginationData?.totalItems ?? 0}
                                         onRowSelected={handleSelectSupplier}
                                         onPageChange={handleSupplierPageChange}
-                                        colField="supplierName"
+                                        displayField="supplierName"
                                         required
                                     />
                                 </Grid>

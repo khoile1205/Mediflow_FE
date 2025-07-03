@@ -66,7 +66,7 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
                 />
             </Box>
             {props.pagination && totalItems !== undefined && (
-                <Box display="flex" justifyContent="end" alignItems="center" mt={2} flexWrap="wrap" gap={2}>
+                <Box display="flex" justifyContent="end" alignItems="center" mt={2} flexWrap="wrap" gap={2} pb={2}>
                     <Box>
                         <FormControl size="small">
                             <Select
@@ -84,7 +84,6 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
                             </Select>
                         </FormControl>
                     </Box>
-                    {/* Range Text */}
                     <Typography fontSize={14}>
                         {totalItems === 0
                             ? "0 to 0 of 0"

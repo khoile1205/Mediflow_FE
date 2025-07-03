@@ -10,12 +10,9 @@ import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import { toBaseOption } from "~/components/form/utils";
 import i18n from "~/configs/i18n";
-import { I18N_LANGUAGE } from "~/configs/i18n/types";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
-import { DiseaseGroup, Service } from "~/entities";
-import { usePagination } from "~/hooks";
-import { useQueryHospitalDiseaseGroup, useQueryHospitalServices } from "~/services/hospital-service/hooks/queries";
-import { useQueryDepartmentsWithPagination } from "~/services/management/department/hooks/queries";
+import { Service } from "~/entities";
+import { useQueryHospitalServices } from "~/services/hospital-service/hooks/queries";
 import {
     useMutationAddServiceReception,
     useMutationDeleteServiceReception,
@@ -34,26 +31,26 @@ interface TestIndicationProps {
 }
 
 export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, receptionId, isReferredToHospital }) => {
-    const { t, i18n: reactI18n } = useTranslation();
-    const { pageIndex, pageSize, handlePageChange } = usePagination();
+    const { t } = useTranslation();
+    // const { pageIndex, pageSize, handlePageChange } = usePagination();
 
     const [selectedRowsCount, setSelectedRowsCount] = React.useState<number>(0);
 
     // Queries hooks
     const { listServiceReception } = useQueryServiceReceptionByReceptionId(receptionId);
 
-    const {
-        data: { hospitalDiseaseGroups },
-    } = useQueryHospitalDiseaseGroup();
+    // const {
+    //     data: { hospitalDiseaseGroups },
+    // } = useQueryHospitalDiseaseGroup();
     const {
         data: { hospitalServices },
     } = useQueryHospitalServices();
-    const {
-        data: { listDepartments, totalItems },
-    } = useQueryDepartmentsWithPagination({
-        pageIndex,
-        pageSize,
-    });
+    // const {
+    //     data: { listDepartments, totalItems },
+    // } = useQueryDepartmentsWithPagination({
+    //     pageIndex,
+    //     pageSize,
+    // });
 
     // Mutations hooks
     const { mutateAsync: addServiceReception } = useMutationAddServiceReception();
@@ -173,7 +170,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                     </Typography>
                     <Box className="mt-2 border p-5" sx={{ borderColor: "primary.main", borderRadius: 2 }}>
                         <Grid container spacing={2.5}>
-                            <Grid size={12}>
+                            {/* <Grid size={12}>
                                 <FormItem
                                     render="autocomplete"
                                     label={t(i18n.translationKey.orderByDiseaseGroup)}
@@ -185,9 +182,9 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                                         value: "id",
                                     })}
                                 />
-                            </Grid>
+                            </Grid> */}
 
-                            <Grid size={7}>
+                            <Grid size={9}>
                                 <FormItem
                                     render="select"
                                     label={t(i18n.translationKey.examinationIndication)}
@@ -201,7 +198,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                                 />
                             </Grid>
 
-                            <Grid size={4}>
+                            {/* <Grid size={4}>
                                 <FormItem
                                     render="data-grid"
                                     label={t(i18n.translationKey.department)}
@@ -227,13 +224,13 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                                     pageSize={pageSize}
                                     totalItems={totalItems}
                                     onPageChange={handlePageChange}
-                                    colField={
+                                    valueField={
                                         reactI18n.language === I18N_LANGUAGE.VIETNAMESE ? "name" : "nameInEnglish"
                                     }
                                 />
-                            </Grid>
+                            </Grid> */}
 
-                            <Grid size={1}>
+                            <Grid size={3}>
                                 <FormItem
                                     render="input-number"
                                     name="defaultQuantity"
@@ -247,7 +244,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
 
                             <Grid size={12}>
                                 <Stack direction="row" spacing={2}>
-                                    <ActionButton
+                                    {/* <ActionButton
                                         label={t(i18n.translationKey.addByGroup)}
                                         startIcon={<AddCircle />}
                                         onClick={form.handleSubmit((data) =>
@@ -257,7 +254,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
                                             ),
                                         )}
                                         disabled={disabled}
-                                    />
+                                    /> */}
                                     <ActionButton
                                         label={t(i18n.translationKey.addHospitalService)}
                                         startIcon={<AddCircle />}

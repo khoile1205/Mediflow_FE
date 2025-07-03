@@ -24,7 +24,7 @@ interface UseAgGridResult<T> {
 
 export const useAgGrid = <T>({
     initialColumnDefs = [],
-    autoSizeColumns = true,
+    autoSizeColumns = false,
     suppressRowClickSelection = false,
     rowSelection = "single",
     defaultSortModel = [],
@@ -39,7 +39,7 @@ export const useAgGrid = <T>({
             filter: false,
             resizable: true,
             flex: 1,
-            minWidth: GRID_STYLE_CONFIG.GRID_DIMENSIONS.MIN_WIDTH_COLUMN,
+            // minWidth: GRID_STYLE_CONFIG.GRID_DIMENSIONS.MIN_WIDTH_COLUMN,
             cellStyle: {
                 height: GRID_STYLE_CONFIG.GRID_DIMENSIONS.ROW_HEIGHT,
             },

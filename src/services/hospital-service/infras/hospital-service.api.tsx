@@ -4,19 +4,19 @@ import { callApi } from "~/libs/axios/request";
 import { HttpMethod } from "~/libs/axios/types";
 import { ISearchParam } from "./types";
 
-const getAllHospitalServiceGroup = async ({ searchTerms = "" }: ISearchParam) => {
+const getAllHospitalServiceGroup = async ({ searchTerm = "" }: ISearchParam) => {
     return await callApi<ServiceGroup[]>({
         url: `${endpoints.hospitalService.serviceGroupEndpoints.getAll}`,
         method: HttpMethod.GET,
-        params: { searchTerms },
+        params: { searchTerm },
     });
 };
 
-const getAllHospitalDiseaseGroup = async ({ searchTerms = "" }: ISearchParam) => {
+const getAllHospitalDiseaseGroup = async ({ searchTerm = "" }: ISearchParam) => {
     return await callApi<DiseaseGroup[]>({
         url: `${endpoints.hospitalService.diseaseGroupEndpoints.getAll}`,
         method: HttpMethod.GET,
-        params: { searchTerms },
+        params: { searchTerm },
     });
 };
 
