@@ -18,6 +18,17 @@ const vaccinationReceptionEndpoints = {
     deleteServiceReceptionByReceptionId: (receptionId: number) => {
         return `${vaccinationReceptionEndpointPrefix}/request-forms/${receptionId}/services`;
     },
+
+    // TODO: update endpoint
+    getVaccinationReceptionByReceptionId: (receptionId: number) => {
+        return `${vaccinationReceptionEndpointPrefix}/receptions/${receptionId}/vaccinations`;
+    },
+    addVaccinationReception: `${vaccinationReceptionEndpointPrefix}/reception-vaccinations`,
+    deleteVaccinationReceptionById: (receptionId: number) => {
+        return `${vaccinationReceptionEndpointPrefix}/reception-vaccinations/${receptionId}`;
+    },
+    updateVaccinationReceptionByReceptionId: (receptionId: number) =>
+        `${vaccinationReceptionEndpointPrefix}/reception-vaccinations/${receptionId}`,
 };
 
 export const receptionEndpoints = { vaccinationReceptionEndpoints };

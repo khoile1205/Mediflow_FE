@@ -4,3 +4,6 @@ export * from "./use-generate-patient-code";
 export * from "./use-mutation-create-pre-vaccination";
 export * from "./use-mutation-update-vaccination-prescreening";
 export * from "./use-mutation-delete-service-reception";
+export * from "./use-mutation-add-vacccination-reception";
+export * from "./use-mutation-delete-vaccination-reception";
+export * from "./use-mutation-update-vaccination-reception";

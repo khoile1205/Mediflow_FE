@@ -1,15 +1,18 @@
 import { endpoints } from "~/constants/endpoints";
+import { ServiceType } from "~/entities/service-type.entity";
 import { callApi } from "~/libs/axios/request";
 import { HttpMethod } from "~/libs/axios/types";
 import {
+    AddVaccinationIndicateReceptionRequest,
     PatientReceptionRequest,
     PatientReceptionResponse,
     ReceptionUnpaidServicesResponse,
     ServiceReceptionRequest,
+    UpdateVaccinationIndicateReceptionRequest,
+    VaccinationIndicateReception,
     VaccinationPreScreeningRequest,
     VaccinationServiceReception,
 } from "./types";
-import { ServiceType } from "~/entities/service-type.entity";
 
 const generatePatientIdentifier = async () => {
     return await callApi<string>({
@@ -84,6 +87,42 @@ const deleteServiceReceptionById = async (receptionId: number, listServiceIds: n
     });
 };
 
+const getVaccinationReceptionByReceptionId = async (receptionId: number) => {
+    return await callApi<VaccinationIndicateReception[]>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.getVaccinationReceptionByReceptionId(receptionId),
+        method: HttpMethod.GET,
+    });
+};
+
+const addVaccinationReception = async (receptionId: number, data: AddVaccinationIndicateReceptionRequest) => {
+    return await callApi<VaccinationIndicateReception[]>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.addVaccinationReception,
+        method: HttpMethod.POST,
+        data: {
+            ...data,
+            receptionId,
+        },
+    });
+};
+
+const deleteVaccinationReceptionById = async (receptionId: number, listServiceIds: number[]) => {
+    return await callApi({
+        url: endpoints.reception.vaccinationReceptionEndpoints.deleteVaccinationReceptionById(receptionId),
+        method: HttpMethod.POST,
+        data: listServiceIds,
+    });
+};
+
+const updateVaccinationReceptionByReceptionId = async (
+    receptionId: number,
+    data: UpdateVaccinationIndicateReceptionRequest,
+) => {
+    return await callApi<VaccinationIndicateReception>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.updateVaccinationReceptionByReceptionId(receptionId),
+        method: HttpMethod.PUT,
+        data,
+    });
+};
 export const receptionApis = {
     generatePatientIdentifier,
     createPatientReception,
@@ -94,4 +133,8 @@ export const receptionApis = {
     updateVaccinationPrescreening,
     getServiceReceptionByReceptionId,
     deleteServiceReceptionById,
+    getVaccinationReceptionByReceptionId,
+    deleteVaccinationReceptionById,
+    addVaccinationReception,
+    updateVaccinationReceptionByReceptionId,
 };

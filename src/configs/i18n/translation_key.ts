@@ -8,6 +8,8 @@ const validationTranslationKey = {
     invalidEmail: "INVALID_EMAIL",
     pleaseSelectADateAfter: "PLEASE_SELECT_A_DATE_AFTER",
     pleaseSelectADateBefore: "PLEASE_SELECT_A_DATE_BEFORE",
+    dateMustNotBeInThePast: "DATE_MUST_NOT_BE_IN_THE_PAST",
+    dateMustNotBeInTheFuture: "DATE_MUST_NOT_BE_IN_THE_FUTURE",
 };
 
 const applicationTranslationKey = {
@@ -215,6 +217,15 @@ const applicationTranslationKey = {
     no: "NO",
     reactionDate: "REACTION_DATE",
     AfterInjection: "AFTER_INJECTION",
+    concentration: "CONCENTRATION",
+    injectionRoute: "INJECTION_ROUTE",
+    isInjected: "IS_INJECTED",
+    notInjected: "NOT_INJECTED",
+    notAvailable: "NOT_AVAILABLE",
+    update: "UPDATE",
+    createVaccinationIndicationSuccessfully: "CREATE_VACCINATION_INDICATION_SUCCESSFULLY",
+    updateVaccinationIndicationSuccessfully: "UPDATE_VACCINATION_INDICATION_SUCCESSFULLY",
+    deleteVaccinationIndicationSuccessfully: "DELETE_VACCINATION_INDICATION_SUCCESSFULLY",
 };
 
 const exceptionTranslationKey = {
@@ -307,6 +318,7 @@ const exceptionTranslationKey = {
     invalidServiceType: "INVALID_SERVICE_TYPE",
     pleaseSelectDiseaseGroupBeforeAdding: "PLEASE_SELECT_DISEASE_GROUP_BEFORE_ADDING",
     pleaseSelectServiceBeforeAdding: "PLEASE_SELECT_SERVICE_BEFORE_ADDING",
+    vaccinationNotAllowed: "VACCINATION_NOT_ALLOWED",
 };
 
 export const TRANSLATION_KEY = {

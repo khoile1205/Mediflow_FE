@@ -37,6 +37,15 @@ export type TValidationMinDate = {
 export type TValidationMaxDate = {
     maxDate?: Date;
 };
+
+export type TValidationNoPastDate = {
+    noPastDate?: boolean;
+};
+
+export type TValidationNoFutureDate = {
+    noFutureDate?: boolean;
+};
+
 export type TValidationRules = TValidationRequired &
     TValidationMinLength &
     TValidationMaxLength &
@@ -46,4 +55,6 @@ export type TValidationRules = TValidationRequired &
     TValidationEmail &
     TValidationPassword &
     TValidationMinDate &
-    TValidationMaxDate;
+    TValidationMaxDate &
+    TValidationNoPastDate &
+    TValidationNoFutureDate;

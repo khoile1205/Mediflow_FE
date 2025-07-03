@@ -18,6 +18,7 @@ interface PreVaccinationProps {
     form: UseFormReturn<VaccinationPrescreeningFormValue>;
 }
 
+// TODO: research for under 1 month old children pre-screening form
 export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, form }) => {
     const { t } = useTranslation();
 
@@ -258,6 +259,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     disabled={!receptionId || isDeferredEnabled}
                                 />
                             </Grid>
+                            {/* TODO: change the word  */}
                             <Grid size={6}>
                                 <FormItem
                                     render="checkbox"

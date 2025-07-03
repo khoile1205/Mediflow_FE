@@ -60,7 +60,7 @@ const TemplateForm = () => {
                         label="Car Details"
                         columnDefs={columnDefs}
                         rowData={rowData}
-                        colField="make"
+                        displayField="make"
                     />
                     <FormItem
                         render="checkbox-group"

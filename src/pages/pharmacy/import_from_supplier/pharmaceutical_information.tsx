@@ -16,7 +16,7 @@ import { Manufacture, ManufactureCountry, Medicine } from "~/entities/medicine";
 import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
 import { IPagination } from "~/libs/axios/types";
 import { inventoryService } from "~/services/inventory";
-import { medicineService } from "~/services/medicine";
+// import { medicineService } from "~/services/medicine";
 import { showToast } from "~/utils";
 import { formatCurrencyVND } from "~/utils/currency";
 import { formatDate } from "~/utils/date-time";
@@ -53,7 +53,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
 }) => {
     const { t } = useTranslation();
 
-    const [medicineDataGrid, setMedicineDataGrid] = React.useState<IPagination<Medicine>>();
+    const [medicineDataGrid] = React.useState<IPagination<Medicine>>();
     const [listManufacturers, setListManufacturers] = React.useState<Manufacture[]>([]);
     const [listCountries, setListCountries] = React.useState<ManufactureCountry[]>([]);
 
@@ -192,8 +192,8 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
 
     const getMedicineData = async () => {
         try {
-            const response = await medicineService.getMedicinesWithPagination({ pageIndex: 1, pageSize: 3 });
-            setMedicineDataGrid(response.Data);
+            // const response = await medicineService.getMedicinesWithPagination({ pageIndex: 1, pageSize: 3 });
+            // setMedicineDataGrid(response.Data);
         } catch (error) {
             showToast.error(getAxiosErrorMessageKey(error));
         }
@@ -270,7 +270,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                                     },
                                 ]}
                                 rowData={medicineDataGrid?.data ?? []}
-                                colField="medicineName"
+                                displayField="medicineName"
                                 pageIndex={1}
                                 pageSize={3}
                                 totalItems={medicineDataGrid?.totalItems}

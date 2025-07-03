@@ -122,7 +122,6 @@ const HospitalFeePage: React.FC = () => {
 
     const handleSearch = (value: string) => {
         console.log("Search value:", value);
-        // TODO: Implement search logic here
     };
 
     return (

@@ -17,6 +17,7 @@ const ReceptionQueryKey = {
     GET_SERVICE_TYPES: "getServiceTypes",
     GET_UNPAID_SERVICES: "getUnpaidServices",
     GET_SERVICE_RECEPTION_BY_RECEPTION_ID: "getServiceReceptionByReceptionId",
+    GET_VACCINATION_RECEPTION_BY_RECEPTION_ID: "getVaccinationReceptionByReceptionId",
 };
 
 const DepartmentQueryKey = {

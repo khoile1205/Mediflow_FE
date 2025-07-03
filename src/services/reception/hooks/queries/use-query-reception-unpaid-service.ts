@@ -3,7 +3,11 @@ import React from "react";
 import { QueryKey } from "~/constants/query-key";
 import { IBaseApiResponse } from "~/libs/axios/types";
 import { receptionApis } from "../../infras";
-import { ReceptionUnpaidService, ReceptionUnpaidServicesResponse } from "../../infras/types";
+import {
+    ReceptionUnpaidService,
+    ReceptionUnpaidServicesResponse,
+    ReceptionVaccinationService,
+} from "../../infras/types";
 
 const transformData = (
     response: IBaseApiResponse<ReceptionUnpaidServicesResponse>,
@@ -24,7 +28,7 @@ export const useQueryReceptionUnpaidServices = (receptionId?: number) => {
         if (isError || isLoading || !data)
             return {
                 services: [] as ReceptionUnpaidService[],
-                // vaccinations: [],
+                vaccinations: [] as ReceptionVaccinationService[],
             };
         return transformData(data);
     }, [isError, isLoading, data]);

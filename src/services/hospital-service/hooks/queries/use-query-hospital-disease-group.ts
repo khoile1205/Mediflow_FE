@@ -9,7 +9,7 @@ const transformData = (response: IBaseApiResponse<DiseaseGroup[]>): DiseaseGroup
     return response.Data || [];
 };
 
-export const useQueryHospitalDiseaseGroup = (query: ISearchParam = { searchTerms: "" }) => {
+export const useQueryHospitalDiseaseGroup = (query: ISearchParam = { searchTerm: "" }) => {
     const {
         data: response,
         isLoading,

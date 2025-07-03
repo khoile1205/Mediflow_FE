@@ -61,7 +61,7 @@
     "ELIGIBLE_FOR_VACCINATION": "Eligible for immediate vaccination (all indices/measurements are normal)",
     "CONTRAINDICATED_FOR_VACCINATION": "Contraindicated for vaccination (abnormal point in section 1.8)",
     "POSTPONE_VACCINATION": "Postpone vaccination (any abnormal index/point in sections 1, 2, 3, 4, 5, 6, 7)",
-    "REFER_TO_HOSPITAL": "Refer for screening at hospital",
+    "REFER_TO_HOSPITAL": "Refer for examination at hospital",
     "UNIT_KG": "kg",
     "UNIT_CELSIUS": "°C",
     "UNIT_MMHG": "mmHg",
@@ -299,5 +299,17 @@
     "REACTION_AFTER_INJECTION_TIME": "Time of reaction after injection",
     "NO": "No",
     "REACTION_DATE": "Reaction date",
-    "AFTER_INJECTION": "Follow-up after injection"
+    "AFTER_INJECTION": "Follow-up after injection",
+    "DATE_MUST_NOT_BE_IN_THE_PAST": "Date must not be in the past.",
+    "DATE_MUST_NOT_BE_IN_THE_FUTURE": "Date must not be in the future.",
+    "VACCINATION_NOT_ALLOWED": "Vaccination is not allowed",
+    "CONCENTRATION": "Conectration",
+    "INJECTION_ROUTE": "Injection route",
+    "IS_INJECTED": "Injected",
+    "NOT_INJECTED": "Not injected",
+    "NOT_AVAILABLE": "Not available",
+    "UPDATE": "Update",
+    "CREATE_VACCINATION_INDICATION_SUCCESSFULLY": "Created vaccination indication successfully.",
+    "UPDATE_VACCINATION_INDICATION_SUCCESSFULLY": "Updated vaccination indication successfully.",
+    "DELETE_VACCINATION_INDICATION_SUCCESSFULLY": "Deleted vaccination indication successfully."
 }

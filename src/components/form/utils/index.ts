@@ -90,5 +90,19 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
         };
     }
 
+    if (rules.noPastDate) {
+        validation.validate = (value: Date) => {
+            const today = new Date();
+            return new Date(value) >= today ? true : i18n.t(i18n.translationKey.dateMustNotBeInThePast);
+        };
+    }
+
+    if (rules.noFutureDate) {
+        validation.validate = (value: Date) => {
+            const today = new Date();
+            return new Date(value) <= today ? true : i18n.t(i18n.translationKey.dateMustNotBeInTheFuture);
+        };
+    }
+
     return validation;
 };

@@ -5,13 +5,18 @@ import React from "react";
 import { AgDataGrid, useAgGrid } from "../../common/ag-grid";
 import { ControllerWrapper, FormErrorMessage } from "../common";
 import { BaseFormItemProps } from "../types/form-item";
+import SearchBox from "~/components/common/search-box";
+import { useTranslation } from "react-i18next";
+import i18n from "~/configs/i18n";
 
 export type AgGridDropdownFormItemProps<T extends object = any> = BaseFormItemProps &
     AgGridReactProps &
     Partial<React.ComponentProps<typeof AgDataGrid>> & {
         columnDefs: ColDef<T>[];
         rowData: T[];
-        colField?: keyof T;
+        valueField?: keyof T;
+        displayField?: keyof T;
+        onSearch?: (searchValue: string) => void;
     };
 
 export const AgGridDropdownFormItem = <T extends object>({
@@ -19,7 +24,8 @@ export const AgGridDropdownFormItem = <T extends object>({
     required = false,
     columnDefs,
     rowData,
-    colField,
+    valueField,
+    displayField,
     fullWidth = true,
     disabled = false,
     placeholder = "",
@@ -30,43 +36,59 @@ export const AgGridDropdownFormItem = <T extends object>({
     onPageChange,
     ...props
 }: AgGridDropdownFormItemProps<T>) => {
-    const agGrid = useAgGrid<T>({});
+    const { t } = useTranslation();
 
-    const anchorRef = React.useRef(null);
+    const agGrid = useAgGrid<T>({
+        autoSizeColumns: true,
+    });
+
+    const anchorRef = React.useRef<HTMLInputElement>(null);
     const [open, setOpen] = React.useState(false);
+    const [selectedRow, setSelectedRow] = React.useState<T | null>(null);
 
-    // Handle row click with optional colField
+    // Handle row click with optional valueField
     const handleRowClick = React.useCallback(
-        (e: { data: T | undefined }, onChange: (value: any) => void) => {
+        (e: { data: T | undefined }, onChange: (value: T[keyof T] | T) => void) => {
             if (e.data) {
-                const value = colField ? e.data[colField] : e.data;
+                setSelectedRow(e.data);
+                const value = valueField ? e.data[valueField] : e.data;
                 onChange(value);
                 setOpen(false);
             }
         },
-        [colField],
+        [valueField],
     );
 
     const handlePageChange = React.useCallback(
         (newPageIndex: number, newPageSize: number) => {
-            if (onPageChange) {
-                onPageChange?.(newPageIndex, newPageSize);
+            if (newPageSize !== pageSize) {
+                // Reset to the first page if page size changes
+                newPageIndex = 1;
             }
+            onPageChange?.(newPageIndex, newPageSize);
         },
         [onPageChange],
     );
+
+    const handleSearch = React.useCallback((searchValue: string) => {
+        if (props.onSearch) {
+            props.onSearch(searchValue);
+        }
+    }, []);
 
     return (
         <ControllerWrapper
             name={name}
             required={required}
             render={({ field, error }) => {
+                const displayText = displayField && selectedRow ? selectedRow[displayField] : (field.value ?? "");
+
                 return (
                     <>
                         <FormControl fullWidth margin="normal" error={!!error} required={required}>
                             <TextField
                                 {...field}
-                                value={field.value ?? ""}
+                                value={displayText}
                                 onClick={() => setOpen(true)}
                                 error={!!error}
                                 inputRef={anchorRef}
@@ -89,14 +111,21 @@ export const AgGridDropdownFormItem = <T extends object>({
                                 paper: {
                                     sx: {
                                         width: "100%",
-                                        maxWidth: "600px",
-                                        height: "100%",
-                                        maxHeight: "400px",
+                                        maxWidth: `${columnDefs.reduce((acc, col) => acc + ((col as ColDef).width ?? 0), 0)}px`,
                                         overflowY: "auto",
                                     },
                                 },
                             }}
                         >
+                            {props.onSearch && (
+                                <SearchBox
+                                    size="small"
+                                    placeholder={t(i18n.translationKey.search)}
+                                    onChange={handleSearch}
+                                    sx={{ p: 1 }}
+                                />
+                            )}
+
                             <AgDataGrid
                                 {...agGrid}
                                 {...props}

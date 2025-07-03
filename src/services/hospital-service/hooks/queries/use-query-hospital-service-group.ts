@@ -9,7 +9,7 @@ const transformData = (response: IBaseApiResponse<ServiceGroup[]>): ServiceGroup
     return response.Data || [];
 };
 
-export const useQueryHospitalServiceGroup = (query: ISearchParam = { searchTerms: "" }) => {
+export const useQueryHospitalServiceGroup = (query: ISearchParam = { searchTerm: "" }) => {
     const {
         data: response,
         isLoading,
