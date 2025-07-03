@@ -54,7 +54,7 @@ export const useCreateVaccinationForm = () => {
         defaultValues: {
             vaccineId: null,
             quantity: 1,
-            vaccineName: "",
+            vaccineName: null,
             appointmentDate: null,
             scheduledDate: null,
             note: "",

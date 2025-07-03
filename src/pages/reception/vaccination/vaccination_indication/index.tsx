@@ -1,5 +1,5 @@
 import { AddCircle, Delete, Update } from "@mui/icons-material";
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Box, Grid, Stack, Tooltip, Typography } from "@mui/material";
 import { ColDef, RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -74,21 +74,28 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
         //         return t(i18n.translationKey.notAvailable);
         //     },
         // },
-        { field: "isReadyToUse", headerName: t(i18n.translationKey.allowUsage), cellClass: "ag-cell-center" },
+        {
+            field: "isReadyToUse",
+            headerName: t(i18n.translationKey.allowUsage),
+            cellClass: "ag-selection-checkbox-center",
+        },
         {
             field: "unitPrice",
             headerName: t(i18n.translationKey.unitPrice),
             valueFormatter: ({ value }) => formatCurrencyVND(value),
+            cellClass: "ag-cell-center",
         },
         {
             field: "scheduledDate",
             headerName: t(i18n.translationKey.usageDate),
             valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
+            cellClass: "ag-cell-center",
         },
         {
             field: "appointmentDate",
             headerName: t(i18n.translationKey.appointmentDate),
             valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
+            cellClass: "ag-cell-center",
         },
         {
             field: "isConfirmed",
@@ -96,23 +103,25 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
             valueGetter: (params) => {
                 return params.data.isConfirmed ? t(i18n.translationKey.isInjected) : t(i18n.translationKey.notInjected);
             },
+            cellClass: "ag-cell-center",
         },
         { field: "note", headerName: t(i18n.translationKey.note) },
     ];
 
     const handleAddNewVaccination = async (data: VaccinationIndicateReceptionFormValues) => {
-        if (!isAllowedToVaccinate) {
+        if (!isAllowedToVaccinate && data.isReadyToUse) {
             showToast.error(t(i18n.translationKey.vaccinationNotAllowed));
             return;
         }
 
         if (data.isReadyToUse) {
-            data.scheduledDate = new Date();
+            data.scheduledDate = new Date(Date.now() + 60 * 1000);
         }
 
         await addVaccinationReception({ receptionId, data });
 
         form.reset();
+        setSelectedRow(null);
     };
 
     const handleDeleteVaccination = async () => {
@@ -125,12 +134,20 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
         const idsToDelete = selectedRows.map((row) => row.id);
 
         await deleteVaccinationReception({ receptionId, listServiceIds: idsToDelete });
+
+        form.reset();
+        setSelectedRow(null);
     };
 
     const handleUpdateVaccinationIndication = async () => {
         const selectedRow = agGrid.gridApi.getSelectedRows()?.[0];
 
         if (!selectedRow) {
+            return;
+        }
+
+        if (!isAllowedToVaccinate && form.getValues("isReadyToUse")) {
+            showToast.error(t(i18n.translationKey.vaccinationNotAllowed));
             return;
         }
 
@@ -149,33 +166,19 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
             data,
         });
         form.reset();
+        setSelectedRow(null);
+        agGrid.gridApi.deselectAll();
     };
-    // const handleUpdateUsageStatusVaccination = async (isReadyToUse: boolean) => {
-    //     const selectedRow = agGrid.gridApi.getSelectedRows()?.[0];
-
-    //     if (!selectedRow) return;
-
-    //     await updateVaccinationReception({
-    //         receptionId,
-    //         data: {
-    //             id: selectedRow.id,
-    //             quantity: selectedRow.quantity,
-    //             appointmentDate: selectedRow.appointmentDate,
-    //             note: selectedRow.note,
-    //             isReadyToUse,
-    //             scheduledDate: isReadyToUse ? new Date() : null,
-    //         },
-    //     });
-    //     form.reset();
-    // };
 
     const handleSelectionChanged = () => {
         const selectedRow = agGrid.gridApi.getSelectedRows()?.[0] || null;
+
         if (!selectedRow) {
             setSelectedRow(null);
             form.reset();
             return;
         }
+
         setSelectedRow(selectedRow);
         form.setValue("id", selectedRow.id);
         form.setValue("vaccineId", selectedRow.vaccineId);
@@ -349,39 +352,26 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                             sx={{ borderRadius: 4, px: 2 }}
                                         />
                                     </Stack>
-                                    <FormItem
-                                        render="checkbox"
-                                        name="isReadyToUse"
-                                        label={t(i18n.translationKey.useToday)}
-                                        disabled={!receptionId || !isAllowedToVaccinate}
-                                    />
-                                    <Stack direction="row" spacing={1}>
-                                        {/* <ActionButton
-                                            label={t(i18n.translationKey.approveUsage)}
-                                            startIcon={<Done />}
-                                            size="small"
-                                            color="success"
-                                            disabled={!receptionId || !selectedRow}
-                                            variant="contained"
-                                            onClick={() => handleUpdateUsageStatusVaccination(true)}
-                                            sx={{ borderRadius: 4, px: 2 }}
-                                        />
-                                        <ActionButton
-                                            label={t(i18n.translationKey.disapproveUsage)}
-                                            startIcon={<DoNotDisturb />}
-                                            size="small"
-                                            variant="outlined"
-                                            color="error"
-                                            onClick={() => handleUpdateUsageStatusVaccination(false)}
-                                            disabled={!receptionId || !selectedRow}
-                                            sx={{
-                                                borderRadius: 4,
-                                                px: 2,
-                                                borderColor: "grey.400",
-                                                color: "grey.600",
-                                            }}
-                                        /> */}
-                                    </Stack>
+                                    <Box>
+                                        <Tooltip
+                                            title={
+                                                !isAllowedToVaccinate
+                                                    ? t(i18n.translationKey.vaccinationNotAllowed)
+                                                    : ""
+                                            }
+                                        >
+                                            <Box>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="isReadyToUse"
+                                                    label={t(i18n.translationKey.useToday)}
+                                                    disabled={!receptionId || !isAllowedToVaccinate}
+                                                />
+                                            </Box>
+                                        </Tooltip>
+                                    </Box>
+
+                                    <Stack direction="row" spacing={1}></Stack>
                                 </Stack>
                             </Grid>
                         </Grid>

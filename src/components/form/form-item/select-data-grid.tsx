@@ -1,5 +1,5 @@
 import { FormControl, Popover, TextField } from "@mui/material";
-import { ColDef } from "ag-grid-community";
+import { ColDef, RowClickedEvent } from "ag-grid-community";
 import { AgGridReactProps } from "ag-grid-react";
 import React from "react";
 import { AgDataGrid, useAgGrid } from "../../common/ag-grid";
@@ -8,6 +8,7 @@ import { BaseFormItemProps } from "../types/form-item";
 import SearchBox from "~/components/common/search-box";
 import { useTranslation } from "react-i18next";
 import i18n from "~/configs/i18n";
+import { useFormContext } from "react-hook-form";
 
 export type AgGridDropdownFormItemProps<T extends object = any> = BaseFormItemProps &
     AgGridReactProps &
@@ -37,24 +38,28 @@ export const AgGridDropdownFormItem = <T extends object>({
     ...props
 }: AgGridDropdownFormItemProps<T>) => {
     const { t } = useTranslation();
+    const formContext = useFormContext();
 
     const agGrid = useAgGrid<T>({
         autoSizeColumns: true,
     });
-
     const anchorRef = React.useRef<HTMLInputElement>(null);
     const [open, setOpen] = React.useState(false);
     const [selectedRow, setSelectedRow] = React.useState<T | null>(null);
 
     // Handle row click with optional valueField
     const handleRowClick = React.useCallback(
-        (e: { data: T | undefined }, onChange: (value: T[keyof T] | T) => void) => {
-            if (e.data) {
-                setSelectedRow(e.data);
-                const value = valueField ? e.data[valueField] : e.data;
-                onChange(value);
-                setOpen(false);
+        (e: RowClickedEvent<T>, onChange: (value: T[keyof T] | T) => void) => {
+            if (!e.data) {
+                setSelectedRow(null);
+                onChange(null);
+                return;
             }
+
+            setSelectedRow(e.data);
+            const value = valueField ? e.data[valueField] : e.data;
+            onChange(value);
+            setOpen(false);
         },
         [valueField],
     );
@@ -76,13 +81,20 @@ export const AgGridDropdownFormItem = <T extends object>({
         }
     }, []);
 
+    React.useEffect(() => {
+        if (!selectedRow && !formContext.getValues(name)) return;
+
+        if (!formContext.getValues(name)) {
+            setSelectedRow(null);
+        }
+    }, [formContext.getValues(name)]);
+
     return (
         <ControllerWrapper
             name={name}
             required={required}
             render={({ field, error }) => {
                 const displayText = displayField && selectedRow ? selectedRow[displayField] : (field.value ?? "");
-
                 return (
                     <>
                         <FormControl fullWidth margin="normal" error={!!error} required={required}>
