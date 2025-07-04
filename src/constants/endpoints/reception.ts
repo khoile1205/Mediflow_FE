@@ -10,7 +10,7 @@ const vaccinationReceptionEndpoints = {
     },
     createPrevaccinationReport: `${vaccinationReceptionEndpointPrefix}/screening-evaluations`,
     updateVaccinationPrescreening: (vaccinationPrescreeningId: number) => {
-        return `${vaccinationReceptionEndpointPrefix}/screening-evaluations/${vaccinationPrescreeningId}`;
+        return `${vaccinationReceptionEndpointPrefix}/screening-evaluation/${vaccinationPrescreeningId}`;
     },
     getServiceReceptionByReceptionId: (receptionId: number) => {
         return `${vaccinationReceptionEndpointPrefix}/receptions/${receptionId}/services`;

@@ -14,8 +14,8 @@ export interface PatientReceptionFormValue {
     province: string;
     district: string;
     ward: string;
-    isPregnant: false;
-    isForeigner: false;
+    isPregnant: boolean;
+    isForeigner: boolean;
     receptionDate: Date;
     serviceTypeId: number;
 }
@@ -36,6 +36,7 @@ export interface TestExaminationIndicationFormValue {
 }
 
 export interface VaccinationPrescreeningFormValue {
+    id?: number;
     parentFullName: string;
     parentPhoneNumber: string;
     weightKg: number;

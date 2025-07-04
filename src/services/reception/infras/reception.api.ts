@@ -64,7 +64,7 @@ const updateVaccinationPrescreening = async (
 ) => {
     return await callApi<number>({
         url: endpoints.reception.vaccinationReceptionEndpoints.updateVaccinationPrescreening(vaccinationPrescreeningId),
-        method: HttpMethod.POST,
+        method: HttpMethod.PUT,
         data: {
             ...data,
             id: vaccinationPrescreeningId,

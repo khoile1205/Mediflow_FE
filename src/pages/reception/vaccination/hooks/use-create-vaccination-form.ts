@@ -1,5 +1,9 @@
 import { Gender } from "~/constants/enums";
-import { PatientReceptionFormValue, VaccinationPrescreeningFormValue } from "../types";
+import {
+    PatientReceptionFormValue,
+    TestExaminationIndicationFormValue,
+    VaccinationPrescreeningFormValue,
+} from "../types";
 import { VaccinationIndicateReceptionFormValues } from "../vaccination_indication/types";
 import { useForm } from "~/components/form/hooks/use-form";
 
@@ -62,9 +66,18 @@ export const useCreateVaccinationForm = () => {
         },
     });
 
+    const testExaminationIndicationForm = useForm<TestExaminationIndicationFormValue>({
+        defaultValues: {
+            services: [],
+            groupId: 0,
+            defaultQuantity: 1,
+        },
+    });
+
     return {
         patientReceptionForm,
         vaccinationPrescreeningForm,
         vaccinationIndicationForm,
+        testExaminationIndicationForm,
     };
 };

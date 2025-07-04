@@ -13,8 +13,8 @@ export interface PatientReceptionRequest {
         province: string;
         district: string;
         ward: string;
-        isPregnant: false;
-        isForeigner: false;
+        isPregnant: boolean;
+        isForeigner: boolean;
     };
     createReceptionDTO: {
         patientId: number;
