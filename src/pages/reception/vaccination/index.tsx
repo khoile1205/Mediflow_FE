@@ -41,7 +41,12 @@ const ReceptionVaccination: React.FC = () => {
     const { data: serviceTypes } = useQueryServiceTypes();
 
     // Form setup
-    const { patientReceptionForm, vaccinationPrescreeningForm, vaccinationIndicationForm } = useCreateVaccinationForm();
+    const {
+        patientReceptionForm,
+        vaccinationPrescreeningForm,
+        vaccinationIndicationForm,
+        testExaminationIndicationForm,
+    } = useCreateVaccinationForm();
 
     const handleAddNewPatient = async () => {
         patientReceptionForm.reset();
@@ -66,18 +71,20 @@ const ReceptionVaccination: React.FC = () => {
         patientReceptionForm.setValue("district", patient.district, { shouldValidate: true });
         patientReceptionForm.setValue("ward", patient.ward, { shouldValidate: true });
         patientReceptionForm.setValue("receptionDate", new Date(), { shouldValidate: true });
+        patientReceptionForm.setValue("isForeigner", patient.isForeigner);
         patientReceptionForm.setValue("serviceTypeId", null, { shouldValidate: true });
 
         setIsRecepting(true);
     };
 
     const handleCancel = () => {
-        patientReceptionForm.reset();
         setIsRecepting(false);
         setReceptionId(null);
 
+        patientReceptionForm.reset();
         vaccinationIndicationForm.reset();
         vaccinationPrescreeningForm.reset();
+        testExaminationIndicationForm.reset();
     };
 
     const handleReset = () => {
@@ -404,7 +411,11 @@ const ReceptionVaccination: React.FC = () => {
                 </Box>
             </DynamicForm>
             {tab === "pre_vaccination" && (
-                <PreVaccination receptionId={receptionId} form={vaccinationPrescreeningForm} />
+                <PreVaccination
+                    receptionId={receptionId}
+                    form={vaccinationPrescreeningForm}
+                    patientDOB={patientReceptionForm.getValues("dob")}
+                />
             )}
             {tab === "vaccination_indication" && (
                 <VaccinationIndication
@@ -418,6 +429,7 @@ const ReceptionVaccination: React.FC = () => {
                     disabled={!isEnableProcessSubtask}
                     receptionId={receptionId}
                     isReferredToHospital={vaccinationPrescreeningForm.watch("isReferredToHospital")}
+                    form={testExaminationIndicationForm}
                 />
             )}
             {tab === "unpaid_costs" && <UnpaidCosts receptionId={receptionId} />}

@@ -12,25 +12,28 @@ import {
 import { VaccinationPreScreeningRequest } from "~/services/reception/infras/types";
 import { VaccinationPrescreeningFormValue } from "../types";
 import { useConclusionCheckboxStatus } from "./use-conclusion-checkbox-status";
+import { PHONE_NUMBER_PATTERN } from "~/components/form/validation/pattern";
 
 interface PreVaccinationProps {
     receptionId?: number;
     form: UseFormReturn<VaccinationPrescreeningFormValue>;
+    patientDOB?: Date;
 }
 
+const ADULT_MONTH_AGE = 18 * 12;
+
 // TODO: research for under 1 month old children pre-screening form
-export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, form }) => {
+export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, form, patientDOB }) => {
     const { t } = useTranslation();
 
     const { mutateAsync: createVaccinationPrescreening } = useMutationCreatePreVaccination();
     const { mutateAsync: updateVaccinationPrescreening } = useMutationUpdateVaccinationPrescreening();
-    const [vaccinationPrescreeningId, setVaccinationPrescreeningId] = React.useState<number | null>(null);
 
     const { isEligibleEnabled, isContraindicatedEnabled, isDeferredEnabled } = useConclusionCheckboxStatus(form);
 
     const onSubmitPreVaccinationForm = async (data: VaccinationPrescreeningFormValue) => {
         const prevaccinationRequest = getPrevaccinationRequest(data);
-        if (!vaccinationPrescreeningId) {
+        if (!form.getValues("id")) {
             handleCreateVaccinationPrescreening(prevaccinationRequest);
             return;
         }
@@ -39,26 +42,51 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
 
     const getPrevaccinationRequest = (data: VaccinationPrescreeningFormValue): VaccinationPreScreeningRequest => {
         return {
-            ...data,
             weightKg: Number(data.weightKg),
             bodyTemperatureC: Number(data.bodyTemperatureC),
             bloodPressureSystolic: Number(data.bloodPressureSystolic),
             bloodPressureDiastolic: Number(data.bloodPressureDiastolic),
             receptionId: Number(receptionId),
+            parentFullName: data.parentFullName,
+            parentPhoneNumber: data.parentPhoneNumber,
+            hasSevereFeverAfterPreviousVaccination: data.hasSevereFeverAfterPreviousVaccination ?? false,
+            hasAcuteOrChronicDisease: data.hasAcuteOrChronicDisease ?? false,
+            isOnOrRecentlyEndedCorticosteroids: data.isOnOrRecentlyEndedCorticosteroids ?? false,
+            hasAbnormalTemperatureOrVitals: data.hasAbnormalTemperatureOrVitals ?? false,
+            hasAbnormalHeartSound: data.hasAbnormalHeartSound ?? false,
+            hasHeartValveDisorder: data.hasHeartValveDisorder ?? false,
+            hasNeurologicalAbnormalities: data.hasNeurologicalAbnormalities ?? false,
+            isUnderweightBelow2000g: data.isUnderweightBelow2000g ?? false,
+            hasOtherContraindications: data.hasOtherContraindications ?? false,
+            isEligibleForVaccination: data.isEligibleForVaccination ?? false,
+            isContraindicatedForVaccination: data.isContraindicatedForVaccination ?? false,
+            isVaccinationDeferred: data.isVaccinationDeferred ?? false,
+            isReferredToHospital: data.isReferredToHospital ?? false,
         };
     };
 
     const handleCreateVaccinationPrescreening = async (prevaccinationRequest: VaccinationPreScreeningRequest) => {
-        const response = await createVaccinationPrescreening(prevaccinationRequest);
-        setVaccinationPrescreeningId(response);
+        const vaccinationReceptionId = await createVaccinationPrescreening(prevaccinationRequest);
+        form.setValue("id", vaccinationReceptionId);
     };
 
     const handleUpdateVaccinationPrescreening = async (prevaccinationRequest: VaccinationPreScreeningRequest) => {
         await updateVaccinationPrescreening({
-            vaccinationPrescreeningId,
+            vaccinationPrescreeningId: form.getValues("id"),
             data: prevaccinationRequest,
         });
     };
+
+    const patientMonthAge = React.useMemo(() => {
+        if (!patientDOB) return null;
+
+        const MILISECOND_OF_MONTH = 1000 * 60 * 60 * 24 * 30;
+
+        const ageInMilliseconds = Date.now() - patientDOB.getTime();
+        const monthAge = Math.floor(ageInMilliseconds / MILISECOND_OF_MONTH);
+
+        return monthAge;
+    }, [patientDOB]);
 
     React.useEffect(() => {
         if (receptionId) {
@@ -82,6 +110,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     render="text-input"
                                     label={t(i18n.translationKey.parentName)}
                                     name="parentFullName"
+                                    required={!(patientMonthAge >= ADULT_MONTH_AGE)}
                                     disabled={!receptionId}
                                 />
                             </Grid>
@@ -90,7 +119,9 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     render="text-input"
                                     label={t(i18n.translationKey.parentPhoneNumber)}
                                     name="parentPhoneNumber"
+                                    required={!(patientMonthAge >= ADULT_MONTH_AGE)}
                                     disabled={!receptionId}
+                                    pattern={PHONE_NUMBER_PATTERN}
                                 />
                             </Grid>
                             <Grid size={12 / 5}>

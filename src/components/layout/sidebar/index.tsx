@@ -21,10 +21,10 @@ const sidebarTree: SidebarTabProps[] = [
                 labelKey: i18n.translationKey.vaccination,
                 pathName: "/reception/vaccination",
             },
-            {
-                labelKey: i18n.translationKey.patient,
-                pathName: "/reception/patient",
-            },
+            // {
+            //     labelKey: i18n.translationKey.patient,
+            //     pathName: "/reception/patient",
+            // },
         ],
     },
     {
@@ -41,13 +41,13 @@ const sidebarTree: SidebarTabProps[] = [
                 pathName: "/vaccination",
             },
             {
+                labelKey: i18n.translationKey.vaccinationHistory,
+                pathName: "/vaccination/history",
+            },
+            {
                 labelKey: i18n.translationKey.AfterInjection,
                 pathName: "/vaccination/post-injection",
                 icon: <AccessTime />,
-            },
-            {
-                labelKey: i18n.translationKey.vaccinationHistory,
-                pathName: "/vaccination/history",
             },
         ],
     },

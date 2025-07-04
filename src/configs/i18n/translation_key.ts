@@ -56,6 +56,7 @@ const applicationTranslationKey = {
     hospitalService: "HOSPITAL_SERVICE",
     medicalAttachedService: "HOSPITAL_SERVICE",
     screeningForChildrenOver1Month: "SCREENING_FOR_CHILDREN_OVER_1_MONTH",
+    screeningForChildrenUnder1Month: "SCREENING_FOR_CHILDREN_UNDER_1_MONTH",
     conclusion: "CONCLUSION",
     parentName: "PARENT_NAME",
     parentPhoneNumber: "PARENT_PHONE_NUMBER",

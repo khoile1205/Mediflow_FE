@@ -2,12 +2,12 @@ import { AddCircle, Delete } from "@mui/icons-material";
 import { Box, Grid, Stack, Typography } from "@mui/material";
 import { ColDef } from "ag-grid-community";
 import React from "react";
+import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { ActionButton } from "~/components/common/action-button";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
-import { useForm } from "~/components/form/hooks/use-form";
 import { toBaseOption } from "~/components/form/utils";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
@@ -28,9 +28,15 @@ interface TestIndicationProps {
     receptionId?: number;
     disabled?: boolean;
     isReferredToHospital?: boolean;
+    form: UseFormReturn<TestExaminationIndicationFormValue>;
 }
 
-export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, receptionId, isReferredToHospital }) => {
+export const TestIndication: React.FC<TestIndicationProps> = ({
+    disabled,
+    receptionId,
+    isReferredToHospital,
+    form,
+}) => {
     const { t } = useTranslation();
     // const { pageIndex, pageSize, handlePageChange } = usePagination();
 
@@ -55,13 +61,6 @@ export const TestIndication: React.FC<TestIndicationProps> = ({ disabled, recept
     // Mutations hooks
     const { mutateAsync: addServiceReception } = useMutationAddServiceReception();
     const { mutateAsync: deleteServiceReception } = useMutationDeleteServiceReception();
-    const form = useForm<TestExaminationIndicationFormValue>({
-        defaultValues: {
-            services: [],
-            groupId: 0,
-            defaultQuantity: 1,
-        },
-    });
 
     const agGrid = useAgGrid<VaccinationServiceReception>({ rowSelection: "multiple" });
     const columnDefs: ColDef<VaccinationServiceReception>[] = React.useMemo(
