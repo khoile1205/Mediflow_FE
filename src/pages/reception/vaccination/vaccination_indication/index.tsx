@@ -82,13 +82,16 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
         {
             field: "unitPrice",
             headerName: t(i18n.translationKey.unitPrice),
-            valueFormatter: ({ value }) => formatCurrencyVND(value),
+            valueFormatter: (params) => formatCurrencyVND(params.data.quantity * params.data.unitPrice),
             cellClass: "ag-cell-center",
         },
         {
             field: "scheduledDate",
             headerName: t(i18n.translationKey.usageDate),
-            valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
+            valueFormatter: ({ value }) => {
+                if (!value) return t(i18n.translationKey.notAvailable);
+                return formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]);
+            },
             cellClass: "ag-cell-center",
         },
         {

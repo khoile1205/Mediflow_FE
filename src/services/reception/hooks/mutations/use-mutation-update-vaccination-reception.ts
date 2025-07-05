@@ -32,6 +32,9 @@ export const useMutationUpdateVaccinationReception = () => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.RECEPTION.GET_VACCINATION_RECEPTION_BY_RECEPTION_ID, variables.receptionId],
             });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.RECEPTION.GET_UNPAID_SERVICES, variables.receptionId],
+            });
             showToast.success(i18n.t(i18n.translationKey.updateVaccinationIndicationSuccessfully));
         },
     });

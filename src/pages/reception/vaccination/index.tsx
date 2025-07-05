@@ -331,10 +331,20 @@ const ReceptionVaccination: React.FC = () => {
                         </Grid>
 
                         <Grid size={{ xs: 12, sm: 4, md: 4 }}>
-                            <ProvinceFormItem name="province" disabled={!isRecepting} readOnly={receptionId != null} />
+                            <ProvinceFormItem
+                                name="province"
+                                required
+                                disabled={!isRecepting}
+                                readOnly={receptionId != null}
+                            />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 4, md: 4 }}>
-                            <DistrictFormItem name="district" disabled={!isRecepting} readOnly={receptionId != null} />
+                            <DistrictFormItem
+                                name="district"
+                                required
+                                disabled={!isRecepting}
+                                readOnly={receptionId != null}
+                            />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 4, md: 4 }}>
                             <WardFormItem name="ward" disabled={!isRecepting} readOnly={receptionId != null} />
@@ -410,29 +420,32 @@ const ReceptionVaccination: React.FC = () => {
                     </Stack>
                 </Box>
             </DynamicForm>
-            {tab === "pre_vaccination" && (
+
+            <Box sx={{ display: tab === "pre_vaccination" ? "block" : "none" }}>
                 <PreVaccination
                     receptionId={receptionId}
                     form={vaccinationPrescreeningForm}
                     patientDOB={patientReceptionForm.getValues("dob")}
                 />
-            )}
-            {tab === "vaccination_indication" && (
+            </Box>
+            <Box sx={{ display: tab === "vaccination_indication" ? "block" : "none" }}>
                 <VaccinationIndication
                     receptionId={receptionId}
                     isAllowedToVaccinate={vaccinationPrescreeningForm.watch("isEligibleForVaccination")}
                     form={vaccinationIndicationForm}
                 />
-            )}
-            {tab === "examination_indication" && (
+            </Box>
+            <Box sx={{ display: tab === "examination_indication" ? "block" : "none" }}>
                 <TestIndication
                     disabled={!isEnableProcessSubtask}
                     receptionId={receptionId}
                     isReferredToHospital={vaccinationPrescreeningForm.watch("isReferredToHospital")}
                     form={testExaminationIndicationForm}
                 />
-            )}
-            {tab === "unpaid_costs" && <UnpaidCosts receptionId={receptionId} />}
+            </Box>
+            <Box sx={{ display: tab === "unpaid_costs" ? "block" : "none" }}>
+                <UnpaidCosts receptionId={receptionId} />
+            </Box>
             <PatientSelectModal
                 open={isOpenPatientSelectModal}
                 onClose={() => setIsOpenPatientSelectModal(false)}
