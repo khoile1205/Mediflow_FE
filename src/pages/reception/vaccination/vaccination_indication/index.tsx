@@ -62,8 +62,8 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
             resizable: false,
         },
         { field: "vaccineTypeName", headerName: t(i18n.translationKey.vaccineSerumType) },
-        { field: "vaccineName", headerName: t(i18n.translationKey.vaccineSerumName), width: 400 },
-        { field: "quantity", headerName: t(i18n.translationKey.quantity), cellClass: "ag-cell-center" },
+        { field: "vaccineName", headerName: t(i18n.translationKey.vaccineSerumName) },
+        { field: "quantity", headerName: t(i18n.translationKey.quantity), cellClass: "ag-cell-center", width: 150 },
         // {
         //     field: "testResultEntry",
         //     headerName: t(i18n.translationKey.doseNumber),
@@ -78,12 +78,14 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
             field: "isReadyToUse",
             headerName: t(i18n.translationKey.allowUsage),
             cellClass: "ag-selection-checkbox-center",
+            width: 150,
         },
         {
             field: "unitPrice",
             headerName: t(i18n.translationKey.unitPrice),
             valueFormatter: (params) => formatCurrencyVND(params.data.quantity * params.data.unitPrice),
             cellClass: "ag-cell-center",
+            width: 150,
         },
         {
             field: "scheduledDate",
@@ -225,12 +227,12 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                         {
                                             field: "medicineCode",
                                             headerName: t(i18n.translationKey.medicalCode),
-                                            width: 50,
+                                            width: 100,
                                         },
                                         {
                                             field: "medicineName",
                                             headerName: t(i18n.translationKey.medicineName),
-                                            width: 300,
+                                            width: 250,
                                         },
                                         {
                                             field: "unit",
@@ -245,12 +247,14 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                         {
                                             field: "routeOfAdministration",
                                             headerName: t(i18n.translationKey.injectionRoute),
-                                            width: 100,
+                                            width: 150,
                                         },
                                         {
                                             field: "unitPrice",
                                             headerName: t(i18n.translationKey.unitPrice),
                                             valueFormatter: ({ value }) => formatCurrencyVND(value),
+                                            cellClass: "ag-cell-center",
+                                            width: 150,
                                         },
                                     ]}
                                     rowData={listMedicines}

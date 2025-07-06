@@ -24,7 +24,7 @@ interface UseAgGridResult<T> {
 
 export const useAgGrid = <T>({
     initialColumnDefs = [],
-    autoSizeColumns = false,
+    autoSizeColumns = true,
     suppressRowClickSelection = false,
     rowSelection = "single",
     defaultSortModel = [],
@@ -38,8 +38,6 @@ export const useAgGrid = <T>({
             sortable: false,
             filter: false,
             resizable: true,
-            flex: 1,
-            // minWidth: GRID_STYLE_CONFIG.GRID_DIMENSIONS.MIN_WIDTH_COLUMN,
             cellStyle: {
                 height: GRID_STYLE_CONFIG.GRID_DIMENSIONS.ROW_HEIGHT,
             },
@@ -74,6 +72,10 @@ export const useAgGrid = <T>({
         (params: GridReadyEvent) => {
             if (!gridApi.current) {
                 gridApi.current = params.api;
+            }
+
+            if (autoSizeColumns) {
+                gridApi.current?.sizeColumnsToFit();
             }
 
             // Apply default sort if provided

@@ -169,18 +169,22 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
                             {
                                 field: "code",
                                 headerName: t(i18n.translationKey.medicalCode),
+                                flex: 1,
                             },
                             {
                                 field: "name",
                                 headerName: t(i18n.translationKey.patientName),
+                                flex: 1,
                             },
                             {
                                 field: "phoneNumber",
                                 headerName: t(i18n.translationKey.phoneNumber),
+                                flex: 1,
                             },
                             {
                                 field: "identityCard",
                                 headerName: t(i18n.translationKey.identityCard),
+                                flex: 1,
                             },
                         ]}
                         rowData={listPatients}
