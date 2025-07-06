@@ -123,7 +123,7 @@ export const AgGridDropdownFormItem = <T extends object>({
                                 paper: {
                                     sx: {
                                         width: "100%",
-                                        maxWidth: `${columnDefs.reduce((acc, col) => acc + ((col as ColDef).width ?? 0), 0)}px`,
+                                        maxWidth: `${columnDefs.reduce((acc, col) => acc + ((col as ColDef).width ?? 200), 0)}px`,
                                         overflowY: "auto",
                                     },
                                 },

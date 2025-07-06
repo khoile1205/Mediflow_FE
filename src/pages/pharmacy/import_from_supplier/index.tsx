@@ -1,5 +1,6 @@
 import { AddCircle, Save, Undo } from "@mui/icons-material";
 import { Box, Grid, Stack } from "@mui/material";
+import { RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActionButton } from "~/components/common/action-button";
@@ -7,18 +8,20 @@ import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
-import { Supplier } from "~/entities/supplier";
-import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
-import { IPagination } from "~/libs/axios/types";
-import { inventoryService } from "~/services/inventory";
-import { showToast } from "~/utils";
-import ImportPharmaceuticalInformation from "./pharmaceutical_information";
-import { ImportMedicineFromSupplierFormValues } from "./types";
-import { ImportMedicineFromSupplierDocumentRequest } from "~/services/inventory/types";
-import { formatDate } from "~/utils/date-time";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { useAuth } from "~/contexts/auth.context";
-import { RowSelectedEvent } from "ag-grid-community";
+import { Supplier } from "~/entities/supplier";
+import { usePagination } from "~/hooks";
+import {
+    useMutationGenerateImportDocumentCode,
+    useMutationSaveImportDocument,
+} from "~/services/inventory/hooks/mutations";
+import { useQueryGetListSupplier } from "~/services/inventory/hooks/queries";
+import { ImportMedicineFromSupplierDocumentRequest } from "~/services/inventory/infras/types";
+import { showToast } from "~/utils";
+import { formatDate } from "~/utils/date-time";
+import ImportPharmaceuticalInformation from "./pharmaceutical_information";
+import { ImportMedicineFromSupplierFormValues } from "./types";
 
 const defaultValues: ImportMedicineFromSupplierFormValues = {
     documentCode: "",
@@ -35,8 +38,21 @@ const defaultValues: ImportMedicineFromSupplierFormValues = {
 const ImportInventoryFromSupplier: React.FC = () => {
     const { t } = useTranslation();
     const { user } = useAuth();
+    const { pageIndex, pageSize, handlePageChange } = usePagination();
+
+    // Query
+
+    const {
+        data: { suppliers, totalItems },
+    } = useQueryGetListSupplier({
+        pageIndex,
+        pageSize,
+    });
+
+    // Mutation
+    const { mutateAsync: generateDocumentCode } = useMutationGenerateImportDocumentCode();
+    const { mutateAsync: saveImportDocument } = useMutationSaveImportDocument();
     const [isAddNew, setIsAddNew] = React.useState<boolean>(false);
-    const [supplierPaginationData, setSupplierPaginationData] = React.useState<IPagination<Supplier>>();
     const form = useForm<ImportMedicineFromSupplierFormValues>({
         defaultValues: {
             ...defaultValues,
@@ -52,19 +68,14 @@ const ImportInventoryFromSupplier: React.FC = () => {
 
     const handleAddNew = () => {
         setIsAddNew(true);
-        generateDocumentCode();
+        handleGenerateDocumentCode();
         form.resetField("details");
     };
 
-    const generateDocumentCode = async () => {
-        try {
-            const response = await inventoryService.generateDocumentCode();
-            const { documentCode, documentNumber } = response.Data;
-            form.setValue("documentCode", documentCode);
-            form.setValue("documentNumber", documentNumber);
-        } catch (error) {
-            showToast.error(getAxiosErrorMessageKey(error));
-        }
+    const handleGenerateDocumentCode = async () => {
+        const response = await generateDocumentCode();
+        form.setValue("documentCode", response.documentCode);
+        form.setValue("documentNumber", response.documentNumber);
     };
 
     const handleSelectSupplier = (selectedRow: RowSelectedEvent<Supplier>) => {
@@ -83,15 +94,11 @@ const ImportInventoryFromSupplier: React.FC = () => {
         }
 
         const importDocumentRequest = getDocumentRequest(importDocument);
+        await saveImportDocument(importDocumentRequest);
 
-        try {
-            await inventoryService.saveImportDocument(importDocumentRequest);
-            showToast.success(t(i18n.translationKey.documentCreateSuccessfully));
-            setIsAddNew(false);
-            form.reset(form.formState.defaultValues);
-        } catch (error) {
-            showToast.error(getAxiosErrorMessageKey(error));
-        }
+        showToast.success(t(i18n.translationKey.documentCreateSuccessfully));
+        setIsAddNew(false);
+        form.reset(form.formState.defaultValues);
     };
 
     const getDocumentRequest = (
@@ -121,31 +128,6 @@ const ImportInventoryFromSupplier: React.FC = () => {
             })),
         };
     };
-
-    React.useEffect(() => {
-        initializeData();
-    }, []);
-
-    const initializeData = async () => {
-        await Promise.allSettled([getListSupplier()]);
-    };
-
-    const getListSupplier = async (pageIndex: number = 1, pageSize: number = 2) => {
-        try {
-            const response = await inventoryService.getListSupplier({ pageIndex, pageSize });
-            setSupplierPaginationData(response.Data);
-        } catch (error) {
-            showToast.error(getAxiosErrorMessageKey(error));
-        }
-    };
-
-    const handleSupplierPageChange = React.useCallback(
-        async (newPageIndex: number) => {
-            const currentPageSize = supplierPaginationData?.pageSize ?? 2;
-            await getListSupplier(newPageIndex, currentPageSize);
-        },
-        [supplierPaginationData?.pageSize],
-    );
 
     return (
         <Box sx={{ p: { xs: 2 } }}>
@@ -219,12 +201,12 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                             { field: "supplierCode", headerName: t(i18n.translationKey.supplierCode) },
                                             { field: "phone", headerName: t(i18n.translationKey.phoneNumber) },
                                         ]}
-                                        rowData={supplierPaginationData?.data ?? []}
-                                        pageIndex={supplierPaginationData?.pageIndex ?? 1}
-                                        pageSize={supplierPaginationData?.pageSize ?? 10}
-                                        totalItems={supplierPaginationData?.totalItems ?? 0}
+                                        rowData={suppliers}
+                                        pageIndex={pageIndex}
+                                        pageSize={pageSize}
+                                        totalItems={totalItems}
                                         onRowSelected={handleSelectSupplier}
-                                        onPageChange={handleSupplierPageChange}
+                                        onPageChange={handlePageChange}
                                         displayField="supplierName"
                                         required
                                     />
