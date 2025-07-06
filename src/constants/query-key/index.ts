@@ -24,9 +24,19 @@ const DepartmentQueryKey = {
     GET_LIST_DEPARTMENT_WITH_PAGINATION: "getListDepartmentWithPagination",
 };
 
+const InventoryQueryKey = {
+    GET_ALL_MANUFACTURERS: "getAllManufacturers",
+    GET_ALL_MANUFACTURE_COUNTRIES: "getAllManufactureCountries",
+    GENERATE_DOCUMENT_CODE: "generateDocumentCode",
+    CREATE_IMPORT_DOCUMENT: "createImportDocument",
+    GET_LIST_SUPPLIER: "getListSupplier",
+    SAVE_IMPORT_DOCUMENT: "saveImportDocument",
+};
+
 export const QueryKey = {
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
     HOSPITAL_SERVICE: HospitalServiceQueryKey,
     DEPARTMENT: DepartmentQueryKey,
+    INVENTORY: InventoryQueryKey,
 };

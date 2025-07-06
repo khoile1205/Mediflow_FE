@@ -13,10 +13,9 @@ import { toBaseOption } from "~/components/form/utils";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { Manufacture, ManufactureCountry, Medicine } from "~/entities/medicine";
-import { getAxiosErrorMessageKey } from "~/libs/axios/helper";
-import { IPagination } from "~/libs/axios/types";
-import { inventoryService } from "~/services/inventory";
-// import { medicineService } from "~/services/medicine";
+import { usePagination } from "~/hooks";
+import { useQueryGetAllManufactureCountries, useQueryGetAllManufacturers } from "~/services/inventory/hooks/queries";
+import { useQueryGetMedicinesWithPagination } from "~/services/medicine/hooks/queries";
 import { showToast } from "~/utils";
 import { formatCurrencyVND } from "~/utils/currency";
 import { formatDate } from "~/utils/date-time";
@@ -30,7 +29,7 @@ interface ImportPharmaceuticalInformationProps {
 
 const defaultValues: ImportMedicineFromSupplierDetail = {
     index: 0,
-    medicineId: 0,
+    medicineId: null,
     medicineName: "",
     unit: "",
     quantity: 0,
@@ -53,9 +52,21 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
 }) => {
     const { t } = useTranslation();
 
-    const [medicineDataGrid] = React.useState<IPagination<Medicine>>();
-    const [listManufacturers, setListManufacturers] = React.useState<Manufacture[]>([]);
-    const [listCountries, setListCountries] = React.useState<ManufactureCountry[]>([]);
+    const { pageIndex, pageSize, handlePageChange } = usePagination();
+    const [searchMedicineTerm, setSearchMedicineTerm] = React.useState<string>("");
+    const {
+        data: { listMedicines, totalItems },
+    } = useQueryGetMedicinesWithPagination({
+        pageIndex,
+        pageSize,
+        searchKeyword: searchMedicineTerm,
+    });
+    const {
+        data: { manufacturers },
+    } = useQueryGetAllManufacturers();
+    const {
+        data: { countries },
+    } = useQueryGetAllManufactureCountries();
 
     const pharmaceuticalInformationForm = useForm<ImportMedicineFromSupplierDetail>({
         defaultValues,
@@ -186,40 +197,9 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
         });
     };
 
-    const initializeData = async () => {
-        await Promise.allSettled([getMedicineData(), getManufacturers(), getAllManufacturerCountries()]);
+    const handleSearchMedicine = (searchValue: string) => {
+        setSearchMedicineTerm(searchValue);
     };
-
-    const getMedicineData = async () => {
-        try {
-            // const response = await medicineService.getMedicinesWithPagination({ pageIndex: 1, pageSize: 3 });
-            // setMedicineDataGrid(response.Data);
-        } catch (error) {
-            showToast.error(getAxiosErrorMessageKey(error));
-        }
-    };
-
-    const getManufacturers = async () => {
-        try {
-            const response = await inventoryService.getAllManufacturers();
-            setListManufacturers(response.Data);
-        } catch (error) {
-            showToast.error(getAxiosErrorMessageKey(error));
-        }
-    };
-
-    const getAllManufacturerCountries = async () => {
-        try {
-            const response = await inventoryService.getAllManufactureCountries();
-            setListCountries(response.Data);
-        } catch (error) {
-            showToast.error(getAxiosErrorMessageKey(error));
-        }
-    };
-
-    React.useEffect(() => {
-        initializeData();
-    }, []);
 
     return (
         <DynamicForm form={pharmaceuticalInformationForm}>
@@ -251,17 +231,20 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                         <Grid size={{ xs: 12, md: 6, lg: 3 }}>
                             <FormItem
                                 render="data-grid"
-                                name="medicineName"
+                                name="medicineId"
                                 label={t(i18n.translationKey.medicineName)}
                                 placeholder={t(i18n.translationKey.medicineName)}
                                 onRowSelected={handleSelectedMedicine}
                                 columnDefs={[
                                     {
+                                        field: "medicineCode",
+                                        headerName: t(i18n.translationKey.medicalCode),
+                                        width: 100,
+                                    },
+                                    {
                                         field: "medicineName",
                                         headerName: t(i18n.translationKey.medicineName),
-                                        resizable: true,
-                                        flex: 1,
-                                        minWidth: 120,
+                                        width: 200,
                                     },
                                     {
                                         field: "unit",
@@ -269,12 +252,16 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                                         width: 100,
                                     },
                                 ]}
-                                rowData={medicineDataGrid?.data ?? []}
+                                rowData={listMedicines}
                                 displayField="medicineName"
-                                pageIndex={1}
-                                pageSize={3}
-                                totalItems={medicineDataGrid?.totalItems}
+                                valueField="medicineId"
+                                pageIndex={pageIndex}
+                                pageSize={pageSize}
+                                totalItems={totalItems}
+                                onPageChange={handlePageChange}
+                                pagination
                                 required
+                                onSearch={handleSearchMedicine}
                                 disabled={disabled}
                             />
                         </Grid>
@@ -353,7 +340,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                                 name="manufacturerId"
                                 label={t(i18n.translationKey.manufacturer)}
                                 placeholder={t(i18n.translationKey.manufacturer)}
-                                options={toBaseOption<Manufacture>(listManufacturers, {
+                                options={toBaseOption<Manufacture>(manufacturers, {
                                     label: "manufacturerName",
                                     value: "id",
                                 })}
@@ -368,7 +355,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                                 name="countryId"
                                 label={t(i18n.translationKey.countryOfOrigin)}
                                 placeholder={t(i18n.translationKey.countryOfOrigin)}
-                                options={toBaseOption<ManufactureCountry>(listCountries, {
+                                options={toBaseOption<ManufactureCountry>(countries, {
                                     label: "countryName",
                                     value: "id",
                                 })}

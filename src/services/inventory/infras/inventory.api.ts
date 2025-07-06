@@ -26,14 +26,6 @@ const generateDocumentCode = async () => {
     });
 };
 
-const createImportDocument = async (data: any) => {
-    return await callApi({
-        url: endpoints.inventory.supplierImportDocument.createDocument,
-        method: HttpMethod.POST,
-        data,
-    });
-};
-
 const getListSupplier = async ({ pageIndex, pageSize }: IPaginationRequest) => {
     return await callApi<IPagination<Supplier>>({
         url: endpoints.inventory.supplier.standard,
@@ -53,11 +45,10 @@ const saveImportDocument = async (importDocument: ImportMedicineFromSupplierDocu
     });
 };
 
-export const inventoryService = {
+export const inventoryApis = {
     getAllManufacturers,
     getAllManufactureCountries,
     generateDocumentCode,
-    createImportDocument,
     getListSupplier,
     saveImportDocument,
 };
