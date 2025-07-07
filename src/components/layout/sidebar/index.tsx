@@ -41,6 +41,10 @@ const sidebarTree: SidebarTabProps[] = [
                 pathName: "/vaccination",
             },
             {
+                labelKey: i18n.translationKey.preExaminationTesting,
+                pathName: "/vaccination/pre-examination-testing",
+            },
+            {
                 labelKey: i18n.translationKey.vaccinationHistory,
                 pathName: "/vaccination/history",
             },

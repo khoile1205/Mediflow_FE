@@ -312,5 +312,8 @@
     "UPDATE": "Update",
     "CREATE_VACCINATION_INDICATION_SUCCESSFULLY": "Created vaccination indication successfully.",
     "UPDATE_VACCINATION_INDICATION_SUCCESSFULLY": "Updated vaccination indication successfully.",
-    "DELETE_VACCINATION_INDICATION_SUCCESSFULLY": "Deleted vaccination indication successfully."
+    "DELETE_VACCINATION_INDICATION_SUCCESSFULLY": "Deleted vaccination indication successfully.",
+    "ENTERED_BY_DOCTOR": "Entered by doctor",
+    "PRE_EXAMINATION_TESTING": "Pre-examination Testing",
+    "INPUT_TEST_RESULT": "Input test result"
 }
