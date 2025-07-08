@@ -1,14 +1,12 @@
+import { Box, Button, Dialog, DialogContent, DialogTitle, Grid, Typography } from "@mui/material";
+import { ColDef } from "ag-grid-community";
 import React from "react";
-import { Dialog, DialogTitle, DialogContent, Grid, Typography, Button, Box } from "@mui/material";
-import { useForm } from "~/components/form/hooks/use-form";
-import DynamicForm from "~/components/form/dynamic-form";
-import FormItem from "~/components/form/form-item";
 import { useTranslation } from "react-i18next";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
-import { ColDef } from "ag-grid-community";
+import DynamicForm from "~/components/form/dynamic-form";
+import FormItem from "~/components/form/form-item";
+import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
-import { ActionButton } from "~/components/common/action-button";
-import { AddCircle, Edit, Save, Delete, Undo } from "@mui/icons-material";
 
 interface PreExaminationTestingPageProps {
     open: boolean;
@@ -43,19 +41,19 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
             onClose={onClose}
             maxWidth="lg"
             fullWidth
-            PaperProps={{
-                sx: {
-                    height: "80%",
-                    maxHeight: "80vh",
-                    overflow: "auto",
-                },
-            }}
+            // PaperProps={{
+            //     sx: {
+            //         height: "80%",
+            //         maxHeight: "80vh",
+            //         overflow: "auto",
+            //     },
+            // }}
         >
             <DialogTitle>
                 <Typography variant="h6">{t(i18n.translationKey.testResult)}</Typography>
             </DialogTitle>
-            <DialogContent>
-                <Grid container spacing={2} className="mb-4">
+            <DialogContent className="no-scrollbar h-full">
+                {/* <Grid container spacing={2} className="mb-4">
                     <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
                         <ActionButton
                             fullWidth
@@ -98,10 +96,10 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
                             onClick={onClose}
                         />
                     </Grid>
-                </Grid>
+                </Grid> */}
 
                 <DynamicForm form={resultForm}>
-                    <Grid container spacing={2} className="mb-4" alignItems="stretch">
+                    <Grid container spacing={2} className="my-4" alignItems="stretch">
                         <Grid size={{ xs: 12, md: 6 }}>
                             <Box
                                 sx={{
