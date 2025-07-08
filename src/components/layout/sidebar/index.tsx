@@ -76,7 +76,7 @@ export const Sidebar: React.FC = () => {
             items
                 .filter((item) => {
                     if (!item.requiredPermissions) return true;
-                    return hasPermission(userPermission.resourceTypes, item.requiredPermissions);
+                    return hasPermission(userPermission?.resourceTypes || {}, item.requiredPermissions);
                 })
                 .map((item) => ({
                     ...item,

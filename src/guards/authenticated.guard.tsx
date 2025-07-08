@@ -16,44 +16,29 @@ const AuthenticatedGuard: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const resourceTypes = userPermission?.resourceTypes ?? {};
-    const requiredPermissions = getRequiredPermissionForPath(location.pathname, routePermissions);
-    const hasAccess = hasPermission(resourceTypes, requiredPermissions);
+    React.useEffect(() => {
+        if (!isInitialized || isLoading || !user || !userPermission) {
+            return;
+        }
 
-    if (!isInitialized || isLoading || !user || !userPermission || !userPermission.resourceTypes) {
+        if (!user) {
+            sessionStorage.setItem("redirectUrl", location.pathname);
+            showToast.warning(t(i18n.translationKey.pleaseLoginToContinue));
+            navigate("/login");
+        }
+
+        const requiredPermissions = getRequiredPermissionForPath(location.pathname, routePermissions);
+        const hasAccess = hasPermission(userPermission?.resourceTypes ?? {}, requiredPermissions);
+
+        if (requiredPermissions && !hasAccess) {
+            showToast.warning(t(i18n.translationKey.accessDenied));
+            navigate("/");
+        }
+    }, [navigate, location.pathname, isInitialized, isLoading, user, userPermission]);
+
+    if (!isInitialized || isLoading || !user || !userPermission) {
         return <Spinner />;
     }
-
-    if (requiredPermissions && !hasAccess) {
-        // Prevent flash render
-        navigate("/");
-        showToast.error(t(i18n.translationKey.accessDenied));
-        return null;
-    }
-
-    // React.useEffect(() => {
-    //     if (!isInitialized || isLoading || !user || !userPermission) {
-    //         return;
-    //     }
-
-    //     if (!user) {
-    //         sessionStorage.setItem("redirectUrl", location.pathname);
-    //         showToast.warning(t(i18n.translationKey.pleaseLoginToContinue));
-    //         navigate("/login");
-    //     }
-
-    //     const requiredPermissions = getRequiredPermissionForPath(location.pathname, routePermissions);
-    //     const hasAccess = hasPermission(userPermission?.resourceTypes ?? {}, requiredPermissions);
-
-    //     if (requiredPermissions && !hasAccess) {
-    //         showToast.warning(t(i18n.translationKey.accessDenied));
-    //         navigate("/");
-    //     }
-    // }, [navigate, location.pathname, isInitialized, isLoading, user, userPermission]);
-
-    // if (!isInitialized || isLoading || !user || !userPermission) {
-    //     return <Spinner />;
-    // }
 
     return (
         <Box className="flex h-screen w-screen">
