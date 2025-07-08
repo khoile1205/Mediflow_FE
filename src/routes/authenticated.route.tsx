@@ -7,7 +7,6 @@ import PatientVaccinationHistory from "~/pages/vaccination/patient-vacciation-hi
 import VaccinationPage from "~/pages/vaccination";
 import AuthenticatedGuard from "../guards/authenticated.guard";
 import PostVaccinationPage from "~/pages/post-vaccination";
-import PreExaminationTestingPage from "~/pages/pre-examination-testing";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -22,7 +21,6 @@ export const AuthenticatedRoutes = (
             <Route index element={<VaccinationPage />} />
             <Route path="history" element={<PatientVaccinationHistory />} />
             <Route path="post-injection" element={<PostVaccinationPage />} />
-            <Route path="pre-examination-testing" element={<PreExaminationTestingPage />} />
         </Route>
 
         <Route path="/finance" element={<HospitalFeePage />} />
