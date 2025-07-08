@@ -7,6 +7,7 @@ import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
+import PreExaminationTestingPage from "../pre-examination-testing";
 
 const ReadonlyTextField: React.FC<TextFieldProps> = ({ slotProps, ...props }) => {
     return (
@@ -70,6 +71,12 @@ const VaccinationPage: React.FC = () => {
 
     const handleSearch = (value: string) => {
         console.log("Search value:", value);
+    };
+
+    const [isOpenTestingModal, setIsOpenTestingModal] = React.useState<boolean>(false);
+
+    const handleConfirmStart = () => {
+        setIsOpenTestingModal(true);
     };
 
     return (
@@ -174,7 +181,7 @@ const VaccinationPage: React.FC = () => {
                         <Grid size={4}>
                             <Stack spacing={3.35}>
                                 <Button>{t(i18n.translationKey.sendToCustomer)}</Button>
-                                <Button>{t(i18n.translationKey.confirmStart)}</Button>
+                                <Button onClick={handleConfirmStart}>{t(i18n.translationKey.confirmStart)}</Button>
                                 <Button>{t(i18n.translationKey.confirmInjectedToday)}</Button>
                                 <Button>{t(i18n.translationKey.saveNote)}</Button>
                                 <Button>{t(i18n.translationKey.confirmSelectedDose)}</Button>
@@ -201,6 +208,8 @@ const VaccinationPage: React.FC = () => {
                     </Box>
                 </DynamicForm>
             </Box>
+
+            <PreExaminationTestingPage open={isOpenTestingModal} onClose={() => setIsOpenTestingModal(false)} />
         </Box>
     );
 };

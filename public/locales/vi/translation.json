@@ -312,5 +312,8 @@
     "NOT_AVAILABLE": "Không khả dụng",
     "CREATE_VACCINATION_INDICATION_SUCCESSFULLY": "Tạo chỉ định tiêm chủng thành công.",
     "UPDATE_VACCINATION_INDICATION_SUCCESSFULLY": "Cập nhật chỉ định tiêm chủng thành công.",
-    "DELETE_VACCINATION_INDICATION_SUCCESSFULLY": "Xóa chỉ định tiêm chủng thành công."
+    "DELETE_VACCINATION_INDICATION_SUCCESSFULLY": "Xóa chỉ định tiêm chủng thành công.",
+    "ENTERED_BY_DOCTOR": "Y/Bác sĩ nhập kết quả",
+    "PRE_EXAMINATION_TESTING": "Thử trước tiêm",
+    "INPUT_TEST_RESULT": "Nhập kết quả thử"
 }

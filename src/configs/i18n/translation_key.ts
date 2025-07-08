@@ -227,6 +227,9 @@ const applicationTranslationKey = {
     createVaccinationIndicationSuccessfully: "CREATE_VACCINATION_INDICATION_SUCCESSFULLY",
     updateVaccinationIndicationSuccessfully: "UPDATE_VACCINATION_INDICATION_SUCCESSFULLY",
     deleteVaccinationIndicationSuccessfully: "DELETE_VACCINATION_INDICATION_SUCCESSFULLY",
+    enteredByDoctor: "ENTERED_BY_DOCTOR",
+    preExaminationTesting: "PRE_EXAMINATION_TESTING",
+    inputTestResult: "INPUT_TEST_RESULT",
 };
 
 const exceptionTranslationKey = {
