@@ -10,6 +10,7 @@ const validationTranslationKey = {
     pleaseSelectADateBefore: "PLEASE_SELECT_A_DATE_BEFORE",
     dateMustNotBeInThePast: "DATE_MUST_NOT_BE_IN_THE_PAST",
     dateMustNotBeInTheFuture: "DATE_MUST_NOT_BE_IN_THE_FUTURE",
+    accessDenied: "ACCESS_DENIED",
 };
 
 const applicationTranslationKey = {

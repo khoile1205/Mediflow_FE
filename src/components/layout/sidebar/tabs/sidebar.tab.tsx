@@ -12,6 +12,7 @@ export interface SidebarTabProps {
     pathName?: string;
     children?: SidebarTabProps[];
     onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
+    requiredPermissions?: string[];
 }
 
 export const SidebarTabItem: React.FC<SidebarTabProps> = ({

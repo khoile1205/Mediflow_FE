@@ -52,6 +52,7 @@ const LoginPage: React.FC = () => {
                             <FormItem
                                 render="text-input"
                                 name="userName"
+                                label={t(i18n.translationKey.username)}
                                 placeholder={t(i18n.translationKey.username)}
                                 required
                                 onKeyDown={handleKeyDown}
@@ -59,6 +60,7 @@ const LoginPage: React.FC = () => {
                             <FormItem
                                 render="text-input"
                                 name="password"
+                                label={t(i18n.translationKey.password)}
                                 placeholder={t(i18n.translationKey.password)}
                                 isPassword
                                 required
