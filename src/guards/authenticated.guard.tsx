@@ -17,7 +17,7 @@ const AuthenticatedGuard: React.FC = () => {
     const location = useLocation();
 
     React.useEffect(() => {
-        if (!isInitialized || isLoading || !user || !userPermission) {
+        if (!isInitialized || isLoading) {
             return;
         }
 
