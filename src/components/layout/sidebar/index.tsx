@@ -6,6 +6,7 @@ import i18n from "~/configs/i18n";
 import { useAuth } from "~/contexts/auth.context";
 import { ChangeLanguageTab } from "./tabs/change-lang.tab";
 import { SidebarTabItem, SidebarTabProps } from "./tabs/sidebar.tab";
+import { hasPermission } from "~/utils/permission.utils";
 
 const sidebarTree: SidebarTabProps[] = [
     {
@@ -26,11 +27,13 @@ const sidebarTree: SidebarTabProps[] = [
             //     pathName: "/reception/patient",
             // },
         ],
+        requiredPermissions: ["vaccination-reception"],
     },
     {
         icon: <Paid />,
         labelKey: i18n.translationKey.hospitalFee,
         pathName: "/finance",
+        requiredPermissions: ["hospital-service"],
     },
     {
         icon: <Vaccines />,
@@ -50,6 +53,7 @@ const sidebarTree: SidebarTabProps[] = [
                 icon: <AccessTime />,
             },
         ],
+        requiredPermissions: ["appointments"],
     },
     {
         icon: <Inventory2 />,
@@ -60,11 +64,28 @@ const sidebarTree: SidebarTabProps[] = [
                 pathName: "/pharmacy/import",
             },
         ],
+        requiredPermissions: ["inventory"],
     },
 ];
 
 export const Sidebar: React.FC = () => {
-    const { logout } = useAuth();
+    const { logout, userPermission } = useAuth();
+
+    const filteredSidebarTree = React.useMemo(() => {
+        const filterTree = (items: SidebarTabProps[]): SidebarTabProps[] =>
+            items
+                .filter((item) => {
+                    if (!item.requiredPermissions) return true;
+                    return hasPermission(userPermission?.resourceTypes || {}, item.requiredPermissions);
+                })
+                .map((item) => ({
+                    ...item,
+                    children: item.children ? filterTree(item.children) : undefined,
+                }));
+
+        return filterTree(sidebarTree);
+    }, [userPermission.resourceTypes]);
+
     return (
         <Drawer
             variant="permanent"
@@ -87,7 +108,7 @@ export const Sidebar: React.FC = () => {
                     <Typography className="ml-3 truncate text-[16px]">MediFlows</Typography>
                 </Box>
                 <Box className="no-scrollbar w-full flex-1 overflow-y-auto overflow-x-hidden p-2">
-                    {sidebarTree.map((sideBar, idx) => (
+                    {filteredSidebarTree.map((sideBar, idx) => (
                         <SidebarTabItem key={sideBar.labelKey + idx} {...sideBar} level={0} />
                     ))}
                 </Box>

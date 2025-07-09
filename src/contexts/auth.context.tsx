@@ -8,11 +8,13 @@ import { showToast } from "~/utils";
 import i18n from "~/configs/i18n";
 import { useTranslation } from "react-i18next";
 import { Staff } from "~/entities/person-info.entity";
+import { UserPermission } from "~/entities/user-permission";
 
 export type AuthContextProps = {
     isLoading: boolean;
     isInitialized: boolean;
     user: Staff | null;
+    userPermission?: UserPermission;
     login: (params: TLoginRequest) => Promise<void>;
     logout: () => void;
 };
@@ -31,27 +33,35 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const [user, setUser] = React.useState<Staff | null>(null);
+    const [userPermission, setUserPermission] = React.useState<UserPermission | null>(null);
     const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
     const navigate = useNavigate();
 
     const loadUserInfor = React.useCallback(async () => {
         try {
-            setIsLoading(true);
             const response = await authService.getCurrentUser();
             setUser(response.Data);
         } catch {
             setUser(null);
-        } finally {
-            setIsLoading(false);
-            setIsInitialized(true);
+        }
+    }, []);
+
+    const loadUserPermission = React.useCallback(async () => {
+        try {
+            const response = await authService.getUserPermission();
+            setUserPermission(response.Data);
+        } catch {
+            setUserPermission(null);
         }
     }, []);
 
     const handleLogin = React.useCallback(async (params: TLoginRequest) => {
         try {
             setIsLoading(true);
+
             await authService.login(params);
-            await loadUserInfor();
+            await initializeUser();
+
             showToast.success(t(i18n.translationKey.loginSuccessfully));
 
             const redirectUrl = sessionStorage.getItem("redirectUrl");
@@ -82,7 +92,14 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
     }, []);
 
     const initializeUser = async () => {
+        setIsInitialized(false);
+        setIsLoading(true);
+
         await loadUserInfor();
+        await loadUserPermission();
+
+        setIsInitialized(true);
+        setIsLoading(false);
     };
 
     React.useEffect(() => {
@@ -94,10 +111,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
             isLoading,
             isInitialized,
             user,
+            userPermission,
             login: handleLogin,
             logout: handleLogout,
         }),
-        [isLoading, isInitialized, user, handleLogin, handleLogout],
+        [isLoading, isInitialized, user, userPermission, handleLogin, handleLogout],
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

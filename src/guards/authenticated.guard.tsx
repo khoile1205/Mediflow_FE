@@ -7,15 +7,17 @@ import { Spinner } from "~/components/layout/spinner";
 import { Sidebar } from "~/components/layout/sidebar";
 import { useTranslation } from "react-i18next";
 import i18n from "~/configs/i18n";
+import { routePermissions } from "~/configs/route-permission";
+import { getRequiredPermissionForPath, hasPermission } from "~/utils/permission.utils";
 
 const AuthenticatedGuard: React.FC = () => {
     const { t } = useTranslation();
-    const { user, isLoading, isInitialized } = useAuth();
+    const { user, isLoading, isInitialized, userPermission } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
     React.useEffect(() => {
-        if (!isInitialized) {
+        if (!isInitialized || isLoading || !user || !userPermission) {
             return;
         }
 
@@ -24,9 +26,17 @@ const AuthenticatedGuard: React.FC = () => {
             showToast.warning(t(i18n.translationKey.pleaseLoginToContinue));
             navigate("/login");
         }
-    }, [navigate, location.pathname, isInitialized]);
 
-    if (isLoading || !user) {
+        const requiredPermissions = getRequiredPermissionForPath(location.pathname, routePermissions);
+        const hasAccess = hasPermission(userPermission?.resourceTypes ?? {}, requiredPermissions);
+
+        if (requiredPermissions && !hasAccess) {
+            showToast.warning(t(i18n.translationKey.accessDenied));
+            navigate("/");
+        }
+    }, [navigate, location.pathname, isInitialized, isLoading, user, userPermission]);
+
+    if (!isInitialized || isLoading || !user || !userPermission) {
         return <Spinner />;
     }
 
