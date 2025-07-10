@@ -231,6 +231,9 @@ const applicationTranslationKey = {
     enteredByDoctor: "ENTERED_BY_DOCTOR",
     preExaminationTesting: "PRE_EXAMINATION_TESTING",
     inputTestResult: "INPUT_TEST_RESULT",
+    updatePostVaccinationResultSuccessfully: "UPDATE_POST_VACCINATION_RESULT_SUCCESSFULLY",
+    savedSuccessfully: "SAVED_SUCCESSFULLY",
+    savedFailed: "SAVED_FAILED",
 };
 
 const exceptionTranslationKey = {

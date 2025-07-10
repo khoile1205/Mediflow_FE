@@ -33,10 +33,17 @@ const InventoryQueryKey = {
     SAVE_IMPORT_DOCUMENT: "saveImportDocument",
 };
 
+const PostVaccinationQueryKey = {
+    GET_PATIENT_LIST: "getPostVaccinationPatients",
+    GET_MEDICINE_LIST: "getPostVaccinationMedicines",
+    UPDATE_RESULT: "updatePostVaccinationResult",
+};
+
 export const QueryKey = {
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
     HOSPITAL_SERVICE: HospitalServiceQueryKey,
     DEPARTMENT: DepartmentQueryKey,
     INVENTORY: InventoryQueryKey,
+    POST_VACCINATION: PostVaccinationQueryKey,
 };
