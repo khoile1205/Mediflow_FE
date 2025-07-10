@@ -1,32 +1,32 @@
 import { Gender } from "~/constants/enums";
 
 export interface PostVaccinationPatient {
-    no: number;
-    patientName: string;
-    dob: string;
-    gender: Gender;
-    medicalCode: string;
-    vaccinationNumber: string;
     receptionId: number;
+    patientName: string;
+    yearOfBirth: string;
+    gender: Gender;
+    patientCode: string;
+    patientVaccinationCode: string;
 }
 
 export interface PostVaccinationMedicine {
-    no: number;
-    vaccineName: string;
-    batchCode: string;
+    vaccinationId: number;
+    medicineName: string;
     quantity: number;
-    injectionDate: string;
-    followUpStatus: string;
-    reactionDate: string;
-    doctor: string;
+    vaccinationDate: string;
+    observationConfirmed: boolean;
+    reactionDate: string | null;
 }
 
 export interface UpdatePostVaccinationRequest {
-    injectionCompleteTime: string;
-    confirmFollowUp: boolean;
-    testResult: "negative" | "positive";
-    reactionOccurred: boolean;
-    reactionAfterInjectionTime?: string;
-    commonReactions: string[];
-    otherSymptoms?: string;
+    id: number;
+    observationConfirmed: boolean;
+    hasReaction: boolean;
+    reactionDate?: string | null;
+    postVaccinationResult: string;
+    postVaccinationDate: string;
+    hasFeverAbove39: boolean;
+    hasInjectionSiteReaction: boolean;
+    hasOtherReaction: boolean;
+    otherReactionDescription?: string | null;
 }

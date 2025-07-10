@@ -23,25 +23,33 @@ const PostVaccinationPage: React.FC = () => {
     const patientAgGrid = useAgGrid({ rowSelection: "single" });
     const reactionAgGrid = useAgGrid({});
 
+    const [selectedReceptionId, setSelectedReceptionId] = React.useState<number | null>(null);
     const [searchName, setSearchName] = React.useState<string>("");
 
     const { patients: listPatients = [] } = useQueryPostVaccinationPatients(searchName);
-    const { medicines: reactionData = [] } = useQueryPostVaccinationMedicines();
+    const { medicines: reactionData = [] } = useQueryPostVaccinationMedicines(selectedReceptionId ?? undefined);
 
     const { mutateAsync: savePostVaccination } = useMutationSavePostVaccination();
     const { mutateAsync: updatePostVaccination } = useMutationUpdatePostVaccinationResult();
 
     const isPatientSelected = !!patientForm.watch("receptionId");
 
+    const commonReactions = followUpForm.watch("commonReactions") || [];
+    const isOtherSelected = commonReactions.includes("other");
+
     const handleRowClick = (e: RowClickedEvent<any>) => {
         const selected = e.data;
-        patientForm.setValue("vaccinationNumber", selected.code);
-        patientForm.setValue("medicalCode", selected.identityCard);
-        patientForm.setValue("dob", selected.dob);
+
+        followUpForm.setValue("vaccinationId", selected.vaccinationId);
+        patientForm.setValue("receptionId", selected.receptionId);
+        patientForm.setValue("vaccinationNumber", selected.patientCode);
+        patientForm.setValue("medicalCode", selected.patientCode);
+        patientForm.setValue("dob", selected.yearOfBirth);
         patientForm.setValue("gender", selected.gender);
-        patientForm.setValue("vaccinationNumberDuplicate", selected.code);
-        patientForm.setValue("patientName", selected.name);
-        patientForm.setValue("receptionId", selected.id);
+        patientForm.setValue("vaccinationNumberDuplicate", selected.patientCode);
+        patientForm.setValue("patientName", selected.patientName);
+
+        setSelectedReceptionId(selected.receptionId);
     };
 
     const handleSave = async () => {
@@ -52,15 +60,19 @@ const PostVaccinationPage: React.FC = () => {
         try {
             if (isUpdate) {
                 await updatePostVaccination({
-                    vaccinationId: patientData.receptionId,
+                    vaccinationId: selectedReceptionId,
                     data: {
-                        injectionCompleteTime: followUpData.injectionCompleteTime || "",
-                        confirmFollowUp: followUpData.confirmFollowUp,
-                        testResult: followUpData.testResult,
-                        reactionOccurred: followUpData.reactionOccurred,
-                        reactionAfterInjectionTime: followUpData.reactionAfterInjectionTime,
-                        commonReactions: followUpData.commonReactions,
-                        otherSymptoms: followUpData.otherSymptoms,
+                        id: reactionData[0]?.vaccinationId,
+                        observationConfirmed: followUpData.confirmFollowUp,
+                        hasReaction: followUpData.reactionOccurred,
+                        reactionDate: followUpData.reactionAfterInjectionTime || null,
+                        postVaccinationResult: followUpData.testResult,
+                        postVaccinationDate: followUpData.injectionCompleteTime || "",
+                        hasFeverAbove39: followUpData.commonReactions?.includes("FEVER_ABOVE_39") ?? false,
+                        hasInjectionSiteReaction:
+                            followUpData.commonReactions?.includes("INJECTION_SITE_REACTION") ?? false,
+                        hasOtherReaction: !!followUpData.otherSymptoms,
+                        otherReactionDescription: followUpData.otherSymptoms || null,
                     },
                 });
             } else {
@@ -73,7 +85,6 @@ const PostVaccinationPage: React.FC = () => {
                     reactionAfterInjectionTime: followUpData.reactionAfterInjectionTime,
                     commonReactions: followUpData.commonReactions,
                     otherSymptoms: followUpData.otherSymptoms,
-                    details: reactionData,
                 };
                 await savePostVaccination(createPayload);
             }
@@ -94,8 +105,8 @@ const PostVaccinationPage: React.FC = () => {
             pinned: "left",
             suppressSizeToFit: true,
         },
-        { headerName: t(i18n.translationKey.patientName), field: "name" },
-        { headerName: t(i18n.translationKey.dateOfBirth), field: "dob" },
+        { headerName: t(i18n.translationKey.patientName), field: "patientName" },
+        { headerName: t(i18n.translationKey.dateOfBirth), field: "yearOfBirth" },
     ];
 
     const reactionColumnDefs: ColDef[] = React.useMemo(
@@ -107,15 +118,11 @@ const PostVaccinationPage: React.FC = () => {
                 pinned: "left",
                 suppressSizeToFit: true,
                 headerStyle: { backgroundColor: "#98D2C0" },
+                valueGetter: (p) => p.node?.rowIndex + 1,
             },
             {
-                field: "vaccineName",
+                field: "medicineName",
                 headerName: t(i18n.translationKey.vaccineSerumName),
-                headerStyle: { backgroundColor: "#98D2C0" },
-            },
-            {
-                field: "batchCode",
-                headerName: t(i18n.translationKey.batchNumber),
                 headerStyle: { backgroundColor: "#98D2C0" },
             },
             {
@@ -124,24 +131,26 @@ const PostVaccinationPage: React.FC = () => {
                 headerStyle: { backgroundColor: "#98D2C0" },
             },
             {
-                field: "injectionDate",
+                field: "vaccinationDate",
                 headerName: t(i18n.translationKey.injectionDate),
                 headerStyle: { backgroundColor: "#98D2C0" },
+                valueFormatter: ({ value }) => (value ? new Date(value).toLocaleString() : ""),
             },
             {
-                field: "followUpStatus",
+                field: "observationConfirmed",
                 headerName: t(i18n.translationKey.vaccinationConfirmation),
                 headerStyle: { backgroundColor: "#98D2C0" },
+                cellRenderer: "agTextCellRenderer",
+                valueFormatter: ({ value }) =>
+                    value
+                        ? t(i18n.translationKey.observationConfirmed)
+                        : t(i18n.translationKey.observationNotConfirmed),
             },
             {
                 field: "reactionDate",
                 headerName: t(i18n.translationKey.reactionDate),
                 headerStyle: { backgroundColor: "#98D2C0" },
-            },
-            {
-                field: "doctor",
-                headerName: t(i18n.translationKey.instructedDoctor),
-                headerStyle: { backgroundColor: "#98D2C0" },
+                valueFormatter: ({ value }) => (value ? new Date(value).toLocaleString() : ""),
             },
         ],
         [t],
@@ -358,7 +367,7 @@ const PostVaccinationPage: React.FC = () => {
                                 label={t(i18n.translationKey.otherSymptoms)}
                                 multiline
                                 rows={2}
-                                disabled={!isPatientSelected}
+                                disabled={!isPatientSelected || !isOtherSelected}
                             />
                         </Grid>
                     </Grid>

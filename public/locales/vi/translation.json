@@ -319,5 +319,8 @@
     "ACCESS_DENIED": "Bạn không có quyền truy cập vào trang này.",
     "UPDATE_POST_VACCINATION_RESULT_SUCCESSFULLY": "Cập nhật kết quả sau tiêm thành công",
     "SAVED_SUCCESSFULLY": "Lưu thành công",
-    "SAVED_FAILED": "Lưu thất bại"
+    "SAVED_FAILED": "Lưu thất bại",
+    "CONFIRM_OBSERVATE": "Xác nhận theo dõi",
+    "OBSERVATION_CONFIRMED": "Đã theo dõi",
+    "OBSERVATION_NOT_CONFIRMED": "Chưa theo dõi"
 }

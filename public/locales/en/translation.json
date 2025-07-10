@@ -319,5 +319,8 @@
     "ACCESS_DENIED": "You do not have permission to access this resource.",
     "UPDATE_POST_VACCINATION_RESULT_SUCCESSFULLY": "Update post vaccination result successfully",
     "SAVED_SUCCESSFULLY": "Saved successfully",
-    "SAVED_FAILED": "Saved failed"
+    "SAVED_FAILED": "Saved failed",
+    "CONFIRM_OBSERVATE": "Confirm observate",
+    "OBSERVATION_CONFIRMED": "Observation confirmed",
+    "OBSERVATION_NOT_CONFIRMED": "Observation not confirmed"
 }

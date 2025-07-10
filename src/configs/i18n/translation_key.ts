@@ -234,6 +234,9 @@ const applicationTranslationKey = {
     updatePostVaccinationResultSuccessfully: "UPDATE_POST_VACCINATION_RESULT_SUCCESSFULLY",
     savedSuccessfully: "SAVED_SUCCESSFULLY",
     savedFailed: "SAVED_FAILED",
+    confirmObservate: "CONFIRM_OBSERVATE",
+    observationConfirmed: "OBSERVATION_CONFIRMED",
+    observationNotConfirmed: "OBSERVATION_NOT_CONFIRMED",
 };
 
 const exceptionTranslationKey = {

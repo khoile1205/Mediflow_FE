@@ -7,7 +7,6 @@ export interface PostVaccinationRequest {
     reactionAfterInjectionTime?: string | Date;
     commonReactions?: string[];
     otherSymptoms?: string;
-    details: ReactionDetail[];
 }
 
 export interface ReactionDetail {

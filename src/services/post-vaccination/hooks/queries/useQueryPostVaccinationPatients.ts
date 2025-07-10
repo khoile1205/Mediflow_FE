@@ -13,7 +13,6 @@ export const useQueryPostVaccinationPatients = (patientName?: string) => {
     const { data, isError, isLoading } = useQuery<IBaseApiResponse<PostVaccinationPatient[]>>({
         queryKey: [QueryKey.POST_VACCINATION.GET_PATIENT_LIST, patientName],
         queryFn: () => postVaccinationApis.getPostVaccinationPatients(patientName),
-        enabled: !!patientName,
     });
 
     const patients = React.useMemo(() => {
