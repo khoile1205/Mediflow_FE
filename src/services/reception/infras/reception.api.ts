@@ -123,6 +123,14 @@ const updateVaccinationReceptionByReceptionId = async (
         data,
     });
 };
+
+const getLatestReceptionIdByPatientId = async (patientId?: number) => {
+    return await callApi<number>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.getLatestReceptionIdByPatientId(patientId),
+        method: HttpMethod.GET,
+    });
+};
+
 export const receptionApis = {
     generatePatientIdentifier,
     createPatientReception,
@@ -137,4 +145,5 @@ export const receptionApis = {
     deleteVaccinationReceptionById,
     addVaccinationReception,
     updateVaccinationReceptionByReceptionId,
+    getLatestReceptionIdByPatientId,
 };

@@ -29,6 +29,10 @@ const vaccinationReceptionEndpoints = {
     },
     updateVaccinationReceptionByReceptionId: (receptionId: number) =>
         `${vaccinationReceptionEndpointPrefix}/receptions/${receptionId}/reception-vaccinations`,
+
+    getLatestReceptionIdByPatientId: (patientId?: number) => {
+        return `${vaccinationReceptionEndpointPrefix}/patients/${patientId}/latest-reception-id`;
+    },
 };
 
 export const receptionEndpoints = { vaccinationReceptionEndpoints };

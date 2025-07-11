@@ -80,7 +80,7 @@ const VaccinationPage: React.FC = () => {
     };
 
     return (
-        <Box className="flex h-full min-h-[600px]">
+        <Box className="flex h-full">
             <DynamicForm form={patientForm}>
                 <Box className="flex h-full basis-1/3 flex-col bg-[#F6F8D5] p-3">
                     <Stack spacing={2} className="flex-grow">

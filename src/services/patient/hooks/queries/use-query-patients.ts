@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { patientApi } from "../infras/patient.api";
-import { GetPatientWithPaginationRequest } from "../infras/types";
+import { patientApi } from "../../infras/patient.api";
+import { GetPatientWithPaginationRequest } from "../../infras/types";
 import { Patient } from "~/entities/person-info.entity";
 import { IBaseApiResponse, IPagination } from "~/libs/axios/types";
 import { QueryKey } from "~/constants/query-key";

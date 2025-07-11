@@ -317,6 +317,7 @@
     "PRE_EXAMINATION_TESTING": "Thử trước tiêm",
     "INPUT_TEST_RESULT": "Nhập kết quả thử",
     "ACCESS_DENIED": "Bạn không có quyền truy cập vào trang này.",
+    "CREATE_RECEIPT_PAYMENT_SUCCESSFULLY": "Tạo phiếu thu thành công.",
     "UPDATE_POST_VACCINATION_RESULT_SUCCESSFULLY": "Cập nhật kết quả sau tiêm thành công",
     "SAVED_SUCCESSFULLY": "Lưu thành công",
     "SAVED_FAILED": "Lưu thất bại",

@@ -7,7 +7,6 @@ export interface PersonInfo extends BaseEntity {
     code: string;
     name: string;
     phoneNumber: string;
-    address: string;
     gender?: Gender;
     email?: string;
 }

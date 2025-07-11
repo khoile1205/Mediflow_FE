@@ -18,6 +18,7 @@ const ReceptionQueryKey = {
     GET_UNPAID_SERVICES: "getUnpaidServices",
     GET_SERVICE_RECEPTION_BY_RECEPTION_ID: "getServiceReceptionByReceptionId",
     GET_VACCINATION_RECEPTION_BY_RECEPTION_ID: "getVaccinationReceptionByReceptionId",
+    GET_LATEST_RECEPTION_ID_BY_PATIENT_ID: "getLatestReceptionIdByPatientId",
 };
 
 const DepartmentQueryKey = {
@@ -39,10 +40,19 @@ const PostVaccinationQueryKey = {
     UPDATE_RESULT: "updatePostVaccinationResult",
 };
 
+const HospitalFeeQueryKey = {
+    GET_UNPAID_PATIENT_LIST: "getUnpaidPatientList",
+    GET_PATIENT_PAYMENT_LIST: "getPatientPaymentList",
+    GET_PAYMENT_DETAIL_BY_PAYMENT_ID: "getPaymentDetailByPaymentId",
+    GET_UNPAID_SERVICE_BY_PATIENT_ID: "getUnpaidServiceByPatientId",
+    CREATE_PAYMENT: "createPayment",
+};
+
 export const QueryKey = {
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
     HOSPITAL_SERVICE: HospitalServiceQueryKey,
+    HOSPITAL_FEE: HospitalFeeQueryKey,
     DEPARTMENT: DepartmentQueryKey,
     INVENTORY: InventoryQueryKey,
     POST_VACCINATION: PostVaccinationQueryKey,

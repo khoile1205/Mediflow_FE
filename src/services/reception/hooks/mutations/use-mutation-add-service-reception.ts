@@ -19,6 +19,12 @@ export const useMutationAddServiceReception = () => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.RECEPTION.GET_UNPAID_SERVICES, variables.receptionId],
             });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_SERVICE_BY_PATIENT_ID, variables.receptionId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.HOSPITAL_FEE.GET_PATIENT_PAYMENT_LIST],
+            });
             showToast.success(i18n.t(i18n.translationKey.createServiceReceptionSuccessfully));
         },
     });

@@ -41,9 +41,9 @@ const AuthenticatedGuard: React.FC = () => {
     }
 
     return (
-        <Box className="flex h-screen w-screen">
+        <Box className="flex h-full w-screen">
             <Sidebar />
-            <Box className="w-full flex-1 overflow-y-auto p-2">
+            <Box className="h-full w-full flex-1 overflow-y-auto p-2">
                 <Outlet />
             </Box>
         </Box>
