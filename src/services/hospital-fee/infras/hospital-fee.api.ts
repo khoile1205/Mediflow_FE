@@ -39,7 +39,7 @@ const getUnpaidServiceByPatientId = async (patientId: number) => {
 };
 
 const createReceiptPayment = async (patientId: number, payload: CreateReceiptPaymentRequest) => {
-    return await callApi<number>({
+    return await callApi<string>({
         url: endpoints.hospitalFee.createReceiptPayment(patientId),
         method: HttpMethod.POST,
         data: payload,

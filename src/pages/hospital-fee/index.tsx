@@ -1,8 +1,9 @@
-import { AddCircle, Edit } from "@mui/icons-material";
+import { AddCircle, Print } from "@mui/icons-material";
 import { Box, Button, Grid, Stack, Typography } from "@mui/material";
 import { ColDef, RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useReactToPrint } from "react-to-print";
 import { ActionButton } from "~/components/common/action-button";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import SearchBox from "~/components/common/search-box";
@@ -19,13 +20,16 @@ import { useQueryGetPatientById } from "~/services/patient/hooks/queries";
 import { useQueryGetLatestReceptionIdByPatientId } from "~/services/reception/hooks/queries";
 import { formatCurrencyVND } from "~/utils/currency";
 import { formatDate, getCurrentAge } from "~/utils/date-time";
+import { ReceiptPrinter } from "./receipt-printer";
 import { HospitalFeeFormValue, HospitalServiceItem } from "./types";
 
 const HospitalFeePage: React.FC = () => {
     const { t } = useTranslation();
+
+    const receiptRef = React.useRef<HTMLDivElement>(null);
+
     const [patientId, setPatientId] = React.useState<number | null>(null);
     const [searchUnpaidPatientTerm, setSearchUnpaidPatientTerm] = React.useState("");
-    const [currentReceiptValue, setCurrentReceiptValue] = React.useState<number>(0);
 
     // Queries
     const {
@@ -67,6 +71,7 @@ const HospitalFeePage: React.FC = () => {
             patientCode: "",
             invoiceNumber: "",
             invoiceValue: 0,
+            phoneNumber: "",
             paidType: PaymentType.CASH,
             isPaid: true,
             isRefund: false,
@@ -85,13 +90,14 @@ const HospitalFeePage: React.FC = () => {
     });
 
     const handleSelectedPatient = (selectedRows: RowSelectedEvent<UnpaidPatientSummary>) => {
+        hospitalFeeForm.reset();
+
         const selectedPatient = selectedRows.api.getSelectedRows()[0];
         setPatientId(selectedPatient ? selectedPatient.id : null);
     };
 
     const handleSelectedHospitalService = (event: RowSelectedEvent<HospitalServiceItem>) => {
         const selectedServices = event.api.getSelectedRows();
-        setCurrentReceiptValue(selectedServices.reduce((total, item) => total + item.unitPrice * item.quantity, 0));
         hospitalFeeForm.setValue("hospitalServiceItems", selectedServices);
     };
 
@@ -101,8 +107,20 @@ const HospitalFeePage: React.FC = () => {
 
     const handleSubmit = async (data: HospitalFeeFormValue) => {
         const payload = getCreateReceiptPaymentPayload(data);
-        await createReceiptPayment({ patientId: patientId!, payload });
+        const invoiceNumber = await createReceiptPayment({ patientId: patientId!, payload });
+        hospitalFeeForm.setValue("invoiceNumber", invoiceNumber);
     };
+
+    const handleCancel = () => {
+        hospitalFeeForm.reset();
+        setPatientId(null);
+        hospitalServiceFeeAgGrid.gridApi.deselectAll();
+        unpaidPatientAgGrid.gridApi.deselectAll();
+    };
+
+    const handlePrint = useReactToPrint({
+        contentRef: receiptRef,
+    });
 
     const getCreateReceiptPaymentPayload = (data: HospitalFeeFormValue): CreateReceiptPaymentRequest => {
         return {
@@ -124,6 +142,7 @@ const HospitalFeePage: React.FC = () => {
             hospitalFeeForm.setValue("name", patientData.name);
             hospitalFeeForm.setValue("dob", formatDate(patientData.dob, DATE_TIME_FORMAT["dd/MM/yyyy"]));
             hospitalFeeForm.setValue("age", getCurrentAge(patientData.dob));
+            hospitalFeeForm.setValue("phoneNumber", patientData.phoneNumber);
             hospitalFeeForm.setValue(
                 "address",
                 `${patientData.addressDetail}, ${patientData.ward}, ${patientData.district}, ${patientData.province}`,
@@ -151,29 +170,24 @@ const HospitalFeePage: React.FC = () => {
                         disabled={
                             !patientId ||
                             patientPaymentList.length === 0 ||
-                            hospitalServiceFeeAgGrid.gridApi.getSelectedRows().length === 0
+                            hospitalServiceFeeAgGrid.gridApi.getSelectedRows().length === 0 ||
+                            !!hospitalFeeForm.watch("invoiceNumber")
                         }
                     />
                     <ActionButton
                         label={t(i18n.translationKey.printInvoice)}
-                        startIcon={<Edit />}
-                        disabled={
-                            !patientId ||
-                            patientPaymentList.length === 0 ||
-                            hospitalServiceFeeAgGrid.gridApi.getSelectedRows().length === 0
-                        }
+                        startIcon={<Print />}
+                        onClick={handlePrint}
+                        disabled={!patientId || !hospitalFeeForm.watch("invoiceNumber")}
                     />
                     <ActionButton
                         label={t(i18n.translationKey.cancel)}
-                        disabled={
-                            !patientId ||
-                            patientPaymentList.length === 0 ||
-                            hospitalServiceFeeAgGrid.gridApi.getSelectedRows().length === 0
-                        }
+                        disabled={!patientId || patientPaymentList.length === 0}
+                        onClick={handleCancel}
                     />
                 </Stack>
                 <Box className="mt-3 flex bg-[#F6F8D5] p-3">
-                    <Box className="basis-3/10 me-3">
+                    <Box className="xl:basis-3/10 me-3 md:basis-1/4">
                         <Button
                             fullWidth
                             className="rounded-2xl"
@@ -225,7 +239,11 @@ const HospitalFeePage: React.FC = () => {
                                     render="text-input"
                                     name="invoiceValue"
                                     label={t(i18n.translationKey.invoiceValue)}
-                                    value={formatCurrencyVND(currentReceiptValue)}
+                                    value={formatCurrencyVND(
+                                        hospitalFeeForm
+                                            .watch("hospitalServiceItems")
+                                            .reduce((total, item) => total + item.unitPrice * item.quantity, 0),
+                                    )}
                                     slotProps={{
                                         input: {
                                             endAdornment: "VND",
@@ -303,7 +321,7 @@ const HospitalFeePage: React.FC = () => {
                                                     slotProps={{ input: { readOnly: true } }}
                                                 />
                                             </Grid>
-                                            <Grid size={1}>
+                                            <Grid size={2}>
                                                 <FormItem
                                                     render="text-input"
                                                     name="age"
@@ -311,11 +329,11 @@ const HospitalFeePage: React.FC = () => {
                                                     slotProps={{ input: { readOnly: true } }}
                                                 />
                                             </Grid>
-                                            <Grid size={4}>
+                                            <Grid size={3}>
                                                 <FormItem
                                                     render="text-input"
-                                                    name="invoiceNumber"
-                                                    label={t(i18n.translationKey.invoiceNumber)}
+                                                    name="phoneNumber"
+                                                    label={t(i18n.translationKey.phoneNumber)}
                                                     slotProps={{ input: { readOnly: true } }}
                                                 />
                                             </Grid>
@@ -446,7 +464,9 @@ const HospitalFeePage: React.FC = () => {
                             ]}
                             rowData={patientPaymentList}
                             onRowSelected={handleSelectedHospitalService}
-                            pinnedBottomRowData={[currentReceiptSummary]}
+                            pinnedBottomRowData={
+                                hospitalFeeForm.watch("hospitalServiceItems").length > 0 ? [currentReceiptSummary] : []
+                            }
                             {...hospitalServiceFeeAgGrid}
                         />
                     </Box>
@@ -492,6 +512,10 @@ const HospitalFeePage: React.FC = () => {
                     </Box>
                 </Stack>
             </DynamicForm>
+
+            <Box style={{ display: "none" }}>
+                <ReceiptPrinter ref={receiptRef} formValue={hospitalFeeForm.watch()} />
+            </Box>
         </Box>
     );
 };

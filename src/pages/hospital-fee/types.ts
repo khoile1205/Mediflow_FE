@@ -5,6 +5,7 @@ export interface HospitalFeeFormValue {
     patientCode?: string;
     invoiceNumber?: string;
     invoiceValue?: number;
+    phoneNumber?: string;
     paidType?: PaymentType;
     isPaid?: boolean;
     isRefund?: boolean;

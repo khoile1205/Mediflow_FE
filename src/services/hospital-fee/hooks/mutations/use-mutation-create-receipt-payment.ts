@@ -12,19 +12,14 @@ export function useMutationCreateReceiptPayment() {
             const response = await hospitalFeeApis.createReceiptPayment(patientId, payload);
             return response.Data;
         },
-        onSuccess: (data: number, variables) => {
+        onSuccess: (invoiceNumber: string) => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.HOSPITAL_FEE.GET_PATIENT_PAYMENT_LIST],
             });
-            queryClient.invalidateQueries({
-                queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_SERVICE_BY_PATIENT_ID, variables.patientId],
-            });
-            queryClient.invalidateQueries({
-                queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_PATIENT_LIST],
-            });
 
             showToast.success(i18n.t(i18n.translationKey.createReceiptPaymentSuccessfully));
-            return data;
+
+            return invoiceNumber;
         },
     });
 }

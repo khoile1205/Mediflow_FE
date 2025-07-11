@@ -40,6 +40,7 @@ export const useQueryGetUnpaidServiceByPatientId = (patientId?: number) => {
         queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_SERVICE_BY_PATIENT_ID, patientId],
         queryFn: () => hospitalFeeApis.getUnpaidServiceByPatientId(patientId),
         enabled: !!patientId,
+        staleTime: 0,
     });
 
     const patientPaymentList = React.useMemo(() => {
