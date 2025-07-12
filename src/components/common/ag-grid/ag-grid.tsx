@@ -17,6 +17,7 @@ type AgDataGridProps = Omit<AgGridReactProps, "columnDefs" | "rowData"> & {
     pageIndex?: number;
     pageSizeOptions?: number[];
     onPageChange?: (pageIndex: number, pageSize: number) => void;
+    maxRows?: number;
 } & Pick<ReturnType<typeof useAgGrid>, "onGridReady">;
 
 const AgDataGrid: React.FC<AgDataGridProps> = ({
@@ -29,21 +30,25 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
     totalItems,
     pageSize = 10,
     pageIndex = 1,
+    maxRows = GRID_STYLE_CONFIG.GRID_DIMENSIONS.MAX_ROWS,
     pageSizeOptions = DEFAULT_PAGINATION_PARAMS.PAGE_SIZE_OPTIONS,
-
     ...props
 }) => {
     const { t } = useTranslation();
 
     const getHeightDataGrid = () => {
-        const { MIN_HEIGHT, MAX_ROWS, HEADER_HEIGHT, ROW_HEIGHT, SCROLLBAR_HEIGHT } = GRID_STYLE_CONFIG.GRID_DIMENSIONS;
-        const pinnedBottomRowData = gridOptions?.pinnedBottomRowData ?? [];
+        const { MIN_HEIGHT, HEADER_HEIGHT, ROW_HEIGHT, SCROLLBAR_HEIGHT } = GRID_STYLE_CONFIG.GRID_DIMENSIONS;
+
+        const pinnedBottomRowData = props.pinnedBottomRowData ?? [];
         const pinnedHeight = pinnedBottomRowData.length * ROW_HEIGHT;
 
         const dataRowCount = Array.isArray(rowData) ? rowData.length : 0;
-        const visibleRows = Math.min(dataRowCount, MAX_ROWS);
+        const visibleRows = Math.min(dataRowCount, maxRows);
 
-        const calculatedHeight = HEADER_HEIGHT + visibleRows * ROW_HEIGHT + pinnedHeight + SCROLLBAR_HEIGHT;
+        const hasPinnedRow = pinnedBottomRowData.length > 0;
+        const forcedBodyHeight = hasPinnedRow ? 96 : visibleRows * ROW_HEIGHT;
+
+        const calculatedHeight = HEADER_HEIGHT + forcedBodyHeight + pinnedHeight + SCROLLBAR_HEIGHT;
 
         return Math.max(calculatedHeight, MIN_HEIGHT);
     };

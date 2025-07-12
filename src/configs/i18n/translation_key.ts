@@ -237,6 +237,7 @@ const applicationTranslationKey = {
     confirmObservate: "CONFIRM_OBSERVATE",
     observationConfirmed: "OBSERVATION_CONFIRMED",
     observationNotConfirmed: "OBSERVATION_NOT_CONFIRMED",
+    createReceiptPaymentSuccessfully: "CREATE_RECEIPT_PAYMENT_SUCCESSFULLY",
 };
 
 const exceptionTranslationKey = {

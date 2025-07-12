@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import i18n from "~/configs/i18n";
 import { Patient } from "~/entities";
 import { usePagination } from "~/hooks";
-import { useQueryPatients } from "~/services/patient/hooks";
+import { useQueryPatients } from "~/services/patient/hooks/queries";
 import { AgDataGrid, useAgGrid } from "../common/ag-grid";
 import DynamicForm from "../form/dynamic-form";
 import FormItem from "../form/form-item";

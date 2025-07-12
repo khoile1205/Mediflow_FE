@@ -24,7 +24,15 @@ const getListPatientWithPagination = async ({
     });
 };
 
+const getPatientById = async (id: number) => {
+    return await callApi<Patient>({
+        url: endpoints.patient.getPatientById(id),
+        method: HttpMethod.GET,
+    });
+};
+
 export const patientApi = {
     generatePatientIdentifier,
     getListPatientWithPagination,
+    getPatientById,
 };
