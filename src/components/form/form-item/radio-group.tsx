@@ -12,6 +12,7 @@ type RadioGroupOption = {
 type RadioGroupUIProps = {
     direction?: "horizontal" | "vertical";
     options: RadioGroupOption[];
+    radioGroupProps?: Omit<React.ComponentProps<typeof RadioGroup>, "row" | "value">;
 };
 
 export type RadioGroupFormItemProps = BaseFormItemProps & RadioGroupUIProps;
@@ -23,6 +24,7 @@ export const RadioGroupFormItem: React.FC<RadioGroupFormItemProps> = ({
     disabled,
     direction = "horizontal",
     options,
+    radioGroupProps,
 }) => {
     return (
         <ControllerWrapper
@@ -32,7 +34,17 @@ export const RadioGroupFormItem: React.FC<RadioGroupFormItemProps> = ({
             render={({ field, error }) => {
                 return (
                     <FormGroup>
-                        <RadioGroup value={field.value} onChange={field.onChange} row={direction === "horizontal"}>
+                        <RadioGroup
+                            value={field.value}
+                            onChange={(e, value) => {
+                                field.onChange(value);
+                                if (radioGroupProps?.onChange) {
+                                    radioGroupProps.onChange(e, value);
+                                }
+                            }}
+                            row={direction === "horizontal"}
+                            {...radioGroupProps}
+                        >
                             {options.map((option) => (
                                 <FormControlLabel
                                     key={option.value}

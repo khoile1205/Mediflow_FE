@@ -115,21 +115,22 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
                                                     sx: {
                                                         width: "100%",
                                                     },
-                                                    endAdornment: !datePickerProps.readOnly ? (
-                                                        <InputAdornment position="end">
-                                                            <IconButton
-                                                                disabled={disabled}
-                                                                size="small"
-                                                                className="ml-3"
-                                                            >
-                                                                {dateValue ? (
-                                                                    <Close onClick={handleClearDate} />
-                                                                ) : (
-                                                                    <CalendarMonth />
-                                                                )}
-                                                            </IconButton>
-                                                        </InputAdornment>
-                                                    ) : null,
+                                                    endAdornment:
+                                                        !datePickerProps.readOnly && !disabled ? (
+                                                            <InputAdornment position="end">
+                                                                <IconButton
+                                                                    disabled={disabled}
+                                                                    size="small"
+                                                                    className="ml-3"
+                                                                >
+                                                                    {dateValue ? (
+                                                                        <Close onClick={handleClearDate} />
+                                                                    ) : (
+                                                                        <CalendarMonth />
+                                                                    )}
+                                                                </IconButton>
+                                                            </InputAdornment>
+                                                        ) : null,
                                                     onClick: () => {
                                                         if (datePickerProps.readOnly || disabled) {
                                                             return;

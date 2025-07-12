@@ -27,21 +27,28 @@ export const CheckboxFormItem: React.FC<SingleCheckboxFormItemProps> = ({
             name={name}
             required={required}
             defaultValue={defaultValue}
-            render={({ field, error }) => (
-                <FormControl error={!!error} disabled={disabled} fullWidth={fullWidth}>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={field.value}
-                                onChange={(e) => field.onChange(e.target.checked)}
-                                {...checkboxProps}
-                            />
-                        }
-                        label={label}
-                    />
-                    <FormErrorMessage errorMessage={error} label={label} />
-                </FormControl>
-            )}
+            render={({ field, error }) => {
+                return (
+                    <FormControl error={!!error} disabled={disabled} fullWidth={fullWidth}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    {...checkboxProps}
+                                    checked={field.value}
+                                    onChange={(e, checked) => {
+                                        field.onChange(e.target.checked);
+                                        if (checkboxProps?.onChange) {
+                                            checkboxProps.onChange(e, checked);
+                                        }
+                                    }}
+                                />
+                            }
+                            label={label}
+                        />
+                        <FormErrorMessage errorMessage={error} label={label} />
+                    </FormControl>
+                );
+            }}
         />
     );
 };
