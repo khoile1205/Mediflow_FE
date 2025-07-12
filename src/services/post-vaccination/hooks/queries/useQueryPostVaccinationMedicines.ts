@@ -9,11 +9,11 @@ const transformData = (response: IBaseApiResponse<PostVaccinationMedicine[]>): P
     return response.Data;
 };
 
-export const useQueryPostVaccinationMedicines = (vaccinationId?: number) => {
+export const useQueryPostVaccinationMedicines = (receptionId?: number) => {
     const { data, isError, isLoading } = useQuery<IBaseApiResponse<PostVaccinationMedicine[]>>({
-        queryKey: [QueryKey.POST_VACCINATION.GET_MEDICINE_LIST, vaccinationId],
-        queryFn: () => postVaccinationApis.getPostVaccinationMedicines(vaccinationId!),
-        enabled: !!vaccinationId,
+        queryKey: [QueryKey.POST_VACCINATION.GET_MEDICINE_LIST, receptionId],
+        queryFn: () => postVaccinationApis.getPostVaccinationMedicines(receptionId!),
+        enabled: !!receptionId,
     });
 
     const medicines = React.useMemo(() => {

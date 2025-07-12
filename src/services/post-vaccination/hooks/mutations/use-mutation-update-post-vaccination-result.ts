@@ -10,8 +10,8 @@ export const useMutationUpdatePostVaccinationResult = () => {
 
     return useMutation({
         mutationKey: [QueryKey.POST_VACCINATION.UPDATE_RESULT],
-        mutationFn: async ({ vaccinationId, data }: { vaccinationId: number; data: UpdatePostVaccinationRequest }) => {
-            return await postVaccinationApis.updatePostVaccinationResult(vaccinationId, data);
+        mutationFn: async ({ receptionId, data }: { receptionId: number; data: UpdatePostVaccinationRequest }) => {
+            return await postVaccinationApis.updatePostVaccinationResult(receptionId, data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({

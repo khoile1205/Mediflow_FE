@@ -8,28 +8,52 @@ import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
-import { useMutationSavePostVaccination } from "~/services/post-vaccination/hooks/mutations/use-mutation-save-post-vaccination-result";
-import { useMutationUpdatePostVaccinationResult } from "~/services/post-vaccination/hooks/mutations/use-mutation-update-post-vaccination-result";
-import { useQueryPostVaccinationMedicines } from "~/services/post-vaccination/hooks/queries/useQueryPostVaccinationMedicines";
-import { useQueryPostVaccinationPatients } from "~/services/post-vaccination/hooks/queries/useQueryPostVaccinationPatients";
-import { showToast } from "~/utils";
-import { PostVaccinationRequest } from "./types";
+import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { TestResultStatus } from "~/constants/enums";
+import { useMutationUpdatePostVaccinationResult } from "~/services/post-vaccination/hooks/mutations";
+import {
+    useQueryPostVaccinationMedicines,
+    useQueryPostVaccinationPatients,
+} from "~/services/post-vaccination/hooks/queries";
+import { PostVaccinationMedicine, PostVaccinationPatient } from "~/services/post-vaccination/infras/types";
+import { formatDate } from "~/utils/date-time";
 
 const PostVaccinationPage: React.FC = () => {
     const { t } = useTranslation();
-    const patientForm = useForm();
-    const followUpForm = useForm();
+    const patientForm = useForm({
+        defaultValues: {
+            receptionId: null,
+            vaccinationNumber: "",
+            medicalCode: "",
+            dob: "",
+            gender: null,
+            vaccinationNumberDuplicate: "",
+            patientName: "",
+        },
+    });
+    const followUpForm = useForm({
+        defaultValues: {
+            vaccinationId: null,
+            vaccinationDate: null,
+            confirmFollowUp: false,
+            testResult: TestResultStatus.NEGATIVE,
+            postVaccinationDate: null,
+            reactionOccurred: false,
+            reactionAfterInjectionTime: null,
+            commonReactions: [],
+            otherSymptoms: "",
+        },
+    });
 
     const patientAgGrid = useAgGrid({ rowSelection: "single" });
-    const reactionAgGrid = useAgGrid({});
+    const postVaccinationMedicineAgGrid = useAgGrid({});
 
     const [selectedReceptionId, setSelectedReceptionId] = React.useState<number | null>(null);
     const [searchName, setSearchName] = React.useState<string>("");
 
     const { patients: listPatients = [] } = useQueryPostVaccinationPatients(searchName);
-    const { medicines: reactionData = [] } = useQueryPostVaccinationMedicines(selectedReceptionId ?? undefined);
+    const { medicines: postVaccinationMedicines = [] } = useQueryPostVaccinationMedicines(selectedReceptionId);
 
-    const { mutateAsync: savePostVaccination } = useMutationSavePostVaccination();
     const { mutateAsync: updatePostVaccination } = useMutationUpdatePostVaccinationResult();
 
     const isPatientSelected = !!patientForm.watch("receptionId");
@@ -37,64 +61,59 @@ const PostVaccinationPage: React.FC = () => {
     const commonReactions = followUpForm.watch("commonReactions") || [];
     const isOtherSelected = commonReactions.includes("other");
 
-    const handleRowClick = (e: RowClickedEvent<any>) => {
+    const handleRowClick = (e: RowClickedEvent<PostVaccinationPatient>) => {
         const selected = e.data;
-
-        followUpForm.setValue("vaccinationId", selected.vaccinationId);
-        patientForm.setValue("receptionId", selected.receptionId);
-        patientForm.setValue("vaccinationNumber", selected.patientCode);
-        patientForm.setValue("medicalCode", selected.patientCode);
-        patientForm.setValue("dob", selected.yearOfBirth);
-        patientForm.setValue("gender", selected.gender);
-        patientForm.setValue("vaccinationNumberDuplicate", selected.patientCode);
-        patientForm.setValue("patientName", selected.patientName);
-
+        populatePatientForm(selected);
         setSelectedReceptionId(selected.receptionId);
     };
 
+    const populatePatientForm = (selectedPatient: PostVaccinationPatient) => {
+        patientForm.setValue("receptionId", selectedPatient.receptionId);
+        patientForm.setValue("vaccinationNumber", selectedPatient.patientVaccinationCode);
+        patientForm.setValue("medicalCode", selectedPatient.patientCode);
+        patientForm.setValue("dob", selectedPatient.yearOfBirth);
+        patientForm.setValue("gender", selectedPatient.gender);
+        patientForm.setValue("patientName", selectedPatient.patientName);
+    };
+
+    const handleSelectMedicine = (selectedMedicine: RowClickedEvent<PostVaccinationMedicine>) => {
+        const selectedRows = selectedMedicine.data;
+
+        followUpForm.setValue("vaccinationId", selectedRows.vaccinationId);
+        followUpForm.setValue("vaccinationDate", selectedRows.vaccinationDate);
+    };
+
     const handleSave = async () => {
-        const patientData = patientForm.getValues();
         const followUpData = followUpForm.getValues();
-        const isUpdate = !!patientData.vaccinationNumberDuplicate;
 
-        try {
-            if (isUpdate) {
-                await updatePostVaccination({
-                    vaccinationId: selectedReceptionId,
-                    data: {
-                        id: reactionData[0]?.vaccinationId,
-                        observationConfirmed: followUpData.confirmFollowUp,
-                        hasReaction: followUpData.reactionOccurred,
-                        reactionDate: followUpData.reactionAfterInjectionTime || null,
-                        postVaccinationResult: followUpData.testResult,
-                        postVaccinationDate: followUpData.injectionCompleteTime || "",
-                        hasFeverAbove39: followUpData.commonReactions?.includes("FEVER_ABOVE_39") ?? false,
-                        hasInjectionSiteReaction:
-                            followUpData.commonReactions?.includes("INJECTION_SITE_REACTION") ?? false,
-                        hasOtherReaction: !!followUpData.otherSymptoms,
-                        otherReactionDescription: followUpData.otherSymptoms || null,
-                    },
-                });
-            } else {
-                const createPayload: PostVaccinationRequest = {
-                    vaccinationNumber: patientData.vaccinationNumber,
-                    injectionCompleteTime: followUpData.injectionCompleteTime || "",
-                    confirmFollowUp: followUpData.confirmFollowUp,
-                    testResult: followUpData.testResult,
-                    reactionOccurred: followUpData.reactionOccurred,
-                    reactionAfterInjectionTime: followUpData.reactionAfterInjectionTime,
-                    commonReactions: followUpData.commonReactions,
-                    otherSymptoms: followUpData.otherSymptoms,
-                };
-                await savePostVaccination(createPayload);
-            }
+        await updatePostVaccination({
+            receptionId: selectedReceptionId,
+            data: {
+                id: postVaccinationMedicines[0]?.vaccinationId,
+                observationConfirmed: followUpData.confirmFollowUp,
+                hasReaction: followUpData.reactionOccurred,
+                reactionDate: followUpData.reactionAfterInjectionTime || null,
+                postVaccinationResult: followUpData.testResult,
+                postVaccinationDate: followUpData.postVaccinationDate || new Date(),
+                hasFeverAbove39: followUpData.commonReactions?.includes("FEVER_ABOVE_39") ?? false,
+                hasInjectionSiteReaction: followUpData.commonReactions?.includes("INJECTION_SITE_REACTION") ?? false,
+                hasOtherReaction: !!followUpData.otherSymptoms,
+                otherReactionDescription: followUpData.otherSymptoms || null,
+            },
+        });
 
-            showToast.success(t(i18n.translationKey.savedSuccessfully));
-            patientForm.reset();
-            followUpForm.reset();
-        } catch (error) {
-            showToast.error(t(i18n.translationKey.savedFailed));
-        }
+        patientForm.reset();
+        followUpForm.reset();
+    };
+
+    const handleCancelProcess = () => {
+        patientForm.reset();
+        followUpForm.reset();
+
+        setSelectedReceptionId(null);
+
+        patientAgGrid.gridApi.deselectAll();
+        postVaccinationMedicineAgGrid.gridApi.deselectAll();
     };
 
     const patientColumnDefs: ColDef[] = [
@@ -104,18 +123,19 @@ const PostVaccinationPage: React.FC = () => {
             width: 60,
             pinned: "left",
             suppressSizeToFit: true,
+            cellClass: "text-center",
         },
-        { headerName: t(i18n.translationKey.patientName), field: "patientName" },
-        { headerName: t(i18n.translationKey.dateOfBirth), field: "yearOfBirth" },
+        { headerName: t(i18n.translationKey.patientName), field: "patientName", cellClass: "ag-cell-center" },
+        { headerName: t(i18n.translationKey.dateOfBirth), field: "yearOfBirth", cellClass: "ag-cell-center" },
     ];
 
-    const reactionColumnDefs: ColDef[] = React.useMemo(
+    const postVaccinationMedicinesColumnDefs: ColDef[] = React.useMemo(
         () => [
             {
                 field: "no",
                 headerName: t(i18n.translationKey.no),
                 width: 60,
-                pinned: "left",
+                cellClass: "ag-cell-center",
                 suppressSizeToFit: true,
                 headerStyle: { backgroundColor: "#98D2C0" },
                 valueGetter: (p) => p.node?.rowIndex + 1,
@@ -124,23 +144,26 @@ const PostVaccinationPage: React.FC = () => {
                 field: "medicineName",
                 headerName: t(i18n.translationKey.vaccineSerumName),
                 headerStyle: { backgroundColor: "#98D2C0" },
+                flex: 1,
             },
             {
                 field: "quantity",
                 headerName: t(i18n.translationKey.quantity),
                 headerStyle: { backgroundColor: "#98D2C0" },
+                cellClass: "ag-cell-center",
             },
             {
                 field: "vaccinationDate",
                 headerName: t(i18n.translationKey.injectionDate),
                 headerStyle: { backgroundColor: "#98D2C0" },
-                valueFormatter: ({ value }) => (value ? new Date(value).toLocaleString() : ""),
+                valueFormatter: ({ value }) =>
+                    value ? formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"]) : "",
             },
             {
                 field: "observationConfirmed",
                 headerName: t(i18n.translationKey.vaccinationConfirmation),
                 headerStyle: { backgroundColor: "#98D2C0" },
-                cellRenderer: "agTextCellRenderer",
+                cellRenderer: "ag-cell-center",
                 valueFormatter: ({ value }) =>
                     value
                         ? t(i18n.translationKey.observationConfirmed)
@@ -150,10 +173,24 @@ const PostVaccinationPage: React.FC = () => {
                 field: "reactionDate",
                 headerName: t(i18n.translationKey.reactionDate),
                 headerStyle: { backgroundColor: "#98D2C0" },
-                valueFormatter: ({ value }) => (value ? new Date(value).toLocaleString() : ""),
+                cellRenderer: "ag-cell-center",
+                valueFormatter: ({ value }) =>
+                    value ? formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"]) : "",
             },
         ],
         [t],
+    );
+
+    const confirmFollowUp = followUpForm.watch("confirmFollowUp");
+    const reactionOccurred = followUpForm.watch("reactionOccurred");
+
+    const isFollowUpEnabled = React.useMemo(
+        () => isPatientSelected && confirmFollowUp,
+        [isPatientSelected, confirmFollowUp],
+    );
+    const isReactionEnabled = React.useMemo(
+        () => isFollowUpEnabled && reactionOccurred,
+        [isFollowUpEnabled, reactionOccurred],
     );
 
     return (
@@ -181,13 +218,18 @@ const PostVaccinationPage: React.FC = () => {
                             rowData={listPatients}
                             onRowClicked={handleRowClick}
                             {...patientAgGrid}
-                            className="h-[210px]"
                         />
 
                         <FormItem
                             render="text-input"
                             name="medicalCode"
                             label={t(i18n.translationKey.medicalCode)}
+                            slotProps={{ input: { readOnly: true } }}
+                        />
+                        <FormItem
+                            render="text-input"
+                            name="patientName"
+                            label={t(i18n.translationKey.patientName)}
                             slotProps={{ input: { readOnly: true } }}
                         />
                         <Grid container spacing={1}>
@@ -208,29 +250,13 @@ const PostVaccinationPage: React.FC = () => {
                                 />
                             </Grid>
                         </Grid>
-                        <FormItem
-                            render="text-input"
-                            name="vaccinationNumberDuplicate"
-                            label={t(i18n.translationKey.vaccinationNumber)}
-                            slotProps={{ input: { readOnly: true } }}
-                        />
-                        <FormItem
-                            render="text-input"
-                            name="patientName"
-                            label={t(i18n.translationKey.patientName)}
-                            slotProps={{ input: { readOnly: true } }}
-                        />
                     </Stack>
 
                     <Box className="mt-4 flex gap-2">
                         <Button fullWidth variant="contained" color="primary" onClick={handleSave}>
                             {t(i18n.translationKey.save)}
                         </Button>
-                        <Button
-                            fullWidth
-                            variant="contained"
-                            sx={{ backgroundColor: "#E23C3C", ":hover": { backgroundColor: "#d22c2c" } }}
-                        >
+                        <Button fullWidth variant="contained" color="error" onClick={handleCancelProcess}>
                             {t(i18n.translationKey.cancel)}
                         </Button>
                     </Box>
@@ -249,19 +275,28 @@ const PostVaccinationPage: React.FC = () => {
                         <Grid size={12}>
                             <FormItem
                                 render="date-time-picker"
-                                name="injectionCompleteTime"
+                                name="vaccinationDate"
+                                defaultValue={null}
+                                placeholder=""
                                 label={t(i18n.translationKey.injectionCompleteTime)}
-                                disabled={!isPatientSelected}
+                                disabled={true}
                             />
                         </Grid>
+
                         <Grid size={12}>
                             <FormItem
                                 render="checkbox"
                                 name="confirmFollowUp"
                                 label={t(i18n.translationKey.confirmFollowUp)}
-                                disabled={!isPatientSelected}
+                                disabled={!isPatientSelected || followUpForm.watch("vaccinationId") === null}
+                                checkboxProps={{
+                                    onChange: () => {
+                                        followUpForm.setValue("postVaccinationDate", new Date());
+                                    },
+                                }}
                             />
                         </Grid>
+
                         <Grid size={12}>
                             <Box
                                 sx={{
@@ -279,41 +314,62 @@ const PostVaccinationPage: React.FC = () => {
                                         backgroundColor: "#fff",
                                         px: "4px",
                                         fontSize: "0.75rem",
-                                        color: "rgba(0, 0, 0, 0.6)",
+                                        color: isReactionEnabled ? "rgba(0, 0, 0, 0.6)" : "rgba(0, 0, 0, 0.38)",
                                         fontWeight: 500,
                                     }}
                                 >
                                     {t(i18n.translationKey.postVaccinationResult)}
                                 </Typography>
-                                <Box sx={{ pl: 20, "& .MuiFormGroup-root": { gap: 8, flexDirection: "row" } }}>
+                                <Box sx={{ pl: { xs: 2, sm: 5, md: 10, lg: 5, xl: 20 } }}>
                                     <FormItem
                                         render="radio-group"
                                         name="testResult"
                                         options={[
-                                            { label: `1. ${t(i18n.translationKey.negative)}`, value: "negative" },
-                                            { label: `2. ${t(i18n.translationKey.positive)}`, value: "positive" },
+                                            {
+                                                label: `1. ${t(i18n.translationKey.negative)}`,
+                                                value: TestResultStatus.NEGATIVE,
+                                            },
+                                            {
+                                                label: `2. ${t(i18n.translationKey.positive)}`,
+                                                value: TestResultStatus.POSITIVE,
+                                            },
                                         ]}
-                                        disabled={!isPatientSelected}
+                                        disabled={!isFollowUpEnabled}
+                                        radioGroupProps={{
+                                            sx: { gap: { xs: 1, sm: 2, md: 3, lg: 5, xl: 8 } },
+                                        }}
                                     />
                                 </Box>
                             </Box>
                         </Grid>
+
                         <Grid size={12}>
                             <FormItem
                                 render="checkbox"
                                 name="reactionOccurred"
                                 label={t(i18n.translationKey.reactionOccurred)}
-                                disabled={!isPatientSelected}
+                                disabled={
+                                    !isFollowUpEnabled || followUpForm.watch("testResult") === TestResultStatus.NEGATIVE
+                                }
+                                checkboxProps={{
+                                    onChange: () => {
+                                        followUpForm.setValue("reactionAfterInjectionTime", new Date());
+                                    },
+                                }}
                             />
                         </Grid>
+
                         <Grid size={12}>
                             <FormItem
                                 render="date-time-picker"
                                 name="reactionAfterInjectionTime"
                                 label={t(i18n.translationKey.reactionAfterInjectionTime)}
-                                disabled={!isPatientSelected}
+                                disabled={true}
+                                placeholder=""
+                                defaultValue={null}
                             />
                         </Grid>
+
                         <Grid size={12}>
                             <Box
                                 sx={{
@@ -331,7 +387,7 @@ const PostVaccinationPage: React.FC = () => {
                                         backgroundColor: "#fff",
                                         px: "4px",
                                         fontSize: "0.75rem",
-                                        color: "rgba(0, 0, 0, 0.6)",
+                                        color: isReactionEnabled ? "rgba(0, 0, 0, 0.6)" : "rgba(0, 0, 0, 0.38)",
                                         fontWeight: 500,
                                     }}
                                 >
@@ -339,9 +395,9 @@ const PostVaccinationPage: React.FC = () => {
                                 </Typography>
                                 <Box
                                     sx={{
-                                        pl: 20,
+                                        pl: { md: 5, xl: 20 },
                                         "& .MuiFormGroup-root": {
-                                            gap: 8,
+                                            gap: { xs: 1, sm: 2, md: 3, lg: 5, xl: 8 },
                                             flexDirection: "row",
                                             flexWrap: "wrap",
                                         },
@@ -355,29 +411,29 @@ const PostVaccinationPage: React.FC = () => {
                                             { label: t(i18n.translationKey.painAtInjectionSite), value: "pain" },
                                             { label: t(i18n.translationKey.other), value: "other" },
                                         ]}
-                                        disabled={!isPatientSelected}
+                                        disabled={!isReactionEnabled}
                                     />
                                 </Box>
                             </Box>
                         </Grid>
+
                         <Grid size={12}>
                             <FormItem
-                                render="text-input"
+                                render="text-area"
                                 name="otherSymptoms"
                                 label={t(i18n.translationKey.otherSymptoms)}
                                 multiline
-                                rows={2}
-                                disabled={!isPatientSelected || !isOtherSelected}
+                                disabled={!isReactionEnabled || !isOtherSelected}
                             />
                         </Grid>
                     </Grid>
 
                     <Box className="mt-4">
                         <AgDataGrid
-                            columnDefs={reactionColumnDefs}
-                            rowData={reactionData}
-                            {...reactionAgGrid}
-                            className="h-[320px]"
+                            columnDefs={postVaccinationMedicinesColumnDefs}
+                            rowData={postVaccinationMedicines}
+                            onRowClicked={handleSelectMedicine}
+                            {...postVaccinationMedicineAgGrid}
                         />
                     </Box>
                 </DynamicForm>

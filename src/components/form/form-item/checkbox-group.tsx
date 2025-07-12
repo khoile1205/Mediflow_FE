@@ -30,6 +30,7 @@ export const CheckboxGroupFormItem: React.FC<CheckboxGroupFormItemProps> = ({
     label = "",
     defaultValue = [],
     direction = "horizontal",
+    disabled = false,
     checkboxProps,
 }) => {
     return (
@@ -49,14 +50,14 @@ export const CheckboxGroupFormItem: React.FC<CheckboxGroupFormItemProps> = ({
 
                 return (
                     <FormGroup row={direction === "horizontal"}>
-                        {options.map(({ label, value: optionValue, disabled }) => (
+                        {options.map(({ label, value: optionValue, disabled: optionDisabled }) => (
                             <FormControlLabel
                                 key={optionValue}
                                 control={
                                     <Checkbox
                                         checked={value.includes(optionValue)}
                                         onChange={() => handleChange(optionValue)}
-                                        disabled={disabled}
+                                        disabled={disabled || optionDisabled}
                                         {...checkboxProps}
                                     />
                                 }
