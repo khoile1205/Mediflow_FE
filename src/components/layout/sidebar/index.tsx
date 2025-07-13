@@ -7,7 +7,6 @@ import {
     Paid,
     PermContactCalendar,
     Vaccines,
-    VerifiedUser,
 } from "@mui/icons-material";
 import { Avatar, Box, Drawer, Stack, Typography } from "@mui/material";
 import React from "react";
