@@ -243,6 +243,13 @@ const applicationTranslationKey = {
     authorization: "AUTHORIZATION",
     departmentName: "DEPARTMENT_NAME",
     departmentNameInEnglish: "DEPARTMENT_NAME_IN_ENGLISH",
+    departmentType: "DEPARTMENT_TYPE",
+    lastUpdatedAt: "LAST_UPDATED_AT",
+    suspend: "SUSPEND",
+    createDepartmentSuccessfully: "CREATE_DEPARTMENT_SUCCESSFULLY",
+    createDepartmentFailed: "CREATE_DEPARTMENT_FAILED",
+    updateDepartmentSuccessfully: "UPDATE_DEPARTMENT_SUCCESSFULLY",
+    updateDepartmentFailed: "UPDATE_DEPARTMENT_FAILED",
 };
 
 const exceptionTranslationKey = {

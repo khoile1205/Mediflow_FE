@@ -2921,6 +2921,11 @@ react-router@^7.5.3:
     set-cookie-parser "^2.6.0"
     turbo-stream "2.4.0"
 
+react-to-print@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/react-to-print/-/react-to-print-3.1.1.tgz#dc7c4870d55e09930f4b7a32b68dabbb72d8ae5f"
+  integrity sha512-N0MUMhpl8nkGri13BjP7zusj3B/j+1eMOTt8N8PYuhBYGzA4PqTXqcihJ9cZw996dvhV6mBdwafIQCg3Ap5bKg==
+
 react-toastify@^11.0.5:
   version "11.0.5"
   resolved "https://registry.yarnpkg.com/react-toastify/-/react-toastify-11.0.5.tgz#ce4c42d10eeb433988ab2264d3e445c4e9d13313"

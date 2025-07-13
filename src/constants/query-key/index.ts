@@ -23,6 +23,10 @@ const ReceptionQueryKey = {
 
 const DepartmentQueryKey = {
     GET_LIST_DEPARTMENT_WITH_PAGINATION: "getListDepartmentWithPagination",
+    GET_DEPARTMENT_BY_ID: "getDepartmentById",
+    GET_LIST_DEPARTMENT_TYPES: "getListDepartmentTypes",
+    CREATE_DEPARTMENT: "createDepartment",
+    UPDATE_DEPARTMENT: "updateDepartment",
 };
 
 const InventoryQueryKey = {

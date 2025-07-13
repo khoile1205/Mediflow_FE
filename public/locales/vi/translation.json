@@ -328,11 +328,12 @@
     "STAFF": "Nhân viên",
     "AUTHORIZATION": "Phân quyền",
     "DEPARTMENT_NAME": "Tên phòng ban",
-    "DEPARTMENT_NAME_IN_ENGLISH": "Tên phòng ban bằng tiếng Anh"
-    "ACCESS_DENIED": "Bạn không có quyền truy cập vào trang này.",
-    "HUMAN_RESOURCE": "Nhân sự",
-    "STAFF": "Nhân viên",
-    "AUTHORIZATION": "Phân quyền",
-    "DEPARTMENT_NAME": "Tên phòng ban",
-    "DEPARTMENT_NAME_IN_ENGLISH": "Tên phòng ban bằng tiếng Anh"
+    "DEPARTMENT_NAME_IN_ENGLISH": "Tên phòng ban bằng tiếng Anh",
+    "DEPARTMENT_TYPE": "Loại phòng ban",
+    "LAST_UPDATED_AT": "Cập nhật lần cuối lúc",
+    "SUSPEND": "Tạm dừng",
+    "CREATE_DEPARTMENT_SUCCESSFULLY": "Tạo phòng ban thành công.",
+    "CREATE_DEPARTMENT_FAILED": "Tạo phòng ban thất bại.",
+    "UPDATE_DEPARTMENT_SUCCESSFULLY": "Cập nhật phòng ban thành công.",
+    "UPDATE_DEPARTMENT_FAILED": "Cập nhật phòng ban thất bại."
 }

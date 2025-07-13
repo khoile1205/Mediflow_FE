@@ -18,11 +18,11 @@ export const useQueryDepartmentsWithPagination = (params: IPaginationRequest) =>
     } = useQuery<IBaseApiResponse<IPagination<Department>>>({
         queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION, params],
         queryFn: async () => {
-            const departmentApiResponse = await departmentApis.getDepartmentWithPagination({
+            const response = await departmentApis.getDepartmentWithPagination({
                 pageIndex: params.pageIndex,
                 pageSize: params.pageSize,
             });
-            return departmentApiResponse;
+            return response;
         },
     });
 
