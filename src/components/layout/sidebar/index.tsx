@@ -1,21 +1,25 @@
 import {
     AccessTime,
-    Dashboard,
+    EventNote,
     ExitToApp,
+    Healing,
     Home,
     Inventory2,
+    LocalHospital,
     Paid,
     PermContactCalendar,
+    Person,
     Vaccines,
 } from "@mui/icons-material";
 import { Avatar, Box, Drawer, Stack, Typography } from "@mui/material";
 import React from "react";
 import AppLogo from "~/assets/images/app_logo.png";
 import i18n from "~/configs/i18n";
+import { ResourceType } from "~/configs/route-permission";
 import { useAuth } from "~/contexts/auth.context";
+import { hasPermission } from "~/utils/permission.utils";
 import { ChangeLanguageTab } from "./tabs/change-lang.tab";
 import { SidebarTabItem, SidebarTabProps } from "./tabs/sidebar.tab";
-import { hasPermission } from "~/utils/permission.utils";
 
 const sidebarTree: SidebarTabProps[] = [
     {
@@ -24,25 +28,39 @@ const sidebarTree: SidebarTabProps[] = [
         pathName: "/",
     },
     {
-        icon: <Dashboard />,
+        icon: <LocalHospital />,
         labelKey: i18n.translationKey.reception,
         children: [
             {
                 labelKey: i18n.translationKey.vaccination,
                 pathName: "/reception/vaccination",
+                icon: <Vaccines />,
             },
-            // {
-            //     labelKey: i18n.translationKey.patient,
-            //     pathName: "/reception/patient",
-            // },
+            {
+                labelKey: i18n.translationKey.patient,
+                pathName: "/reception/patient",
+                icon: <Person />,
+            },
         ],
-        requiredPermissions: ["vaccination-reception"],
+        requiredPermissions: [ResourceType.VaccinationReception],
+    },
+    {
+        icon: <EventNote />,
+        labelKey: i18n.translationKey.appointments,
+        children: [
+            {
+                labelKey: i18n.translationKey.followUpAppointments,
+                pathName: "/appointments/follow-up",
+                icon: <AccessTime />,
+            },
+        ],
+        requiredPermissions: [ResourceType.Appointments],
     },
     {
         icon: <Paid />,
         labelKey: i18n.translationKey.hospitalFee,
         pathName: "/finance",
-        requiredPermissions: ["hospital-service"],
+        requiredPermissions: [ResourceType.VaccinationReception],
     },
     {
         icon: <Vaccines />,
@@ -51,18 +69,20 @@ const sidebarTree: SidebarTabProps[] = [
             {
                 labelKey: i18n.translationKey.vaccination,
                 pathName: "/vaccination",
+                icon: <Vaccines />,
             },
             {
                 labelKey: i18n.translationKey.vaccinationHistory,
                 pathName: "/vaccination/history",
+                icon: <AccessTime />,
             },
             {
                 labelKey: i18n.translationKey.AfterInjection,
                 pathName: "/vaccination/post-injection",
-                icon: <AccessTime />,
+                icon: <Healing />,
             },
         ],
-        requiredPermissions: ["appointments"],
+        requiredPermissions: [ResourceType.VaccinationReception],
     },
     {
         icon: <Inventory2 />,
@@ -71,9 +91,10 @@ const sidebarTree: SidebarTabProps[] = [
             {
                 labelKey: i18n.translationKey.importPharmacy,
                 pathName: "/pharmacy/import",
+                icon: <Inventory2 />,
             },
         ],
-        requiredPermissions: ["inventory"],
+        requiredPermissions: [ResourceType.Inventory],
     },
     {
         icon: <PermContactCalendar />,
@@ -92,7 +113,7 @@ const sidebarTree: SidebarTabProps[] = [
                 pathName: "/management/departments",
             },
         ],
-        requiredPermissions: ["management"],
+        requiredPermissions: [ResourceType.Management],
     },
 ];
 
