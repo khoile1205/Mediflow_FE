@@ -323,5 +323,16 @@
     "SAVED_FAILED": "Lưu thất bại",
     "CONFIRM_OBSERVATE": "Xác nhận theo dõi",
     "OBSERVATION_CONFIRMED": "Đã theo dõi",
-    "OBSERVATION_NOT_CONFIRMED": "Chưa theo dõi"
+    "OBSERVATION_NOT_CONFIRMED": "Chưa theo dõi",
+    "HUMAN_RESOURCE": "Nhân sự",
+    "STAFF": "Nhân viên",
+    "AUTHORIZATION": "Phân quyền",
+    "DEPARTMENT_NAME": "Tên phòng ban",
+    "DEPARTMENT_NAME_IN_ENGLISH": "Tên phòng ban bằng tiếng Anh"
+    "ACCESS_DENIED": "Bạn không có quyền truy cập vào trang này.",
+    "HUMAN_RESOURCE": "Nhân sự",
+    "STAFF": "Nhân viên",
+    "AUTHORIZATION": "Phân quyền",
+    "DEPARTMENT_NAME": "Tên phòng ban",
+    "DEPARTMENT_NAME_IN_ENGLISH": "Tên phòng ban bằng tiếng Anh"
 }

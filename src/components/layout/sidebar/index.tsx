@@ -1,4 +1,14 @@
-import { AccessTime, Dashboard, ExitToApp, Home, Inventory2, Paid, Vaccines } from "@mui/icons-material";
+import {
+    AccessTime,
+    Dashboard,
+    ExitToApp,
+    Home,
+    Inventory2,
+    Paid,
+    PermContactCalendar,
+    Vaccines,
+    VerifiedUser,
+} from "@mui/icons-material";
 import { Avatar, Box, Drawer, Stack, Typography } from "@mui/material";
 import React from "react";
 import AppLogo from "~/assets/images/app_logo.png";
@@ -65,6 +75,25 @@ const sidebarTree: SidebarTabProps[] = [
             },
         ],
         requiredPermissions: ["inventory"],
+    },
+    {
+        icon: <PermContactCalendar />,
+        labelKey: i18n.translationKey.humanResource,
+        children: [
+            {
+                labelKey: i18n.translationKey.staff,
+                pathName: "/management/users",
+            },
+            {
+                labelKey: i18n.translationKey.authorization,
+                pathName: "/management/authorization",
+            },
+            {
+                labelKey: i18n.translationKey.department,
+                pathName: "/management/departments",
+            },
+        ],
+        requiredPermissions: ["management"],
     },
 ];
 
