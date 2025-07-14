@@ -13,7 +13,7 @@ export function useMutationCreateDepartment() {
             const response = await departmentApis.createDepartment(payload);
             return response;
         },
-        onSuccess: (response) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION],
             });
