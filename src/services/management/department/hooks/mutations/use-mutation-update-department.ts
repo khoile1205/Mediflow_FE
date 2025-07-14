@@ -14,16 +14,15 @@ export function useMutationUpdateDepartment() {
             return response;
         },
         onSuccess: (response, payload) => {
-            if (response.StatusCode === 200) {
-                queryClient.invalidateQueries({
-                    queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION],
-                });
-                queryClient.invalidateQueries({
-                    queryKey: [QueryKey.DEPARTMENT.GET_DEPARTMENT_BY_ID + payload.id],
-                });
-                showToast.success(i18n.t(i18n.translationKey.updateDepartmentSuccessfully));
-                return;
-            }
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.DEPARTMENT.GET_DEPARTMENT_BY_ID + payload.id],
+            });
+            showToast.success(i18n.t(i18n.translationKey.updateDepartmentSuccessfully));
+        },
+        onError: () => {
             showToast.error(i18n.t(i18n.translationKey.updateDepartmentFailed));
         },
     });

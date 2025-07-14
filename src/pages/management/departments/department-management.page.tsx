@@ -20,6 +20,8 @@ import {
     useMutationCreateDepartment,
     useMutationUpdateDepartment,
 } from "~/services/management/department/hooks/mutations";
+import { useAgGrid } from "~/components/common/ag-grid";
+import { usePagination } from "~/hooks";
 
 export const DepartmentMangement: React.FC = () => {
     const { t, i18n: reactI18n } = useTranslation();
@@ -28,12 +30,13 @@ export const DepartmentMangement: React.FC = () => {
     const [isAddingNewDepartment, setIsAddingNewDepartment] = useState(false);
     const [isEditingDepartment, setIsEditingDepartment] = useState(false);
 
+    const { handlePageChange, pageIndex, pageSize } = usePagination();
+
     const {
-        data: { listDepartments },
-        refetch: refetchDepartments,
+        data: { listDepartments, totalItems },
     } = useQueryDepartmentsWithPagination({
-        pageIndex: 1,
-        pageSize: 999,
+        pageIndex: pageIndex,
+        pageSize: pageSize,
     });
 
     const {
@@ -84,14 +87,15 @@ export const DepartmentMangement: React.FC = () => {
     const { mutateAsync: createDepartment } = useMutationCreateDepartment();
     const { mutateAsync: updateDepartment } = useMutationUpdateDepartment();
 
+    const departmentGrid = useAgGrid({});
+
     const handleAddNewDepartment = async (data: DepartmentFormValues) => {
         await createDepartment(data);
 
         resetFormValues();
         setIsFormEnabled(false);
         setIsAddingNewDepartment(false);
-
-        refetchDepartments();
+        departmentGrid.gridApi.deselectAll();
     };
 
     const handleSaveDepartment = async (data: DepartmentFormValues) => {
@@ -101,18 +105,18 @@ export const DepartmentMangement: React.FC = () => {
         setIsFormEnabled(false);
         setIsEditingDepartment(false);
         setSelectedDepartmentId(null);
-
-        refetchDepartments();
+        departmentGrid.gridApi.deselectAll();
     };
 
     return (
         <>
             <DynamicForm form={form}>
-                <Grid container spacing={2} alignItems={"center"}>
+                <Grid container spacing={2} alignItems={"center"} my={2}>
                     <Grid size={8}>
                         <FormItem
                             render="data-grid"
                             name="departmentName"
+                            label={t(i18n.translationKey.department)}
                             placeholder={t(i18n.translationKey.departmentName)}
                             columnDefs={[
                                 {
@@ -137,6 +141,12 @@ export const DepartmentMangement: React.FC = () => {
                             onRowSelected={handleSelectDepartment}
                             displayField="name"
                             valueField="id"
+                            pagination
+                            pageIndex={pageIndex}
+                            pageSize={pageSize}
+                            totalItems={totalItems}
+                            onPageChange={handlePageChange}
+                            {...departmentGrid}
                         />
                     </Grid>
                     <Grid size={4} container spacing={2} direction={"column"}>

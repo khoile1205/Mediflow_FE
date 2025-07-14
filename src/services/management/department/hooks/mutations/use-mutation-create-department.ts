@@ -14,13 +14,12 @@ export function useMutationCreateDepartment() {
             return response;
         },
         onSuccess: (response) => {
-            if (response.StatusCode === 200) {
-                queryClient.invalidateQueries({
-                    queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION],
-                });
-                showToast.success(i18n.t(i18n.translationKey.createDepartmentSuccessfully));
-                return;
-            }
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION],
+            });
+            showToast.success(i18n.t(i18n.translationKey.createDepartmentSuccessfully));
+        },
+        onError: () => {
             showToast.error(i18n.t(i18n.translationKey.createDepartmentFailed));
         },
     });
