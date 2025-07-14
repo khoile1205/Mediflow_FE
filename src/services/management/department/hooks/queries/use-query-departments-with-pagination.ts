@@ -16,13 +16,13 @@ export const useQueryDepartmentsWithPagination = (params: IPaginationRequest) =>
         isError,
         refetch,
     } = useQuery<IBaseApiResponse<IPagination<Department>>>({
-        queryKey: [QueryKey.PATIENT.GET_LIST_PATIENT_WITH_PAGINATION, params],
+        queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION, params],
         queryFn: async () => {
-            const patientApiResponse = await departmentApis.getDepartmentWithPagination({
+            const response = await departmentApis.getDepartmentWithPagination({
                 pageIndex: params.pageIndex,
                 pageSize: params.pageSize,
             });
-            return patientApiResponse;
+            return response;
         },
     });
 

@@ -7,6 +7,7 @@ import PatientVaccinationHistory from "~/pages/vaccination/patient-vacciation-hi
 import VaccinationPage from "~/pages/vaccination";
 import AuthenticatedGuard from "../guards/authenticated.guard";
 import PostVaccinationPage from "~/pages/post-vaccination";
+import DepartmentPage from "~/pages/management/departments/department-management.page";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -26,6 +27,12 @@ export const AuthenticatedRoutes = (
         <Route path="/finance" element={<HospitalFeePage />} />
         <Route path="/pharmacy">
             <Route path="import" element={<ImportInventoryFromSupplier />} />
+        </Route>
+
+        <Route path="/management">
+            <Route path="users" element={<div>Staff Management</div>} />
+            <Route path="authorization" element={<div>Authorization Management</div>} />
+            <Route path="departments" element={<DepartmentPage />} />
         </Route>
 
         <Route path="*" element={<div>Developing</div>} />

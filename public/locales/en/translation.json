@@ -323,5 +323,17 @@
     "SAVED_FAILED": "Saved failed",
     "CONFIRM_OBSERVATE": "Confirm observate",
     "OBSERVATION_CONFIRMED": "Observation confirmed",
-    "OBSERVATION_NOT_CONFIRMED": "Observation not confirmed"
+    "OBSERVATION_NOT_CONFIRMED": "Observation not confirmed",
+    "HUMAN_RESOURCE": "Human Resource",
+    "STAFF": "Staff",
+    "AUTHORIZATION": "Authorization",
+    "DEPARTMENT_NAME": "Department's name",
+    "DEPARTMENT_NAME_IN_ENGLISH": "Department's name in English",
+    "DEPARTMENT_TYPE": "Department type",
+    "LAST_UPDATED_AT": "Last updated at",
+    "SUSPEND": "Suspend",
+    "CREATE_DEPARTMENT_SUCCESSFULLY": "Create department successfully.",
+    "CREATE_DEPARTMENT_FAILED": "Create department failed.",
+    "UPDATE_DEPARTMENT_SUCCESSFULLY": "Update department successfully.",
+    "UPDATE_DEPARTMENT_FAILED": "Update department failed."
 }
