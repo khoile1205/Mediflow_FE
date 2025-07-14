@@ -425,7 +425,7 @@ const ReceptionVaccination: React.FC = () => {
                 <PreVaccination
                     receptionId={receptionId}
                     form={vaccinationPrescreeningForm}
-                    patientDOB={patientReceptionForm.getValues("dob")}
+                    patientDOB={patientReceptionForm.watch("dob")}
                 />
             </Box>
             <Box sx={{ display: tab === "vaccination_indication" ? "block" : "none" }}>
