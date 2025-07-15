@@ -23,6 +23,10 @@ const ReceptionQueryKey = {
 
 const DepartmentQueryKey = {
     GET_LIST_DEPARTMENT_WITH_PAGINATION: "getListDepartmentWithPagination",
+    GET_DEPARTMENT_BY_ID: "getDepartmentById",
+    GET_LIST_DEPARTMENT_TYPES: "getListDepartmentTypes",
+    CREATE_DEPARTMENT: "createDepartment",
+    UPDATE_DEPARTMENT: "updateDepartment",
 };
 
 const InventoryQueryKey = {
@@ -48,6 +52,16 @@ const HospitalFeeQueryKey = {
     CREATE_PAYMENT: "createPayment",
 };
 
+const UserQueryKey = {
+    GET_LIST_USERS_WITH_PAGINATION: "getListUsersWithPagination",
+    GET_USER_BY_ID: "getUserById",
+    CREATE_USER: "createUser",
+    UPDATE_USER: "updateUser",
+    DELETE_USER: "deleteUser",
+    GET_ROLE_NAMES: "getRoleNames",
+    RESET_PASSWORD: "resetPassword",
+};
+
 const PreExaminationQueryKey = {
     GET_MEDICINE_LIST: "getPreExaminationMedicines",
     ADD_VACCINE_TO_PRE_EXAMINATION: "addVaccineToPreExamination",
@@ -62,5 +76,4 @@ export const QueryKey = {
     DEPARTMENT: DepartmentQueryKey,
     INVENTORY: InventoryQueryKey,
     POST_VACCINATION: PostVaccinationQueryKey,
-    PRE_EXAMINATION: PreExaminationQueryKey,
 };
