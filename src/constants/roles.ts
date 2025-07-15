@@ -10,4 +10,5 @@ export enum Role {
     Receptionist = "Receptionist",
     ImagingTechnician = "ImagingTechnician",
     HeadOfDepartment = "HeadOfDepartment",
+    ITSupport = "ITSupport",
 }

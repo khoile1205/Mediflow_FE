@@ -5,6 +5,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
 import { ResourceType } from "~/configs/route-permission";
+import { Role } from "~/constants/roles";
+import { ResourceTypePermission } from "~/entities/user-permission";
 
 export interface SidebarTabProps {
     icon?: React.ReactNode;
@@ -14,6 +16,8 @@ export interface SidebarTabProps {
     children?: SidebarTabProps[];
     onClick?: (event?: React.MouseEvent<HTMLElement>) => void;
     requiredPermissions?: ResourceType[];
+    requiredRoles?: Role[];
+    accessModifiers?: ResourceTypePermission;
 }
 
 export const SidebarTabItem: React.FC<SidebarTabProps> = ({
