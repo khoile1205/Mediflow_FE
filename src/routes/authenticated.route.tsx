@@ -7,6 +7,7 @@ import PatientVaccinationHistory from "~/pages/vaccination/patient-vacciation-hi
 import VaccinationPage from "~/pages/vaccination";
 import AuthenticatedGuard from "../guards/authenticated.guard";
 import PostVaccinationPage from "~/pages/post-vaccination";
+import { AppointmentsManagementPage } from "~/pages/appointments/follow-up";
 import DepartmentManagement from "~/pages/management/departments/department-management.page";
 import UserManagement from "~/pages/management/users/user-management.page";
 
@@ -18,7 +19,9 @@ export const AuthenticatedRoutes = (
         <Route path="/reception">
             <Route path="vaccination" element={<ReceptionVaccination />} />
         </Route>
-
+        <Route path="/appointments">
+            <Route path="follow-up" element={<AppointmentsManagementPage />} />
+        </Route>
         <Route path="/vaccination">
             <Route index element={<VaccinationPage />} />
             <Route path="history" element={<PatientVaccinationHistory />} />

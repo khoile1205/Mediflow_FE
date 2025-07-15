@@ -95,8 +95,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) =
         setIsInitialized(false);
         setIsLoading(true);
 
-        await loadUserInfor();
-        await loadUserPermission();
+        await Promise.all([loadUserInfor(), loadUserPermission()]);
 
         setIsInitialized(true);
         setIsLoading(false);

@@ -27,16 +27,26 @@ const AuthenticatedGuard: React.FC = () => {
             navigate("/login");
         }
 
-        const requiredPermissions = getRequiredPermissionForPath(location.pathname, routePermissions);
-        const hasAccess = hasPermission(userPermission?.resourceTypes ?? {}, requiredPermissions);
+        const { requiredPermissions = [], requiredRoles = [] } = getRequiredPermissionForPath(
+            location.pathname,
+            routePermissions,
+        );
+
+        const hasAccess = hasPermission({
+            resourceTypes: userPermission?.resourceTypes,
+            requiredPermissions,
+            userRoles: userPermission?.roles || [],
+            requiredRoles,
+            accessModifier: userPermission?.resourceTypes[requiredPermissions[0]],
+        });
 
         if (requiredPermissions && !hasAccess) {
             showToast.warning(t(i18n.translationKey.accessDenied));
             navigate("/");
         }
-    }, [navigate, location.pathname, isInitialized, isLoading, user, userPermission]);
+    }, [navigate, location.pathname, isInitialized, isLoading]);
 
-    if (!isInitialized || isLoading || !user || !userPermission) {
+    if (!isInitialized || isLoading) {
         return <Spinner />;
     }
 
