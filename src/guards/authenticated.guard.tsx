@@ -44,7 +44,7 @@ const AuthenticatedGuard: React.FC = () => {
             showToast.warning(t(i18n.translationKey.accessDenied));
             navigate("/");
         }
-    }, [navigate, location.pathname, isInitialized, isLoading]);
+    }, [navigate, location.pathname, isInitialized, isLoading, userPermission, user]);
 
     if (!isInitialized || isLoading) {
         return <Spinner />;

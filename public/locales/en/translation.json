@@ -323,12 +323,11 @@
     "SAVED_FAILED": "Saved failed",
     "CONFIRM_OBSERVATE": "Confirm observate",
     "OBSERVATION_CONFIRMED": "Observation confirmed",
-    "OBSERVATION_NOT_CONFIRMED": "Observation not confirmed",
     "CONFIRM_TESTING": "Confirm testing",
     "VACCINE_GRID_NOT_READY": "Unable to detect vaccine data table.",
     "SELECT_AT_LEAST_ONE_DOSE": "Please select at least one vaccine dose.",
     "ADD_VACCINE_TO_PRE_EXAMINATION_SUCCESS": "Successfully added vaccine to pre-examination.",
-    "ADD_VACCINE_TO_PRE_EXAMINATION_FAILED": "Failed to add vaccine to pre-examination."
+    "ADD_VACCINE_TO_PRE_EXAMINATION_FAILED": "Failed to add vaccine to pre-examination.",
     "OBSERVATION_NOT_CONFIRMED": "Observation not confirmed",
     "HUMAN_RESOURCE": "Human Resource",
     "STAFF": "Staff",
@@ -392,5 +391,6 @@
     "CONFIRM_RESET_PASSWORD": "Are you sure you want to reset the password for this staff?",
     "CONFIRM_RESET_PASSWORD_MESSAGE": "This action will reset the password to the default value. Please confirm to proceed.",
     "CONFIRM": "Confirm",
-    "RESET_PASSWORD_SUCCESSFULLY": "Reset password successfully. Please check your email for the new password."
+    "RESET_PASSWORD_SUCCESSFULLY": "Reset password successfully. Please check your email for the new password.",
+    "NOT_TESTED": "Not tested"
 }

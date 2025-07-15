@@ -16,7 +16,12 @@ export function useMutationCreateReceiptPayment() {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.HOSPITAL_FEE.GET_PATIENT_PAYMENT_LIST],
             });
-
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.VACCINATION.GET_WAITING_PATIENT_VACCINATION_LIST],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.VACCINATION.GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID],
+            });
             showToast.success(i18n.t(i18n.translationKey.createReceiptPaymentSuccessfully));
 
             return invoiceNumber;

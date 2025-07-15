@@ -10,11 +10,11 @@ const getPreExaminationMedicines = async (receptionId: number) => {
     });
 };
 
-const addVaccineToPreExamination = async ({ receptionId, data }: { receptionId: number; data: number[] }) => {
+const addVaccineToPreExamination = async ({ receptionId }: { receptionId: number }) => {
     return await callApi<boolean>({
         url: preExaminationEndpoints.addVaccineToPreExamination(receptionId),
         method: HttpMethod.PUT,
-        data,
+        data: null,
     });
 };
 

@@ -14,6 +14,7 @@ export const useQueryPreExaminationMedicines = (receptionId?: number) => {
         queryKey: [QueryKey.PRE_EXAMINATION.GET_MEDICINE_LIST, receptionId],
         queryFn: () => preExaminationApis.getPreExaminationMedicines(receptionId!),
         enabled: !!receptionId,
+        staleTime: 0,
     });
 
     const medicines = React.useMemo(() => {

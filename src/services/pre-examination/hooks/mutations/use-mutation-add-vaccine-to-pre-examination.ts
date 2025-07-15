@@ -7,8 +7,8 @@ export const useMutationAddVaccineToPreExamination = () => {
 
     return useMutation({
         mutationKey: [QueryKey.PRE_EXAMINATION.ADD_VACCINE_TO_PRE_EXAMINATION],
-        mutationFn: async ({ receptionId, data }: { receptionId: number; data: number[] }) => {
-            return await preExaminationApis.addVaccineToPreExamination({ receptionId, data });
+        mutationFn: async ({ receptionId }: { receptionId: number }) => {
+            return await preExaminationApis.addVaccineToPreExamination({ receptionId });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [QueryKey.PRE_EXAMINATION.GET_MEDICINE_LIST] });

@@ -306,6 +306,7 @@ const applicationTranslationKey = {
     selectAtLeastOneDose: "SELECT_AT_LEAST_ONE_DOSE",
     addVaccineToPreExaminationSuccess: "ADD_VACCINE_TO_PRE_EXAMINATION_SUCCESS",
     addVaccineToPreExaminationFailed: "ADD_VACCINE_TO_PRE_EXAMINATION_FAILED",
+    notTested: "NOT_TESTED",
 };
 
 const exceptionTranslationKey = {
