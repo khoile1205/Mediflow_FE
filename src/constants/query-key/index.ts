@@ -52,6 +52,16 @@ const HospitalFeeQueryKey = {
     CREATE_PAYMENT: "createPayment",
 };
 
+const UserQueryKey = {
+    GET_LIST_USERS_WITH_PAGINATION: "getListUsersWithPagination",
+    GET_USER_BY_ID: "getUserById",
+    CREATE_USER: "createUser",
+    UPDATE_USER: "updateUser",
+    DELETE_USER: "deleteUser",
+    GET_ROLE_NAMES: "getRoleNames",
+    RESET_PASSWORD: "resetPassword",
+};
+
 export const QueryKey = {
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
@@ -60,4 +70,5 @@ export const QueryKey = {
     DEPARTMENT: DepartmentQueryKey,
     INVENTORY: InventoryQueryKey,
     POST_VACCINATION: PostVaccinationQueryKey,
+    USER: UserQueryKey,
 };

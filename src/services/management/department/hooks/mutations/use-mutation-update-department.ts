@@ -18,12 +18,9 @@ export function useMutationUpdateDepartment() {
                 queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION],
             });
             queryClient.invalidateQueries({
-                queryKey: [QueryKey.DEPARTMENT.GET_DEPARTMENT_BY_ID + payload.id],
+                queryKey: [QueryKey.DEPARTMENT.GET_DEPARTMENT_BY_ID, payload.id],
             });
             showToast.success(i18n.t(i18n.translationKey.updateDepartmentSuccessfully));
-        },
-        onError: () => {
-            showToast.error(i18n.t(i18n.translationKey.updateDepartmentFailed));
         },
     });
 }

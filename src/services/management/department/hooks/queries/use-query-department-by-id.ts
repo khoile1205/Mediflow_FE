@@ -7,7 +7,7 @@ import { IBaseApiResponse } from "~/libs/axios/types";
 
 export const useQueryDepartmentById = (departmentId: number) => {
     const { data, isLoading, isError, refetch } = useQuery<IBaseApiResponse<Department>>({
-        queryKey: [QueryKey.DEPARTMENT.GET_DEPARTMENT_BY_ID + departmentId],
+        queryKey: [QueryKey.DEPARTMENT.GET_DEPARTMENT_BY_ID, departmentId],
         queryFn: async () => {
             const response = await departmentApis.getDepartmentById(departmentId);
             return response;

@@ -14,6 +14,7 @@ export interface PersonInfo extends BaseEntity {
 export interface Staff extends PersonInfo {
     userName: string;
     email: string;
+    address: string;
     profilePictureUrl: string;
     emailConfirmed: boolean;
     phoneNumberConfirmed: boolean;
