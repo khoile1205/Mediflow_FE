@@ -44,7 +44,7 @@ const VaccinationPage: React.FC = () => {
     const [selectedVaccines, setSelectedVaccines] = React.useState<any[]>([]);
     const [isOpenTestingModal, setIsOpenTestingModal] = React.useState(false);
     const [isStartEnabled, setIsStartEnabled] = React.useState(false);
-    const [selectedReceptionId, setSelectedReceptionId] = React.useState<number | null>(1);
+    const [selectedReceptionId] = React.useState<number | null>(1);
 
     const { mutateAsync: addVaccineToPreExamination } = useMutationAddVaccineToPreExamination();
     const { medicines, isLoading } = useQueryPreExaminationMedicines(selectedReceptionId ?? undefined);
@@ -85,10 +85,6 @@ const VaccinationPage: React.FC = () => {
         ],
         [t],
     );
-
-    const handleSearch = (value: string) => {
-        // TODO: search logic
-    };
 
     const handleConfirmTesting = async () => {
         if (!vaccineAgGrid.gridApi) {
@@ -136,7 +132,6 @@ const VaccinationPage: React.FC = () => {
                                     placeholder={t(i18n.translationKey.findPatient)}
                                     size="small"
                                     fullWidth
-                                    onChange={(e) => handleSearch(e.target.value)}
                                 />
                             </Grid>
                             <Grid size={4}>
@@ -261,7 +256,6 @@ const VaccinationPage: React.FC = () => {
                 open={isOpenTestingModal}
                 onClose={() => {
                     setIsOpenTestingModal(false);
-                    // invalidate query khi đóng modal để reload lại data
                     queryClient.invalidateQueries({
                         queryKey: [QueryKey.PRE_EXAMINATION.GET_MEDICINE_LIST, selectedReceptionId],
                     });
