@@ -7,20 +7,62 @@ import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
+import { PreExaminationRow } from "./types";
+import { useMutationUpdatePreExaminationResult } from "~/services/pre-examination/hooks/mutations/use-mutation-update-pre-examination-result";
+import { showToast } from "~/utils";
 
 interface PreExaminationTestingPageProps {
     open: boolean;
     onClose: () => void;
+    rowData: PreExaminationRow[];
 }
 
-const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ open, onClose }) => {
+const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ open, onClose, rowData = [] }) => {
     const { t } = useTranslation();
     const resultForm = useForm();
-    const resultAgGrid = useAgGrid({ rowSelection: "multiple" });
+    const resultAgGrid = useAgGrid<PreExaminationRow>({ rowSelection: "multiple" });
 
-    const rowData = [{}];
+    const { mutateAsync: updateTestResult } = useMutationUpdatePreExaminationResult();
 
-    const columnDefs: ColDef[] = [
+    const handleSubmitResult = async () => {
+        const selectedRows = resultAgGrid.gridApi?.getSelectedRows?.();
+
+        if (!selectedRows || selectedRows.length === 0) {
+            showToast.warning(t(i18n.translationKey.selectAtLeastOneDose));
+            return;
+        }
+
+        const testResult = resultForm.getValues("testResult");
+
+        try {
+            await Promise.all(
+                selectedRows.map((row) =>
+                    updateTestResult({
+                        receptionVaccinationId: row.receptionVaccinationId,
+                        data: {
+                            receptionVaccinationId: row.receptionVaccinationId,
+                            testEntryResult: testResult,
+                        },
+                    }),
+                ),
+            );
+
+            selectedRows.forEach((row) => {
+                const index = rowData.findIndex((r) => r.receptionVaccinationId === row.receptionVaccinationId);
+                if (index !== -1) {
+                    rowData[index].testResultEntry = testResult;
+                }
+            });
+
+            (resultAgGrid.gridApi as any)?.setRowData([...rowData]);
+
+            showToast.success(t(i18n.translationKey.addVaccineToPreExaminationSuccess));
+        } catch (error) {
+            showToast.error(t(i18n.translationKey.addVaccineToPreExaminationFailed));
+        }
+    };
+
+    const columnDefs: ColDef<PreExaminationRow>[] = [
         {
             headerCheckboxSelection: true,
             checkboxSelection: true,
@@ -29,75 +71,18 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
         },
         { field: "patientName", headerName: t(i18n.translationKey.patientName) },
         { field: "vaccineName", headerName: t(i18n.translationKey.vaccineSerumName) },
-        { field: "confirmation", headerName: t(i18n.translationKey.vaccinationConfirmation) },
-        { field: "startTime", headerName: t(i18n.translationKey.testStartTime) },
-        { field: "testResult", headerName: t(i18n.translationKey.testResult) },
-        { field: "enteredBy", headerName: t(i18n.translationKey.enteredByDoctor) },
+        { field: "isConfirmed", headerName: t(i18n.translationKey.vaccinationConfirmation) },
+        { field: "vaccinationTestDate", headerName: t(i18n.translationKey.testStartTime) },
+        { field: "testResultEntry", headerName: t(i18n.translationKey.testResult) },
+        { field: "doctorName", headerName: t(i18n.translationKey.enteredByDoctor) },
     ];
 
     return (
-        <Dialog
-            open={open}
-            onClose={onClose}
-            maxWidth="lg"
-            fullWidth
-            // PaperProps={{
-            //     sx: {
-            //         height: "80%",
-            //         maxHeight: "80vh",
-            //         overflow: "auto",
-            //     },
-            // }}
-        >
+        <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
             <DialogTitle>
                 <Typography variant="h6">{t(i18n.translationKey.testResult)}</Typography>
             </DialogTitle>
             <DialogContent className="no-scrollbar h-full">
-                {/* <Grid container spacing={2} className="mb-4">
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <ActionButton
-                            fullWidth
-                            label={t(i18n.translationKey.addNew)}
-                            startIcon={<AddCircle />}
-                            onClick={() => {}}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <ActionButton
-                            fullWidth
-                            label={t(i18n.translationKey.edit)}
-                            startIcon={<Edit />}
-                            onClick={() => {}}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <ActionButton
-                            fullWidth
-                            label={t(i18n.translationKey.save)}
-                            startIcon={<Save />}
-                            onClick={() => {}}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <ActionButton
-                            fullWidth
-                            label={t(i18n.translationKey.delete)}
-                            startIcon={<Delete />}
-                            color="error"
-                            onClick={() => {}}
-                        />
-                    </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
-                        <ActionButton
-                            fullWidth
-                            label={t(i18n.translationKey.cancel)}
-                            startIcon={<Undo />}
-                            variant="outlined"
-                            onClick={onClose}
-                        />
-                    </Grid>
-                </Grid> */}
-
                 <DynamicForm form={resultForm}>
                     <Grid container spacing={2} className="my-4" alignItems="stretch">
                         <Grid size={{ xs: 12, md: 6 }}>
@@ -142,32 +127,36 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
                                         render="radio-group"
                                         name="testResult"
                                         options={[
-                                            { label: `${t(i18n.translationKey.negative)}`, value: "negative" },
-                                            { label: `${t(i18n.translationKey.positive)}`, value: "positive" },
+                                            { label: t(i18n.translationKey.negative), value: "Âm tính" },
+                                            { label: t(i18n.translationKey.positive), value: "Dương tính" },
                                         ]}
-                                        defaultValue="negative"
+                                        defaultValue="Âm tính"
                                     />
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid
-                            size={{ xs: 12, md: 6 }}
-                            display="flex"
-                            alignItems="stretch"
-                            sx={{ pl: { md: 1 }, mt: { xs: 2, md: 0 } }}
-                        >
+
+                        <Grid size={{ xs: 12, md: 6 }} display="flex" alignItems="stretch">
                             <Button
                                 variant="contained"
                                 fullWidth
-                                sx={{ height: "100%", boxShadow: 1, fontWeight: 600, fontSize: "0.875rem" }}
-                                onClick={() => {}}
+                                sx={{ height: "100%", boxShadow: 1, fontWeight: 600 }}
+                                onClick={handleSubmitResult}
                             >
                                 {t(i18n.translationKey.inputTestResult)}
                             </Button>
                         </Grid>
                     </Grid>
 
-                    <AgDataGrid columnDefs={columnDefs} rowData={rowData} {...resultAgGrid} />
+                    <AgDataGrid
+                        columnDefs={columnDefs}
+                        rowData={rowData}
+                        {...resultAgGrid}
+                        onGridReady={(params) => {
+                            resultAgGrid.gridApi = params.api;
+                            params.api.sizeColumnsToFit();
+                        }}
+                    />
                 </DynamicForm>
             </DialogContent>
         </Dialog>

@@ -48,6 +48,12 @@ const HospitalFeeQueryKey = {
     CREATE_PAYMENT: "createPayment",
 };
 
+const PreExaminationQueryKey = {
+    GET_MEDICINE_LIST: "getPreExaminationMedicines",
+    ADD_VACCINE_TO_PRE_EXAMINATION: "addVaccineToPreExamination",
+    UPDATE_TEST_RESULT: "updatePreExaminationResult",
+};
+
 export const QueryKey = {
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
@@ -56,4 +62,5 @@ export const QueryKey = {
     DEPARTMENT: DepartmentQueryKey,
     INVENTORY: InventoryQueryKey,
     POST_VACCINATION: PostVaccinationQueryKey,
+    PRE_EXAMINATION: PreExaminationQueryKey,
 };

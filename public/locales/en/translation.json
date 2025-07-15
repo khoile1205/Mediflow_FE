@@ -323,5 +323,10 @@
     "SAVED_FAILED": "Saved failed",
     "CONFIRM_OBSERVATE": "Confirm observate",
     "OBSERVATION_CONFIRMED": "Observation confirmed",
-    "OBSERVATION_NOT_CONFIRMED": "Observation not confirmed"
+    "OBSERVATION_NOT_CONFIRMED": "Observation not confirmed",
+    "CONFIRM_TESTING": "Confirm testing",
+    "VACCINE_GRID_NOT_READY": "Unable to detect vaccine data table.",
+    "SELECT_AT_LEAST_ONE_DOSE": "Please select at least one vaccine dose.",
+    "ADD_VACCINE_TO_PRE_EXAMINATION_SUCCESS": "Successfully added vaccine to pre-examination.",
+    "ADD_VACCINE_TO_PRE_EXAMINATION_FAILED": "Failed to add vaccine to pre-examination."
 }

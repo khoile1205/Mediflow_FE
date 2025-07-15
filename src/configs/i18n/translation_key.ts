@@ -238,6 +238,11 @@ const applicationTranslationKey = {
     observationConfirmed: "OBSERVATION_CONFIRMED",
     observationNotConfirmed: "OBSERVATION_NOT_CONFIRMED",
     createReceiptPaymentSuccessfully: "CREATE_RECEIPT_PAYMENT_SUCCESSFULLY",
+    confirmTesting: "CONFIRM_TESTING",
+    vaccineGridNotReady: "VACCINE_GRID_NOT_READY",
+    selectAtLeastOneDose: "SELECT_AT_LEAST_ONE_DOSE",
+    addVaccineToPreExaminationSuccess: "ADD_VACCINE_TO_PRE_EXAMINATION_SUCCESS",
+    addVaccineToPreExaminationFailed: "ADD_VACCINE_TO_PRE_EXAMINATION_FAILED",
 };
 
 const exceptionTranslationKey = {
