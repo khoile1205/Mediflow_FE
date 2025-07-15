@@ -7,7 +7,13 @@ import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
+import { useMutationAddVaccineToPreExamination } from "~/services/pre-examination/hooks/mutations/use-mutation-add-vaccine-to-pre-examination";
+import { useQueryPreExaminationMedicines } from "~/services/pre-examination/hooks/queries/useQueryPreExaminationMedicines";
+import { showToast } from "~/utils";
 import PreExaminationTestingPage from "../pre-examination-testing";
+import { mockPreExaminationMedicines } from "./mock/dataDump";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKey } from "~/constants/query-key";
 
 const ReadonlyTextField: React.FC<TextFieldProps> = ({ slotProps, ...props }) => {
     return (
@@ -31,12 +37,23 @@ const VaccinationPage: React.FC = () => {
     const vaccineForm = useForm();
 
     const patientAgGrid = useAgGrid({});
+    const vaccineAgGrid = useAgGrid({ rowSelection: "multiple" });
+
+    const queryClient = useQueryClient();
+
+    const [selectedVaccines, setSelectedVaccines] = React.useState<any[]>([]);
+    const [isOpenTestingModal, setIsOpenTestingModal] = React.useState(false);
+    const [isStartEnabled, setIsStartEnabled] = React.useState(false);
+    const [selectedReceptionId] = React.useState<number | null>(1);
+
+    const { mutateAsync: addVaccineToPreExamination } = useMutationAddVaccineToPreExamination();
+    const { medicines, isLoading } = useQueryPreExaminationMedicines(selectedReceptionId ?? undefined);
+
     const patientColumnDefs = React.useMemo(
         () => [{ field: "patientName", headerName: t(i18n.translationKey.patientName) }],
-        [],
+        [t],
     );
 
-    const vaccineAgGrid = useAgGrid({ rowSelection: "multiple" });
     const vaccineColumnDefs: ColDef<any>[] = React.useMemo(
         () => [
             { checkboxSelection: true, headerCheckboxSelection: true, width: 50, pinned: true, resizable: false },
@@ -51,29 +68,52 @@ const VaccinationPage: React.FC = () => {
                 headerStyle: { backgroundColor: "#98D2C0" },
             },
             {
-                field: "injectionStatus",
+                field: "isConfirmed",
                 headerName: t(i18n.translationKey.vaccinationConfirmation),
                 headerStyle: { backgroundColor: "#98D2C0" },
             },
             {
-                field: "testResult",
+                field: "testResultEntry",
                 headerName: t(i18n.translationKey.testResult),
                 headerStyle: { backgroundColor: "#98D2C0" },
             },
             {
-                field: "doctor",
+                field: "doctorName",
                 headerName: t(i18n.translationKey.instructedDoctor),
                 headerStyle: { backgroundColor: "#98D2C0" },
             },
         ],
-        [],
+        [t],
     );
 
-    const handleSearch = (value: string) => {
-        console.log("Search value:", value);
-    };
+    const handleConfirmTesting = async () => {
+        if (!vaccineAgGrid.gridApi) {
+            showToast.warning(t(i18n.translationKey.vaccineGridNotReady));
+            return;
+        }
 
-    const [isOpenTestingModal, setIsOpenTestingModal] = React.useState<boolean>(false);
+        const selectedRows = vaccineAgGrid.gridApi.getSelectedRows() as { medicineId: number }[];
+
+        if (!selectedReceptionId || selectedRows.length === 0) {
+            showToast.warning(t(i18n.translationKey.selectAtLeastOneDose));
+            return;
+        }
+
+        try {
+            const medicineIds = selectedRows.map((row) => row.medicineId);
+
+            await addVaccineToPreExamination({
+                receptionId: selectedReceptionId,
+                data: medicineIds,
+            });
+
+            setIsStartEnabled(true);
+            setSelectedVaccines(selectedRows);
+            showToast.success(t(i18n.translationKey.addVaccineToPreExaminationSuccess));
+        } catch (error) {
+            showToast.error(t(i18n.translationKey.addVaccineToPreExaminationFailed));
+        }
+    };
 
     const handleConfirmStart = () => {
         setIsOpenTestingModal(true);
@@ -85,7 +125,6 @@ const VaccinationPage: React.FC = () => {
                 <Box className="flex h-full basis-1/3 flex-col bg-[#F6F8D5] p-3">
                     <Stack spacing={2} className="flex-grow">
                         <ReadonlyTextField label={t(i18n.translationKey.vaccinationNumber)} />
-
                         <Grid container spacing={2} alignItems="center">
                             <Grid size={8}>
                                 <TextField
@@ -93,7 +132,6 @@ const VaccinationPage: React.FC = () => {
                                     placeholder={t(i18n.translationKey.findPatient)}
                                     size="small"
                                     fullWidth
-                                    onChange={(e) => handleSearch(e.target.value)}
                                 />
                             </Grid>
                             <Grid size={4}>
@@ -181,7 +219,9 @@ const VaccinationPage: React.FC = () => {
                         <Grid size={4}>
                             <Stack spacing={3.35}>
                                 <Button>{t(i18n.translationKey.sendToCustomer)}</Button>
-                                <Button onClick={handleConfirmStart}>{t(i18n.translationKey.confirmStart)}</Button>
+                                <Button onClick={handleConfirmStart} disabled={!isStartEnabled}>
+                                    {t(i18n.translationKey.confirmStart)}
+                                </Button>
                                 <Button>{t(i18n.translationKey.confirmInjectedToday)}</Button>
                                 <Button>{t(i18n.translationKey.saveNote)}</Button>
                                 <Button>{t(i18n.translationKey.confirmSelectedDose)}</Button>
@@ -192,6 +232,9 @@ const VaccinationPage: React.FC = () => {
                             <Box height="100%" display="flex" flexDirection="column" justifyContent="center">
                                 <Stack spacing={11}>
                                     <Button>{t(i18n.translationKey.cancelConfirm)}</Button>
+                                    <Button onClick={handleConfirmTesting}>
+                                        {t(i18n.translationKey.confirmTesting)}
+                                    </Button>
                                     <Button>{t(i18n.translationKey.vaccinationHistory)}</Button>
                                 </Stack>
                             </Box>
@@ -201,15 +244,24 @@ const VaccinationPage: React.FC = () => {
                     <Box mt={2}>
                         <AgDataGrid
                             columnDefs={vaccineColumnDefs}
-                            rowData={[]}
+                            rowData={medicines.length > 0 ? medicines : mockPreExaminationMedicines}
+                            loading={isLoading}
                             {...vaccineAgGrid}
                             className="ag-theme-alpine h-[300px]"
                         />
                     </Box>
                 </DynamicForm>
             </Box>
-
-            <PreExaminationTestingPage open={isOpenTestingModal} onClose={() => setIsOpenTestingModal(false)} />
+            <PreExaminationTestingPage
+                open={isOpenTestingModal}
+                onClose={() => {
+                    setIsOpenTestingModal(false);
+                    queryClient.invalidateQueries({
+                        queryKey: [QueryKey.PRE_EXAMINATION.GET_MEDICINE_LIST, selectedReceptionId],
+                    });
+                }}
+                rowData={selectedVaccines}
+            />
         </Box>
     );
 };

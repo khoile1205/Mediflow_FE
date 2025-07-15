@@ -324,6 +324,12 @@
     "CONFIRM_OBSERVATE": "Xác nhận theo dõi",
     "OBSERVATION_CONFIRMED": "Đã theo dõi",
     "OBSERVATION_NOT_CONFIRMED": "Chưa theo dõi",
+    "CONFIRM_TESTING": "Đồng ý thử vaccine",
+    "VACCINE_GRID_NOT_READY": "Không thể xác định bảng dữ liệu vaccine.",
+    "SELECT_AT_LEAST_ONE_DOSE": "Vui lòng chọn ít nhất 1 liều vaccine.",
+    "ADD_VACCINE_TO_PRE_EXAMINATION_SUCCESS": "Thêm vaccine vào để thử thành công!",
+    "ADD_VACCINE_TO_PRE_EXAMINATION_FAILED": "Có lỗi xảy ra khi thêm vaccine vào để thử."
+    "OBSERVATION_NOT_CONFIRMED": "Chưa theo dõi",
     "HUMAN_RESOURCE": "Nhân sự",
     "STAFF": "Nhân viên",
     "AUTHORIZATION": "Phân quyền",
