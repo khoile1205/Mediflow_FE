@@ -76,4 +76,6 @@ export const QueryKey = {
     DEPARTMENT: DepartmentQueryKey,
     INVENTORY: InventoryQueryKey,
     POST_VACCINATION: PostVaccinationQueryKey,
+    PRE_EXAMINATION: PreExaminationQueryKey,
+    USER: UserQueryKey,
 };
