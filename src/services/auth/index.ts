@@ -1,7 +1,7 @@
 import { endpoints } from "~/constants/endpoints";
 import { callApi } from "~/libs/axios/request";
 import { HttpMethod, IBaseApiResponse } from "~/libs/axios/types";
-import { LogOutResponse, RefreshTokenResponse, TLoginRequest, TLoginResponse } from "./types";
+import { LogOutResponse, RefreshTokenResponse, ResetPasswordResponse, TLoginRequest, TLoginResponse } from "./types";
 import { Staff } from "~/entities";
 import { UserPermission } from "~/entities/user-permission";
 
@@ -43,4 +43,19 @@ const getUserPermission = async (): Promise<IBaseApiResponse<UserPermission>> =>
     });
 };
 
-export const authService = { login, logout, refreshToken, getCurrentUser, getUserPermission };
+const resetPassword = async (payload: { email: string }): Promise<IBaseApiResponse<ResetPasswordResponse>> => {
+    return await callApi<ResetPasswordResponse>({
+        url: endpoints.auth.resetPassword,
+        method: HttpMethod.POST,
+        data: payload,
+    });
+};
+
+export const authService = {
+    login,
+    logout,
+    refreshToken,
+    getCurrentUser,
+    getUserPermission,
+    resetPassword,
+};

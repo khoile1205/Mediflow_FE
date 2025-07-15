@@ -19,8 +19,5 @@ export function useMutationCreateDepartment() {
             });
             showToast.success(i18n.t(i18n.translationKey.createDepartmentSuccessfully));
         },
-        onError: () => {
-            showToast.error(i18n.t(i18n.translationKey.createDepartmentFailed));
-        },
     });
 }

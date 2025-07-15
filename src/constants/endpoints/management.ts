@@ -11,6 +11,22 @@ const departmentEndpoints = {
     getEmployeesByDepartmentId: (id: number) => `${departmentEndpointPrefix}/${id}/employees`,
 };
 
+const userEndpointPrefix = `${managementEndpointPrefix}/users`;
+const userEndpoints = {
+    getUsersWithPagination: `${userEndpointPrefix}/`,
+    getUserById: (id: number) => `${userEndpointPrefix}/${id}`,
+    createUser: `${userEndpointPrefix}`,
+    updateUser: (id: number) => `${userEndpointPrefix}/${id}`,
+    deleteUser: (id: number) => `${userEndpointPrefix}/${id}`,
+};
+
+const roleEndpointPrefix = `${managementEndpointPrefix}/roles`;
+const roleEndpoints = {
+    getRoleNames: `${roleEndpointPrefix}/names`,
+};
+
 export const managementEndpoints = {
     departmentEndpoints,
+    userEndpoints,
+    roleEndpoints,
 };

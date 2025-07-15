@@ -21,3 +21,8 @@ export type LogOutResponse = {
     IsSuccess: boolean;
     Message: string;
 };
+
+export type ResetPasswordResponse = {
+    IsSuccess: boolean;
+    Message: string;
+};

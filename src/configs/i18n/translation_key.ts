@@ -250,6 +250,27 @@ const applicationTranslationKey = {
     createDepartmentFailed: "CREATE_DEPARTMENT_FAILED",
     updateDepartmentSuccessfully: "UPDATE_DEPARTMENT_SUCCESSFULLY",
     updateDepartmentFailed: "UPDATE_DEPARTMENT_FAILED",
+
+    user: "USER",
+    userRole: "ROLE",
+    userName: "USER_NAME",
+    userCode: "USER_CODE",
+    userProfilePicture: "PROFILE_PICTURE",
+    confirmPassword: "CONFIRM_PASSWORD",
+    passwordMismatch: "PASSWORD_MISMATCH",
+    resetPassword: "RESET_PASSWORD",
+    createUserSuccessfully: "CREATE_USER_SUCCESSFULLY",
+    createUserFailed: "CREATE_USER_FAILED",
+    updateUserSuccessfully: "UPDATE_USER_SUCCESSFULLY",
+    updateUserFailed: "UPDATE_USER_FAILED",
+    deleteUserSuccessfully: "DELETE_USER_SUCCESSFULLY",
+    deleteUserFailed: "DELETE_USER_FAILED",
+    confirmDeleteUser: "CONFIRM_DELETE_USER",
+    confirmDeleteUserMessage: "CONFIRM_DELETE_USER_MESSAGE",
+    confirmResetPassword: "CONFIRM_RESET_PASSWORD",
+    confirmResetPasswordMessage: "CONFIRM_RESET_PASSWORD_MESSAGE",
+    confirm: "CONFIRM",
+    resetPasswordSuccessfully: "RESET_PASSWORD_SUCCESSFULLY",
 };
 
 const exceptionTranslationKey = {

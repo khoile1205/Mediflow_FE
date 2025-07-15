@@ -63,6 +63,7 @@ export const DepartmentMangement: React.FC = () => {
 
     useEffect(() => {
         if (department) {
+            form.reset();
             form.setValue("id", department.id);
             form.setValue("code", department.code);
             form.setValue("name", department.name);
