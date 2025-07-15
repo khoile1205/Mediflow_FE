@@ -1,3 +1,5 @@
+import { Role } from "~/constants/roles";
+
 export enum ResourceType {
     Inventory = "inventory",
     Management = "management",
@@ -8,15 +10,80 @@ export enum ResourceType {
 }
 
 export type RoutePermissionMap = {
-    [path: string]: ResourceType[];
+    [path: string]: {
+        requiredPermissions: ResourceType[];
+        requiredRoles?: Role[];
+    };
 };
 
 export const routePermissions: RoutePermissionMap = {
-    "/reception/vaccination": [ResourceType.VaccinationReception],
-    "/vaccination": [ResourceType.VaccinationReception],
-    "/vaccination/history": [ResourceType.VaccinationReception],
-    "/vaccination/post-injection": [ResourceType.VaccinationReception],
-    "/appointments/follow-up": [ResourceType.Appointments],
-    "/finance": [ResourceType.VaccinationReception],
-    "/pharmacy/import": [ResourceType.Inventory],
+    "/reception/vaccination": {
+        requiredPermissions: [ResourceType.VaccinationReception],
+        requiredRoles: [
+            Role.Administrator,
+            Role.Doctor,
+            Role.Nurse,
+            Role.Receptionist,
+            Role.LaboratoryStaff,
+            Role.ImagingTechnician,
+            Role.Accountant,
+        ],
+    },
+    "/vaccination": {
+        requiredPermissions: [ResourceType.VaccinationReception],
+        requiredRoles: [
+            Role.Administrator,
+            Role.Doctor,
+            Role.Nurse,
+            Role.Receptionist,
+            Role.LaboratoryStaff,
+            Role.ImagingTechnician,
+        ],
+    },
+    "/vaccination/history": {
+        requiredPermissions: [ResourceType.VaccinationReception],
+        requiredRoles: [
+            Role.Administrator,
+            Role.Doctor,
+            Role.Nurse,
+            Role.Receptionist,
+            Role.LaboratoryStaff,
+            Role.ImagingTechnician,
+        ],
+    },
+    "/vaccination/post-injection": {
+        requiredPermissions: [ResourceType.VaccinationReception],
+        requiredRoles: [
+            Role.Administrator,
+            Role.Doctor,
+            Role.Nurse,
+            Role.Receptionist,
+            Role.LaboratoryStaff,
+            Role.ImagingTechnician,
+        ],
+    },
+    "/appointments/follow-up": {
+        requiredPermissions: [ResourceType.Appointments],
+        requiredRoles: [Role.Administrator, Role.Doctor, Role.Receptionist],
+    },
+    "/finance": {
+        requiredPermissions: [ResourceType.VaccinationReception],
+        requiredRoles: [Role.Administrator, Role.Accountant],
+    },
+    "/pharmacy/import": {
+        requiredPermissions: [ResourceType.Inventory],
+        requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],
+    },
+    "/management/users": {
+        requiredPermissions: [ResourceType.Management],
+        requiredRoles: [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport],
+    },
+    "/management/authorization": {
+        requiredPermissions: [ResourceType.Management],
+        requiredRoles: [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport],
+    },
+    "/management/departments": {
+        requiredPermissions: [ResourceType.Management],
+        requiredRoles: [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport],
+    },
 };
