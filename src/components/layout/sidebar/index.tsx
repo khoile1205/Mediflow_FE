@@ -201,7 +201,7 @@ export const Sidebar: React.FC = () => {
                 }));
 
         return filterTree(sidebarTree);
-    }, [userPermission.resourceTypes]);
+    }, [userPermission]);
 
     return (
         <Drawer
