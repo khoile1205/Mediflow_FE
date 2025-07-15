@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import i18n from "~/configs/i18n";
 import { QueryKey } from "~/constants/query-key";
-import { UserFormValues } from "~/pages/management/users/types";
+import { StaffFormValues } from "~/pages/management/users/types";
 import { showToast } from "~/utils";
 import { userApis } from "../../infras";
 
@@ -9,7 +9,7 @@ export const useMutationUpdateUser = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationKey: [QueryKey.USER.UPDATE_USER],
-        mutationFn: async (payload: UserFormValues) => {
+        mutationFn: async (payload: StaffFormValues) => {
             const response = await userApis.updateUser(payload);
             return response;
         },

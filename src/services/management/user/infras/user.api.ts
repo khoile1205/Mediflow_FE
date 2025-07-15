@@ -1,11 +1,11 @@
 import { endpoints } from "~/constants/endpoints";
-import { User } from "~/entities/user";
+import { Staff } from "~/entities";
 import { callApi } from "~/libs/axios/request";
 import { HttpMethod, IPagination, IPaginationRequest } from "~/libs/axios/types";
-import { UserFormValues } from "~/pages/management/users/types";
+import { StaffFormValues } from "~/pages/management/users/types";
 
 const getUsersWithPagination = async ({ pageIndex = 1, pageSize = 10 }: IPaginationRequest, keyword?: string) => {
-    return await callApi<IPagination<User>>({
+    return await callApi<IPagination<Staff>>({
         url: endpoints.management.userEndpoints.getUsersWithPagination,
         method: HttpMethod.GET,
         params: { pageIndex, pageSize, keyword },
@@ -13,22 +13,22 @@ const getUsersWithPagination = async ({ pageIndex = 1, pageSize = 10 }: IPaginat
 };
 
 const getUserById = async (id: number) => {
-    return await callApi<User>({
+    return await callApi<Staff>({
         url: endpoints.management.userEndpoints.getUserById(id),
         method: HttpMethod.GET,
     });
 };
 
-const createUser = async (payload: UserFormValues) => {
-    return await callApi<UserFormValues>({
+const createUser = async (payload: StaffFormValues) => {
+    return await callApi<StaffFormValues>({
         url: endpoints.management.userEndpoints.createUser,
         method: HttpMethod.POST,
         data: payload,
     });
 };
 
-const updateUser = async (payload: UserFormValues) => {
-    return await callApi<UserFormValues>({
+const updateUser = async (payload: StaffFormValues) => {
+    return await callApi<StaffFormValues>({
         url: endpoints.management.userEndpoints.updateUser(payload.id!),
         method: HttpMethod.PUT,
         data: payload,

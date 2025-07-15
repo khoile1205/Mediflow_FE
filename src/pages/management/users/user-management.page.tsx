@@ -8,7 +8,7 @@ import { ActionButton } from "~/components/common/action-button";
 import { AddCircle, Delete, Recycling, Save } from "@mui/icons-material";
 import { I18N_LANGUAGE } from "~/configs/i18n/types";
 import i18n from "~/configs/i18n";
-import { useUserForm } from "./hooks";
+import { useStaffForm } from "./hooks";
 import { usePagination } from "~/hooks";
 import {
     useQueryRoleNames,
@@ -16,15 +16,15 @@ import {
     useQueryUsersWithPagination,
 } from "~/services/management/user/hooks/queries";
 import { useAgGrid } from "~/components/common/ag-grid";
-import { User } from "~/entities/user";
 import {
     useMutationCreateUser,
     useMutationUpdateUser,
     useMutationDeleteUser,
     useMutationResetPassword,
 } from "~/services/management/user/hooks/mutation";
-import { UserFormValues } from "./types";
+import { StaffFormValues } from "./types";
 import { useQueryDepartmentsWithPagination } from "~/services/management/department/hooks/queries";
+import { Staff } from "~/entities";
 
 export const UserManagement: React.FC = () => {
     const { t, i18n: reactI18n } = useTranslation();
@@ -60,7 +60,7 @@ export const UserManagement: React.FC = () => {
 
     const userGrid = useAgGrid({});
 
-    const form = useUserForm();
+    const form = useStaffForm();
 
     useEffect(() => {
         if (user) {
@@ -100,7 +100,7 @@ export const UserManagement: React.FC = () => {
         form.resetField("isSuspended");
     };
 
-    const handleSelectUser = (selectedRow: RowSelectedEvent<User>) => {
+    const handleSelectUser = (selectedRow: RowSelectedEvent<Staff>) => {
         if (!selectedRow) {
             form.reset();
             setIsFormEnabled(false);
@@ -116,7 +116,7 @@ export const UserManagement: React.FC = () => {
     const { mutateAsync: deleteUser } = useMutationDeleteUser();
     const { mutateAsync: resetPassword } = useMutationResetPassword();
 
-    const handleAddNewUser = async (data: UserFormValues) => {
+    const handleAddNewUser = async (data: StaffFormValues) => {
         await createUser(data);
 
         resetFormValues();
@@ -125,7 +125,7 @@ export const UserManagement: React.FC = () => {
         userGrid.gridApi.deselectAll();
     };
 
-    const handleSaveUser = async (data: UserFormValues) => {
+    const handleSaveUser = async (data: StaffFormValues) => {
         await updateUser(data);
 
         resetFormValues();
@@ -135,7 +135,7 @@ export const UserManagement: React.FC = () => {
         userGrid.gridApi.deselectAll();
     };
 
-    const handleDeleteUser = async (data: UserFormValues) => {
+    const handleDeleteUser = async (data: StaffFormValues) => {
         await deleteUser(data.id!);
 
         resetFormValues();
@@ -145,7 +145,7 @@ export const UserManagement: React.FC = () => {
         userGrid.gridApi.deselectAll();
     };
 
-    const handleResetPassword = async (data: UserFormValues) => {
+    const handleResetPassword = async (data: StaffFormValues) => {
         await resetPassword(data.email);
     };
 

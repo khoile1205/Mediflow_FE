@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { User } from "~/entities/user";
 import { IBaseApiResponse, IPagination, IPaginationRequest } from "~/libs/axios/types";
 import { userApis } from "../../infras";
 import React from "react";
 import { QueryKey } from "~/constants/query-key";
+import { Staff } from "~/entities";
 
-const transformData = (response: IBaseApiResponse<IPagination<User>>) => {
-    return response.Data.data.map((item) => ({ ...item })) as User[];
+const transformData = (response: IBaseApiResponse<IPagination<Staff>>) => {
+    return response.Data.data.map((item) => ({ ...item })) as Staff[];
 };
 
 export const useQueryUsersWithPagination = (params: IPaginationRequest, keyword?: string) => {
@@ -15,7 +15,7 @@ export const useQueryUsersWithPagination = (params: IPaginationRequest, keyword?
         isLoading,
         isError,
         refetch,
-    } = useQuery<IBaseApiResponse<IPagination<User>>>({
+    } = useQuery<IBaseApiResponse<IPagination<Staff>>>({
         queryKey: [QueryKey.USER.GET_LIST_USERS_WITH_PAGINATION, params, keyword],
         queryFn: async () => {
             const response = await userApis.getUsersWithPagination(

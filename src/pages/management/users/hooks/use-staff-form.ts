@@ -1,10 +1,10 @@
 import { useForm } from "~/components/form/hooks/use-form";
-import { UserFormValues } from "../types";
+import { StaffFormValues } from "../types";
 import { t } from "i18next";
 import i18n from "~/configs/i18n";
 
-export const useUserForm = () => {
-    const userForm = useForm<UserFormValues>({
+export const useStaffForm = () => {
+    const staffForm = useForm<StaffFormValues>({
         defaultValues: {
             id: null,
             code: "",
@@ -22,9 +22,9 @@ export const useUserForm = () => {
         },
     });
 
-    userForm.register("confirmPassword", {
-        validate: (value) => value === userForm.watch("password") || t(i18n.translationKey.passwordMismatch),
+    staffForm.register("confirmPassword", {
+        validate: (value) => value === staffForm.watch("password") || t(i18n.translationKey.passwordMismatch),
     });
 
-    return userForm;
+    return staffForm;
 };

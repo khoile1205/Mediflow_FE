@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { QueryKey } from "~/constants/query-key";
-import { User } from "~/entities/user";
 import { userApis } from "../../infras";
 import { IBaseApiResponse } from "~/libs/axios/types";
 import React from "react";
+import { Staff } from "~/entities";
 
 export const useQueryUserById = (id: number) => {
     const {
@@ -11,7 +11,7 @@ export const useQueryUserById = (id: number) => {
         isLoading,
         isError,
         refetch,
-    } = useQuery<IBaseApiResponse<User>>({
+    } = useQuery<IBaseApiResponse<Staff>>({
         queryKey: [QueryKey.USER.GET_USER_BY_ID, id],
         queryFn: async () => {
             const response = await userApis.getUserById(id);

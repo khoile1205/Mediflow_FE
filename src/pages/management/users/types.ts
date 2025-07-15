@@ -1,4 +1,4 @@
-export interface UserFormValues {
+export interface StaffFormValues {
     id?: number;
     code: string;
     name: string;
