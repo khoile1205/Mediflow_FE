@@ -153,9 +153,14 @@ const HospitalFeePage: React.FC = () => {
     const currentReceiptSummary = React.useMemo(() => {
         const selectedHospitalServices = hospitalFeeForm.watch("hospitalServiceItems") ?? [];
 
+        const totalQuantity = selectedHospitalServices.reduce((sum, item) => sum + item.quantity, 0);
+        const totalAmount = selectedHospitalServices.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+
         return {
-            quantity: selectedHospitalServices.reduce((total, item) => total + item.quantity, 0),
-            unitPrice: selectedHospitalServices.reduce((total, item) => total + item.unitPrice, 0),
+            quantity: totalQuantity,
+            amountBeforeDiscount: totalAmount,
+            support: 0,
+            cost: totalAmount,
         };
     }, [hospitalFeeForm.watch("hospitalServiceItems")]);
 
@@ -425,11 +430,21 @@ const HospitalFeePage: React.FC = () => {
                                 },
                                 {
                                     field: "unitPrice",
+                                    headerName: t(i18n.translationKey.unitPrice),
+                                    cellClass: "ag-cell-center",
+                                    flex: 1,
+                                    valueGetter: (params) =>
+                                        params.data?.unitPrice ? formatCurrencyVND(params.data.unitPrice) : "",
+                                },
+                                {
+                                    field: "amountBeforeDiscount",
                                     headerName: t(i18n.translationKey.amountBeforeDiscount),
                                     cellClass: "ag-cell-center",
                                     flex: 1,
                                     valueGetter: (params) =>
-                                        formatCurrencyVND(params.data.unitPrice * params.data.quantity),
+                                        params.data?.amountBeforeDiscount !== undefined
+                                            ? formatCurrencyVND(params.data.amountBeforeDiscount)
+                                            : formatCurrencyVND(params.data.unitPrice * params.data.quantity),
                                 },
                                 {
                                     field: "support",
@@ -445,7 +460,9 @@ const HospitalFeePage: React.FC = () => {
                                     cellClass: "ag-cell-center",
                                     flex: 1,
                                     valueGetter: (params) =>
-                                        formatCurrencyVND(params.data.unitPrice * params.data.quantity),
+                                        params.data?.cost !== undefined
+                                            ? formatCurrencyVND(params.data.cost)
+                                            : formatCurrencyVND(params.data.unitPrice * params.data.quantity),
                                 },
                                 {
                                     field: "createdAt",
