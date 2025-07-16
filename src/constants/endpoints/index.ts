@@ -6,6 +6,7 @@ import { managementEndpoints } from "./management";
 import { patientEndpoints } from "./patient";
 import { publicApiEndpoints } from "./public-api";
 import { receptionEndpoints } from "./reception";
+import { vaccinationEndpoints } from "./vaccination";
 
 export const endpoints = {
     inventory: inventoryEndpoints,
@@ -16,4 +17,5 @@ export const endpoints = {
     management: managementEndpoints,
     patient: patientEndpoints,
     hospitalFee: hospitalEndpoints,
+    vaccination: vaccinationEndpoints,
 };

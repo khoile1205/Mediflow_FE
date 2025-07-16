@@ -68,6 +68,12 @@ const PreExaminationQueryKey = {
     UPDATE_TEST_RESULT: "updatePreExaminationResult",
 };
 
+const VaccinationQueryKey = {
+    GET_WAITING_PATIENT_VACCINATION_LIST: "getWaitingPatientVaccinationList",
+    GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID: "getMedicineVaccinationListByReceptionId",
+    GET_NEAREST_EXPIRY_MEDICINE_BATCH: "getNearestExpiryMedicineBatch",
+};
+
 export const QueryKey = {
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
@@ -75,6 +81,7 @@ export const QueryKey = {
     HOSPITAL_FEE: HospitalFeeQueryKey,
     DEPARTMENT: DepartmentQueryKey,
     INVENTORY: InventoryQueryKey,
+    VACCINATION: VaccinationQueryKey,
     POST_VACCINATION: PostVaccinationQueryKey,
     PRE_EXAMINATION: PreExaminationQueryKey,
     USER: UserQueryKey,

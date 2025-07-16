@@ -328,8 +328,7 @@
     "VACCINE_GRID_NOT_READY": "Không thể xác định bảng dữ liệu vaccine.",
     "SELECT_AT_LEAST_ONE_DOSE": "Vui lòng chọn ít nhất 1 liều vaccine.",
     "ADD_VACCINE_TO_PRE_EXAMINATION_SUCCESS": "Thêm vaccine vào để thử thành công!",
-    "ADD_VACCINE_TO_PRE_EXAMINATION_FAILED": "Có lỗi xảy ra khi thêm vaccine vào để thử."
-    "OBSERVATION_NOT_CONFIRMED": "Chưa theo dõi",
+    "ADD_VACCINE_TO_PRE_EXAMINATION_FAILED": "Có lỗi xảy ra khi thêm vaccine vào để thử.",
     "HUMAN_RESOURCE": "Nhân sự",
     "STAFF": "Nhân viên",
     "AUTHORIZATION": "Phân quyền",
@@ -394,5 +393,6 @@
     "CONFIRM_RESET_PASSWORD": "Bạn có chắc chắn muốn đặt lại mật khẩu cho nhân viên này không?",
     "CONFIRM_RESET_PASSWORD_MESSAGE": "Việc đặt lại mật khẩu sẽ làm mất tất cả các mật khẩu hiện tại. Vui lòng xác nhận để tiếp tục.",
     "CONFIRM": "Xác nhận",
-    "RESET_PASSWORD_SUCCESSFULLY": "Đặt lại mật khẩu thành công. Vui lòng kiểm tra email để nhận mật khẩu mới."
+    "RESET_PASSWORD_SUCCESSFULLY": "Đặt lại mật khẩu thành công. Vui lòng kiểm tra email để nhận mật khẩu mới.",
+    "NOT_TESTED": "Chưa kiểm tra"
 }
