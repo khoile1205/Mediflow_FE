@@ -10,19 +10,21 @@ import i18n from "~/configs/i18n";
 import { PreExaminationRow } from "./types";
 import { useMutationUpdatePreExaminationResult } from "~/services/pre-examination/hooks/mutations/use-mutation-update-pre-examination-result";
 import { showToast } from "~/utils";
+import { useQueryPreExaminationMedicines } from "~/services/pre-examination/hooks/queries/useQueryPreExaminationMedicines";
 
 interface PreExaminationTestingPageProps {
     open: boolean;
     onClose: () => void;
-    rowData: PreExaminationRow[];
+    receptionId: number;
 }
 
-const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ open, onClose, rowData = [] }) => {
+const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ open, onClose, receptionId }) => {
     const { t } = useTranslation();
     const resultForm = useForm();
     const resultAgGrid = useAgGrid<PreExaminationRow>({ rowSelection: "multiple" });
 
     const { mutateAsync: updateTestResult } = useMutationUpdatePreExaminationResult();
+    const { medicines, isLoading } = useQueryPreExaminationMedicines(receptionId);
 
     const handleSubmitResult = async () => {
         const selectedRows = resultAgGrid.gridApi?.getSelectedRows?.();
@@ -47,16 +49,8 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
                 ),
             );
 
-            selectedRows.forEach((row) => {
-                const index = rowData.findIndex((r) => r.receptionVaccinationId === row.receptionVaccinationId);
-                if (index !== -1) {
-                    rowData[index].testResultEntry = testResult;
-                }
-            });
-
-            (resultAgGrid.gridApi as any)?.setRowData([...rowData]);
-
             showToast.success(t(i18n.translationKey.addVaccineToPreExaminationSuccess));
+            onClose();
         } catch (error) {
             showToast.error(t(i18n.translationKey.addVaccineToPreExaminationFailed));
         }
@@ -72,8 +66,26 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
         { field: "patientName", headerName: t(i18n.translationKey.patientName) },
         { field: "vaccineName", headerName: t(i18n.translationKey.vaccineSerumName) },
         { field: "isConfirmed", headerName: t(i18n.translationKey.vaccinationConfirmation) },
-        { field: "vaccinationTestDate", headerName: t(i18n.translationKey.testStartTime) },
-        { field: "testResultEntry", headerName: t(i18n.translationKey.testResult) },
+        {
+            field: "vaccinationTestDate",
+            headerName: t(i18n.translationKey.testStartTime),
+            valueFormatter: ({ value }) => {
+                if (!value) return "";
+                const date = new Date(value);
+                const pad = (n: number) => n.toString().padStart(2, "0");
+                return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+            },
+        },
+        {
+            field: "testResultEntry",
+            headerName: t(i18n.translationKey.testResult),
+            valueGetter: (params) => {
+                if (!params.data.testResultEntry) return t(i18n.translationKey.notTested);
+                return params.data.testResultEntry === "negative"
+                    ? t(i18n.translationKey.negative)
+                    : t(i18n.translationKey.positive);
+            },
+        },
         { field: "doctorName", headerName: t(i18n.translationKey.enteredByDoctor) },
     ];
 
@@ -127,10 +139,16 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
                                         render="radio-group"
                                         name="testResult"
                                         options={[
-                                            { label: t(i18n.translationKey.negative), value: "Âm tính" },
-                                            { label: t(i18n.translationKey.positive), value: "Dương tính" },
+                                            {
+                                                label: t(i18n.translationKey.negative),
+                                                value: "negative",
+                                            },
+                                            {
+                                                label: t(i18n.translationKey.positive),
+                                                value: "positive",
+                                            },
                                         ]}
-                                        defaultValue="Âm tính"
+                                        defaultValue="negative"
                                     />
                                 </Box>
                             </Box>
@@ -150,12 +168,13 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
 
                     <AgDataGrid
                         columnDefs={columnDefs}
-                        rowData={rowData}
+                        rowData={medicines}
                         {...resultAgGrid}
                         onGridReady={(params) => {
                             resultAgGrid.gridApi = params.api;
                             params.api.sizeColumnsToFit();
                         }}
+                        loading={isLoading}
                     />
                 </DynamicForm>
             </DialogContent>

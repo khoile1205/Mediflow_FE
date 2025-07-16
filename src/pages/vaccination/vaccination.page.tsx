@@ -24,6 +24,8 @@ import { showToast } from "~/utils";
 import { formatDate } from "~/utils/date-time";
 import PreExaminationTestingPage from "../pre-examination-testing";
 import { useCreateVaccinationForm } from "./hooks/use-create-vaccination-form";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKey } from "~/constants/query-key";
 
 const VaccinationPage: React.FC = () => {
     const { t } = useTranslation();
@@ -31,6 +33,8 @@ const VaccinationPage: React.FC = () => {
 
     const patientAgGrid = useAgGrid<WaitingPatientVaccination>({});
     const vaccineAgGrid = useAgGrid<MedicineVaccinationInformation>({});
+
+    const queryClient = useQueryClient();
 
     const [selectedVaccinationMedicineCount, setSelectedVaccinationMedicineCount] = React.useState<number>(0);
     const [searchWaitingPatientTerm, setSearchWaitingPatientTerm] = React.useState<string>("");
@@ -373,8 +377,15 @@ const VaccinationPage: React.FC = () => {
                 open={isOpenTestingModal}
                 onClose={() => {
                     setIsOpenTestingModal(false);
+
+                    queryClient.invalidateQueries({
+                        queryKey: [
+                            QueryKey.VACCINATION.GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID,
+                            patientForm.watch("receptionId"),
+                        ],
+                    });
                 }}
-                rowData={[]}
+                receptionId={patientForm.watch("receptionId")}
             />
         </Box>
     );
