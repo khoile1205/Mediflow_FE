@@ -33,3 +33,11 @@ export interface Patient extends PersonInfo {
     isPregnant: boolean;
     isForeigner: boolean;
 }
+
+export interface PatientSummary {
+    id: number;
+    name: string;
+    dob: Date;
+    email: string;
+    phoneNumber: string;
+}

@@ -402,5 +402,6 @@
     "REFERENCE_VALUE": "Reference value",
     "RESULT": "Result",
     "SEARCH_PATIENT": "Search patient",
-    "BACK_TO_PATIENTS": "Back to Patients"
+    "BACK_TO_PATIENTS": "Back to Patients",
+    "VIEW": "View"
 }

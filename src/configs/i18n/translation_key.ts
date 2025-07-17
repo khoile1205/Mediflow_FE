@@ -318,6 +318,7 @@ const applicationTranslationKey = {
     result: "RESULT",
     searchPatient: "SEARCH_PATIENT",
     backToPatients: "BACK_TO_PATIENTS",
+    view: "VIEW",
 };
 
 const exceptionTranslationKey = {
