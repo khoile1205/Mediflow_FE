@@ -2,7 +2,7 @@ import { ArrowBack, Visibility } from "@mui/icons-material";
 import { Box, Chip, Grid, IconButton, Link, Paper, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import i18n from "~/configs/i18n";
 import ExaminationDetailModal from "./examination-detail.modal";
@@ -23,46 +23,6 @@ const mockPatients = [
     },
 ];
 
-const mockExaminations = [
-    {
-        id: "E001-2022-01-15",
-        date: "2022-01-15",
-        type: "Annual Check-up",
-        doctor: "Dr. Alex Smith",
-        status: "COMPLETED",
-        patientId: "P001",
-    },
-    {
-        id: "E002-2022-08-20",
-        date: "2022-08-20",
-        type: "Cardiology Consult",
-        doctor: "Dr. Jane Foster",
-        status: "COMPLETED",
-        patientId: "P001",
-    },
-    {
-        id: "E003-2023-03-10",
-        date: "2023-03-10",
-        type: "Blood Test",
-        doctor: "Dr. Alex Smith",
-        status: "COMPLETED",
-        patientId: "P001",
-    },
-    {
-        id: "E004-2023-10-05",
-        date: "2023-10-05",
-        type: "Follow-up Consult",
-        doctor: "Dr. Jane Foster",
-        status: "PENDING",
-        patientId: "P001",
-    },
-];
-
-// const statusColor = {
-//     COMPLETED: "success",
-//     PENDING: "warning",
-// };
-
 const ExaminationPatientHistoryPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -72,7 +32,6 @@ const ExaminationPatientHistoryPage: React.FC = () => {
     const [open, setOpen] = React.useState<boolean>(false);
     // Find patient by id
     const patient = mockPatients.find((p) => p.id === id) || mockPatients[0];
-    const examinations = mockExaminations.filter((e) => e.patientId === patient.id);
 
     return (
         <Box sx={{ bgcolor: "#fff", minHeight: "100vh", p: { xs: 2, md: 4 } }}>
@@ -132,7 +91,7 @@ const ExaminationPatientHistoryPage: React.FC = () => {
                 </Typography>
                 <AgDataGrid
                     {...agGrid}
-                    rowData={examinations}
+                    rowData={[]}
                     columnDefs={[
                         {
                             headerName: t(i18n.translationKey.requestNumber),

@@ -10,59 +10,12 @@ import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { formatDate } from "~/utils/date-time";
 
-const mockPatients = [
-    {
-        id: "128437582",
-        name: "Trần Văn A",
-        phone: "0945740153",
-        lastExam: "2023-06-15",
-        service: "General Checkup",
-        status: "Complete",
-    },
-    {
-        id: "128437583",
-        name: "Nguyễn Thị B",
-        phone: "0912345678",
-        lastExam: "2023-06-14",
-        service: "Blood Test",
-        status: "Pending",
-    },
-    {
-        id: "128437584",
-        name: "Lê Văn C",
-        phone: "0987654321",
-        lastExam: "2023-06-13",
-        service: "X-Ray",
-        status: "Complete",
-    },
-    {
-        id: "128437585",
-        name: "Phạm Thị D",
-        phone: "0977123456",
-        lastExam: "2023-06-12",
-        service: "Cardiology",
-        status: "Complete",
-    },
-    {
-        id: "128437586",
-        name: "Hoàng Văn E",
-        phone: "0909876543",
-        lastExam: "2023-06-11",
-        service: "Ultrasound",
-        status: "Complete",
-    },
-];
-
 const ListPatientsExaminationHistoryPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const [searchQuery, setSearchQuery] = React.useState("");
+    const [_, setSearchQuery] = React.useState("");
 
     const agGrid = useAgGrid({});
-
-    const filteredPatients = mockPatients.filter(
-        (patient) => patient.name.toLowerCase().includes(searchQuery.toLowerCase()) || patient.id.includes(searchQuery),
-    );
 
     return (
         <Box
@@ -92,7 +45,7 @@ const ListPatientsExaminationHistoryPage: React.FC = () => {
             </Box>
             <AgDataGrid
                 {...agGrid}
-                rowData={filteredPatients}
+                rowData={[]}
                 columnDefs={[
                     {
                         headerName: t(i18n.translationKey.medicalCode),
