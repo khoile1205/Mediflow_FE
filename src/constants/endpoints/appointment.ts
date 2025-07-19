@@ -1,4 +1,4 @@
-const appointmentEndpointPrefix = "/appointment";
+const appointmentEndpointPrefix = "/appointments";
 
 export const appointmentEndpoints = {
     getUpcomingAppointments: `${appointmentEndpointPrefix}/upcoming`,
