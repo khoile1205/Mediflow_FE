@@ -392,5 +392,15 @@
     "CONFIRM_RESET_PASSWORD_MESSAGE": "This action will reset the password to the default value. Please confirm to proceed.",
     "CONFIRM": "Confirm",
     "RESET_PASSWORD_SUCCESSFULLY": "Reset password successfully. Please check your email for the new password.",
-    "NOT_TESTED": "Not tested"
+    "NOT_TESTED": "Not tested",
+    "EXAMINATION": "Examination",
+    "EXAMINATION_HISTORY": "Examination history",
+    "LAST_EXAMINATION": "Last examination",
+    "PATIENT_EXAMINATION_HISTORY": "Examination history of {{patient_name}}",
+    "EXAMINATION_TIME": "Examination time",
+    "EXAMINATION_DETAILS": "Examination details",
+    "REFERENCE_VALUE": "Reference value",
+    "RESULT": "Result",
+    "SEARCH_PATIENT": "Search patient",
+    "BACK_TO_PATIENTS": "Back to Patients"
 }

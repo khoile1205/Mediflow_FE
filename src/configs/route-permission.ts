@@ -70,6 +70,14 @@ export const routePermissions: RoutePermissionMap = {
         requiredPermissions: [ResourceType.VaccinationReception],
         requiredRoles: [Role.Administrator, Role.Accountant],
     },
+    "/examination/list-patients": {
+        requiredPermissions: [ResourceType.VaccinationReception],
+        requiredRoles: [Role.Administrator, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician],
+    },
+    "/examination": {
+        requiredPermissions: [ResourceType.VaccinationReception],
+        requiredRoles: [Role.Administrator, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician],
+    },
     "/pharmacy/import": {
         requiredPermissions: [ResourceType.Inventory],
         requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],

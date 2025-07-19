@@ -10,6 +10,8 @@ import PostVaccinationPage from "~/pages/post-vaccination";
 import { AppointmentsManagementPage } from "~/pages/appointments/follow-up";
 import DepartmentManagement from "~/pages/management/departments/department-management.page";
 import UserManagement from "~/pages/management/users/user-management.page";
+import { ExaminationPatientHistoryPage } from "~/pages/examination/examination-history";
+import ListPatientsExaminationHistoryPage from "~/pages/examination/examination-history/examination-patients.page";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -38,7 +40,10 @@ export const AuthenticatedRoutes = (
             <Route path="authorization" element={<div>Authorization Management</div>} />
             <Route path="departments" element={<DepartmentManagement />} />
         </Route>
-
+        <Route path="/examination">
+            <Route path="history/patients" element={<ListPatientsExaminationHistoryPage />} />
+            <Route path="history/patient/:id" element={<ExaminationPatientHistoryPage />} />
+        </Route>
         <Route path="*" element={<div>Developing</div>} />
     </Route>
 );

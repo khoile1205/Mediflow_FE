@@ -1,6 +1,26 @@
-import { RoutePermissionMap } from "~/configs/route-permission";
+import { ResourceType, RoutePermissionMap } from "~/configs/route-permission";
+import { sidebarTree } from "~/configs/sidebar";
 import { Role } from "~/constants/roles";
 import { ResourceTypePermission } from "~/entities/user-permission";
+
+export const findPermissionsInSidebar = (
+    path: string,
+    items = sidebarTree,
+): { requiredPermissions?: ResourceType[]; requiredRoles?: Role[] } => {
+    for (const item of items) {
+        if (item.pathName === path) {
+            return {
+                requiredPermissions: item.requiredPermissions,
+                requiredRoles: item.requiredRoles,
+            };
+        }
+        if (item.children) {
+            const found = findPermissionsInSidebar(path, item.children);
+            if (found.requiredPermissions || found.requiredRoles) return found;
+        }
+    }
+    return {};
+};
 
 export const hasPermission = ({
     resourceTypes,
