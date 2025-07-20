@@ -1,14 +1,14 @@
 import { Box } from "@mui/material";
 import React from "react";
-import { Outlet, useLocation, useNavigate } from "react-router";
-import { showToast } from "~/utils";
-import { useAuth } from "../contexts/auth.context";
-import { Spinner } from "~/components/layout/spinner";
-import { Sidebar } from "~/components/layout/sidebar";
 import { useTranslation } from "react-i18next";
+import { Outlet, useLocation, useNavigate } from "react-router";
+import { Sidebar } from "~/components/layout/sidebar";
+import { Spinner } from "~/components/layout/spinner";
 import i18n from "~/configs/i18n";
 import { routePermissions } from "~/configs/route-permission";
+import { showToast } from "~/utils";
 import { getRequiredPermissionForPath, hasPermission } from "~/utils/permission.utils";
+import { useAuth } from "../contexts/auth.context";
 
 const AuthenticatedGuard: React.FC = () => {
     const { t } = useTranslation();

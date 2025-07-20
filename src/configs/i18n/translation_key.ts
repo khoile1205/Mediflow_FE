@@ -307,6 +307,17 @@ const applicationTranslationKey = {
     addVaccineToPreExaminationSuccess: "ADD_VACCINE_TO_PRE_EXAMINATION_SUCCESS",
     addVaccineToPreExaminationFailed: "ADD_VACCINE_TO_PRE_EXAMINATION_FAILED",
     notTested: "NOT_TESTED",
+    examination: "EXAMINATION",
+    listPatientExamination: "LIST_PATIENT_EXAMINATION",
+    examinationHistory: "EXAMINATION_HISTORY",
+    lastExamination: "LAST_EXAMINATION",
+    examinationTime: "EXAMINATION_TIME",
+    patientExaminationHistory: "PATIENT_EXAMINATION_HISTORY",
+    examinationDetails: "EXAMINATION_DETAILS",
+    referenceValue: "REFERENCE_VALUE",
+    result: "RESULT",
+    searchPatient: "SEARCH_PATIENT",
+    backToPatients: "BACK_TO_PATIENTS",
 };
 
 const exceptionTranslationKey = {

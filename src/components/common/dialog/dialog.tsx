@@ -21,6 +21,7 @@ const Dialog: React.FC<DialogProps> & DialogComposition = ({ children, ...props 
                     borderRadius: 2,
                 },
             }}
+            maxWidth="md"
             fullWidth
             {...props}
         >

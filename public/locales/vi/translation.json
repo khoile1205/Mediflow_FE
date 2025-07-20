@@ -394,5 +394,16 @@
     "CONFIRM_RESET_PASSWORD_MESSAGE": "Việc đặt lại mật khẩu sẽ làm mất tất cả các mật khẩu hiện tại. Vui lòng xác nhận để tiếp tục.",
     "CONFIRM": "Xác nhận",
     "RESET_PASSWORD_SUCCESSFULLY": "Đặt lại mật khẩu thành công. Vui lòng kiểm tra email để nhận mật khẩu mới.",
-    "NOT_TESTED": "Chưa kiểm tra"
+    "NOT_TESTED": "Chưa kiểm tra",
+    "EXAMINATION": "Xét nghiệm",
+    "LIST_PATIENT_EXAMINATION": "Danh sách bệnh nhân",
+    "EXAMINATION_HISTORY": "Lịch sử xét nghiệm",
+    "LAST_EXAMINATION": "Lần xét nghiệm gần nhất",
+    "PATIENT_EXAMINATION_HISTORY": "Lịch sử xét nghiệm của {{patient_name}}",
+    "EXAMINATION_TIME": "Thời gian xét nghiệm",
+    "EXAMINATION_DETAILS": "Chi tiết xét nghiệm",
+    "REFERENCE_VALUE": "Giá trị tham chiếu",
+    "RESULT": "Kết quả",
+    "SEARCH_PATIENT": "Tìm kiếm bệnh nhân",
+    "BACK_TO_PATIENTS": "Quay lại danh sách bệnh nhân"
 }
