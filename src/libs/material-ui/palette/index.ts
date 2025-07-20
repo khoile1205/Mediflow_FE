@@ -3,6 +3,7 @@ import { PaletteOptions } from "@mui/material";
 export const themePalette: PaletteOptions = {
     primary: {
         main: "#4F959D",
+        light: "#98D2C0",
     },
     secondary: {
         main: "#205781",
@@ -15,6 +16,7 @@ export const themePalette: PaletteOptions = {
     },
     warning: {
         main: "#FFE69A",
+        light: "#F6F8D5",
     },
     info: {
         main: "#87CEFA",
