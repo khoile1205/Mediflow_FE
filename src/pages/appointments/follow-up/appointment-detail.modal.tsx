@@ -7,8 +7,10 @@ import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import { Dialog } from "~/components/common/dialog";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { Gender } from "~/constants/enums";
 import { Appointment } from "~/entities/appointment.entity";
 import { useQueryGetAppointmentById } from "~/services/appointments/hooks/queries";
+import { useQueryGetPatientById } from "~/services/patient/hooks/queries";
 import { formatDate } from "~/utils/date-time";
 
 interface AppointmentDetailsModalProps {
@@ -22,38 +24,45 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
     const {
         data: { appointment },
     } = useQueryGetAppointmentById(appointmentId);
+
+    const { data: patient } = useQueryGetPatientById({ patientId: appointment?.patient.id });
+
     const appointmentAgGrid = useAgGrid({});
     const appointmentColumnDefs: ColDef<Appointment>[] = [
         {
             field: "vaccineName",
             headerName: t(i18n.translationKey.vaccineSerumName),
             flex: 2,
+            cellClass: "ag-grid-cell-text-wrap ag-cell-center",
         },
         {
             field: "dose",
             headerName: t(i18n.translationKey.doseNumber),
-            flex: 1,
+            flex: 0.8,
+            cellClass: "ag-cell-center",
         },
         {
             field: "appointmentDate",
             headerName: t(i18n.translationKey.appointmentDate),
             valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
+            cellClass: "ag-cell-center",
             flex: 1,
         },
         {
             field: "note",
             headerName: t(i18n.translationKey.note),
             flex: 1,
+            valueGetter: ({ data }) => data.note || t(i18n.translationKey.notAvailable),
         },
     ];
 
-    if (!appointment) {
+    if (!appointment || !patient) {
         return null;
     }
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-            <Dialog.Header title="Follow-up Appointment Details" onClose={onClose} />
+            <Dialog.Header title={t(i18n.translationKey.followUpAppointmentDetail)} onClose={onClose} />
 
             <Dialog.Body className="space-y-6 bg-slate-50 p-6 !pt-4">
                 {/* Patient Info */}
@@ -65,7 +74,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                                 className="flex items-center gap-2 font-semibold text-slate-800"
                             >
                                 <Person />
-                                Patient Information
+                                {t(i18n.translationKey.patientInformation)}
                             </Typography>
                         </Box>
 
@@ -83,7 +92,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                                         {appointment.patientName}
                                     </Typography>
                                     <Box className="mt-2 w-full rounded-md bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">
-                                        Patient ID:{" "}
+                                        {t(i18n.translationKey.medicalCode)}:{" "}
                                         <span className="font-semibold text-slate-800">{appointment.patientCode}</span>
                                     </Box>
                                 </Box>
@@ -94,22 +103,25 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                                         {
                                             icon: <Person />,
                                             label: t(i18n.translationKey.gender),
-                                            value: "Male",
+                                            value:
+                                                patient.gender == Gender.MALE
+                                                    ? t(i18n.translationKey.male)
+                                                    : t(i18n.translationKey.female),
                                         },
                                         {
                                             icon: <CalendarToday />,
                                             label: t(i18n.translationKey.dateOfBirth),
-                                            value: "15/05/1981",
+                                            value: formatDate(appointment.patient.dob, DATE_TIME_FORMAT["dd/MM/yyyy"]),
                                         },
                                         {
                                             icon: <Phone />,
                                             label: t(i18n.translationKey.phoneNumber),
-                                            value: "+1 (555) 123-4567",
+                                            value: appointment.patient.phoneNumber,
                                         },
                                         {
                                             icon: <Mail />,
                                             label: t(i18n.translationKey.email),
-                                            value: "john.doe@example.com",
+                                            value: appointment.patient.email,
                                         },
                                     ].map((item, idx) => (
                                         <Box key={idx} className="flex items-start gap-3">
@@ -136,7 +148,7 @@ export const AppointmentDetailsModal: React.FC<AppointmentDetailsModalProps> = (
                                 variant="subtitle1"
                                 className="flex items-center gap-2 font-semibold text-slate-800"
                             >
-                                <CalendarToday /> Scheduled Vaccines
+                                <CalendarToday /> {t(i18n.translationKey.scheduledVaccines)}
                             </Typography>
                         </Box>
                         <AgDataGrid {...appointmentAgGrid} columnDefs={appointmentColumnDefs} rowData={[appointment]} />

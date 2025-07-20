@@ -1,7 +1,7 @@
 export enum TimeOfDay {
+    All_Day,
     Morning,
     Afternoon,
-    Evening,
 }
 
 export interface FilterVaccinationFormValue {

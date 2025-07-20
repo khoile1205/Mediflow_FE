@@ -18,10 +18,13 @@ export const useQueryGetUpcomingAppointments = (params: IPaginationRequest & IAp
     } = useQuery<IBaseApiResponse<IPagination<AppointmentSummary>>>({
         queryKey: [QueryKey.APPOINTMENT.GET_UPCOMING_APPOINTMENTS, params],
         queryFn: async () => {
-            const response = await appointmentApis.getUpcomingAppointments(params);
+            const response = await appointmentApis.getUpcomingAppointments({
+                ...params,
+                timeOfDay: params.timeOfDay != null ? params.timeOfDay : undefined,
+            });
             return response;
         },
-        enabled: false,
+        enabled: true,
     });
 
     const listAppointments = React.useMemo(() => {

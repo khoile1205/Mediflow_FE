@@ -1,5 +1,25 @@
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 
+/**
+ * Normalize fromDate to start of the day (00:00)
+ */
+export const normalizeStartDate = (date: Date | null): Date | null => {
+    if (!date) return null;
+    const normalized = new Date(date);
+    normalized.setHours(0, 0, 0, 0);
+    return normalized;
+};
+
+/**
+ * Normalize toDate to end of the day (23:59)
+ */
+export const normalizeEndDate = (date: Date | null): Date | null => {
+    if (!date) return null;
+    const normalized = new Date(date);
+    normalized.setHours(23, 59, 59, 999);
+    return normalized;
+};
+
 export function getPreviousDate(baseDate: Date = new Date()): Date {
     const date = new Date(baseDate);
     date.setDate(date.getDate() - 1);

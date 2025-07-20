@@ -1,5 +1,5 @@
 import { ExpandLess, ExpandMore, FilterList } from "@mui/icons-material";
-import { Avatar, Box, Button, Collapse, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Collapse, Grid, Paper, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
@@ -15,8 +15,11 @@ import { usePagination } from "~/hooks";
 import { useQueryGetMedicinesWithPagination } from "~/services/medicine/hooks/queries";
 import { useQueryGetUpcomingAppointments } from "~/services/appointments/hooks/queries";
 import { AppointmentSummary } from "~/entities/appointment.entity";
-import { formatDate } from "~/utils/date-time";
+import { formatDate, normalizeEndDate, normalizeStartDate } from "~/utils/date-time";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { DEFAULT_PAGINATION_PARAMS } from "~/constants/pagination";
+import { IPaginationRequest } from "~/libs/axios/types";
+import { IAppointmentFilter } from "~/services/appointments/infras";
 
 const AppointmentsManagementPage: React.FC = () => {
     const { t } = useTranslation();
@@ -25,44 +28,29 @@ const AppointmentsManagementPage: React.FC = () => {
     const appointmentsAgGrid = useAgGrid<AppointmentSummary>({});
     const columnDefs: ColDef<AppointmentSummary>[] = [
         {
-            field: "appointmentDate",
-            headerName: t(i18n.translationKey.appointmentDate),
-            valueFormatter: (params) => formatDate(params.value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
+            field: "patientCode",
+            headerName: t(i18n.translationKey.medicalCode),
+            cellClass: "ag-cell-center",
             flex: 1,
         },
         {
             field: "patientName",
             headerName: t(i18n.translationKey.patient),
-            cellRenderer: (params: ICellRendererParams<AppointmentSummary>) => {
-                const { data } = params;
-                const initials = data.patientName
-                    .split(" ")
-                    .map((n: string) => n[0])
-                    .join("")
-                    .toUpperCase();
+            cellClass: "ag-cell-center",
 
-                return (
-                    <Box display="flex" alignItems="center" gap={1}>
-                        <Avatar sx={{ width: 32, height: 32 }}>{initials}</Avatar>
-                        <Box>
-                            <Typography fontWeight={600}>{data.patientName}</Typography>
-                            <Typography variant="caption" color="text.secondary">
-                                ID: {data.patientCode} • {data.patientAge} yrs
-                            </Typography>
-                        </Box>
-                    </Box>
-                );
-            },
             flex: 1,
         },
         {
             field: "vaccineName",
             headerName: t(i18n.translationKey.medicineName),
+            cellClass: "ag-cell-center",
             flex: 1,
         },
         {
-            field: "dose",
-            headerName: t(i18n.translationKey.dose),
+            field: "appointmentDate",
+            headerName: t(i18n.translationKey.appointmentDate),
+            valueFormatter: (params) => formatDate(params.value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
+            cellClass: "ag-cell-center",
             flex: 1,
         },
         {
@@ -78,6 +66,7 @@ const AppointmentsManagementPage: React.FC = () => {
                     {t(i18n.translationKey.view)}
                 </Button>
             ),
+            cellClass: "ag-cell-center",
             flex: 0.5,
         },
     ];
@@ -90,6 +79,7 @@ const AppointmentsManagementPage: React.FC = () => {
         },
     });
 
+    // Medicines Query
     const {
         pageSize: medicinePageSize,
         handlePageChange: handleMedicinePageChange,
@@ -104,6 +94,13 @@ const AppointmentsManagementPage: React.FC = () => {
         searchKeyword: searchMedicineTerm,
     });
 
+    // Upcoming Appointments Query
+    const [appliedAppointmentFilters, setAppliedAppointmentFilters] = React.useState<
+        IPaginationRequest & IAppointmentFilter
+    >({
+        pageIndex: DEFAULT_PAGINATION_PARAMS.PAGE_INDEX,
+        pageSize: DEFAULT_PAGINATION_PARAMS.PAGE_SIZE,
+    });
     const {
         pageSize: appointmentPageSize,
         handlePageChange: handleAppointmentPageChange,
@@ -111,15 +108,7 @@ const AppointmentsManagementPage: React.FC = () => {
     } = usePagination();
     const {
         data: { listAppointments, totalItems: totalAppointmentsItems },
-        refetch,
-    } = useQueryGetUpcomingAppointments({
-        pageIndex: appointmentPageIndex,
-        pageSize: appointmentPageSize,
-        fromDate: appointmentFilterForm.watch("fromDate"),
-        toDate: appointmentFilterForm.watch("toDate"),
-        timeOfDay: appointmentFilterForm.watch("timeOfDay"),
-        vaccineId: appointmentFilterForm.watch("vaccineId"),
-    });
+    } = useQueryGetUpcomingAppointments(appliedAppointmentFilters);
 
     const [filtersExpanded, setFiltersExpanded] = React.useState(true);
     const [open, setOpen] = React.useState(false);
@@ -168,7 +157,11 @@ const AppointmentsManagementPage: React.FC = () => {
                                     </Typography>
                                     <Grid container spacing={1} alignItems="center">
                                         <Grid size={{ xs: 5.5, xl: 5 }}>
-                                            <FormItem render="date-picker" name="fromDate" />
+                                            <FormItem
+                                                render="date-picker"
+                                                name="fromDate"
+                                                maxDate={appointmentFilterForm.watch("toDate")}
+                                            />
                                         </Grid>
                                         <Grid size={{ xs: 1, xl: 2 }} sx={{ textAlign: "center" }}>
                                             <Typography variant="body2" sx={{ mb: 1 }}>
@@ -194,7 +187,7 @@ const AppointmentsManagementPage: React.FC = () => {
                                         name="timeOfDay"
                                         options={[
                                             {
-                                                value: null,
+                                                value: TimeOfDay.All_Day,
                                                 label: t(i18n.translationKey.allTimes),
                                             },
                                             {
@@ -204,10 +197,6 @@ const AppointmentsManagementPage: React.FC = () => {
                                             {
                                                 value: TimeOfDay.Afternoon,
                                                 label: t(i18n.translationKey.afternoon12pm5pm),
-                                            },
-                                            {
-                                                value: TimeOfDay.Evening,
-                                                label: t(i18n.translationKey.evening5pm8pm),
                                             },
                                         ]}
                                     />
@@ -245,50 +234,12 @@ const AppointmentsManagementPage: React.FC = () => {
                                         valueField="id"
                                     />
                                 </Grid>
-
-                                {/* Dose Number */}
-                                {/* <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-                                    <Typography variant="subtitle2" gutterBottom>
-                                        {t(i18n.translationKey.dose)}
-                                    </Typography>
-                                    <FormItem render="select" name="doseNumber" options={[]} />
-                                </Grid> */}
-                                {/* Status Filter */}
-                                {/* <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-                                    <Typography variant="subtitle2" gutterBottom>
-                                        {t(i18n.translationKey.status)}
-                                    </Typography>
-                                    <FormItem
-                                        render="select"
-                                        name="status"
-                                        options={[{ value: "all", label: "All Statuses" }]}
-                                    />
-                                </Grid> */}
-                                {/* Patient Age Group */}
-                                {/* <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-                                    <Typography variant="subtitle2" gutterBottom>
-                                        {t(i18n.translationKey.ageGroup)}
-                                    </Typography>
-                                    <FormItem
-                                        render="select"
-                                        name="ageGroup"
-                                        options={[
-                                            { value: "all", label: "All Ages" },
-                                            { value: "0-5", label: t(i18n.translationKey.age0To5Years) },
-                                            { value: "6-12", label: t(i18n.translationKey.age6To12Years) },
-                                            { value: "13-18", label: t(i18n.translationKey.age13To18Years) },
-                                            { value: "19-64", label: t(i18n.translationKey.age19To64Years) },
-                                            { value: "65+", label: t(i18n.translationKey.age65PlusYears) },
-                                        ]}
-                                    />
-                                </Grid> */}
                             </Grid>
                             <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
                                 <Button
                                     variant="outlined"
                                     onClick={() => {
                                         appointmentFilterForm.reset();
-                                        setSearchMedicineTerm("");
                                     }}
                                 >
                                     {t(i18n.translationKey.reset)}
@@ -296,7 +247,16 @@ const AppointmentsManagementPage: React.FC = () => {
                                 <Button
                                     variant="contained"
                                     onClick={() => {
-                                        refetch();
+                                        const values = appointmentFilterForm.getValues();
+
+                                        setAppliedAppointmentFilters({
+                                            pageIndex: appointmentPageIndex,
+                                            pageSize: appointmentPageSize,
+                                            fromDate: normalizeStartDate(values.fromDate),
+                                            toDate: normalizeEndDate(values.toDate),
+                                            timeOfDay: values.timeOfDay,
+                                            vaccineId: values.vaccineId,
+                                        });
                                     }}
                                 >
                                     {t(i18n.translationKey.applyFilters)}
