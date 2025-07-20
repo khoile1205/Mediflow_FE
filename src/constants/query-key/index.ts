@@ -74,6 +74,11 @@ const VaccinationQueryKey = {
     GET_NEAREST_EXPIRY_MEDICINE_BATCH: "getNearestExpiryMedicineBatch",
 };
 
+const AppointmentQueryKey = {
+    GET_UPCOMING_APPOINTMENTS: "getUpcomingAppointments",
+    GET_APPOINTMENT_BY_ID: "getAppointmentById",
+};
+
 export const QueryKey = {
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
@@ -85,4 +90,5 @@ export const QueryKey = {
     POST_VACCINATION: PostVaccinationQueryKey,
     PRE_EXAMINATION: PreExaminationQueryKey,
     USER: UserQueryKey,
+    APPOINTMENT: AppointmentQueryKey,
 };

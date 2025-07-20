@@ -318,6 +318,11 @@ const applicationTranslationKey = {
     result: "RESULT",
     searchPatient: "SEARCH_PATIENT",
     backToPatients: "BACK_TO_PATIENTS",
+    view: "VIEW",
+    followUpAppointmentDetail: "FOLLOW_UP_APPOINTMENT_DETAIL",
+    patientInformation: "PATIENT_INFORMATION",
+    scheduledVaccines: "SCHEDULED_VACCINES",
+    noData: "NO_DATA",
 };
 
 const exceptionTranslationKey = {

@@ -405,5 +405,10 @@
     "REFERENCE_VALUE": "Giá trị tham chiếu",
     "RESULT": "Kết quả",
     "SEARCH_PATIENT": "Tìm kiếm bệnh nhân",
-    "BACK_TO_PATIENTS": "Quay lại danh sách bệnh nhân"
+    "BACK_TO_PATIENTS": "Quay lại danh sách bệnh nhân",
+    "VIEW": "Xem thêm",
+    "FOLLOW_UP_APPOINTMENT_DETAIL": "Chi tiết lịch hẹn tái khám",
+    "PATIENT_INFORMATION": "Thông tin bệnh nhân",
+    "SCHEDULED_VACCINES": "Các vắc xin đã lên lịch",
+    "NO_DATA": "Không có"
 }

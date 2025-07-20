@@ -402,5 +402,10 @@
     "REFERENCE_VALUE": "Reference value",
     "RESULT": "Result",
     "SEARCH_PATIENT": "Search patient",
-    "BACK_TO_PATIENTS": "Back to Patients"
+    "BACK_TO_PATIENTS": "Back to Patients",
+    "VIEW": "View",
+    "FOLLOW_UP_APPOINTMENT_DETAIL": "Follow-up Appointment Detail",
+    "PATIENT_INFORMATION": "Patient Information",
+    "SCHEDULED_VACCINES": "Scheduled Vaccines",
+    "NO_DATA": "No data"
 }

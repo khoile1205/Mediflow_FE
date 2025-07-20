@@ -1,4 +1,4 @@
-import { FormControl, Popover, TextField } from "@mui/material";
+import { FormControl, IconButton, InputAdornment, Popover, TextField } from "@mui/material";
 import { ColDef, RowClickedEvent } from "ag-grid-community";
 import { AgGridReactProps } from "ag-grid-react";
 import React from "react";
@@ -9,6 +9,7 @@ import SearchBox from "~/components/common/search-box";
 import { useTranslation } from "react-i18next";
 import i18n from "~/configs/i18n";
 import { useFormContext } from "react-hook-form";
+import { HighlightOff } from "@mui/icons-material";
 
 export type AgGridDropdownFormItemProps<T extends object = any> = BaseFormItemProps &
     AgGridReactProps &
@@ -95,6 +96,13 @@ export const AgGridDropdownFormItem = <T extends object>({
             required={required}
             render={({ field, error }) => {
                 const displayText = displayField && selectedRow ? selectedRow[displayField] : (field.value ?? "");
+
+                const onClear = () => {
+                    field.onChange(null);
+                    setSelectedRow(null);
+                    setOpen(false);
+                };
+
                 return (
                     <>
                         <FormControl fullWidth margin="normal" error={!!error} required={required}>
@@ -104,7 +112,18 @@ export const AgGridDropdownFormItem = <T extends object>({
                                 onClick={() => setOpen(true)}
                                 error={!!error}
                                 inputRef={anchorRef}
-                                slotProps={{ input: { readOnly: true } }}
+                                slotProps={{
+                                    input: {
+                                        readOnly: true,
+                                        endAdornment: field.value ? (
+                                            <InputAdornment position="end">
+                                                <IconButton aria-label="clear input" onClick={onClear} edge="end">
+                                                    <HighlightOff />
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ) : null,
+                                    },
+                                }}
                                 size="small"
                                 label={label}
                                 disabled={disabled}
