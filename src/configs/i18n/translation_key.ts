@@ -356,6 +356,9 @@ const applicationTranslationKey = {
     ninetyMinutes: "NINETY_MINUTES",
     standardValue: "STANDARD_VALUE",
     specimenDeviceType: "SPECIMEN_DEVICE_TYPE",
+    updateVaccinationStatusSuccessfully: "UPDATE_VACCINATION_STATUS_SUCCESSFULLY",
+    confirmInjectedSuccessfully: "CONFIRM_INJECTED_SUCCESSFULLY",
+    confirmVaccinationTodaySuccessfully: "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY",
 };
 
 const exceptionTranslationKey = {

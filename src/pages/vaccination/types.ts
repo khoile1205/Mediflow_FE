@@ -11,12 +11,22 @@ export interface PatientFormValue {
 }
 
 export interface VaccinationFormValue {
+    patientId?: number;
     receptionVaccinationId?: number;
     medicineId?: number;
+    medicineName?: string;
+    medicineBatchId?: number;
     medicineBatchCode?: string;
     medicineExpiryDate?: string;
+    medicineBatchNumber?: string;
     isInjected?: boolean;
     testingStartTime: Date;
     injectionDate: Date;
     note?: string;
+    doctorId?: number;
+}
+
+export interface AddVaccineToPreExaminationRequest {
+    receptionId: number;
+    data: number[];
 }

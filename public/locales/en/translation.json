@@ -440,5 +440,8 @@
     "NINETY_MINUTES": "90 minutes",
     "RESULT": "Result",
     "STANDARD_VALUE": "Standard value",
-    "SPECIMEN_DEVICE_TYPE": "Specimen/Device type"
+    "SPECIMEN_DEVICE_TYPE": "Specimen/Device type",
+    "UPDATE_VACCINATION_STATUS_SUCCESSFULLY": "Update vaccination status successfully",
+    "CONFIRM_INJECTED_SUCCESSFULLY": "Injected confirmed successfully.",
+    "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY": "Confirm vaccination today successfully."
 }

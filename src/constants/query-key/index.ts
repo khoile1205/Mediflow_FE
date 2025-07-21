@@ -72,6 +72,9 @@ const VaccinationQueryKey = {
     GET_WAITING_PATIENT_VACCINATION_LIST: "getWaitingPatientVaccinationList",
     GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID: "getMedicineVaccinationListByReceptionId",
     GET_NEAREST_EXPIRY_MEDICINE_BATCH: "getNearestExpiryMedicineBatch",
+    UPDATE_VACCINATION_STATUS: "updateVaccinationStatus",
+    INJECT_VACCINATION: "injectVaccination",
+    CONFIRM_VACCINATION_TODAY: "confirmVaccinationToday",
 };
 
 const AppointmentQueryKey = {

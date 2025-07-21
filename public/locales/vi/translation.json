@@ -443,5 +443,8 @@
     "NINETY_MINUTES": "90 phút",
     "RESULT": "Kết quả",
     "STANDARD_VALUE": "Giá trị chuẩn",
-    "SPECIMEN_DEVICE_TYPE": "Loại bệnh phẩm / Thiết bị"
+    "SPECIMEN_DEVICE_TYPE": "Loại bệnh phẩm / Thiết bị",
+    "UPDATE_VACCINATION_STATUS_SUCCESSFULLY": "Cập nhật trạng thái tiêm chủng thành công.",
+    "CONFIRM_INJECTED_SUCCESSFULLY": "Xác nhận tiêm thành công",
+    "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY": "Xác nhận tiêm hôm nay thành công"
 }
