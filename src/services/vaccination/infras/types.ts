@@ -2,6 +2,7 @@ import { Gender } from "~/constants/enums";
 
 export type WaitingPatientVaccination = {
     receptionId: number;
+    patientId: number;
     patientCode: string;
     patientVaccinationCode: string;
     patientName: string;
@@ -22,6 +23,9 @@ export type MedicineVaccinationInformation = {
     isConfirmed: boolean;
     testResultEntry?: string;
     doctorName?: string;
+    vaccinationId: null;
+    medicineBatchId: string;
+    medicineBatchNumber: string;
 };
 
 export type GetNearestExpiryMedicineBatchResponse = {
@@ -39,3 +43,19 @@ export type NearestExpiryMedicineBatch = {
     medicineId: number;
     medicineName: string;
 };
+
+export interface UpdateVaccinationStatusRequest {
+    receptionVaccinationId: number;
+    status: boolean;
+}
+
+export interface InjectVaccineRequest {
+    patientId: number;
+    receptionVaccinationId: number;
+    medicineBatchId: number;
+    batchNumber: string;
+    medicineId: number;
+    medicineName: string;
+    note: string;
+    doctorId: number;
+}

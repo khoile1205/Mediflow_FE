@@ -1,4 +1,5 @@
 import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { ColDef, RowClickedEvent, RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -9,7 +10,14 @@ import FormItem from "~/components/form/form-item";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { TestResultStatus } from "~/constants/enums";
+import { QueryKey } from "~/constants/query-key";
+import { useAuth } from "~/contexts/auth.context";
 import { useMutationAddVaccineToPreExamination } from "~/services/pre-examination/hooks/mutations";
+import {
+    useMutationConfirmVaccinationToday,
+    useMutationInjectVaccine,
+    useMutationUpdateVaccinationStatus,
+} from "~/services/vaccination/hooks/mutations";
 import {
     useQueryGetMedicineVaccinationByReceptionId,
     useQueryGetNearestExpiryMedicineBatch,
@@ -18,17 +26,19 @@ import {
 import {
     MedicineVaccinationInformation,
     NearestExpiryMedicineBatch,
+    UpdateVaccinationStatusRequest,
     WaitingPatientVaccination,
 } from "~/services/vaccination/infras";
 import { showToast } from "~/utils";
 import { formatDate } from "~/utils/date-time";
 import PreExaminationTestingPage from "../pre-examination-testing";
 import { useCreateVaccinationForm } from "./hooks/use-create-vaccination-form";
-import { useQueryClient } from "@tanstack/react-query";
-import { QueryKey } from "~/constants/query-key";
+import { useNavigate } from "react-router";
 
 const VaccinationPage: React.FC = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const { patientForm, vaccinationForm } = useCreateVaccinationForm();
 
     const patientAgGrid = useAgGrid<WaitingPatientVaccination>({});
@@ -41,18 +51,23 @@ const VaccinationPage: React.FC = () => {
     const [isOpenTestingModal, setIsOpenTestingModal] = React.useState<boolean>(false);
     const [isStartEnabled, setIsStartEnabled] = React.useState(false);
 
+    // Queries
     const {
         data: { waitingPatientList },
     } = useQueryGetWaitingPatientVaccination({ searchTerm: searchWaitingPatientTerm });
 
     const {
-        data: { doctorPrescribedVaccines },
+        data: { doctorPrescribedVaccines, customerWarehouseVaccines },
     } = useQueryGetMedicineVaccinationByReceptionId(patientForm.watch("receptionId"));
     const {
         data: { nearestExpiryMedicineBatch },
     } = useQueryGetNearestExpiryMedicineBatch(vaccinationForm.watch("medicineId"));
 
+    // Mutations
     const { mutateAsync: addVaccineToPreExamination } = useMutationAddVaccineToPreExamination();
+    const { mutateAsync: updateVaccinationStatus } = useMutationUpdateVaccinationStatus();
+    const { mutateAsync: injectVaccine } = useMutationInjectVaccine();
+    const { mutateAsync: confirmVaccinationToday } = useMutationConfirmVaccinationToday();
 
     const patientColumnDefs = React.useMemo(
         () =>
@@ -78,7 +93,7 @@ const VaccinationPage: React.FC = () => {
             flex: 2,
         },
         {
-            field: "doctorName",
+            field: "medicineBatchNumber",
             headerName: t(i18n.translationKey.batchNumber),
             headerStyle: { backgroundColor: "#98D2C0" },
             flex: 1,
@@ -113,6 +128,9 @@ const VaccinationPage: React.FC = () => {
             headerStyle: { backgroundColor: "#98D2C0" },
             cellClass: "ag-cell-center",
             flex: 1,
+            valueGetter: (params) => {
+                return params.data.doctorName ?? user.name;
+            },
         },
     ];
 
@@ -126,6 +144,9 @@ const VaccinationPage: React.FC = () => {
 
     const handleSelectPatient = (row: RowClickedEvent<WaitingPatientVaccination>) => {
         const selectedPatient = row.data;
+
+        vaccinationForm.setValue("patientId", selectedPatient.patientId);
+
         patientForm.setValue("receptionId", selectedPatient.receptionId);
         patientForm.setValue("patientCode", selectedPatient.patientCode);
         patientForm.setValue("patientName", selectedPatient.patientName);
@@ -145,6 +166,9 @@ const VaccinationPage: React.FC = () => {
                 vaccinationForm.setValue("medicineId", selectedMedicine.medicineId);
                 vaccinationForm.setValue("receptionVaccinationId", selectedMedicine.receptionVaccinationId);
                 vaccinationForm.setValue("isInjected", selectedMedicine.isConfirmed);
+                vaccinationForm.setValue("medicineName", selectedMedicine.medicineName);
+                vaccinationForm.setValue("doctorId", user.id);
+                vaccinationForm.setValue("injectionDate", new Date());
             } else {
                 vaccinationForm.reset();
             }
@@ -162,7 +186,44 @@ const VaccinationPage: React.FC = () => {
             receptionId: receptionVaccinationId,
         });
 
+        vaccinationForm.setValue("testingStartTime", new Date());
         setIsStartEnabled(true);
+    };
+
+    const handleInjectVaccine = async () => {
+        const receptionVaccinationId = vaccinationForm.watch("receptionVaccinationId");
+        if (!receptionVaccinationId) {
+            showToast.warning(t(i18n.translationKey.selectAtLeastOneDose));
+            return;
+        }
+
+        await injectVaccine(vaccinationForm.watch());
+    };
+
+    const handleUpdateVaccinationStatus = async (status: boolean) => {
+        if (selectedVaccinationMedicineCount === 0) {
+            showToast.warning(t(i18n.translationKey.selectAtLeastOneDose));
+            return;
+        }
+
+        const receptionId = patientForm.watch("receptionId");
+        const data: UpdateVaccinationStatusRequest = getUpdateVaccinationStatusBody(status);
+
+        await updateVaccinationStatus({ receptionId, data });
+    };
+
+    const getUpdateVaccinationStatusBody = (status: boolean): UpdateVaccinationStatusRequest => ({
+        receptionVaccinationId: vaccinationForm.watch("receptionVaccinationId"),
+        status,
+    });
+
+    const handleConfirmVaccinationToday = async () => {
+        const receptionId = patientForm.watch("receptionId");
+
+        await confirmVaccinationToday(receptionId);
+
+        vaccinationForm.reset();
+        patientForm.reset();
     };
 
     React.useEffect(() => {
@@ -170,11 +231,13 @@ const VaccinationPage: React.FC = () => {
             const firstBatch = nearestExpiryMedicineBatch[0];
             vaccinationForm.setValue("medicineBatchCode", firstBatch.medicineBatchNumber);
             vaccinationForm.setValue("medicineExpiryDate", firstBatch.expiryDate);
+            vaccinationForm.setValue("medicineBatchId", firstBatch.medicineBatchId);
+            vaccinationForm.setValue("medicineBatchNumber", firstBatch.medicineBatchNumber);
         }
     }, [nearestExpiryMedicineBatch]);
 
     return (
-        <Box className="flex h-full">
+        <Box className="flex h-full min-h-screen">
             <DynamicForm form={patientForm}>
                 <Box className="flex h-full basis-1/3 flex-col bg-[#F6F8D5] p-3">
                     <Stack spacing={2} className="flex-grow">
@@ -281,16 +344,19 @@ const VaccinationPage: React.FC = () => {
                                                 ] as ColDef<NearestExpiryMedicineBatch>[]
                                             }
                                             rowData={nearestExpiryMedicineBatch}
+                                            disabled={vaccinationForm.watch("isInjected")}
                                             displayField="medicineBatchNumber"
                                         />
                                     </Grid>
                                     <Grid size={5}>
                                         <Typography variant="body2" color="text.secondary" className="mb-2">
-                                            HSD:{" "}
-                                            {formatDate(
-                                                vaccinationForm.watch("medicineExpiryDate"),
-                                                DATE_TIME_FORMAT["dd/MM/yyyy"],
-                                            )}
+                                            <span className="font-semibold">{t(i18n.translationKey.expiryDate)}: </span>
+                                            {vaccinationForm.watch("medicineExpiryDate")
+                                                ? formatDate(
+                                                      vaccinationForm.watch("medicineExpiryDate"),
+                                                      DATE_TIME_FORMAT["dd/MM/yyyy"],
+                                                  )
+                                                : null}
                                         </Typography>
                                     </Grid>
                                     <Grid size={12}>
@@ -330,7 +396,10 @@ const VaccinationPage: React.FC = () => {
                                 >
                                     {t(i18n.translationKey.confirmStart)}
                                 </Button>
-                                <Button disabled={selectedVaccinationMedicineCount === 0}>
+                                <Button
+                                    disabled={!patientForm.watch("receptionId")}
+                                    onClick={handleConfirmVaccinationToday}
+                                >
                                     {t(i18n.translationKey.confirmInjectedToday)}
                                 </Button>
                                 <Button disabled={selectedVaccinationMedicineCount === 0}>
@@ -340,6 +409,7 @@ const VaccinationPage: React.FC = () => {
                                     disabled={
                                         selectedVaccinationMedicineCount === 0 || vaccinationForm.watch("isInjected")
                                     }
+                                    onClick={() => handleInjectVaccine()}
                                 >
                                     {t(i18n.translationKey.confirmSelectedDose)}
                                 </Button>
@@ -347,6 +417,7 @@ const VaccinationPage: React.FC = () => {
                                     disabled={
                                         selectedVaccinationMedicineCount === 0 || !vaccinationForm.watch("isInjected")
                                     }
+                                    onClick={() => handleUpdateVaccinationStatus(false)}
                                 >
                                     {t(i18n.translationKey.cancelConfirm)}
                                 </Button>
@@ -358,7 +429,13 @@ const VaccinationPage: React.FC = () => {
                                 <Button onClick={handleConfirmStart} disabled={!isStartEnabled}>
                                     {t(i18n.translationKey.inputTestResult)}
                                 </Button>
-                                <Button>{t(i18n.translationKey.vaccinationHistory)}</Button>
+                                <Button
+                                    onClick={() => {
+                                        navigate("/vaccination/history");
+                                    }}
+                                >
+                                    {t(i18n.translationKey.vaccinationHistory)}
+                                </Button>
                             </Stack>
                         </Grid>
                     </Grid>
@@ -371,6 +448,16 @@ const VaccinationPage: React.FC = () => {
                             {...vaccineAgGrid}
                         />
                     </Box>
+                    {customerWarehouseVaccines.length > 0 && (
+                        <Box mt={2}>
+                            <AgDataGrid
+                                columnDefs={vaccineColumnDefs}
+                                rowData={customerWarehouseVaccines}
+                                // onRowSelected={handleSelectVaccinationMedicine}
+                                {...vaccineAgGrid}
+                            />
+                        </Box>
+                    )}
                 </DynamicForm>
             </Box>
             <PreExaminationTestingPage
