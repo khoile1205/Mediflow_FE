@@ -1,5 +1,6 @@
 import {
     AccessTime,
+    Biotech,
     EventNote,
     Healing,
     Home,
@@ -88,6 +89,20 @@ export const sidebarTree: SidebarTabProps[] = [
             //     requiredPermissions: [ResourceType.VaccinationReception],
             //     requiredRoles: [Role.Administrator, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician],
             // },
+            {
+                labelKey: i18n.translationKey.examination,
+                pathName: "/examination",
+                icon: <Biotech />,
+                requiredPermissions: [ResourceType.VaccinationReception],
+                requiredRoles: [
+                    Role.Administrator,
+                    Role.Doctor,
+                    Role.Nurse,
+                    Role.Receptionist,
+                    Role.LaboratoryStaff,
+                    Role.ImagingTechnician,
+                ],
+            },
         ],
         requiredPermissions: [ResourceType.VaccinationReception],
         requiredRoles: [

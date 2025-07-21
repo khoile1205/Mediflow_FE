@@ -6,3 +6,4 @@ export * from "./supplier";
 export * from "./hospital-service.entity";
 export * from "./service.entity";
 export * from "./service-type.entity";
+export * from "./examination";

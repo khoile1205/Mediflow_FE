@@ -49,7 +49,6 @@ export const TextAreaFormItem: React.FC<TextAreaFormItemProps> = ({
                         rows={rows}
                         maxRows={maxRows}
                         error={!!error}
-                        helperText={error}
                         variant="outlined"
                         disabled={disabled}
                         margin="normal"
