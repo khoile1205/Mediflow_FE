@@ -1,42 +1,69 @@
-import { Patient } from "./person-info.entity";
 import { BaseEntity } from "./base.entity";
 
 export interface Examination extends BaseEntity {
-    patient: Patient;
+    examinationId: number;
+    patientId: number;
     diagnose: string;
-    receiptTime: Date;
-    executeTime?: Date;
+    returnTime: Date;
     performTechnicianId: number;
-    appointmentTimeForResult?: Date;
-    resultForm?: ResultForm;
-    sampleType?: SampleType;
-    sampleQuality?: SampleQuality;
-    concludedDoctorId?: number;
-    receiverId?: number;
+    sampleType: SampleType;
+    sampleQuality: SampleQuality;
+    doctorId: number;
     conclusion: string;
     note: string;
-    isDiagnosed: boolean;
+    examinationResults: ExaminationResult[];
 }
 
-export enum ResultForm {
-    THIRD_FLOOR_LOBBY = "thirdFloorLobby",
-    SECOND_FLOOR_LOBBY = "secondFloorLobby",
-    ONLINE = "online",
+export interface ExaminationResult {
+    parameterName: string;
+    unit: string;
+    resultValue: string;
+    standardValue: string;
+}
+
+export interface ServiceTestParameter {
+    requestNumber: string;
+    parameterName: string;
+    result: string;
+    standardValue: string;
+    unit: string;
+    specimenType: string;
+    equipmentName: string;
+}
+
+export interface PatientForExamination {
+    receptionId: number;
+    patientId: number;
+    patientName: string;
+    yearOfBirth: number;
+    patientCode: string;
+    age: number;
+    gender: string;
+}
+
+export interface ExaminationOfReception {
+    examinationId: number;
+    serviceName: string;
+}
+
+export interface ExaminationTechnician {
+    id: number;
+    name: string;
 }
 
 export enum SampleType {
-    BLOOD = "blood",
-    FLUID = "fluid",
-    URINE = "urine",
-    SEMEN = "semen",
-    FLUID_URINE = "fluidUrine",
-    FLUID_BLOOD = "fluidBlood",
-    BLOOD_URINE = "bloodUrine",
-    FLUID_URINE_BLOOD = "fluidUrineBlood",
+    BLOOD,
+    FLUID,
+    URINE,
+    SEMEN,
+    FLUID_URINE,
+    FLUID_BLOOD,
+    BLOOD_URINE,
+    FLUID_URINE_BLOOD,
 }
 
 export enum SampleQuality {
-    HIGH = "high",
-    MEDIUM = "medium",
-    LOW = "low",
+    HIGH,
+    MEDIUM,
+    LOW,
 }

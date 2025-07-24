@@ -359,6 +359,9 @@ const applicationTranslationKey = {
     updateVaccinationStatusSuccessfully: "UPDATE_VACCINATION_STATUS_SUCCESSFULLY",
     confirmInjectedSuccessfully: "CONFIRM_INJECTED_SUCCESSFULLY",
     confirmVaccinationTodaySuccessfully: "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY",
+    upsertExaminationResultSuccessfully: "UPSERT_EXAMINATION_RESULT_SUCCESSFULLY",
+    invalidExaminationData: "INVALID_EXAMINATION_DATA",
+    detail: "DETAIL",
 };
 
 const exceptionTranslationKey = {

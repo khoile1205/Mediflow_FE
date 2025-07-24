@@ -1,4 +1,4 @@
-import { Box, FormControl, MenuItem, Pagination, Select, Typography } from "@mui/material";
+import { Box, FormControl, Grid, MenuItem, Pagination, Select, Typography } from "@mui/material";
 import { AgGridReact, AgGridReactProps } from "ag-grid-react";
 import classNames from "classnames";
 import React from "react";
@@ -18,6 +18,7 @@ type AgDataGridProps = Omit<AgGridReactProps, "columnDefs" | "rowData"> & {
     pageSizeOptions?: number[];
     onPageChange?: (pageIndex: number, pageSize: number) => void;
     maxRows?: number;
+    isFullHeight?: boolean;
 } & Pick<ReturnType<typeof useAgGrid>, "onGridReady">;
 
 const AgDataGrid: React.FC<AgDataGridProps> = ({
@@ -32,6 +33,7 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
     pageIndex = 1,
     maxRows = GRID_STYLE_CONFIG.GRID_DIMENSIONS.MAX_ROWS,
     pageSizeOptions = DEFAULT_PAGINATION_PARAMS.PAGE_SIZE_OPTIONS,
+    isFullHeight = false,
     ...props
 }) => {
     const { t } = useTranslation();
@@ -54,8 +56,11 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
     };
 
     return (
-        <Box>
-            <Box className={classNames("ag-data-grid", className)} sx={{ height: getHeightDataGrid() }}>
+        <Grid className="h-full">
+            <Box
+                className={classNames("ag-data-grid", className)}
+                sx={{ height: isFullHeight ? "100%" : getHeightDataGrid() }}
+            >
                 <AgGridReact
                     {...gridOptions}
                     columnDefs={columnDefs}
@@ -106,7 +111,7 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
                     />
                 </Box>
             )}
-        </Box>
+        </Grid>
     );
 };
 

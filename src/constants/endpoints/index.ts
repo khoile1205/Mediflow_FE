@@ -1,5 +1,6 @@
 import { appointmentEndpoints } from "./appointment";
 import { authEndpoints } from "./auth";
+import { examinationEndpoints } from "./examination";
 import { hospitalEndpoints } from "./hospital-fee";
 import { hospitalServiceEndpoints } from "./hospital-service";
 import { inventoryEndpoints } from "./inventory";
@@ -20,4 +21,5 @@ export const endpoints = {
     hospitalFee: hospitalEndpoints,
     vaccination: vaccinationEndpoints,
     appointment: appointmentEndpoints,
+    examination: examinationEndpoints,
 };

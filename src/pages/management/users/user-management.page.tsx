@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Dialog, Grid } from "@mui/material";
+import React, { ReactNode, useEffect, useState } from "react";
+import { Dialog, Grid, SelectChangeEvent } from "@mui/material";
 import { RowSelectedEvent } from "node_modules/ag-grid-community/dist/types/src/events";
 import { useTranslation } from "react-i18next";
 import DynamicForm from "~/components/form/dynamic-form";
@@ -32,6 +32,9 @@ export const UserManagement: React.FC = () => {
     const [isFormEnabled, setIsFormEnabled] = useState(false);
     const [isAddingNewUser, setIsAddingNewUser] = useState(false);
     const [isEditingUser, setIsEditingUser] = useState(false);
+
+    const [selectedRoleName, setSelectedRoleName] = useState<string>(null);
+    const [selectedDepartmentId, setSelectedDepartmentId] = useState<number>(null);
 
     const { handlePageChange, pageIndex, pageSize } = usePagination();
 
@@ -83,6 +86,9 @@ export const UserManagement: React.FC = () => {
             form.setValue("isSuspended", user.isSuspended);
             setIsFormEnabled(true);
             setIsEditingUser(true);
+
+            setSelectedRoleName(user.roles[0]);
+            setSelectedDepartmentId(user.departments[0].id);
         }
     }, [user]);
 
@@ -117,6 +123,8 @@ export const UserManagement: React.FC = () => {
     const { mutateAsync: resetPassword } = useMutationResetPassword();
 
     const handleAddNewUser = async (data: StaffFormValues) => {
+        data.roleNames = [selectedRoleName];
+        data.departmentIds = [selectedDepartmentId];
         await createUser(data);
 
         resetFormValues();
@@ -126,6 +134,8 @@ export const UserManagement: React.FC = () => {
     };
 
     const handleSaveUser = async (data: StaffFormValues) => {
+        data.roleNames = [selectedRoleName];
+        data.departmentIds = [selectedDepartmentId];
         await updateUser(data);
 
         resetFormValues();
@@ -303,13 +313,16 @@ export const UserManagement: React.FC = () => {
                             required
                             disabled={!isFormEnabled}
                             render="select"
-                            name="roleNames"
+                            name=""
                             label={t(i18n.translationKey.userRole)}
                             options={roleNames.map((role) => ({
                                 label: role,
                                 value: role,
                             }))}
-                            multiple
+                            value={selectedRoleName}
+                            onChange={(event: SelectChangeEvent<unknown>, _child: ReactNode) => {
+                                setSelectedRoleName(event.target.value as string);
+                            }}
                         />
                     </Grid>
                     <Grid size={4}>
@@ -317,13 +330,16 @@ export const UserManagement: React.FC = () => {
                             required
                             disabled={!isFormEnabled}
                             render="select"
-                            name="departmentIds"
+                            name=""
                             label={t(i18n.translationKey.department)}
                             options={listDepartments.map((dept) => ({
                                 label: reactI18n.language === I18N_LANGUAGE.VIETNAMESE ? dept.name : dept.nameInEnglish,
                                 value: dept.id,
                             }))}
-                            multiple
+                            value={`${selectedDepartmentId ?? ""}`}
+                            onChange={(event: SelectChangeEvent<unknown>, _child: ReactNode) => {
+                                setSelectedDepartmentId(Number(event.target.value));
+                            }}
                         />
                     </Grid>
                     <Grid size={4} justifyContent={"center"} container>
@@ -360,7 +376,7 @@ export const UserManagement: React.FC = () => {
                             name="password"
                             label={t(i18n.translationKey.password)}
                             isPassword
-                            required
+                            required={isAddingNewUser}
                         />
                     </Grid>
                     <Grid size={4} hidden={!isAddingNewUser}>
@@ -370,7 +386,7 @@ export const UserManagement: React.FC = () => {
                             name="confirmPassword"
                             label={t(i18n.translationKey.confirmPassword)}
                             isPassword
-                            required
+                            required={isAddingNewUser}
                         />
                     </Grid>
                 </Grid>
