@@ -91,7 +91,10 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
                 field: "invoiceDate",
                 cellClass: "ag-cell-center",
                 headerName: t(i18n.translationKey.invoiceDate),
-                valueFormatter: (params) => formatDate(params.value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
+                valueGetter: (params) => {
+                    if (!params.data.invoiceDate) return t(i18n.translationKey.notAvailable);
+                    return formatDate(params.data.invoiceDate, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]);
+                },
             },
         ],
         [],
