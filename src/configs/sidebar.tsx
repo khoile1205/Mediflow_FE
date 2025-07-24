@@ -95,14 +95,9 @@ export const sidebarTree: SidebarTabProps[] = [
                 labelKey: i18n.translationKey.examinationHistory,
                 pathName: "/examination/history/patients",
                 icon: <Vaccines />,
+                requiredPermissions: [ResourceType.VaccinationReception],
+                requiredRoles: [Role.Administrator, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician],
             },
-            // {
-            //     labelKey: i18n.translationKey.examinationHistory,
-            //     pathName: "/examination/history",
-            //     icon: <AccessTime />,
-            //     requiredPermissions: [ResourceType.VaccinationReception],
-            //     requiredRoles: [Role.Administrator, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician],
-            // },
         ],
         requiredPermissions: [ResourceType.VaccinationReception],
         requiredRoles: [

@@ -6,39 +6,35 @@ import { useNavigate, useParams } from "react-router";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import i18n from "~/configs/i18n";
 import ExaminationDetailModal from "./examination-detail.modal";
-
-// Mock data
-const mockPatients = [
-    {
-        id: "P001",
-        name: "John Doe",
-        dob: "1985-03-15",
-        phone: "(555) 123-4567",
-    },
-    {
-        id: "P002",
-        name: "Jane Smith",
-        dob: "1990-07-22",
-        phone: "(555) 987-6543",
-    },
-];
+import { useQueryGetPatientExaminationHistory } from "~/services/examination/hooks/queries";
+import { formatDate } from "~/utils/date-time";
+import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { CustomCellRendererProps } from "ag-grid-react";
 
 const ExaminationPatientHistoryPage: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const [examinationId, setExaminationId] = React.useState<number>(null);
+
     const { t } = useTranslation();
     const agGrid = useAgGrid({});
 
     const [open, setOpen] = React.useState<boolean>(false);
     // Find patient by id
-    const patient = mockPatients.find((p) => p.id === id) || mockPatients[0];
+
+    const {
+        data: { patientExaminationHistory },
+    } = useQueryGetPatientExaminationHistory(Number(id));
+    if (!patientExaminationHistory) return null;
 
     return (
         <Box sx={{ bgcolor: "#fff", minHeight: "100vh", p: { xs: 2, md: 4 } }}>
             {/* Top bar */}
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={3}>
                 <Typography variant="h5" fontWeight={700} color="primary.main">
-                    {t(i18n.translationKey.patientExaminationHistory, { patient_name: patient.name })}
+                    {t(i18n.translationKey.patientExaminationHistory, {
+                        patient_name: patientExaminationHistory.patientName,
+                    })}
                 </Typography>
                 <Link
                     component="button"
@@ -62,25 +58,27 @@ const ExaminationPatientHistoryPage: React.FC = () => {
                         <Typography variant="caption" color="text.secondary" fontWeight={500}>
                             {t(i18n.translationKey.medicalCode)}
                         </Typography>
-                        <Typography fontWeight={600}>{patient.id}</Typography>
+                        <Typography fontWeight={600}>{patientExaminationHistory.patientCode}</Typography>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Typography variant="caption" color="text.secondary" fontWeight={500}>
                             {t(i18n.translationKey.patientName)}
                         </Typography>
-                        <Typography fontWeight={600}>{patient.name}</Typography>
+                        <Typography fontWeight={600}>{patientExaminationHistory.patientName}</Typography>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Typography variant="caption" color="text.secondary" fontWeight={500}>
                             {t(i18n.translationKey.dateOfBirth)}
                         </Typography>
-                        <Typography fontWeight={600}>{patient.dob}</Typography>
+                        <Typography fontWeight={600}>
+                            {formatDate(patientExaminationHistory.dob, DATE_TIME_FORMAT["dd/MM/yyyy"])}
+                        </Typography>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                         <Typography variant="caption" color="text.secondary" fontWeight={500}>
                             {t(i18n.translationKey.phoneNumber)}
                         </Typography>
-                        <Typography fontWeight={600}>{patient.phone}</Typography>
+                        <Typography fontWeight={600}>{patientExaminationHistory.phoneNumber}</Typography>
                     </Grid>
                 </Grid>
             </Paper>
@@ -91,29 +89,30 @@ const ExaminationPatientHistoryPage: React.FC = () => {
                 </Typography>
                 <AgDataGrid
                     {...agGrid}
-                    rowData={[]}
+                    rowData={patientExaminationHistory.examinationHistory}
                     columnDefs={[
                         {
                             headerName: t(i18n.translationKey.requestNumber),
-                            field: "id",
+                            field: "examinationId",
                             cellClass: "ag-cell-center",
                             flex: 1,
                         },
                         {
                             headerName: t(i18n.translationKey.examinationTime),
-                            field: "date",
+                            field: "returnTime",
                             cellClass: "ag-cell-center",
+                            valueFormatter: (params) => formatDate(params.value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
                             flex: 1,
                         },
                         {
                             headerName: t(i18n.translationKey.serviceName),
-                            field: "type",
+                            field: "serviceName",
                             cellClass: "ag-cell-center",
                             flex: 1.5,
                         },
                         {
                             headerName: t(i18n.translationKey.enteredByDoctor),
-                            field: "doctor",
+                            field: "doctorName",
                             cellClass: "ag-cell-center",
                             flex: 1.5,
                         },
@@ -124,7 +123,7 @@ const ExaminationPatientHistoryPage: React.FC = () => {
                             flex: 1,
                             cellRenderer: (params: any) => (
                                 <Chip
-                                    label={params.value}
+                                    label={t(params.value)}
                                     size="small"
                                     sx={{
                                         bgcolor: params.value === "COMPLETED" ? "#22c55e" : "#f59e42",
@@ -138,8 +137,14 @@ const ExaminationPatientHistoryPage: React.FC = () => {
                         },
                         {
                             cellClass: "ag-cell-center",
-                            cellRenderer: () => (
-                                <IconButton color="primary" onClick={() => setOpen(true)}>
+                            cellRenderer: (params: CustomCellRendererProps) => (
+                                <IconButton
+                                    color="primary"
+                                    onClick={() => {
+                                        setOpen(true);
+                                        setExaminationId(params.data.examinationId);
+                                    }}
+                                >
                                     <Visibility />
                                 </IconButton>
                             ),
@@ -148,7 +153,14 @@ const ExaminationPatientHistoryPage: React.FC = () => {
                     ]}
                 />
             </Paper>
-            <ExaminationDetailModal open={open} onClose={() => setOpen(false)} />
+            <ExaminationDetailModal
+                open={open}
+                onClose={() => {
+                    setOpen(false);
+                    setExaminationId(null);
+                }}
+                examinationId={examinationId}
+            />
         </Box>
     );
 };

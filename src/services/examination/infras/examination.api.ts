@@ -7,7 +7,9 @@ import {
     ServiceTestParameter,
 } from "~/entities";
 import { callApi } from "~/libs/axios/request";
-import { HttpMethod } from "~/libs/axios/types";
+import { HttpMethod, IPagination, IPaginationRequest } from "~/libs/axios/types";
+import { ISearchParam } from "~/services/hospital-service/infras";
+import { ExaminationHistoryDetail, PatientExaminationHistory, PatientExaminationSummary } from "./types";
 
 const getPatientsForExamination = async (patientName?: string, isDiagnose?: boolean) => {
     return await callApi<PatientForExamination[]>({
@@ -58,6 +60,28 @@ const getAllExaminationTechnician = async () => {
     });
 };
 
+const getAllExaminationHistory = async (params: IPaginationRequest & ISearchParam) => {
+    return callApi<IPagination<PatientExaminationSummary>>({
+        url: endpoints.examination.getAllExaminationHistory,
+        method: HttpMethod.GET,
+        params,
+    });
+};
+
+const getPatientExaminationHistory = async (patientId: number) => {
+    return callApi<PatientExaminationHistory>({
+        url: endpoints.examination.getPatientExaminationHistory(patientId),
+        method: HttpMethod.GET,
+    });
+};
+
+const getExaminationHistoryDetailById = async (examinationId: number) => {
+    return callApi<ExaminationHistoryDetail>({
+        url: endpoints.examination.getExaminationHistoryDetailById(examinationId),
+        method: HttpMethod.GET,
+    });
+};
+
 export const examinationApis = {
     getPatientsForExamination,
     getAllExaminationOfReceptionByReceptionId,
@@ -65,4 +89,7 @@ export const examinationApis = {
     getPatientExaminationDetailByExaminationId,
     upsertExaminationResult,
     getAllExaminationTechnician,
+    getAllExaminationHistory,
+    getPatientExaminationHistory,
+    getExaminationHistoryDetailById,
 };

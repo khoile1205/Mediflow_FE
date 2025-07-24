@@ -5,47 +5,24 @@ import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import { Dialog } from "~/components/common/dialog";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { useQueryGetExaminationHistoryDetailById } from "~/services/examination/hooks/queries";
 import { formatDate } from "~/utils/date-time";
-
-const mockExaminationData = {
-    services: [
-        {
-            id: 1,
-            name: "Complete Blood Count",
-            result: "Normal",
-            referenceValue: "4.5-5.5 million cells/mcL",
-        },
-        {
-            id: 2,
-            name: "Blood Glucose",
-            result: "95 mg/dL",
-            referenceValue: "70-100 mg/dL",
-        },
-        {
-            id: 3,
-            name: "Blood Pressure",
-            result: "120/80 mmHg",
-            referenceValue: "< 120/80 mmHg",
-        },
-        {
-            id: 4,
-            name: "Heart Rate",
-            result: "72 bpm",
-            referenceValue: "60-100 bpm",
-        },
-    ],
-    diagnosis: "Patient is in normal condition with all vital signs within acceptable ranges.",
-    notes: "No adverse reactions observed. Patient does not report any discomfort or unusual symptoms.",
-};
 
 interface ExaminationDetailModalProps {
     open: boolean;
     onClose: () => void;
+    examinationId: number;
 }
-const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, onClose }) => {
+const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, onClose, examinationId }) => {
     // if (!patient) return null;
     const { t } = useTranslation();
     const agGrid = useAgGrid({});
+    const {
+        data: { examinationHistory },
+    } = useQueryGetExaminationHistoryDetailById(examinationId);
+
+    if (!examinationHistory) return null;
+
     return (
         <Dialog open={open} onClose={onClose}>
             <Dialog.Header title={t(i18n.translationKey.examinationDetails)} onClose={onClose} />
@@ -71,7 +48,7 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                                 </Typography>
                                 <Typography variant="body1" fontWeight="medium">
                                     {/* {patient.id} */}
-                                    CDCDN250719092256101
+                                    {examinationHistory.patientCode}
                                 </Typography>
                             </Grid>
                             <Grid size={{ xs: 12, md: 4 }}>
@@ -80,7 +57,7 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                                 </Typography>
                                 <Typography variant="body1" fontWeight="medium">
                                     {/* {patient.name} */}
-                                    John Doe
+                                    {examinationHistory.patientName}
                                 </Typography>
                             </Grid>
                             <Grid size={{ xs: 12, md: 4 }}>
@@ -89,7 +66,7 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                                 </Typography>
                                 <Typography variant="body1">
                                     {/* {patient.phone} */}
-                                    +1234567890
+                                    {examinationHistory.patientPhoneNumber}
                                 </Typography>
                             </Grid>
                             <Grid size={{ xs: 12, md: 4 }}>
@@ -98,7 +75,7 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                                 </Typography>
                                 <Typography variant="body1">
                                     {/* {patient.lastExam} */}
-                                    {formatDate(new Date(), DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"])}
+                                    {formatDate(examinationHistory.returnDate, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"])}
                                 </Typography>
                             </Grid>
                             <Grid size={{ xs: 12, md: 4 }}>
@@ -107,7 +84,7 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                                 </Typography>
                                 <Typography variant="body1">
                                     {/* {patient.service} */}
-                                    General Checkup
+                                    {examinationHistory.serviceName}
                                 </Typography>
                             </Grid>
                             <Grid size={{ xs: 12, md: 4 }}>
@@ -115,9 +92,16 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                                     {t(i18n.translationKey.status)}
                                 </Typography>
                                 <Chip
-                                    // label={patient.status}
-                                    // color={patient.status === "Complete" ? "success" : "warning"}
+                                    label={t(examinationHistory.status)}
+                                    color={examinationHistory.status === "Completed" ? "warning" : "success"}
                                     size="small"
+                                    sx={{
+                                        bgcolor: examinationHistory.status === "Completed" ? "#f59e42" : "#22c55e",
+                                        color: "#fff",
+                                        fontWeight: 600,
+                                        fontSize: 13,
+                                        px: 1.5,
+                                    }}
                                 />
                             </Grid>
                         </Grid>
@@ -129,48 +113,39 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                             mt: 2,
                         }}
                     >
-                        Examination Results
+                        {t(i18n.translationKey.examinationResults)}
                     </Typography>
                     <AgDataGrid
                         {...agGrid}
-                        rowData={mockExaminationData.services}
+                        rowData={examinationHistory.examinationTestParameters}
                         columnDefs={[
-                            { headerName: t(i18n.translationKey.serviceName), field: "name" },
-                            { headerName: t(i18n.translationKey.result), field: "result" },
-                            { headerName: t(i18n.translationKey.referenceValue), field: "referenceValue" },
+                            {
+                                headerName: t(i18n.translationKey.serviceName),
+                                field: "parameterName",
+                                flex: 1,
+                                cellClass: "ag-cell-center",
+                            },
+                            {
+                                headerName: t(i18n.translationKey.result),
+                                field: "result",
+                                flex: 0.5,
+                                cellClass: "ag-cell-center",
+                            },
+                            {
+                                headerName: t(i18n.translationKey.referenceValue),
+                                field: "standardValue",
+                                flex: 0.5,
+                                cellClass: "ag-cell-center",
+                            },
                         ]}
                     />
-                    {/* <TableContainer component={Paper} variant="outlined">
-                        <Table aria-label="examination results table">
-                            <TableHead>
-                                <TableRow
-                                    sx={{
-                                        bgcolor: "#f5f5f5",
-                                    }}
-                                >
-                                    <TableCell>Service Name</TableCell>
-                                    <TableCell>Result</TableCell>
-                                    <TableCell>Reference Value</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {mockExaminationData.services.map((service) => (
-                                    <TableRow key={service.id}>
-                                        <TableCell>{service.name}</TableCell>
-                                        <TableCell>{service.result}</TableCell>
-                                        <TableCell>{service.referenceValue}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer> */}
                     <Box
                         sx={{
                             mt: 3,
                         }}
                     >
                         <Typography variant="h6" gutterBottom>
-                            Diagnosis
+                            {t(i18n.translationKey.diagnose)}
                         </Typography>
                         <Paper
                             variant="outlined"
@@ -179,10 +154,10 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                                 mb: 3,
                             }}
                         >
-                            <Typography variant="body1">{mockExaminationData.diagnosis}</Typography>
+                            <Typography variant="body1">{examinationHistory.diagnosis}</Typography>
                         </Paper>
                         <Typography variant="h6" gutterBottom>
-                            Conclusion
+                            {t(i18n.translationKey.conclusion)}
                         </Typography>
                         <Paper
                             variant="outlined"
@@ -191,10 +166,10 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                                 mb: 3,
                             }}
                         >
-                            <Typography variant="body1">{mockExaminationData.notes}</Typography>
+                            <Typography variant="body1">{examinationHistory.conclusion}</Typography>
                         </Paper>
                         <Typography variant="h6" gutterBottom>
-                            Notes
+                            {t(i18n.translationKey.note)}
                         </Typography>
                         <Paper
                             variant="outlined"
@@ -203,7 +178,7 @@ const ExaminationDetailModal: React.FC<ExaminationDetailModalProps> = ({ open, o
                                 mb: 3,
                             }}
                         >
-                            <Typography variant="body1">{mockExaminationData.notes}</Typography>
+                            <Typography variant="body1">{examinationHistory.note}</Typography>
                         </Paper>
                     </Box>
                 </Box>

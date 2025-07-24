@@ -446,5 +446,6 @@
     "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY": "Confirm vaccination today successfully.",
     "UPSERT_EXAMINATION_RESULT_SUCCESSFULLY": "Upsert examination result successfully.",
     "INVALID_EXAMINATION_DATA": "Invalid examination data. Please fill in all information in each service group.",
-    "DETAIL": "Detail"
+    "DETAIL": "Detail",
+    "EXAMINATION_RESULTS": "Examination Results"
 }

@@ -90,6 +90,9 @@ const ExaminationQueryKey = {
     GET_PATIENT_EXAMINATION_DETAIL_BY_EXAMINATION_ID: "getPatientExaminationDetailByExaminationId",
     UPSERT_EXAMINATION_RESULT: "upsertExaminationResult",
     GET_ALL_EXAMINATION_TECHNICIAN: "getAllExaminationTechnician",
+    GET_ALL_EXAMINATION_HISTORY: "getAllExaminationHistory",
+    GET_PATIENT_EXAMINATION_HISTORY: "getPatientExaminationHistory",
+    GET_EXAMINATION_HISTORY_DETAIL_BY_ID: "getExaminationHistoryDetailById",
 };
 
 export const QueryKey = {
