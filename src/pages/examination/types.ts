@@ -1,24 +1,16 @@
-import { Patient, ResultForm, SampleType, SampleQuality } from "~/entities";
+import { SampleType, SampleQuality, ServiceTestParameter } from "~/entities";
 
 export interface ExaminationFormValue {
-    patient: Patient;
-    patientYearOld: number;
-    patientYOB: number;
+    examinationId: number;
+    patientId: number;
     diagnose: string;
-    receiptTime: Date;
-    executeTime: Date;
+    returnResultsAfter: string; // in minutes
+    returnTime: Date;
     performTechnicianId: number;
-    performTechnicianName?: string;
-    returnResultsAfter?: number; // in minutes
-    appointmentTimeForResult: Date;
-    resultForm: ResultForm;
     sampleType: SampleType;
     sampleQuality: SampleQuality;
-    concludedDoctorId: number;
-    concludedDoctorName?: string;
-    receiverId: number;
-    receiverName?: string;
+    doctorId: number;
     conclusion: string;
     note: string;
-    isDiagnosed: boolean;
+    serviceTestParameters: ServiceTestParameter[];
 }

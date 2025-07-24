@@ -443,5 +443,8 @@
     "SPECIMEN_DEVICE_TYPE": "Specimen/Device type",
     "UPDATE_VACCINATION_STATUS_SUCCESSFULLY": "Update vaccination status successfully",
     "CONFIRM_INJECTED_SUCCESSFULLY": "Injected confirmed successfully.",
-    "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY": "Confirm vaccination today successfully."
+    "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY": "Confirm vaccination today successfully.",
+    "UPSERT_EXAMINATION_RESULT_SUCCESSFULLY": "Upsert examination result successfully.",
+    "INVALID_EXAMINATION_DATA": "Invalid examination data. Please fill in all information in each service group.",
+    "DETAIL": "Detail"
 }

@@ -446,5 +446,8 @@
     "SPECIMEN_DEVICE_TYPE": "Loại bệnh phẩm / Thiết bị",
     "UPDATE_VACCINATION_STATUS_SUCCESSFULLY": "Cập nhật trạng thái tiêm chủng thành công.",
     "CONFIRM_INJECTED_SUCCESSFULLY": "Xác nhận tiêm thành công",
-    "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY": "Xác nhận tiêm hôm nay thành công"
+    "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY": "Xác nhận tiêm hôm nay thành công",
+    "UPSERT_EXAMINATION_RESULT_SUCCESSFULLY": "Cập nhật kết quả xét nghiệm thành công.",
+    "INVALID_EXAMINATION_DATA": "Kết quả xét nghiệm không hợp lệ. Vui lòng điền đầy đủ thông tin trong mỗi nhóm dịch vụ.",
+    "DETAIL": "Chi tiết"
 }

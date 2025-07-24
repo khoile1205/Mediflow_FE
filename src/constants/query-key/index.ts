@@ -82,6 +82,16 @@ const AppointmentQueryKey = {
     GET_APPOINTMENT_BY_ID: "getAppointmentById",
 };
 
+const ExaminationQueryKey = {
+    GET_PATIENTS_FOR_EXAMINATION: "getPatientsForExamination",
+    GET_ALL_EXAMINATION_OF_RECEPTION_BY_RECEPTION_ID: "getAllExaminationOfReceptionByReceptionId",
+    GET_SERVICE_TEST_PARAMETERS_OF_EXAMINATION_BY_EXAMINATION_ID:
+        "getServiceTestParametersOfExaminationByExaminationId",
+    GET_PATIENT_EXAMINATION_DETAIL_BY_EXAMINATION_ID: "getPatientExaminationDetailByExaminationId",
+    UPSERT_EXAMINATION_RESULT: "upsertExaminationResult",
+    GET_ALL_EXAMINATION_TECHNICIAN: "getAllExaminationTechnician",
+};
+
 export const QueryKey = {
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
@@ -94,4 +104,5 @@ export const QueryKey = {
     PRE_EXAMINATION: PreExaminationQueryKey,
     USER: UserQueryKey,
     APPOINTMENT: AppointmentQueryKey,
+    EXAMINATION: ExaminationQueryKey,
 };

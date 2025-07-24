@@ -78,18 +78,6 @@ export const sidebarTree: SidebarTabProps[] = [
         labelKey: i18n.translationKey.examination,
         children: [
             {
-                labelKey: i18n.translationKey.examinationHistory,
-                pathName: "/examination/history/patients",
-                icon: <Vaccines />,
-            },
-            // {
-            //     labelKey: i18n.translationKey.examinationHistory,
-            //     pathName: "/examination/history",
-            //     icon: <AccessTime />,
-            //     requiredPermissions: [ResourceType.VaccinationReception],
-            //     requiredRoles: [Role.Administrator, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician],
-            // },
-            {
                 labelKey: i18n.translationKey.examination,
                 pathName: "/examination",
                 icon: <Biotech />,
@@ -103,6 +91,18 @@ export const sidebarTree: SidebarTabProps[] = [
                     Role.ImagingTechnician,
                 ],
             },
+            {
+                labelKey: i18n.translationKey.examinationHistory,
+                pathName: "/examination/history/patients",
+                icon: <Vaccines />,
+            },
+            // {
+            //     labelKey: i18n.translationKey.examinationHistory,
+            //     pathName: "/examination/history",
+            //     icon: <AccessTime />,
+            //     requiredPermissions: [ResourceType.VaccinationReception],
+            //     requiredRoles: [Role.Administrator, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician],
+            // },
         ],
         requiredPermissions: [ResourceType.VaccinationReception],
         requiredRoles: [
@@ -193,12 +193,6 @@ export const sidebarTree: SidebarTabProps[] = [
             {
                 labelKey: i18n.translationKey.staff,
                 pathName: "/management/users",
-                requiredPermissions: [ResourceType.Management],
-                requiredRoles: [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport],
-            },
-            {
-                labelKey: i18n.translationKey.authorization,
-                pathName: "/management/authorization",
                 requiredPermissions: [ResourceType.Management],
                 requiredRoles: [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport],
             },
