@@ -36,6 +36,11 @@ const InventoryQueryKey = {
     CREATE_IMPORT_DOCUMENT: "createImportDocument",
     GET_LIST_SUPPLIER: "getListSupplier",
     SAVE_IMPORT_DOCUMENT: "saveImportDocument",
+    GET_LIST_WITH_PAGINATION: "inventoryGetMedicineList",
+    CREATE_MEDICINE: "createMedicine",
+    GET_VACCINE_TYPES: "getVaccineTypes",
+    GET_MEDICINE_INTERACTIONS_WITH_PAGINATION: "getMedicineInteractionsWithPagination",
+    CREATE_MEDICINE_INTERACTION: "createMedicineInteraction",
 };
 
 const PostVaccinationQueryKey = {
