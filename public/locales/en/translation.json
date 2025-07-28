@@ -447,5 +447,9 @@
     "UPSERT_EXAMINATION_RESULT_SUCCESSFULLY": "Upsert examination result successfully.",
     "INVALID_EXAMINATION_DATA": "Invalid examination data. Please fill in all information in each service group.",
     "DETAIL": "Detail",
-    "EXAMINATION_RESULTS": "Examination Results"
+    "EXAMINATION_RESULTS": "Examination Results",
+    "ADD_VACCINE_TO_PRE_EXAMINATION_SUCCESSFULLY": "Successfully added vaccine to pre-examination",
+    "UPDATE_TEST_RESULT_SUCCESSFULLY": "Update test result successfully",
+    "UPDATE_TEST_RESULT_FAILED": "Update test result failed",
+    "PRE_TESTING_REQUIRED": "Pre-testing required"
 }

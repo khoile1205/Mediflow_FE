@@ -18,26 +18,41 @@ export const UnpaidCosts: React.FC<UnpaidCostsProps> = ({ receptionId }) => {
     const consultationFee = React.useMemo(() => {
         return 0;
     }, []);
+
     const examinationFee = React.useMemo(() => {
-        return unpaidServices.services.reduce((total, service) => {
-            return total + service.unitPrice * service.quantity;
-        }, 0);
+        return unpaidServices.services
+            .filter((service) => service.serviceName.includes("Công khám"))
+            .reduce((total, service) => {
+                return total + service.unitPrice * service.quantity;
+            }, 0);
     }, [unpaidServices.services]);
+
     const injectionFee = React.useMemo(() => {
-        return 0;
-    }, []);
+        return unpaidServices.services
+            .filter((service) => service.serviceName.includes("Công tiêm"))
+            .reduce((total, service) => {
+                return total + service.unitPrice * service.quantity;
+            }, 0);
+    }, [unpaidServices.services]);
+
     const vaccineFee = React.useMemo(() => {
         return unpaidServices.vaccinations.reduce((total, vaccination) => {
             return total + vaccination.unitPrice * vaccination.quantity;
         }, 0);
     }, [unpaidServices.vaccinations]);
-    const testFee = React.useMemo(() => {
-        return 0;
-    }, []);
+
+    const examinationPrice = React.useMemo(() => {
+        return unpaidServices.services
+            .filter((service) => !["Công khám", "Công tiêm"].includes(service.serviceName))
+            .reduce((total, service) => {
+                return total + service.unitPrice * service.quantity;
+            }, 0);
+    }, [unpaidServices.services]);
 
     const totalUnpaid = React.useMemo(() => {
-        return consultationFee + examinationFee + injectionFee + vaccineFee + testFee;
-    }, [consultationFee, examinationFee, injectionFee, vaccineFee, testFee]);
+        return consultationFee + examinationFee + injectionFee + vaccineFee + examinationPrice;
+    }, [consultationFee, examinationFee, injectionFee, vaccineFee, examinationPrice]);
+
     const form = useForm();
     return (
         <DynamicForm form={form}>
@@ -78,7 +93,7 @@ export const UnpaidCosts: React.FC<UnpaidCostsProps> = ({ receptionId }) => {
                     <Grid size={12}>
                         <Stack direction="row" justifyContent="space-between">
                             <Typography>{t(i18n.translationKey.examinationPrice)}:</Typography>
-                            <Typography fontWeight="bold">{formatCurrencyVND(testFee)}</Typography>
+                            <Typography fontWeight="bold">{formatCurrencyVND(examinationPrice)}</Typography>
                         </Stack>
                     </Grid>
 

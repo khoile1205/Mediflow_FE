@@ -38,21 +38,22 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
 
         try {
             await Promise.all(
-                selectedRows.map((row) =>
-                    updateTestResult({
-                        receptionVaccinationId: row.receptionVaccinationId,
-                        data: {
+                selectedRows.map(
+                    async (row) =>
+                        await updateTestResult({
                             receptionVaccinationId: row.receptionVaccinationId,
-                            testEntryResult: testResult,
-                        },
-                    }),
+                            data: {
+                                receptionVaccinationId: row.receptionVaccinationId,
+                                testEntryResult: testResult,
+                            },
+                        }),
                 ),
             );
 
-            showToast.success(t(i18n.translationKey.addVaccineToPreExaminationSuccess));
+            showToast.success(t(i18n.translationKey.updateTestResultSuccessfully));
             onClose();
         } catch (error) {
-            showToast.error(t(i18n.translationKey.addVaccineToPreExaminationFailed));
+            showToast.error(t(i18n.translationKey.updateTestResultFailed));
         }
     };
 

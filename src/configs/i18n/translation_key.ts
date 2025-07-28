@@ -363,6 +363,10 @@ const applicationTranslationKey = {
     invalidExaminationData: "INVALID_EXAMINATION_DATA",
     detail: "DETAIL",
     examinationResults: "EXAMINATION_RESULTS",
+    addVaccineToPreExaminationSuccessfully: "ADD_VACCINE_TO_PRE_EXAMINATION_SUCCESSFULLY",
+    updateTestResultSuccessfully: "UPDATE_TEST_RESULT_SUCCESSFULLY",
+    updateTestResultFailed: "UPDATE_TEST_RESULT_FAILED",
+    preTestingRequired: "PRE_TESTING_REQUIRED",
 };
 
 const exceptionTranslationKey = {

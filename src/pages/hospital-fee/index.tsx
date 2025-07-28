@@ -62,7 +62,7 @@ const HospitalFeePage: React.FC = () => {
         ] as ColDef<UnpaidPatientSummary>[];
     }, []);
 
-    const attachedServiceFeeAgGrid = useAgGrid({});
+    // const attachedServiceFeeAgGrid = useAgGrid({});
     const hospitalServiceFeeAgGrid = useAgGrid({ rowSelection: "multiple" });
 
     // Form
@@ -479,6 +479,7 @@ const HospitalFeePage: React.FC = () => {
                                     flex: 1,
                                 },
                             ]}
+                            maxRows={5}
                             rowData={patientPaymentList}
                             onRowSelected={handleSelectedHospitalService}
                             pinnedBottomRowData={
@@ -487,7 +488,7 @@ const HospitalFeePage: React.FC = () => {
                             {...hospitalServiceFeeAgGrid}
                         />
                     </Box>
-                    <Box>
+                    {/* <Box>
                         <Typography className="mb-2 ms-3 font-bold">
                             {t(i18n.translationKey.medicalAttachedService)}
                         </Typography>
@@ -526,7 +527,7 @@ const HospitalFeePage: React.FC = () => {
                                 pinnedBottomRowData: [],
                             }}
                         />
-                    </Box>
+                    </Box> */}
                 </Stack>
             </DynamicForm>
 
