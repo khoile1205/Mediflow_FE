@@ -8,15 +8,24 @@ import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import SearchBox from "~/components/common/search-box";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { usePagination } from "~/hooks";
+import { useQueryGetAllExaminationHistory } from "~/services/examination/hooks/queries";
 import { formatDate } from "~/utils/date-time";
 
 const ListPatientsExaminationHistoryPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const [_, setSearchQuery] = React.useState("");
+    const [searchQuery, setSearchQuery] = React.useState("");
 
     const agGrid = useAgGrid({});
-
+    const { pageIndex, handlePageChange, pageSize } = usePagination();
+    const {
+        data: { listExaminationHistory, totalItems },
+    } = useQueryGetAllExaminationHistory({
+        pageIndex,
+        pageSize,
+        searchTerm: searchQuery,
+    });
     return (
         <Box
             component="main"
@@ -45,29 +54,29 @@ const ListPatientsExaminationHistoryPage: React.FC = () => {
             </Box>
             <AgDataGrid
                 {...agGrid}
-                rowData={[]}
+                rowData={listExaminationHistory}
                 columnDefs={[
                     {
                         headerName: t(i18n.translationKey.medicalCode),
-                        field: "id",
+                        field: "patientCode",
                         cellClass: "ag-cell-center",
                         flex: 1,
                     },
                     {
                         headerName: t(i18n.translationKey.patientName),
-                        field: "name",
+                        field: "patientName",
                         cellClass: "ag-cell-center",
                         flex: 1,
                     },
                     {
                         headerName: t(i18n.translationKey.phoneNumber),
-                        field: "phone",
+                        field: "phoneNumber",
                         cellClass: "ag-cell-center",
                         flex: 1,
                     },
                     {
                         headerName: t(i18n.translationKey.lastExamination),
-                        field: "lastExam",
+                        field: "lastExaminationDate",
                         cellClass: "ag-cell-center",
                         valueFormatter: (params) => formatDate(params.value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
                         flex: 0.8,
@@ -76,11 +85,9 @@ const ListPatientsExaminationHistoryPage: React.FC = () => {
                         cellClass: "ag-cell-center",
                         cellRenderer: (params: ICellRendererParams) => (
                             <IconButton
-                                // variant="outlined"
-                                // size="small"
                                 color="primary"
                                 onClick={() => {
-                                    navigate(`/examination/history/patient/${params.data.id}`);
+                                    navigate(`/examination/history/patient/${params.data.patientId}`);
                                 }}
                             >
                                 <Visibility />
@@ -89,6 +96,11 @@ const ListPatientsExaminationHistoryPage: React.FC = () => {
                         flex: 0.5,
                     },
                 ]}
+                pagination={true}
+                totalItems={totalItems}
+                pageSize={pageSize}
+                pageIndex={pageIndex}
+                onPageChange={handlePageChange}
             />
         </Box>
     );

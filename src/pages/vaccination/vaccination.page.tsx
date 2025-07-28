@@ -109,6 +109,13 @@ const VaccinationPage: React.FC = () => {
             flex: 1,
         },
         {
+            field: "isRequiredTesting",
+            headerName: t(i18n.translationKey.preTestingRequired),
+            headerStyle: { backgroundColor: "#98D2C0" },
+            cellClass: "ag-selection-checkbox-center",
+            flex: 1,
+        },
+        {
             field: "testResultEntry",
             headerName: t(i18n.translationKey.testResult),
             headerStyle: { backgroundColor: "#98D2C0" },
@@ -166,7 +173,9 @@ const VaccinationPage: React.FC = () => {
                 vaccinationForm.setValue("medicineId", selectedMedicine.medicineId);
                 vaccinationForm.setValue("receptionVaccinationId", selectedMedicine.receptionVaccinationId);
                 vaccinationForm.setValue("isInjected", selectedMedicine.isConfirmed);
+                vaccinationForm.setValue("isRequiredTesting", selectedMedicine.isRequiredTesting);
                 vaccinationForm.setValue("medicineName", selectedMedicine.medicineName);
+                vaccinationForm.setValue("testResult", selectedMedicine.testResultEntry);
                 vaccinationForm.setValue("doctorId", user.id);
                 vaccinationForm.setValue("injectionDate", new Date());
             } else {
@@ -226,6 +235,30 @@ const VaccinationPage: React.FC = () => {
         patientForm.reset();
     };
 
+    const isDisablePreTesting = React.useMemo(() => {
+        console.log("isDisablePreTesting", vaccinationForm.watch("isRequiredTesting"));
+        console.log("testResult", vaccinationForm.watch("testResult"));
+        console.log("isInjected", vaccinationForm.watch("isInjected"));
+
+        if (vaccinationForm.watch("isInjected")) {
+            return true;
+        }
+
+        if (vaccinationForm.watch("testResult") != null) {
+            return true;
+        }
+
+        if (!vaccinationForm.watch("isRequiredTesting")) {
+            return true;
+        }
+
+        return false;
+    }, [
+        vaccinationForm.watch("isInjected"),
+        vaccinationForm.watch("testResult"),
+        vaccinationForm.watch("isRequiredTesting"),
+    ]);
+
     React.useEffect(() => {
         if (nearestExpiryMedicineBatch.length > 0) {
             const firstBatch = nearestExpiryMedicineBatch[0];
@@ -257,13 +290,16 @@ const VaccinationPage: React.FC = () => {
                             </Grid>
                         </Grid>
 
-                        <AgDataGrid
-                            columnDefs={patientColumnDefs}
-                            rowData={waitingPatientList}
-                            onRowClicked={handleSelectPatient}
-                            {...patientAgGrid}
-                            maxRows={5}
-                        />
+                        <Box className="flex-1">
+                            <AgDataGrid
+                                columnDefs={patientColumnDefs}
+                                rowData={waitingPatientList}
+                                onRowClicked={handleSelectPatient}
+                                isFullHeight
+                                {...patientAgGrid}
+                            />
+                        </Box>
+
                         <FormItem
                             render="text-input"
                             name="patientVaccinationCode"
@@ -390,10 +426,7 @@ const VaccinationPage: React.FC = () => {
                         <Grid size={4}>
                             <Stack spacing={2.5} height="100%">
                                 {/* <Button>{t(i18n.translationKey.sendToCustomer)}</Button> */}
-                                <Button
-                                    disabled={selectedVaccinationMedicineCount === 0}
-                                    onClick={handleConfirmTesting}
-                                >
+                                <Button disabled={isDisablePreTesting} onClick={handleConfirmTesting}>
                                     {t(i18n.translationKey.confirmStart)}
                                 </Button>
                                 <Button

@@ -10,11 +10,13 @@ export interface Medicine {
     medicineClassification: string;
     routeOfAdministration: string;
     nationalMedicineCode: string;
+    currentStock?: number;
     description: string;
     note: string;
     unitPrice: number;
     registrationNumber: string;
     medicineTypeId: number;
+    isRequiredTestingBeforeUse: boolean;
     vaccineTypeId: number;
     isSuspended: boolean;
     isCancelled: boolean;
