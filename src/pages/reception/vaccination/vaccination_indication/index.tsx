@@ -237,6 +237,13 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                         {
                                             field: "unit",
                                             headerName: t(i18n.translationKey.unit),
+                                            cellClass: "ag-cell-center",
+                                            width: 100,
+                                        },
+                                        {
+                                            field: "currentStock",
+                                            headerName: t(i18n.translationKey.quantity),
+                                            cellClass: "ag-cell-center",
                                             width: 100,
                                         },
                                         {
@@ -247,12 +254,19 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                         {
                                             field: "routeOfAdministration",
                                             headerName: t(i18n.translationKey.injectionRoute),
+                                            cellClass: "ag-cell-center",
                                             width: 150,
+                                        },
+                                        {
+                                            field: "isRequiredTestingBeforeUse",
+                                            headerName: t(i18n.translationKey.preTestingRequired),
+                                            cellClass: "ag-selection-checkbox-center",
+                                            width: 100,
                                         },
                                         {
                                             field: "unitPrice",
                                             headerName: t(i18n.translationKey.unitPrice),
-                                            valueFormatter: ({ value }) => formatCurrencyVND(value),
+                                            valueFormatter: ({ value }) => formatCurrencyVND(value ?? 0),
                                             cellClass: "ag-cell-center",
                                             width: 150,
                                         },

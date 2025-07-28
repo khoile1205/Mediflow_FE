@@ -20,6 +20,7 @@ export type MedicineVaccinationInformation = {
     receptionVaccinationId: number;
     medicineId: number;
     medicineName: string;
+    isRequiredTesting: boolean;
     isConfirmed: boolean;
     testResultEntry?: string;
     doctorName?: string;
