@@ -6,3 +6,7 @@ export * from "./use-mutation-update-medicine";
 export * from "./use-mutation-create-medicine-interaction";
 export * from "./use-mutation-update-medicine-interaction";
 export * from "./use-mutation-delete-medicine-interaction";
+export * from "./use-mutation-delete-medicine-interaction";
+export * from "./use-mutation-create-medicine-price";
+export * from "./use-mutation-update-medicine-price";
+export * from "./use-mutation-delete-medicine-price";

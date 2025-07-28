@@ -41,7 +41,7 @@ export interface Medicine {
     concentration: string;
     indications: string;
     medicineClassification: string;
-    routeOfAdministration: "IM" | "SC" | "ID" | null;
+    routeOfAdministration: "IM" | "SC" | "ID" | "PO" | "IN" | null;
     nationalMedicineCode: string;
     description: string;
     note: string;
@@ -56,11 +56,8 @@ export interface Medicine {
 }
 
 export interface GetMedicineListRequest extends IPaginationRequest {
-    pageIndex: number;
-    pageSize: number;
     name?: string;
     code?: string;
-    searchKeyword?: string;
 }
 
 export interface CreateMedicineRequest {
@@ -149,37 +146,4 @@ export interface CreateMedicineInteractionRequest {
     preventiveActions: string;
     referenceInfo: string;
     notes: string;
-}
-
-export interface MedicinePrice {
-    id: number;
-    medicineId: number;
-    medicineName?: string;
-    unitPrice: number;
-    currency: string;
-    vatRate: number;
-    vatAmount: number;
-    originalPriceAfterVat: number;
-    originalPriceBeforeVat: number;
-    isSuspended: boolean;
-    isCancelled: boolean;
-    createdAt: string;
-    createdBy: number;
-    lastUpdatedAt: string;
-    lastUpdatedBy: number;
-}
-
-export interface UpdateMedicinePriceRequest {
-    id: number;
-    medicineId: number;
-    unitPrice: number;
-    currency: string;
-    vatRate: number;
-    vatAmount: number;
-    originalPriceBeforeVat: number;
-    originalPriceAfterVat: number;
-}
-
-export interface GetMedicinePriceListRequest extends IPaginationRequest {
-    medicineId?: number;
 }

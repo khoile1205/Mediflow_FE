@@ -10,6 +10,7 @@ export interface GetMedicineListRequest {
     pageSize: number;
     name?: string;
     code?: string;
+    searchKeyword?: string;
 }
 
 const transformData = (response: IBaseApiResponse<IPagination<Medicine>>) => {
@@ -30,6 +31,7 @@ export const useQueryGetMedicines = ({ isEnabled, query }: { isEnabled: boolean;
                 pageSize: query.pageSize,
                 name: query.name?.trim(),
                 code: query.code?.trim(),
+                searchKeyword: query.searchKeyword?.trim(),
             });
         },
         enabled: isEnabled,

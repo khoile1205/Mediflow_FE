@@ -2,7 +2,7 @@ import { AddCircle, Delete, Edit } from "@mui/icons-material";
 import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { ColDef, RowClickedEvent } from "ag-grid-community";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -15,16 +15,19 @@ import FormItem from "~/components/form/form-item";
 import i18n from "~/configs/i18n";
 import { Medicine } from "~/entities/medicine";
 import usePagination from "~/hooks/use-pagination";
-import { useMutationDeleteMedicine } from "~/services/inventory/hooks/mutations/use-mutation-delete-medicine";
 import { useMutationUpdateMedicine } from "~/services/inventory/hooks/mutations/use-mutation-update-medicine";
 import { useQueryGetMedicines } from "~/services/inventory/hooks/queries/use-query-get-medicines";
 import { inventoryApis } from "~/services/inventory/infras/inventory.api";
 import { UpdateMedicineDto, VaccineType } from "~/services/inventory/infras/types";
 import { showToast } from "~/utils";
+import { ConfirmPasswordDialog } from "./ConfirmPasswordDialog";
+import { useMutationDeleteMedicine } from "~/services/inventory/hooks/mutations/use-mutation-delete-medicine";
+import useDebounce from "~/hooks/use-debounce";
 
 interface SearchFormValues {
     name: string;
     code: string;
+    searchKeyword: string;
 }
 
 export default function MedicineListPage() {
@@ -36,6 +39,8 @@ export default function MedicineListPage() {
     const [isAdding] = useState(false);
     const [, setIsEditing] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+    const { mutate: deleteMedicine } = useMutationDeleteMedicine();
 
     const queryClient = useQueryClient();
 
@@ -43,17 +48,9 @@ export default function MedicineListPage() {
         defaultValues: {
             name: "",
             code: "",
+            searchKeyword: "",
         },
     });
-
-    const handleRowClick = (event: RowClickedEvent<Medicine>) => {
-        const selected = event.data;
-        if (!selected) return;
-
-        setSelectedMedicineId(selected.id);
-        setIsFormEnabled(true);
-        setIsEditing(true);
-    };
 
     const medicineForm = useForm<UpdateMedicineDto>({
         defaultValues: {
@@ -79,25 +76,69 @@ export default function MedicineListPage() {
 
     const [vaccineTypes, setVaccineTypes] = useState<VaccineType[]>([]);
 
-    const { mutate: deleteMedicine } = useMutationDeleteMedicine();
     const { mutate: updateMedicine } = useMutationUpdateMedicine();
 
     const navigate = useNavigate();
 
     const { onGridReady } = useAgGrid({ rowSelection: "single" });
 
-    const { data, isLoading, refetch } = useQueryGetMedicines({
-        isEnabled: true,
-        query: {
-            pageIndex,
-            pageSize,
-            name: searchForm.watch("name"),
-            code: searchForm.watch("code"),
-        },
+    const [searchInputs, setSearchInputs] = useState<SearchFormValues>({
+        name: "",
+        code: "",
+        searchKeyword: "",
     });
 
-    const medicines = data?.medicines ?? [];
+    const debouncedSearchInputs = useDebounce(searchInputs, 500);
+
+    useEffect(() => {
+        const subscription = searchForm.watch((value) => {
+            setSearchInputs({
+                name: value.name,
+                code: value.code,
+                searchKeyword: value.searchKeyword,
+            });
+        });
+        return () => subscription.unsubscribe();
+    }, [searchForm]);
+
+    const searchQuery = useMemo(
+        () => ({
+            pageIndex,
+            pageSize,
+            name: debouncedSearchInputs.name,
+            code: debouncedSearchInputs.code,
+            searchKeyword: debouncedSearchInputs.searchKeyword,
+        }),
+        [pageIndex, pageSize, debouncedSearchInputs],
+    );
+
+    const { data, isLoading, refetch } = useQueryGetMedicines({
+        isEnabled: true,
+        query: searchQuery,
+    });
+
+    useEffect(() => {
+        refetch();
+    }, [searchQuery, refetch]);
+
+    const medicines = useMemo(() => {
+        return (data?.medicines ?? []).slice().sort((a, b) => {
+            if (a.medicineCode < b.medicineCode) return -1;
+            if (a.medicineCode > b.medicineCode) return 1;
+            return 0;
+        });
+    }, [data]);
+
     const totalItems = data?.totalItems ?? 0;
+
+    const handleRowClick = (event: RowClickedEvent<Medicine>) => {
+        const selected = event.data;
+        if (!selected) return;
+
+        setSelectedMedicineId(selected.id);
+        setIsFormEnabled(true);
+        setIsEditing(true);
+    };
 
     const handleAdd = () => {
         navigate("/pharmacy/create-medicine");
@@ -127,13 +168,9 @@ export default function MedicineListPage() {
 
             medicineForm.reset({
                 ...selected,
-                routeOfAdministration: routeOfAdministration,
+                routeOfAdministration,
                 vaccineTypeId: selected.vaccineTypeId ?? 0,
             });
-
-            // Log for debugging
-            console.log("Selected Medicine:", selected);
-            console.log("Form Values After Reset:", medicineForm.getValues());
 
             setIsEditModalOpen(true);
         }
@@ -168,15 +205,7 @@ export default function MedicineListPage() {
 
     const handleDelete = () => {
         if (!selectedMedicineId) return;
-        deleteMedicine(selectedMedicineId, {
-            onSuccess: () => {
-                showToast.success(t(i18n.translationKey.deleteMedicineSuccess));
-                setSelectedMedicineId(null);
-                setIsFormEnabled(false);
-                queryClient.invalidateQueries({ queryKey: ["getMedicineList"] });
-            },
-            onError: () => showToast.error(t(i18n.translationKey.deleteMedicineFailed)),
-        });
+        setIsPasswordDialogOpen(true);
     };
 
     useEffect(() => {
@@ -241,9 +270,17 @@ export default function MedicineListPage() {
                             sx={{ borderRadius: 4 }}
                         />
                     </Grid>
+                    <Grid size={{ xs: 12, sm: 12, md: 6 }} sx={{ pt: "18px" }}>
+                        <FormItem
+                            render="text-input"
+                            name="searchKeyword"
+                            label={t(i18n.translationKey.searchKeyword)}
+                            placeholder={t(i18n.translationKey.search)}
+                        />
+                    </Grid>
                 </Grid>
 
-                <Grid size={12}>
+                <Grid size={12} p={2}>
                     <AgDataGrid
                         onGridReady={onGridReady}
                         columnDefs={columnDefs}
@@ -320,7 +357,7 @@ export default function MedicineListPage() {
                                         { value: 3, label: t(i18n.translationKey.routeAdminID) },
                                         { value: 4, label: t(i18n.translationKey.routeAdminPO) },
                                         { value: 5, label: t(i18n.translationKey.routeAdminIN) },
-                                    ].map(({ value, label }) => ({ value: Number(value), label }))}
+                                    ]}
                                 />
                             </Grid>
                             <Grid size={{ xs: 6 }}>
@@ -369,6 +406,31 @@ export default function MedicineListPage() {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <ConfirmPasswordDialog
+                open={isPasswordDialogOpen}
+                onClose={() => setIsPasswordDialogOpen(false)}
+                onConfirmed={() => {
+                    if (!selectedMedicineId) return;
+
+                    deleteMedicine(selectedMedicineId, {
+                        onSuccess: () => {
+                            showToast.success(t(i18n.translationKey.deleteMedicineSuccess));
+                            queryClient.invalidateQueries({
+                                queryKey: ["getMedicineList"],
+                            });
+                            setSelectedMedicineId(null);
+                            setIsFormEnabled(false);
+                            setIsPasswordDialogOpen(false);
+                            refetch();
+                        },
+                        onError: () => {
+                            showToast.error(t(i18n.translationKey.deleteMedicineFailed));
+                            setIsPasswordDialogOpen(false);
+                        },
+                    });
+                }}
+            />
         </Box>
     );
 }

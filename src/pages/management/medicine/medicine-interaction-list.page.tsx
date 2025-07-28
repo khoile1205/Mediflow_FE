@@ -1,10 +1,11 @@
 import { AddCircle, Delete, Edit } from "@mui/icons-material";
-import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid, TextField } from "@mui/material";
+import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { ColDef, RowClickedEvent } from "ag-grid-community";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { ActionButton } from "~/components/common/action-button";
 import AgDataGrid from "~/components/common/ag-grid/ag-grid";
 import { useAgGrid } from "~/components/common/ag-grid/hooks";
@@ -12,15 +13,15 @@ import Dialog from "~/components/common/dialog/dialog";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import i18n from "~/configs/i18n";
-import { showToast } from "~/utils";
 import usePagination from "~/hooks/use-pagination";
+import { showToast } from "~/utils";
 import { useQueryGetMedicineInteractions } from "~/services/inventory/hooks/queries/use-query-get-medicine-interactions";
-import { MedicineInteraction } from "~/services/inventory/infras/types";
-import { useMutationUpdateMedicineInteraction } from "~/services/inventory/hooks/mutations/use-mutation-update-medicine-interaction";
-import { useMutationDeleteMedicineInteraction } from "~/services/inventory/hooks/mutations/use-mutation-delete-medicine-interaction";
-import { QueryKey } from "~/constants/query-key";
 import { useQueryGetMedicines } from "~/services/inventory/hooks/queries/use-query-get-medicines";
-import { useNavigate } from "react-router";
+import { useMutationUpdateMedicineInteraction } from "~/services/inventory/hooks/mutations/use-mutation-update-medicine-interaction";
+import { QueryKey } from "~/constants/query-key";
+import { MedicineInteraction } from "~/services/inventory/infras/types";
+import { ConfirmPasswordDialog } from "./ConfirmPasswordDialog";
+import { useMutationDeleteMedicineInteraction } from "~/services/inventory/hooks/mutations/use-mutation-delete-medicine-interaction";
 
 type FormValues = Pick<
     MedicineInteraction,
@@ -41,24 +42,10 @@ export default function MedicineInteractionListPage() {
     const { handlePageChange, pageIndex, pageSize } = usePagination();
     const navigate = useNavigate();
 
-    const [columnDefs, setColumnDefs] = useState<ColDef<MedicineInteraction>[]>([]);
     const [selectedRow, setSelectedRow] = useState<MedicineInteraction | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-    const [deletePassword, setDeletePassword] = useState("");
-
-    const { data: medicineData } = useQueryGetMedicines({ isEnabled: true, query: { pageIndex: 1, pageSize: 999 } });
-    const medicineOptions = medicineData.medicines.map((m) => ({ label: m.medicineName, value: m.id }));
-
-    const { data, isLoading, refetch } = useQueryGetMedicineInteractions({
-        isEnabled: true,
-        query: { pageIndex, pageSize },
-    });
-    const { mutate: updateInteraction } = useMutationUpdateMedicineInteraction();
     const { mutate: deleteInteraction } = useMutationDeleteMedicineInteraction();
-
-    const medicineInteractions = data?.medicineInteractions ?? [];
-    const totalItems = data?.totalItems ?? 0;
 
     const editForm = useForm<FormValues>({
         defaultValues: {
@@ -73,7 +60,45 @@ export default function MedicineInteractionListPage() {
         },
     });
 
-    const handleRowClick = (e: RowClickedEvent<MedicineInteraction>) => setSelectedRow(e.data);
+    const { data: medicineListData } = useQueryGetMedicines({
+        isEnabled: true,
+        query: useMemo(() => ({ pageIndex: 1, pageSize: 999 }), []),
+    });
+
+    const { mutate: updateInteraction } = useMutationUpdateMedicineInteraction();
+
+    const query = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
+
+    const { data, isLoading, refetch } = useQueryGetMedicineInteractions({
+        isEnabled: true,
+        query,
+    });
+
+    const medicineOptions =
+        medicineListData?.medicines.map((m) => ({
+            label: m.medicineName,
+            value: m.id,
+        })) ?? [];
+
+    const columnDefs = useMemo<ColDef<MedicineInteraction>[]>(
+        () => [
+            { headerName: t(i18n.translationKey.medicine1), field: "medicineName1", flex: 1 },
+            { headerName: t(i18n.translationKey.medicine2), field: "medicineName2", flex: 1 },
+            { headerName: t(i18n.translationKey.harmfulEffects), field: "harmfulEffects", flex: 2 },
+            { headerName: t(i18n.translationKey.mechanism), field: "mechanism", flex: 2 },
+            { headerName: t(i18n.translationKey.preventiveActions), field: "preventiveActions", flex: 2 },
+            { headerName: t(i18n.translationKey.referenceInfo), field: "referenceInfo", flex: 2 },
+            { headerName: t(i18n.translationKey.note), field: "notes", flex: 2 },
+        ],
+        [t],
+    );
+
+    const medicineInteractions = data?.medicineInteractions ?? [];
+    const totalItems = data?.totalItems ?? 0;
+
+    const handleRowClick = (e: RowClickedEvent<MedicineInteraction>) => {
+        setSelectedRow(e.data);
+    };
 
     const handleCreate = () => navigate("/pharmacy/create-medicine-interaction");
 
@@ -98,45 +123,14 @@ export default function MedicineInteractionListPage() {
         });
     };
 
-    const handleConfirmDelete = () => {
-        if (!deletePassword) {
-            showToast.error(t(i18n.translationKey.passwordRequired));
+    const handleDelete = () => {
+        if (!selectedRow) {
+            showToast.error(t(i18n.translationKey.noRowSelected));
             return;
         }
 
-        if (!selectedRow) return;
-
-        deleteInteraction(selectedRow.id, {
-            onSuccess: () => {
-                showToast.success(t(i18n.translationKey.deleteSuccess));
-                setSelectedRow(null);
-                setIsPasswordDialogOpen(false);
-                setDeletePassword("");
-                queryClient.invalidateQueries({
-                    queryKey: [QueryKey.INVENTORY.GET_MEDICINE_INTERACTIONS_WITH_PAGINATION],
-                });
-                refetch();
-            },
-            onError: () => showToast.error(t(i18n.translationKey.deleteFailed)),
-        });
-    };
-
-    const handleDelete = () => {
-        if (!selectedRow) return showToast.error(t(i18n.translationKey.noRowSelected));
         setIsPasswordDialogOpen(true);
     };
-
-    useEffect(() => {
-        setColumnDefs([
-            { headerName: t(i18n.translationKey.medicine1), field: "medicineName1", flex: 1 },
-            { headerName: t(i18n.translationKey.medicine2), field: "medicineName2", flex: 1 },
-            { headerName: t(i18n.translationKey.harmfulEffects), field: "harmfulEffects", flex: 2 },
-            { headerName: t(i18n.translationKey.mechanism), field: "mechanism", flex: 2 },
-            { headerName: t(i18n.translationKey.preventiveActions), field: "preventiveActions", flex: 2 },
-            { headerName: t(i18n.translationKey.referenceInfo), field: "referenceInfo", flex: 2 },
-            { headerName: t(i18n.translationKey.note), field: "notes", flex: 2 },
-        ]);
-    }, [t]);
 
     return (
         <Box p={3}>
@@ -249,25 +243,29 @@ export default function MedicineInteractionListPage() {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <ConfirmPasswordDialog
+                open={isPasswordDialogOpen}
+                onClose={() => setIsPasswordDialogOpen(false)}
+                onConfirmed={() => {
+                    if (!selectedRow?.id) return;
 
-            <Dialog open={isPasswordDialogOpen} onClose={() => setIsPasswordDialogOpen(false)} maxWidth="xs" fullWidth>
-                <DialogTitle>{t(i18n.translationKey.confirmDelete)}</DialogTitle>
-                <DialogContent dividers>
-                    <TextField
-                        fullWidth
-                        label={t(i18n.translationKey.password)}
-                        type="password"
-                        value={deletePassword}
-                        onChange={(e) => setDeletePassword(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setIsPasswordDialogOpen(false)}>{t(i18n.translationKey.cancel)}</Button>
-                    <Button onClick={handleConfirmDelete} variant="contained" color="error">
-                        {t(i18n.translationKey.confirm)}
-                    </Button>
-                </DialogActions>
-            </Dialog>
+                    deleteInteraction(selectedRow.id, {
+                        onSuccess: () => {
+                            showToast.success(t(i18n.translationKey.deleteMedicineInteractionSuccess));
+                            setSelectedRow(null);
+                            setIsPasswordDialogOpen(false);
+                            queryClient.invalidateQueries({
+                                queryKey: [QueryKey.INVENTORY.GET_MEDICINE_INTERACTIONS_WITH_PAGINATION],
+                            });
+                            refetch();
+                        },
+                        onError: () => {
+                            showToast.error(t(i18n.translationKey.deleteMedicineInteractionFailed));
+                            setIsPasswordDialogOpen(false);
+                        },
+                    });
+                }}
+            />
         </Box>
     );
 }

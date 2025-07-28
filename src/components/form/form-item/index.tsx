@@ -13,6 +13,7 @@ import { SwitchFormItem } from "./switch";
 import { TextAreaFormItem } from "./text-area";
 import { TextFieldFormItem } from "./text-field";
 import { AutocompleteFieldFormItem } from "./auto-complete";
+import { TextFieldNoClearFormItem } from "./text-field-no-clear";
 
 const FormItem: React.FC<FormItemProps> = (props) => {
     // TODO: move the controller wrapper logic to a common place
@@ -45,7 +46,8 @@ const FormItem: React.FC<FormItemProps> = (props) => {
                 return <DateTimePickerFormItem {...props} />;
             case "autocomplete":
                 return <AutocompleteFieldFormItem {...props} />;
-
+            case "text-input-no-clear":
+                return <TextFieldNoClearFormItem {...props} />;
             default:
                 return null;
         }

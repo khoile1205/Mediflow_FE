@@ -210,6 +210,13 @@ export const sidebarTree: SidebarTabProps[] = [
                 requiredPermissions: [ResourceType.Inventory],
                 requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],
             },
+            {
+                labelKey: i18n.translationKey.medicinePriceList,
+                pathName: "/pharmacy/medicine-price-list",
+                icon: <Inventory2 />,
+                requiredPermissions: [ResourceType.Inventory],
+                requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],
+            },
         ],
         requiredPermissions: [ResourceType.Inventory],
         requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],

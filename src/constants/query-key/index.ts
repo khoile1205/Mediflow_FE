@@ -40,7 +40,12 @@ const InventoryQueryKey = {
     CREATE_MEDICINE: "createMedicine",
     GET_VACCINE_TYPES: "getVaccineTypes",
     GET_MEDICINE_INTERACTIONS_WITH_PAGINATION: "getMedicineInteractionsWithPagination",
+    DELETE_MEDICINE_INTERACTION: "deleteMedicineInteraction",
     CREATE_MEDICINE_INTERACTION: "createMedicineInteraction",
+    GET_MEDICINE_PRICES_WITH_PAGINATION: "getMedicinePricesWithPagination",
+    CREATE_MEDICINE_PRICE: "createMedicinePrice",
+    UPDATE_MEDICINE_PRICE: "updateMedicinePrice",
+    DELETE_MEDICINE_PRICE: "deleteMedicinePrice",
 };
 
 const PostVaccinationQueryKey = {
@@ -97,6 +102,10 @@ const ExaminationQueryKey = {
     GET_ALL_EXAMINATION_TECHNICIAN: "getAllExaminationTechnician",
 };
 
+const AuthQueryKey = {
+    CONFIRM_PASSWORD: "confirmPassword",
+};
+
 export const QueryKey = {
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
@@ -110,4 +119,5 @@ export const QueryKey = {
     USER: UserQueryKey,
     APPOINTMENT: AppointmentQueryKey,
     EXAMINATION: ExaminationQueryKey,
+    AUTH: AuthQueryKey,
 };

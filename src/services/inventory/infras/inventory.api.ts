@@ -5,11 +5,14 @@ import {
     CreateMedicineInteractionRequest,
     CreateMedicineRequest,
     GetMedicineInteractionListRequest,
+    GetMedicinePriceListRequest,
     IDocumentImportMedicineSupplierResponse,
     ImportMedicineFromSupplierDocumentRequest,
     MedicineInteraction,
+    MedicinePrice,
     UpdateMedicineDto,
     UpdateMedicineInteractionRequest,
+    UpdateMedicinePriceRequest,
     VaccineType,
 } from "./types";
 import { IPaginationRequest, IPagination, HttpMethod, IBaseApiResponse } from "~/libs/axios/types";
@@ -62,6 +65,7 @@ const getMedicines = async ({
     pageSize,
     name,
     code,
+    searchKeyword,
 }: GetMedicineListRequest): Promise<IBaseApiResponse<IPagination<Medicine>>> => {
     return await callApi({
         url: endpoints.inventory.medicine.standard,
@@ -71,6 +75,7 @@ const getMedicines = async ({
             pageSize,
             name,
             code,
+            searchKeyword,
         },
     });
 };
@@ -137,6 +142,47 @@ const createMedicineInteraction = async (data: CreateMedicineInteractionRequest)
         data,
     });
 };
+
+const getMedicinePrices = async (
+    query: GetMedicinePriceListRequest,
+): Promise<IBaseApiResponse<IPagination<MedicinePrice>>> => {
+    return await callApi({
+        url: inventoryEndpoints.medicinePrice.getList,
+        method: HttpMethod.GET,
+        params: query,
+    });
+};
+
+export const getMedicinePriceById = async (id: number): Promise<IBaseApiResponse<MedicinePrice>> => {
+    return await callApi({
+        url: inventoryEndpoints.medicinePrice.update(id),
+        method: HttpMethod.GET,
+    });
+};
+
+const createMedicinePrice = async (data: MedicinePrice) => {
+    return await callApi({
+        url: inventoryEndpoints.medicinePrice.create,
+        method: HttpMethod.POST,
+        data,
+    });
+};
+
+const updateMedicinePrice = async (data: UpdateMedicinePriceRequest) => {
+    return await callApi<void>({
+        url: inventoryEndpoints.medicinePrice.update(data.id),
+        method: HttpMethod.PUT,
+        data,
+    });
+};
+
+const deleteMedicinePrice = async (id: number) => {
+    return await callApi<void>({
+        url: inventoryEndpoints.medicinePrice.delete(id),
+        method: HttpMethod.DELETE,
+    });
+};
+
 export const inventoryApis = {
     getAllManufacturers,
     getAllManufactureCountries,
@@ -150,4 +196,9 @@ export const inventoryApis = {
     updateMedicineInteraction,
     deleteMedicineInteraction,
     createMedicineInteraction,
+    getMedicinePrices,
+    createMedicinePrice,
+    updateMedicinePrice,
+    deleteMedicinePrice,
+    getMedicinePriceById,
 };

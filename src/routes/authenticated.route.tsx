@@ -17,6 +17,7 @@ import MedicineListPage from "~/pages/management/medicine/medicine-list.page";
 import CreateMedicinePage from "~/pages/management/medicine/medicine-create.page";
 import CreateMedicineInteractionPage from "~/pages/management/medicine/medicine-interaction-create.page";
 import MedicineInteractionListPage from "~/pages/management/medicine/medicine-interaction-list.page";
+import MedicinePriceListPage from "~/pages/management/medicine/medicine-price.page";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -42,6 +43,7 @@ export const AuthenticatedRoutes = (
             <Route path="create-medicine" element={<CreateMedicinePage />} />
             <Route path="create-medicine-interaction" element={<CreateMedicineInteractionPage />} />
             <Route path="medicine-interaction-list" element={<MedicineInteractionListPage />} />
+            <Route path="medicine-price-list" element={<MedicinePriceListPage />} />
         </Route>
 
         <Route path="/management">

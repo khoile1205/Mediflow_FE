@@ -3,23 +3,30 @@ const inventoryEndpointPrefix = "/inventory";
 const medicineEndpointPrefix = `${inventoryEndpointPrefix}/medicines`;
 const medicineEndpoints = {
     standard: `${medicineEndpointPrefix}/`,
-    getMedicineById: (id: string) => `${medicineEndpointPrefix}/${id}`,
     getList: `${medicineEndpointPrefix}`,
+    getMedicineById: (id: string) => `${medicineEndpointPrefix}/${id}`,
     createMedicine: `${medicineEndpointPrefix}`,
     updateMedicine: (id: number | string) => `${medicineEndpointPrefix}/${id}`,
     deleteMedicine: (id: number | string) => `${medicineEndpointPrefix}/${id}`,
 };
 
-const vaccineTypeEndpointPrefix = `${inventoryEndpointPrefix}/vaccine-types`;
+const medicinePriceEndpointPrefix = `${inventoryEndpointPrefix}/medicine-prices`;
+const medicinePriceEndpoints = {
+    standard: `${medicinePriceEndpointPrefix}`,
+    getList: `${medicinePriceEndpointPrefix}`,
+    create: `${medicinePriceEndpointPrefix}`,
+    update: (id: number | string) => `${medicinePriceEndpointPrefix}/${id}`,
+    delete: (id: number | string) => `${medicinePriceEndpointPrefix}/${id}`,
+};
 
-export const vaccineTypeEndpoints = {
+const vaccineTypeEndpointPrefix = `${inventoryEndpointPrefix}/vaccine-types`;
+const vaccineTypeEndpoints = {
     standard: `${vaccineTypeEndpointPrefix}`,
 };
 
 const medicineInteractionEndpointPrefix = `${inventoryEndpointPrefix}/medicine-interactions`;
-
 const medicineInteractionEndpoints = {
-    standard: `${inventoryEndpointPrefix}/medicine-interactions`,
+    standard: `${medicineInteractionEndpointPrefix}`,
     create: `${medicineInteractionEndpointPrefix}`,
     update: (id: number | string) => `${medicineInteractionEndpointPrefix}/${id}`,
     delete: (id: number | string) => `${medicineInteractionEndpointPrefix}/${id}`,
@@ -47,6 +54,7 @@ const documentImportFromSupplierEndpoints = {
 
 export const inventoryEndpoints = {
     medicine: medicineEndpoints,
+    medicinePrice: medicinePriceEndpoints,
     manufacturer: manufacturerEndpoints,
     manufacturerCountry: manufacturerCountryEndpoints,
     supplierImportDocument: documentImportFromSupplierEndpoints,

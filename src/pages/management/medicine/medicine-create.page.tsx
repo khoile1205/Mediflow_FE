@@ -1,13 +1,15 @@
-import { Box, Grid, TextField, Checkbox, FormControlLabel, Button, MenuItem } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import { Box, Button, Grid } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { useQueryCreateMedicine } from "~/services/inventory/hooks/mutations/use-mutation-create-medicine";
-import { showToast } from "~/utils";
 import i18n from "~/configs/i18n";
+import { useQueryCreateMedicine } from "~/services/inventory/hooks/mutations/use-mutation-create-medicine";
 import { useQueryGetVaccineTypes } from "~/services/inventory/hooks/queries/use-query-get-vaccine-types";
+import { showToast } from "~/utils";
+import FormItem from "~/components/form/form-item";
+import DynamicForm from "~/components/form/dynamic-form";
 
 interface MedicineFormValues {
     medicineCode: string;
@@ -28,44 +30,44 @@ interface MedicineFormValues {
 }
 
 export default function CreateMedicinePage() {
-    const { control, handleSubmit } = useForm<MedicineFormValues>({
-        defaultValues: {
-            requiresTestBeforeUse: false,
-        },
-    });
-
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { mutate: createMedicine } = useQueryCreateMedicine();
 
+    const { mutate: createMedicine } = useQueryCreateMedicine();
     const { data: vaccineTypes = [] } = useQueryGetVaccineTypes();
 
     const routes = [
-        { id: 1, name: t(i18n.translationKey.routeAdminIM) },
-        { id: 2, name: t(i18n.translationKey.routeAdminSC) },
-        { id: 3, name: t(i18n.translationKey.routeAdminID) },
-        { id: 4, name: t(i18n.translationKey.routeAdminPO) },
-        { id: 5, name: t(i18n.translationKey.routeAdminIN) },
+        { value: "1", label: t(i18n.translationKey.routeAdminIM) },
+        { value: "2", label: t(i18n.translationKey.routeAdminSC) },
+        { value: "3", label: t(i18n.translationKey.routeAdminID) },
     ];
 
-    const onSubmit = (formData: MedicineFormValues) => {
+    const form = useForm<MedicineFormValues>({
+        defaultValues: {
+            requiresTestBeforeUse: false,
+            routeOfAdministration: "1",
+            vaccineTypeId: "",
+        },
+    });
+
+    const onSubmit = (data: MedicineFormValues) => {
         const payload = {
-            medicineCode: formData.medicineCode,
-            medicineName: formData.medicineName,
-            registrationNumber: formData.registrationNumber,
-            unit: formData.unit,
-            activeIngredient: formData.activeIngredient,
-            usageInstructions: formData.usageInstructions,
-            concentration: formData.concentration,
-            indications: formData.indications,
-            medicineClassification: formData.medicineClassification,
-            routeOfAdministration: Number(formData.routeOfAdministration),
-            nationalMedicineCode: formData.nationalMedicineCode,
-            description: formData.description,
-            note: formData.note,
-            isRequiredTestingBeforeUse: formData.requiresTestBeforeUse ?? false,
+            medicineCode: data.medicineCode,
+            medicineName: data.medicineName,
+            registrationNumber: data.registrationNumber,
+            unit: data.unit,
+            activeIngredient: data.activeIngredient,
+            usageInstructions: data.usageInstructions,
+            concentration: data.concentration,
+            indications: data.indications,
+            medicineClassification: data.medicineClassification,
+            routeOfAdministration: Number(data.routeOfAdministration),
+            nationalMedicineCode: data.nationalMedicineCode,
+            description: data.description,
+            note: data.note,
+            isRequiredTestingBeforeUse: data.requiresTestBeforeUse ?? false,
             medicineTypeId: 1,
-            vaccineTypeId: Number(formData.vaccineTypeId) || 0,
+            vaccineTypeId: Number(data.vaccineTypeId) || 0,
         };
 
         createMedicine(payload, {
@@ -81,171 +83,93 @@ export default function CreateMedicinePage() {
 
     return (
         <Box p={3}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Grid container spacing={5}>
+            <DynamicForm form={form} onSubmit={onSubmit}>
+                <Grid container spacing={3}>
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Controller
-                            name="medicineCode"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth label={t(i18n.translationKey.medicineCode)} />
-                            )}
-                        />
+                        <FormItem render="text-input" name="medicineCode" label={t(i18n.translationKey.medicineCode)} />
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Controller
-                            name="medicineName"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth label={t(i18n.translationKey.medicineName)} />
-                            )}
-                        />
+                        <FormItem render="text-input" name="medicineName" label={t(i18n.translationKey.medicineName)} />
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Controller
+                        <FormItem
+                            render="text-input"
                             name="registrationNumber"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth label={t(i18n.translationKey.registrationNumber)} />
-                            )}
+                            label={t(i18n.translationKey.registrationNumber)}
                         />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 3 }}>
-                        <Controller
-                            name="unit"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth label={t(i18n.translationKey.unit)} />
-                            )}
-                        />
+                        <FormItem render="text-input" name="unit" label={t(i18n.translationKey.unit)} />
                     </Grid>
                     <Grid size={{ xs: 12, md: 3 }}>
-                        <Controller
+                        <FormItem
+                            render="text-input"
                             name="activeIngredient"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth label={t(i18n.translationKey.activeIngredient)} />
-                            )}
+                            label={t(i18n.translationKey.activeIngredient)}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, md: 3 }}>
-                        <Controller
-                            name="concentration"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth label={t(i18n.translationKey.dosage)} />
-                            )}
-                        />
+                        <FormItem render="text-input" name="concentration" label={t(i18n.translationKey.dosage)} />
                     </Grid>
                     <Grid size={{ xs: 12, md: 3 }} display="flex" alignItems="center">
-                        <Controller
+                        <FormItem
+                            render="checkbox"
                             name="requiresTestBeforeUse"
-                            control={control}
-                            render={({ field }) => (
-                                <FormControlLabel
-                                    control={<Checkbox {...field} checked={field.value} />}
-                                    label={t(i18n.translationKey.requiresTestBeforeUse)}
-                                />
-                            )}
+                            label={t(i18n.translationKey.requiresTestBeforeUse)}
                         />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Controller
+                        <FormItem
+                            render="text-area"
                             name="usageInstructions"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField
-                                    {...field}
-                                    fullWidth
-                                    multiline
-                                    label={t(i18n.translationKey.usageInstructions)}
-                                />
-                            )}
+                            label={t(i18n.translationKey.usageInstructions)}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Controller
-                            name="indications"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth multiline label={t(i18n.translationKey.indications)} />
-                            )}
-                        />
+                        <FormItem render="text-area" name="indications" label={t(i18n.translationKey.indications)} />
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Controller
+                        <FormItem
+                            render="select"
                             name="routeOfAdministration"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField
-                                    {...field}
-                                    select
-                                    fullWidth
-                                    label={t(i18n.translationKey.routeOfAdministration)}
-                                >
-                                    {routes.map((r) => (
-                                        <MenuItem key={r.id} value={r.id}>
-                                            {r.name}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            )}
+                            label={t(i18n.translationKey.routeOfAdministration)}
+                            options={routes}
                         />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Controller
+                        <FormItem
+                            render="select"
                             name="vaccineTypeId"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} select fullWidth label={t(i18n.translationKey.vaccineType)}>
-                                    {vaccineTypes.map((v) => (
-                                        <MenuItem key={v.vaccineTypeId} value={v.vaccineTypeId}>
-                                            {v.vaccinatTypeName}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            )}
+                            label={t(i18n.translationKey.vaccineType)}
+                            options={vaccineTypes.map((v) => ({
+                                label: v.vaccinatTypeName,
+                                value: String(v.vaccineTypeId),
+                            }))}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Controller
+                        <FormItem
+                            render="text-input"
                             name="medicineClassification"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth label={t(i18n.translationKey.classification)} />
-                            )}
+                            label={t(i18n.translationKey.classification)}
                         />
                     </Grid>
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Controller
+                        <FormItem
+                            render="text-input"
                             name="nationalMedicineCode"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth label={t(i18n.translationKey.nationalMedicineCode)} />
-                            )}
+                            label={t(i18n.translationKey.nationalMedicineCode)}
                         />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 6 }}>
-                        <Controller
-                            name="description"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth multiline label={t(i18n.translationKey.description)} />
-                            )}
-                        />
+                        <FormItem render="text-area" name="description" label={t(i18n.translationKey.description)} />
                     </Grid>
                     <Grid size={{ xs: 12, md: 6 }}>
-                        <Controller
-                            name="note"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField {...field} fullWidth multiline label={t(i18n.translationKey.note)} />
-                            )}
-                        />
+                        <FormItem render="text-area" name="note" label={t(i18n.translationKey.note)} />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 6 }}>
@@ -265,7 +189,7 @@ export default function CreateMedicinePage() {
                         </Button>
                     </Grid>
                 </Grid>
-            </form>
+            </DynamicForm>
         </Box>
     );
 }
