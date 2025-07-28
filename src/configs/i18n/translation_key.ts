@@ -362,6 +362,7 @@ const applicationTranslationKey = {
     upsertExaminationResultSuccessfully: "UPSERT_EXAMINATION_RESULT_SUCCESSFULLY",
     invalidExaminationData: "INVALID_EXAMINATION_DATA",
     detail: "DETAIL",
+    examinationResults: "EXAMINATION_RESULTS",
 };
 
 const exceptionTranslationKey = {

@@ -1,11 +1,16 @@
-const examinationPrefix = "/vaccination-reception/examination";
+const examinationEndpointPrefix = "/vaccination-reception/examination";
 
 export const examinationEndpoints = {
-    getPatientsForExamination: `${examinationPrefix}/patients`,
-    getAllExaminationOfReceptionByReceptionId: (id: number) => `/vaccination-reception/reception/${id}/examination`,
+    getAllExaminationHistory: `${examinationEndpointPrefix}/history`,
+    getExaminationHistoryDetailById: (examinationId: number) =>
+        `${examinationEndpointPrefix}/${examinationId}/examination-result`,
+    getPatientExaminationHistory: (patientId: number) => `${examinationEndpointPrefix}/history/patient/${patientId}`,
+    getPatientsForExamination: `${examinationEndpointPrefix}/patients`,
+    getAllExaminationOfReceptionByReceptionId: (id: number) =>
+        `${examinationEndpointPrefix}/reception/${id}/examination`,
     getServiceTestParametersOfExaminationByExaminationId: (id: number) =>
-        `/vaccination-reception/examinations/${id}/service-test-parameters`,
-    getPatientExaminationDetailByExaminationId: (id: number) => `${examinationPrefix}/${id}/patient-detail`,
-    upsertExaminationResult: `${examinationPrefix}/results`,
-    getAllExaminationTechnician: `${examinationPrefix}/users?roleName=LaboratoryStaff`,
+        `${examinationEndpointPrefix}/examinations/${id}/service-test-parameters`,
+    getPatientExaminationDetailByExaminationId: (id: number) => `${examinationEndpointPrefix}/${id}/patient-detail`,
+    upsertExaminationResult: `${examinationEndpointPrefix}/results`,
+    getAllExaminationTechnician: `${examinationEndpointPrefix}/users?roleName=LaboratoryStaff`,
 };

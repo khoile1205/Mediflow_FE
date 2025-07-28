@@ -449,5 +449,6 @@
     "CONFIRM_VACCINATION_TODAY_SUCCESSFULLY": "Xác nhận tiêm hôm nay thành công",
     "UPSERT_EXAMINATION_RESULT_SUCCESSFULLY": "Cập nhật kết quả xét nghiệm thành công.",
     "INVALID_EXAMINATION_DATA": "Kết quả xét nghiệm không hợp lệ. Vui lòng điền đầy đủ thông tin trong mỗi nhóm dịch vụ.",
-    "DETAIL": "Chi tiết"
+    "DETAIL": "Chi tiết",
+    "EXAMINATION_RESULTS": "Kết quả xét nghiệm"
 }
