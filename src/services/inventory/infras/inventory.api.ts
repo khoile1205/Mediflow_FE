@@ -3,6 +3,7 @@ import { Manufacture, ManufactureCountry, Medicine } from "~/entities/medicine";
 import { callApi } from "~/libs/axios/request";
 import {
     CreateMedicineInteractionRequest,
+    CreateMedicinePriceRequest,
     CreateMedicineRequest,
     GetMedicineInteractionListRequest,
     GetMedicinePriceListRequest,
@@ -160,7 +161,7 @@ export const getMedicinePriceById = async (id: number): Promise<IBaseApiResponse
     });
 };
 
-const createMedicinePrice = async (data: MedicinePrice) => {
+const createMedicinePrice = async (data: CreateMedicinePriceRequest) => {
     return await callApi({
         url: inventoryEndpoints.medicinePrice.create,
         method: HttpMethod.POST,

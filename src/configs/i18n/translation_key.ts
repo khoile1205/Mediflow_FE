@@ -431,6 +431,11 @@ const applicationTranslationKey = {
     updateMedicinePriceSuccess: "UPDATE_MEDICINE_PRICE_SUCCESS",
     updateMedicinePriceFailed: "UPDATE_MEDICINE_PRICE_FAILED",
     medicinePriceList: "MEDICINE_PRICE_LIST",
+    createMedicinePriceSuccess: "CREATE_MEDICINE_PRICE_SUCCESS",
+    createMedicinePriceFailed: "CREATE_MEDICINE_PRICE_FAILED",
+    medicineIdRequired: "MEDICINE_ID_REQUIRED",
+    vatRateMustBePositive: "VAT_RATE_MUST_BE_POSITIVE",
+    vatRateTooHigh: "VAT_RATE_TOO_HIGH",
 };
 
 const exceptionTranslationKey = {

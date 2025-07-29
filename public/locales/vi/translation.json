@@ -455,7 +455,6 @@
     "UPDATE_TEST_RESULT_SUCCESSFULLY": "Cập nhật kết quả thử thành công",
     "UPDATE_TEST_RESULT_FAILED": "Cập nhật kết quả thử thất bại",
     "PRE_TESTING_REQUIRED": "Yêu cầu thử trước tiêm",
-    "DETAIL": "Chi tiết",
     "MEDICINE_CODE": "Mã dược phẩm",
     "ACTIVE_INGREDIENT": "Hoạt chất",
     "DOSAGE": "Liều lượng",
@@ -521,5 +520,10 @@
     "CREATED_AT": "Ngày tạo",
     "UPDATE_MEDICINE_PRICE_SUCCESS": "Cập nhật giá thuốc thành công",
     "UPDATE_MEDICINE_PRICE_FAILED": "Cập nhật giá thuốc thất bại",
-    "MEDICINE_PRICE_LIST": "Đơn giá thuốc"
+    "MEDICINE_PRICE_LIST": "Đơn giá thuốc",
+    "CREATE_MEDICINE_PRICE_SUCCESS": "Tạo giá thuốc thành công",
+    "CREATE_MEDICINE_PRICE_FAILED": "Tạo giá thuốc thất bại",
+    "MEDICINE_ID_REQUIRED": "Vui lòng chọn thuốc",
+    "VAT_RATE_MUST_BE_POSITIVE": "Tỷ lệ VAT phải lớn hơn hoặc bằng 0",
+    "VAT_RATE_TOO_HIGH": "Tỷ lệ VAT không được vượt quá 1"
 }

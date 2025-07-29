@@ -452,7 +452,6 @@
     "UPDATE_TEST_RESULT_SUCCESSFULLY": "Update test result successfully",
     "UPDATE_TEST_RESULT_FAILED": "Update test result failed",
     "PRE_TESTING_REQUIRED": "Pre-testing required",
-    "DETAIL": "Detail",
     "MEDICINE_CODE": "Medicine code",
     "ACTIVE_INGREDIENT": "Active ingredient",
     "USAGE_INSTRUCTIONS": "Usage instructions",
@@ -518,5 +517,10 @@
     "CREATED_AT": "Created at",
     "UPDATE_MEDICINE_PRICE_SUCCESS": "Update medicine price successfully",
     "UPDATE_MEDICINE_PRICE_FAILED": "Failed to update medicine price",
-    "MEDICINE_PRICE_LIST": "Medicine Price"
+    "MEDICINE_PRICE_LIST": "Medicine Price",
+    "CREATE_MEDICINE_PRICE_SUCCESS": "Create medicine price successfully",
+    "CREATE_MEDICINE_PRICE_FAILED": "Failed to create medicine price",
+    "MEDICINE_ID_REQUIRED": "Please select a medicine",
+    "VAT_RATE_MUST_BE_POSITIVE": "VAT rate must be positive",
+    "VAT_RATE_TOO_HIGH": "VAT rate must not exceed 1"
 }

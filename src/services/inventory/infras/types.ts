@@ -183,3 +183,13 @@ export interface UpdateMedicinePriceRequest {
 export interface GetMedicinePriceListRequest extends IPaginationRequest {
     medicineId?: number;
 }
+
+export interface CreateMedicinePriceRequest {
+    medicineId: number;
+    unitPrice: number;
+    currency: string;
+    vatRate: number;
+    vatAmount: number;
+    originalPriceBeforeVat: number;
+    originalPriceAfterVat: number;
+}

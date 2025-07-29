@@ -1,7 +1,7 @@
 import { AddCircle, Delete, Edit } from "@mui/icons-material";
 import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { ColDef, RowClickedEvent } from "ag-grid-community";
+import { ColDef, RowClickedEvent, IHeaderParams } from "ag-grid-community";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,7 @@ import { showToast } from "~/utils";
 import { ConfirmPasswordDialog } from "./ConfirmPasswordDialog";
 import { useQueryGetMedicinePrices } from "~/services/inventory/hooks/queries/use-query-get-medicine-prices";
 import { useQueryGetMedicinePriceById } from "~/services/inventory/hooks/queries/use-query-get-medicine-prices-by-id";
+import { useNavigate } from "react-router";
 
 interface MedicinePriceFormValues {
     id: number;
@@ -36,15 +37,28 @@ interface MedicinePriceFormValues {
     lastUpdatedAt?: string;
 }
 
+interface CurrencyHeaderProps extends IHeaderParams {
+    onCurrencyToggle: () => void;
+}
+
+const CurrencyHeader: React.FC<CurrencyHeaderProps> = ({ onCurrencyToggle }) => {
+    const { t } = useTranslation();
+    return (
+        <span style={{ cursor: "pointer" }} onClick={onCurrencyToggle}>
+            {t(i18n.translationKey.currency)}
+        </span>
+    );
+};
+
 export default function MedicinePriceListPage() {
     const { t } = useTranslation();
     const { handlePageChange, pageIndex, pageSize } = usePagination();
-
+    const navigate = useNavigate();
     const [columnDefs, setColumnDefs] = useState<ColDef<MedicinePriceFormValues>[]>([]);
     const [selectedMedicinePriceId, setSelectedMedicinePriceId] = useState<number | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-
+    const [globalCurrency, setGlobalCurrency] = useState<"VND" | "USD">("VND");
     const queryClient = useQueryClient();
 
     const form = useForm<MedicinePriceFormValues>({
@@ -109,6 +123,38 @@ export default function MedicinePriceListPage() {
         });
     }, [watchedUnitPrice, watchedVatRate, setValue]);
 
+    const handleCurrencyToggle = async () => {
+        const newCurrency = globalCurrency === "VND" ? "USD" : "VND";
+        const conversionRate = 25000;
+        const factor = globalCurrency === "VND" ? 1 / conversionRate : conversionRate;
+
+        try {
+            const updatePromises = data?.medicinePrices.map((item) =>
+                mutationUpdateMedicinePrice.mutateAsync({
+                    id: item.id,
+                    medicineId: item.medicineId || 0,
+                    unitPrice: Number((item.unitPrice * factor).toFixed(2)),
+                    currency: newCurrency,
+                    vatRate: item.vatRate,
+                    vatAmount: Number((item.vatAmount * factor).toFixed(2)),
+                    originalPriceBeforeVat: Number((item.originalPriceBeforeVat * factor).toFixed(2)),
+                    originalPriceAfterVat: Number((item.originalPriceAfterVat * factor).toFixed(2)),
+                }),
+            );
+
+            if (updatePromises) {
+                await Promise.all(updatePromises);
+                setGlobalCurrency(newCurrency);
+                queryClient.invalidateQueries({
+                    predicate: (query) => query.queryKey[0] === "getMedicinePrices",
+                });
+                refetch();
+            }
+        } catch {
+            showToast.error(t(i18n.translationKey.updateMedicinePriceFailed));
+        }
+    };
+
     useEffect(() => {
         setColumnDefs([
             {
@@ -122,10 +168,20 @@ export default function MedicinePriceListPage() {
                 field: "unitPrice",
                 flex: 1,
                 sortable: true,
-                valueFormatter: ({ value }) => value?.toLocaleString("vi-VN") + " ₫",
+                valueFormatter: ({ value, data }) =>
+                    `${value?.toLocaleString("vi-VN")} ${data?.currency === "USD" ? "$" : "₫"}`,
                 cellStyle: { textAlign: "right" },
             },
-            { headerName: t(i18n.translationKey.currency), field: "currency", flex: 0.5 },
+            {
+                headerName: t(i18n.translationKey.currency),
+                field: "currency",
+                flex: 0.5,
+                sortable: false,
+                headerComponent: CurrencyHeader,
+                headerComponentParams: {
+                    onCurrencyToggle: handleCurrencyToggle,
+                },
+            },
             {
                 headerName: t(i18n.translationKey.vatRate),
                 field: "vatRate",
@@ -137,21 +193,24 @@ export default function MedicinePriceListPage() {
                 headerName: t(i18n.translationKey.vatAmount),
                 field: "vatAmount",
                 flex: 1,
-                valueFormatter: ({ value }) => value?.toLocaleString("vi-VN") + " ₫",
+                valueFormatter: ({ value, data }) =>
+                    `${value?.toLocaleString("vi-VN")} ${data?.currency === "USD" ? "$" : "₫"}`,
                 cellStyle: { textAlign: "right" },
             },
             {
                 headerName: t(i18n.translationKey.originalPriceAfterVat),
                 field: "originalPriceAfterVat",
                 flex: 1,
-                valueFormatter: ({ value }) => value?.toLocaleString("vi-VN") + " ₫",
+                valueFormatter: ({ value, data }) =>
+                    `${value?.toLocaleString("vi-VN")} ${data?.currency === "USD" ? "$" : "₫"}`,
                 cellStyle: { textAlign: "right" },
             },
             {
                 headerName: t(i18n.translationKey.originalPriceBeforeVat),
                 field: "originalPriceBeforeVat",
                 flex: 1,
-                valueFormatter: ({ value }) => value?.toLocaleString("vi-VN") + " ₫",
+                valueFormatter: ({ value, data }) =>
+                    `${value?.toLocaleString("vi-VN")} ${data?.currency === "USD" ? "$" : "₫"}`,
                 cellStyle: { textAlign: "right" },
             },
             {
@@ -167,7 +226,7 @@ export default function MedicinePriceListPage() {
                 valueFormatter: ({ value }) => (value ? new Date(value).toLocaleString("vi-VN") : ""),
             },
         ]);
-    }, [t]);
+    }, [t, handleCurrencyToggle]);
 
     const handleRowClick = (event: RowClickedEvent<MedicinePriceFormValues>) => {
         const selected = event.data;
@@ -193,7 +252,7 @@ export default function MedicinePriceListPage() {
                 id: selectedMedicinePriceId,
                 medicineId: values.medicineId || 0,
                 unitPrice: values.unitPrice,
-                currency: "VND",
+                currency: values.currency,
                 vatRate: values.vatRate,
                 vatAmount: values.vatAmount,
                 originalPriceBeforeVat: values.originalPriceBeforeVat,
@@ -228,7 +287,7 @@ export default function MedicinePriceListPage() {
                         startIcon={<AddCircle />}
                         size="small"
                         variant="outlined"
-                        disabled
+                        onClick={() => navigate("/pharmacy/create-medicine-price")}
                     />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4, md: 2 }}>
@@ -283,19 +342,17 @@ export default function MedicinePriceListPage() {
                             </Grid>
                             <Grid size={{ xs: 12 }}>
                                 <FormItem
-                                    render="text-input-no-clear"
+                                    render="select"
                                     name="currency"
                                     label={t(i18n.translationKey.currency)}
-                                    disabled
+                                    options={[
+                                        { label: "VND", value: "VND" },
+                                        { label: "USD", value: "USD" },
+                                    ]}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12 }}>
-                                <FormItem
-                                    render="input-number"
-                                    name="vatRate"
-                                    label={t(i18n.translationKey.vatRate)}
-                                    disabled
-                                />
+                                <FormItem render="input-number" name="vatRate" label={t(i18n.translationKey.vatRate)} />
                             </Grid>
                             <Grid size={{ xs: 12 }}>
                                 <FormItem
@@ -339,7 +396,6 @@ export default function MedicinePriceListPage() {
                 onClose={() => setIsPasswordDialogOpen(false)}
                 onConfirmed={() => {
                     if (!selectedMedicinePriceId) return;
-
                     mutationDeleteMedicinePrice.mutate(selectedMedicinePriceId, {
                         onSuccess: () => {
                             showToast.success(t(i18n.translationKey.deleteMedicineSuccess));
