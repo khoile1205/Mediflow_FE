@@ -13,6 +13,12 @@ import UserManagement from "~/pages/management/users/user-management.page";
 import { ExaminationPatientHistoryPage } from "~/pages/examination/examination-history";
 import ListPatientsExaminationHistoryPage from "~/pages/examination/examination-history/examination-patients.page";
 import { ExaminationPage } from "~/pages/examination/examination.page";
+import MedicineListPage from "~/pages/management/medicine/medicine-list.page";
+import CreateMedicinePage from "~/pages/management/medicine/medicine-create.page";
+import CreateMedicineInteractionPage from "~/pages/management/medicine/medicine-interaction-create.page";
+import MedicineInteractionListPage from "~/pages/management/medicine/medicine-interaction-list.page";
+import MedicinePriceListPage from "~/pages/management/medicine/medicine-price.page";
+import CreateMedicinePricePage from "~/pages/management/medicine/medicine-price-create.page";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -34,6 +40,12 @@ export const AuthenticatedRoutes = (
         <Route path="/finance" element={<HospitalFeePage />} />
         <Route path="/pharmacy">
             <Route path="import" element={<ImportInventoryFromSupplier />} />
+            <Route path="medicine-list" element={<MedicineListPage />} />
+            <Route path="create-medicine" element={<CreateMedicinePage />} />
+            <Route path="create-medicine-interaction" element={<CreateMedicineInteractionPage />} />
+            <Route path="medicine-interaction-list" element={<MedicineInteractionListPage />} />
+            <Route path="medicine-price-list" element={<MedicinePriceListPage />} />
+            <Route path="create-medicine-price" element={<CreateMedicinePricePage />} />
         </Route>
 
         <Route path="/management">

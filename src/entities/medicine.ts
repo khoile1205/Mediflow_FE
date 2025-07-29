@@ -24,6 +24,7 @@ export interface Medicine {
     createdBy: number;
     lastUpdatedAt: Date;
     lastUpdatedBy: number;
+    vaccineTypeName: string;
 }
 
 export interface MedicinePrice {

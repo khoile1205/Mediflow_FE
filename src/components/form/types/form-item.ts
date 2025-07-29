@@ -11,9 +11,11 @@ import { AgGridDropdownFormItemProps } from "../form-item/select-data-grid";
 import { SwitchFormItemProps } from "../form-item/switch";
 import { TextAreaFormItemProps } from "../form-item/text-area";
 import { TextFieldFormItemProps } from "../form-item/text-field";
+import { TextFieldNoClearFormItemProps } from "../form-item/text-field-no-clear";
 
 export type FormItemProps =
     | ({ render: "text-input" } & TextFieldFormItemProps)
+    | ({ render: "text-input-no-clear" } & TextFieldNoClearFormItemProps)
     | ({ render: "select" } & SelectFieldFormItemProps)
     | ({ render: "data-grid" } & AgGridDropdownFormItemProps)
     | ({ render: "checkbox" } & SingleCheckboxFormItemProps)

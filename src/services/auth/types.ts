@@ -26,3 +26,12 @@ export type ResetPasswordResponse = {
     IsSuccess: boolean;
     Message: string;
 };
+
+export interface ConfirmPasswordRequest {
+    password: string;
+}
+
+export interface ConfirmPasswordResponse {
+    isSuccess: boolean;
+    message: string;
+}

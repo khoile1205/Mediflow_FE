@@ -7,4 +7,5 @@ export const authEndpoints = {
     refreshToken: `${authEndpointPrefix}/login/refresh-token`,
     userPermission: `${authEndpointPrefix}/current-user/policies`,
     resetPassword: `${authEndpointPrefix}/reset-password`,
+    confirmPassword: `${authEndpointPrefix}/confirm-password`,
 };
