@@ -30,7 +30,7 @@ export class TokenRefresher {
                 const originalRequest = error.config as RetryableAxiosRequestConfig;
                 const isUnauthorizedResponse = error.response?.status === HttpStatusCode.Unauthorized;
                 const isRetryable =
-                    originalRequest && originalRequest._retry && error.config?.url !== endpoints.auth.refreshToken;
+                    originalRequest && !originalRequest._retry && error.config?.url !== endpoints.auth.refreshToken;
 
                 if (isUnauthorizedResponse && isRetryable) {
                     if (this.isRefreshing) {
@@ -51,7 +51,7 @@ export class TokenRefresher {
                         const messageKey = refreshError.response.data.MessageKey || i18n.translationKey.tokenExpired;
 
                         this.processQueue(refreshError);
-                        this.redirectToLoginPage();
+                        // this.redirectToLoginPage();
 
                         showToast.error(i18n.t(messageKey));
 
@@ -81,8 +81,8 @@ export class TokenRefresher {
         this.failedRequestsQueue = [];
     }
 
-    private redirectToLoginPage(): void {
-        const LOGIN_PAGE_URL = "/login";
-        window.location.href = LOGIN_PAGE_URL;
-    }
+    // private redirectToLoginPage(): void {
+    //     const LOGIN_PAGE_URL = "/login";
+    //     window.location.href = LOGIN_PAGE_URL;
+    // }
 }
