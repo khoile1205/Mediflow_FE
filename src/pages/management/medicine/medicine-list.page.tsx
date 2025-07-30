@@ -353,8 +353,6 @@ export default function MedicineListPage() {
                                         { value: 1, label: t(i18n.translationKey.routeAdminIM) },
                                         { value: 2, label: t(i18n.translationKey.routeAdminSC) },
                                         { value: 3, label: t(i18n.translationKey.routeAdminID) },
-                                        { value: 4, label: t(i18n.translationKey.routeAdminPO) },
-                                        { value: 5, label: t(i18n.translationKey.routeAdminIN) },
                                     ]}
                                 />
                             </Grid>
