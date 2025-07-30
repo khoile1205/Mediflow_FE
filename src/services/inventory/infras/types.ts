@@ -31,6 +31,27 @@ export interface DocumentMedicineDetail {
     isFree: boolean;
 }
 
+export interface InventoryLimitStock {
+    id: number;
+    medicineId: number;
+    medicineCode: string;
+    medicineName: string;
+    unit: string;
+    currentStock: number;
+    minimalStockThreshold: number;
+    difference: number;
+    inventoryLimitStockStatus: number;
+    statusDescription: string;
+    isSuspended?: boolean;
+    isCancelled?: boolean;
+}
+
+export interface GetInventoryLimitStockListRequest {
+    pageIndex: number;
+    pageSize: number;
+    searchKeyword?: string;
+}
+
 export interface Medicine {
     id: number;
     medicineCode: string;

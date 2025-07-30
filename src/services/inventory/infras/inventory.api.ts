@@ -7,14 +7,16 @@ import {
     CreateMedicineRequest,
     GetMedicineInteractionListRequest,
     GetMedicinePriceListRequest,
-    IDocumentImportMedicineSupplierResponse,
-    ImportMedicineFromSupplierDocumentRequest,
     MedicineInteraction,
     MedicinePrice,
     UpdateMedicineDto,
     UpdateMedicineInteractionRequest,
     UpdateMedicinePriceRequest,
     VaccineType,
+    GetInventoryLimitStockListRequest,
+    IDocumentImportMedicineSupplierResponse,
+    ImportMedicineFromSupplierDocumentRequest,
+    InventoryLimitStock,
 } from "./types";
 import { IPaginationRequest, IPagination, HttpMethod, IBaseApiResponse } from "~/libs/axios/types";
 import { Supplier } from "~/entities/supplier";
@@ -58,6 +60,52 @@ const saveImportDocument = async (importDocument: ImportMedicineFromSupplierDocu
         url: endpoints.inventory.supplierImportDocument.createDocument,
         method: HttpMethod.POST,
         data: importDocument,
+    });
+};
+
+const getInventoryLimitStocks = async ({
+    pageIndex,
+    pageSize,
+    searchKeyword,
+}: GetInventoryLimitStockListRequest): Promise<IBaseApiResponse<IPagination<InventoryLimitStock>>> => {
+    return await callApi({
+        url: inventoryEndpoints.inventoryLimitStock.getList,
+        method: HttpMethod.GET,
+        params: {
+            pageIndex,
+            pageSize,
+            searchKeyword,
+        },
+    });
+};
+
+const createInventoryLimitStock = async (data: {
+    medicineId: number;
+    minimalStockThreshold: number;
+}): Promise<IBaseApiResponse<void>> => {
+    return await callApi({
+        url: inventoryEndpoints.inventoryLimitStock.create,
+        method: HttpMethod.POST,
+        data,
+    });
+};
+
+const updateInventoryLimitStock = async (data: {
+    id: number;
+    medicineId: number;
+    minimalStockThreshold: number;
+}): Promise<IBaseApiResponse<void>> => {
+    return await callApi({
+        url: inventoryEndpoints.inventoryLimitStock.update(data.id),
+        method: HttpMethod.PUT,
+        data,
+    });
+};
+
+const deleteInventoryLimitStock = async (id: number): Promise<IBaseApiResponse<void>> => {
+    return await callApi({
+        url: inventoryEndpoints.inventoryLimitStock.delete(id),
+        method: HttpMethod.DELETE,
     });
 };
 
@@ -190,6 +238,10 @@ export const inventoryApis = {
     generateDocumentCode,
     getListSupplier,
     saveImportDocument,
+    getInventoryLimitStocks,
+    createInventoryLimitStock,
+    updateInventoryLimitStock,
+    deleteInventoryLimitStock,
     getMedicines,
     createMedicine,
     getVaccineTypes,

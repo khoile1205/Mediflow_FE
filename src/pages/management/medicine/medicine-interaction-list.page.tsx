@@ -100,7 +100,7 @@ export default function MedicineInteractionListPage() {
         setSelectedRow(e.data);
     };
 
-    const handleCreate = () => navigate("/pharmacy/create-medicine-interaction");
+    const handleCreate = () => navigate("/medicine/create-medicine-interaction");
 
     const handleEdit = () => {
         if (!selectedRow) return showToast.error(t(i18n.translationKey.noRowSelected));

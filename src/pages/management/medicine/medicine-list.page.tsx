@@ -141,7 +141,7 @@ export default function MedicineListPage() {
     };
 
     const handleAdd = () => {
-        navigate("/pharmacy/create-medicine");
+        navigate("/medicine/create-medicine");
     };
 
     const handleEdit = async () => {
@@ -154,16 +154,14 @@ export default function MedicineListPage() {
         if (response?.Data) {
             setVaccineTypes(response.Data);
 
-            const routeOfAdminMap: { [key in "IM" | "SC" | "ID" | "PO" | "IN"]: number } = {
+            const routeOfAdminMap: { [key in "IM" | "SC" | "ID"]: number } = {
                 IM: 1,
                 SC: 2,
                 ID: 3,
-                PO: 4,
-                IN: 5,
             };
 
             const routeOfAdministration = selected.routeOfAdministration
-                ? routeOfAdminMap[selected.routeOfAdministration as "IM" | "SC" | "ID" | "PO" | "IN"] || 1
+                ? routeOfAdminMap[selected.routeOfAdministration as "IM" | "SC" | "ID"] || 1
                 : 1;
 
             medicineForm.reset({

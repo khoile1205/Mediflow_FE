@@ -19,6 +19,7 @@ import CreateMedicineInteractionPage from "~/pages/management/medicine/medicine-
 import MedicineInteractionListPage from "~/pages/management/medicine/medicine-interaction-list.page";
 import MedicinePriceListPage from "~/pages/management/medicine/medicine-price.page";
 import CreateMedicinePricePage from "~/pages/management/medicine/medicine-price-create.page";
+import InventoryLimitStockPage from "~/pages/management/inventory-stock/inventory-stock.page";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -28,9 +29,11 @@ export const AuthenticatedRoutes = (
         <Route path="/reception">
             <Route path="vaccination" element={<ReceptionVaccination />} />
         </Route>
+
         <Route path="/appointments">
             <Route path="follow-up" element={<AppointmentsManagementPage />} />
         </Route>
+
         <Route path="/vaccination">
             <Route index element={<VaccinationPage />} />
             <Route path="history" element={<PatientVaccinationHistory />} />
@@ -38,8 +41,12 @@ export const AuthenticatedRoutes = (
         </Route>
 
         <Route path="/finance" element={<HospitalFeePage />} />
+
         <Route path="/pharmacy">
             <Route path="import" element={<ImportInventoryFromSupplier />} />
+        </Route>
+
+        <Route path="/medicine">
             <Route path="medicine-list" element={<MedicineListPage />} />
             <Route path="create-medicine" element={<CreateMedicinePage />} />
             <Route path="create-medicine-interaction" element={<CreateMedicineInteractionPage />} />
@@ -48,15 +55,21 @@ export const AuthenticatedRoutes = (
             <Route path="create-medicine-price" element={<CreateMedicinePricePage />} />
         </Route>
 
+        <Route path="/inventory">
+            <Route path="limit-stock" element={<InventoryLimitStockPage />} />
+        </Route>
+
         <Route path="/management">
             <Route path="users" element={<UserManagement />} />
             <Route path="departments" element={<DepartmentManagement />} />
         </Route>
+
         <Route path="/examination">
             <Route path="history/patients" element={<ListPatientsExaminationHistoryPage />} />
             <Route path="history/patient/:id" element={<ExaminationPatientHistoryPage />} />
             <Route index element={<ExaminationPage />} />
         </Route>
+
         <Route path="*" element={<div>Developing</div>} />
     </Route>
 );
