@@ -545,5 +545,19 @@
     "MEDICINE_UNIT": {
         "Dose": "Dose",
         "Capsule": "Capsule"
-    }
+    },
+    "INVENTORY_LIMIT_STOCK_SUSPENSION_ENUM": {
+        "true": "Suspended",
+        "false": "Active"
+    },
+    "UPDATE_BOTH_STATUS_AND_STOCK_SUCCESS": "Successfully updated suspension status and minimal stock threshold",
+    "UPDATE_SUSPENSION_STATUS_SUCCESS": "Successfully updated suspension status",
+    "UPDATE_MINIMAL_STOCK_THRESHOLD_SUCCESS": "Successfully updated minimal stock threshold",
+    "UPDATE_BOTH_STATUS_AND_STOCK_FAILED": "Failed to update suspension status and minimal stock threshold",
+    "UPDATE_SUSPENSION_STATUS_FAILED": "Failed to update suspension status",
+    "UPDATE_MINIMAL_STOCK_THRESHOLD_FAILED": "Failed to update minimal stock threshold",
+    "NO_CHANGES_SAVED": "No changes were saved",
+    "INVENTORY_LIMIT_STOCK_SUSPENSION_STATUS": "Suspension Status",
+    "INVALID_UNIT_PRICE": "Invalid unit price.",
+    "INVALID_MEDICINE_ID": "Invalid medicine ID."
 }

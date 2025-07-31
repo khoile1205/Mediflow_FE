@@ -30,6 +30,10 @@ interface SearchFormValues {
     searchKeyword: string;
 }
 
+interface MedicineFormValues extends Omit<UpdateMedicineDto, "isSuspended"> {
+    isSuspended: string;
+}
+
 export default function MedicineListPage() {
     const { t } = useTranslation();
     const { handlePageChange, pageIndex, pageSize } = usePagination();
@@ -52,7 +56,7 @@ export default function MedicineListPage() {
         },
     });
 
-    const medicineForm = useForm<UpdateMedicineDto>({
+    const medicineForm = useForm<MedicineFormValues>({
         defaultValues: {
             id: 0,
             medicineCode: "",
@@ -69,7 +73,7 @@ export default function MedicineListPage() {
             note: "",
             registrationNumber: "",
             vaccineTypeId: 0,
-            isSuspended: false,
+            isSuspended: "false",
             isCancelled: false,
         },
     });
@@ -168,6 +172,7 @@ export default function MedicineListPage() {
                 ...selected,
                 routeOfAdministration,
                 vaccineTypeId: selected.vaccineTypeId ?? 0,
+                isSuspended: selected.isSuspended ? "true" : "false",
             });
 
             setIsEditModalOpen(true);
@@ -178,27 +183,27 @@ export default function MedicineListPage() {
         const values = medicineForm.getValues();
         if (!selectedMedicineId) return;
 
-        updateMedicine(
-            {
-                ...values,
-                id: selectedMedicineId,
-                isRequiredTestingBeforeUse: values.isRequiredTestingBeforeUse ?? false,
-                isSuspended: values.isSuspended ?? false,
-                isCancelled: values.isCancelled ?? false,
+        const updatedValues: UpdateMedicineDto = {
+            ...values,
+            id: selectedMedicineId,
+            isRequiredTestingBeforeUse: values.isRequiredTestingBeforeUse ?? false,
+            isSuspended: values.isSuspended === "true",
+            isCancelled: values.isCancelled ?? false,
+        };
+
+        updateMedicine(updatedValues, {
+            onSuccess: () => {
+                showToast.success(t(i18n.translationKey.updateMedicineSuccess));
+                setIsEditModalOpen(false);
+                setSelectedMedicineId(null);
+                setIsFormEnabled(false);
+                medicineForm.reset();
+                queryClient.invalidateQueries({
+                    queryKey: ["getMedicineList", searchQuery],
+                });
+                refetch();
             },
-            {
-                onSuccess: () => {
-                    showToast.success(t(i18n.translationKey.updateMedicineSuccess));
-                    setIsEditModalOpen(false);
-                    setSelectedMedicineId(null);
-                    setIsFormEnabled(false);
-                    medicineForm.reset();
-                    queryClient.invalidateQueries({ predicate: (query) => query.queryKey[0] === "getMedicineList" });
-                    refetch();
-                },
-                onError: () => showToast.error(t(i18n.translationKey.updateMedicineFailed)),
-            },
-        );
+        });
     };
 
     const handleDelete = () => {
@@ -224,6 +229,16 @@ export default function MedicineListPage() {
                 field: "unitPrice",
                 flex: 1,
                 valueFormatter: ({ value }) => `${value?.toLocaleString("vi-VN")} ₫`,
+            },
+            {
+                headerName: t(i18n.translationKey.inventoryLimitStockSuspensionStatus),
+                field: "isSuspended",
+                flex: 1,
+                cellRenderer: "agCellWrapper",
+                valueFormatter: ({ value }) =>
+                    t(
+                        `${i18n.translationKey.inventoryLimitStockSuspensionEnum}.${value === true || value === "true" ? "true" : "false"}`,
+                    ),
             },
             { headerName: t(i18n.translationKey.note), field: "note", flex: 1.5 },
         ]);
@@ -379,6 +394,30 @@ export default function MedicineListPage() {
                                         label: type.vaccinatTypeName,
                                         value: type.vaccineTypeId,
                                     }))}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 6 }}>
+                                <FormItem
+                                    render="checkbox"
+                                    name="isRequiredTestingBeforeUse"
+                                    label={t(i18n.translationKey.requiresTestBeforeUse)}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 6 }}>
+                                <FormItem
+                                    render="select"
+                                    name="isSuspended"
+                                    label={t(i18n.translationKey.inventoryLimitStockSuspensionStatus)}
+                                    options={[
+                                        {
+                                            value: "false",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.false`),
+                                        },
+                                        {
+                                            value: "true",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.true`),
+                                        },
+                                    ]}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12 }}>

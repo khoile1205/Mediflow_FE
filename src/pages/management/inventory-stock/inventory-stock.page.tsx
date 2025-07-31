@@ -1,7 +1,7 @@
 import { AddCircle, Delete, Edit } from "@mui/icons-material";
 import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { ColDef, RowClickedEvent } from "ag-grid-community";
+import { ColDef, RowClickedEvent, RowClassParams } from "ag-grid-community";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -35,6 +35,7 @@ interface FormValues {
     medicineCode: string;
     unit: string;
     minimalStockThreshold: number;
+    isSuspended: string;
 }
 
 export default function InventoryLimitStockPage() {
@@ -67,6 +68,7 @@ export default function InventoryLimitStockPage() {
             medicineCode: "",
             unit: "",
             minimalStockThreshold: 0,
+            isSuspended: "false",
         },
     });
 
@@ -111,9 +113,31 @@ export default function InventoryLimitStockPage() {
                 flex: 1,
                 valueFormatter: ({ value }) =>
                     value ? t(`${i18n.translationKey.inventoryLimitStockStatus}.${value}`) : "",
+                cellClassRules: {
+                    "suspended-status": (params) => params.data?.isSuspended === true,
+                    "critical-low-status": (params) => !params.data?.isSuspended && params.value === "Critical Low",
+                    "low-status": (params) => !params.data?.isSuspended && params.value === "Low",
+                    "normal-status": (params) => !params.data?.isSuspended && params.value === "Normal",
+                    "high-status": (params) => !params.data?.isSuspended && params.value === "High",
+                },
+            },
+            {
+                headerName: t(i18n.translationKey.inventoryLimitStockSuspensionStatus),
+                field: "isSuspended",
+                flex: 1,
+                cellRenderer: "agCellWrapper",
+                valueFormatter: ({ value }) =>
+                    t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.${String(value)}`),
             },
         ],
         [t],
+    );
+
+    const rowClassRules = useMemo(
+        () => ({
+            "suspended-row": (params: RowClassParams<InventoryLimitStock>) => params.data?.isSuspended === true,
+        }),
+        [],
     );
 
     const handleAdd = () => setIsAddModalOpen(true);
@@ -126,6 +150,7 @@ export default function InventoryLimitStockPage() {
             medicineName: selectedRow.medicineName,
             unit: selectedRow.unit,
             minimalStockThreshold: selectedRow.minimalStockThreshold,
+            isSuspended: String(selectedRow.isSuspended),
         });
         setIsEditModalOpen(true);
     };
@@ -137,9 +162,20 @@ export default function InventoryLimitStockPage() {
 
     const handleSave = () => {
         const values = form.getValues();
+        const isSuspendedChanged = selectedRow && String(selectedRow.isSuspended) !== values.isSuspended;
+        const minimalStockThresholdChanged =
+            selectedRow && selectedRow.minimalStockThreshold !== values.minimalStockThreshold;
+
+        if (selectedRow && !isSuspendedChanged && !minimalStockThresholdChanged) {
+            showToast.info(t(i18n.translationKey.noChangesSaved));
+            setIsEditModalOpen(false);
+            return;
+        }
+
         const payload = {
             medicineId: values.medicineId!,
             minimalStockThreshold: values.minimalStockThreshold,
+            isSuspended: values.isSuspended === "true",
         };
 
         const existed = data?.inventoryLimitStocks.find((item) => item.medicineId === payload.medicineId);
@@ -148,21 +184,34 @@ export default function InventoryLimitStockPage() {
 
         mutation(args as any, {
             onSuccess: () => {
-                showToast.success(
-                    selectedRow || existed
-                        ? t(i18n.translationKey.updateInventoryLimitStockSuccess)
-                        : t(i18n.translationKey.createInventoryLimitStockSuccess),
-                );
+                let successMessage = t(i18n.translationKey.createInventoryLimitStockSuccess);
+                if (selectedRow || existed) {
+                    if (isSuspendedChanged && minimalStockThresholdChanged) {
+                        successMessage = t(i18n.translationKey.updateBothStatusAndStockSuccess);
+                    } else if (isSuspendedChanged) {
+                        successMessage = t(i18n.translationKey.updateSuspensionStatusSuccess);
+                    } else if (minimalStockThresholdChanged) {
+                        successMessage = t(i18n.translationKey.updateMinimalStockThresholdSuccess);
+                    }
+                }
+                showToast.success(successMessage);
                 setIsEditModalOpen(false);
                 queryClient.invalidateQueries();
                 refetch();
             },
-            onError: () =>
-                showToast.error(
-                    selectedRow || existed
-                        ? t(i18n.translationKey.updateInventoryLimitStockFailed)
-                        : t(i18n.translationKey.createInventoryLimitStockFailed),
-                ),
+            onError: () => {
+                let errorMessage = t(i18n.translationKey.createInventoryLimitStockFailed);
+                if (selectedRow || existed) {
+                    if (isSuspendedChanged && minimalStockThresholdChanged) {
+                        errorMessage = t(i18n.translationKey.updateBothStatusAndStockFailed);
+                    } else if (isSuspendedChanged) {
+                        errorMessage = t(i18n.translationKey.updateSuspensionStatusFailed);
+                    } else if (minimalStockThresholdChanged) {
+                        errorMessage = t(i18n.translationKey.updateMinimalStockThresholdFailed);
+                    }
+                }
+                showToast.error(errorMessage);
+            },
         });
     };
 
@@ -202,7 +251,7 @@ export default function InventoryLimitStockPage() {
             onSuccess: () => {
                 showToast.success(
                     existedActive || existedCancelled
-                        ? t(i18n.translationKey.updateInventoryLimitStockSuccess)
+                        ? t(i18n.translationKey.updateMinimalStockThresholdSuccess)
                         : t(i18n.translationKey.createInventoryLimitStockSuccess),
                 );
                 queryClient.invalidateQueries();
@@ -212,7 +261,7 @@ export default function InventoryLimitStockPage() {
             onError: () => {
                 showToast.error(
                     existedActive || existedCancelled
-                        ? t(i18n.translationKey.updateInventoryLimitStockFailed)
+                        ? t(i18n.translationKey.updateMinimalStockThresholdFailed)
                         : t(i18n.translationKey.createInventoryLimitStockFailed),
                 );
             },
@@ -221,6 +270,34 @@ export default function InventoryLimitStockPage() {
 
     return (
         <Box p={3}>
+            <style>
+                {`
+    .suspended-row {
+        background-color: #f0f0f0 !important;
+        color: #9e9e9e !important;
+    }
+    .suspended-status {
+        background-color: #f0f0f0 !important;
+        color: #9e9e9e !important;
+    }
+    .critical-low-status {
+        background-color: #ff6666 !important;
+        color: #ffffff !important;
+    }
+    .low-status {
+        background-color: #fff3cd !important;
+        color: #856404 !important;
+    }
+    .normal-status {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    .high-status {
+        background-color: #d4edda !important;
+        color: #155724 !important;
+    }
+                `}
+            </style>
             <DynamicForm form={searchForm}>
                 <Grid container spacing={2} alignItems="center" justifyContent="flex-start" className="px-4 py-5">
                     <Grid size={{ xs: 12, sm: 4, md: 2 }}>
@@ -264,7 +341,10 @@ export default function InventoryLimitStockPage() {
                 <AgDataGrid
                     onGridReady={onGridReady}
                     columnDefs={columns}
-                    rowData={data?.inventoryLimitStocks ?? []}
+                    rowData={[...(data?.inventoryLimitStocks ?? [])].sort((a, b) =>
+                        a.medicineCode.localeCompare(b.medicineCode),
+                    )}
+                    rowClassRules={rowClassRules}
                     onRowClicked={(row: RowClickedEvent<InventoryLimitStock>) => setSelectedRow(row.data)}
                     rowSelection="single"
                     pagination
@@ -315,6 +395,23 @@ export default function InventoryLimitStockPage() {
                                     render="input-number"
                                     name="minimalStockThreshold"
                                     label={t(i18n.translationKey.minimalStockThreshold)}
+                                />
+                            </Grid>
+                            <Grid size={12}>
+                                <FormItem
+                                    render="select"
+                                    name="isSuspended"
+                                    label={t(i18n.translationKey.inventoryLimitStockSuspensionStatus)}
+                                    options={[
+                                        {
+                                            value: "false",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.false`),
+                                        },
+                                        {
+                                            value: "true",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.true`),
+                                        },
+                                    ]}
                                 />
                             </Grid>
                         </Grid>

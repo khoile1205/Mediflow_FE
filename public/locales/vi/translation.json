@@ -548,5 +548,19 @@
     "MEDICINE_UNIT": {
         "Dose": "Liều",
         "Capsule": "Viên"
-    }
+    },
+    "INVENTORY_LIMIT_STOCK_SUSPENSION_ENUM": {
+        "true": "Đã dừng hoạt động",
+        "false": "Đang hoạt động"
+    },
+    "INVENTORY_LIMIT_STOCK_SUSPENSION_STATUS": "Trạng thái hoạt động",
+    "UPDATE_BOTH_STATUS_AND_STOCK_SUCCESS": "Cập nhật trạng thái hoạt động và ngưỡng tồn kho tối thiểu thành công",
+    "UPDATE_SUSPENSION_STATUS_SUCCESS": "Cập nhật trạng thái hoạt động thành công",
+    "UPDATE_MINIMAL_STOCK_THRESHOLD_SUCCESS": "Cập nhật ngưỡng tồn kho tối thiểu thành công",
+    "UPDATE_BOTH_STATUS_AND_STOCK_FAILED": "Cập nhật trạng thái hoạt động và ngưỡng tồn kho tối thiểu thất bại",
+    "UPDATE_SUSPENSION_STATUS_FAILED": "Cập nhật trạng thái hoạt động thất bại",
+    "UPDATE_MINIMAL_STOCK_THRESHOLD_FAILED": "Cập nhật ngưỡng tồn kho tối thiểu thất bại",
+    "NO_CHANGES_SAVED": "Không có thay đổi được lưu",
+    "INVALID_UNIT_PRICE": "Đơn giá không hợp lệ.",
+    "INVALID_MEDICINE_ID": "Mã thuốc không hợp lệ."
 }

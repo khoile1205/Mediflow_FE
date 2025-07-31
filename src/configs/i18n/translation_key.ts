@@ -451,6 +451,20 @@ const applicationTranslationKey = {
     maxStock: "MAX_STOCK",
     inventoryLimitStockStatus: "INVENTORY_LIMIT_STOCK_STATUS",
     medicineUnit: "MEDICINE_UNIT",
+    inventoryLimitStockSuspensionStatus: "INVENTORY_LIMIT_STOCK_SUSPENSION_STATUS",
+    inventoryLimitStockSuspensionEnum: "INVENTORY_LIMIT_STOCK_SUSPENSION_ENUM",
+    suspended: "SUSPENDED",
+    active: "ACTIVE",
+    updateBothStatusAndStockSuccess: "UPDATE_BOTH_STATUS_AND_STOCK_SUCCESS",
+    updateSuspensionStatusSuccess: "UPDATE_SUSPENSION_STATUS_SUCCESS",
+    updateMinimalStockThresholdSuccess: "UPDATE_MINIMAL_STOCK_THRESHOLD_SUCCESS",
+    updateBothStatusAndStockFailed: "UPDATE_BOTH_STATUS_AND_STOCK_FAILED",
+    updateSuspensionStatusFailed: "UPDATE_SUSPENSION_STATUS_FAILED",
+    updateMinimalStockThresholdFailed: "UPDATE_MINIMAL_STOCK_THRESHOLD_FAILED",
+    noChangesSaved: "NO_CHANGES_SAVED",
+    inactive: "INACTIVE",
+    invalidUnitPrice: "INVALID_UNIT_PRICE",
+    invalidMedicineId: "INVALID_MEDICINE_ID",
 };
 
 const exceptionTranslationKey = {

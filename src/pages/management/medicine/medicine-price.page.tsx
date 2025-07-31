@@ -31,7 +31,7 @@ interface MedicinePriceFormValues {
     vatAmount: number;
     originalPriceAfterVat: number;
     originalPriceBeforeVat: number;
-    isSuspended?: boolean;
+    isSuspended: string;
     isCancelled?: boolean;
     createdAt?: string;
     lastUpdatedAt?: string;
@@ -56,10 +56,12 @@ export default function MedicinePriceListPage() {
             vatAmount: 0,
             originalPriceAfterVat: 0,
             originalPriceBeforeVat: 0,
+            isSuspended: "false",
+            isCancelled: false,
         },
     });
 
-    const { watch, setValue } = form;
+    const { watch, setValue, reset } = form;
 
     const mutationUpdateMedicinePrice = useMutationUpdateMedicinePrice();
     const mutationDeleteMedicinePrice = useMutationDeleteMedicinePrice();
@@ -81,9 +83,14 @@ export default function MedicinePriceListPage() {
 
     useEffect(() => {
         if (detailData) {
-            form.reset(detailData);
+            reset({
+                ...detailData,
+                currency: detailData.currency ?? "VND",
+                isSuspended: detailData.isSuspended ? "true" : "false",
+                isCancelled: detailData.isCancelled ?? false,
+            });
         }
-    }, [detailData, form]);
+    }, [detailData, reset]);
 
     const watchedUnitPrice = watch("unitPrice");
     const watchedVatRate = watch("vatRate");
@@ -164,6 +171,14 @@ export default function MedicinePriceListPage() {
                 cellStyle: { textAlign: "right" },
             },
             {
+                headerName: t(i18n.translationKey.inventoryLimitStockSuspensionStatus),
+                field: "isSuspended",
+                flex: 1,
+                cellRenderer: "agCellWrapper",
+                valueFormatter: ({ value }) => t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.${value}`),
+                sortable: true,
+            },
+            {
                 headerName: t(i18n.translationKey.createdAt),
                 field: "createdAt",
                 flex: 1,
@@ -198,16 +213,20 @@ export default function MedicinePriceListPage() {
         const values = form.getValues();
 
         try {
-            await mutationUpdateMedicinePrice.mutateAsync({
+            const updatedValues = {
                 id: selectedMedicinePriceId,
                 medicineId: values.medicineId || 0,
                 unitPrice: values.unitPrice,
-                currency: values.currency,
+                currency: values.currency ?? "VND",
                 vatRate: values.vatRate,
                 vatAmount: values.vatAmount,
                 originalPriceBeforeVat: values.originalPriceBeforeVat,
                 originalPriceAfterVat: values.originalPriceAfterVat,
-            });
+                isSuspended: values.isSuspended === "true",
+                isCancelled: values.isCancelled ?? false,
+            };
+
+            await mutationUpdateMedicinePrice.mutateAsync(updatedValues);
 
             showToast.success(t(i18n.translationKey.updateMedicinePriceSuccess));
             setIsEditModalOpen(false);
@@ -303,6 +322,23 @@ export default function MedicinePriceListPage() {
                             </Grid>
                             <Grid size={{ xs: 12 }}>
                                 <FormItem render="input-number" name="vatRate" label={t(i18n.translationKey.vatRate)} />
+                            </Grid>
+                            <Grid size={{ xs: 12 }}>
+                                <FormItem
+                                    render="select"
+                                    name="isSuspended"
+                                    label={t(i18n.translationKey.inventoryLimitStockSuspensionStatus)}
+                                    options={[
+                                        {
+                                            value: "false",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.false`),
+                                        },
+                                        {
+                                            value: "true",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.true`),
+                                        },
+                                    ]}
+                                />
                             </Grid>
                             <Grid size={{ xs: 12 }}>
                                 <FormItem

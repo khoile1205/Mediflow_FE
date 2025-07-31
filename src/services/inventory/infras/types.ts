@@ -199,6 +199,7 @@ export interface UpdateMedicinePriceRequest {
     vatAmount: number;
     originalPriceBeforeVat: number;
     originalPriceAfterVat: number;
+    isSuspended?: boolean;
 }
 
 export interface GetMedicinePriceListRequest extends IPaginationRequest {
@@ -213,4 +214,6 @@ export interface CreateMedicinePriceRequest {
     vatAmount: number;
     originalPriceBeforeVat: number;
     originalPriceAfterVat: number;
+    isSuspended: boolean;
+    isCancelled: boolean;
 }
