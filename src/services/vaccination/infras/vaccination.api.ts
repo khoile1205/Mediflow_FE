@@ -8,6 +8,7 @@ import {
     GetNearestExpiryMedicineBatchResponse,
     UpdateVaccinationStatusRequest,
     WaitingPatientVaccination,
+    VaccinationHistoryResponse,
 } from "./types";
 
 const getWaitingPatientVaccinationList = async ({ searchTerm = "" }: ISearchParam) => {
@@ -57,6 +58,14 @@ const confirmVaccinationToday = async (receptionId: number) => {
         data: null,
     });
 };
+
+const getVaccinationHistory = async (patientId: number) => {
+    return await callApi<VaccinationHistoryResponse>({
+        url: endpoints.vaccination.getVaccinationHistory(patientId),
+        method: HttpMethod.GET,
+    });
+};
+
 export const vaccinationApis = {
     getWaitingPatientVaccinationList,
     getMedicineVaccinationByReceptionId,
@@ -64,4 +73,5 @@ export const vaccinationApis = {
     updateVaccinationStatus,
     injectVaccine,
     confirmVaccinationToday,
+    getVaccinationHistory,
 };

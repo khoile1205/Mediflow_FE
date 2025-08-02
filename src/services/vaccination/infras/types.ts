@@ -60,3 +60,27 @@ export interface InjectVaccineRequest {
     note: string;
     doctorId: number;
 }
+
+type VaccinationHistoryItem = {
+    id: number;
+    medicineTypeName: string;
+    medicineName: string;
+    doseNumber: string;
+    vaccinationTestDate: Date;
+    vaccinationDate: Date;
+    vaccinationConfirmation: boolean;
+    doctorName: string;
+};
+
+export interface VaccinationHistoryResponse {
+    patientCode: string;
+    patientVaccinationCode: string;
+    patientName: string;
+    gender: string;
+    phoneNumber: string;
+    addressDetail: string;
+    ward: string;
+    district: string;
+    province: string;
+    vaccinationHistoryItems: VaccinationHistoryItem[];
+}

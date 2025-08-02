@@ -219,6 +219,7 @@
     "PLEASE_ADD_PHARMACEUTICAL_INFORMATION": "Please add the pharmaceutical information",
     "DOCUMENT_CREATE_SUCCESSFULLY": "Document created successfully.",
     "INJECTION_DATE": "Injection date",
+    "TEST_DATE": "Test date",
     "INSTRUCTED_DOCTOR": "Instructed doctor",
     "VACCINATION_HISTORY": "Vaccination history",
     "SERVICE_TYPE": "Service type",

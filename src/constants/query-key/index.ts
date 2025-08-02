@@ -85,6 +85,7 @@ const VaccinationQueryKey = {
     UPDATE_VACCINATION_STATUS: "updateVaccinationStatus",
     INJECT_VACCINATION: "injectVaccination",
     CONFIRM_VACCINATION_TODAY: "confirmVaccinationToday",
+    GET_VACCINATION_HISTORY_BY_PATIENT_ID: "getVaccinationHistoryByPatientId",
 };
 
 const AppointmentQueryKey = {
