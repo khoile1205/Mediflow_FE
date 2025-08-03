@@ -483,8 +483,6 @@
     "ROUTE_ADMIN_IM": "Intramuscular (IM)",
     "ROUTE_ADMIN_SC": "Subcutaneous (SC)",
     "ROUTE_ADMIN_ID": "Intradermal (ID)",
-    "ROUTE_ADMIN_PO": "Oral (PO)",
-    "ROUTE_ADMIN_IN": "Intranasal (IN)",
     "CREATE_MEDICINE_SUCCESS": "Create medicine successfully",
     "CREATE_MEDICINE_FAILED": "Create medicine failed",
     "MEDICINE_MANAGEMENT": "Medicine Management",
@@ -522,5 +520,44 @@
     "CREATE_MEDICINE_PRICE_FAILED": "Failed to create medicine price",
     "MEDICINE_ID_REQUIRED": "Please select a medicine",
     "VAT_RATE_MUST_BE_POSITIVE": "VAT rate must be positive",
-    "VAT_RATE_TOO_HIGH": "VAT rate must not exceed 1"
+    "VAT_RATE_TOO_HIGH": "VAT rate must not exceed 1",
+    "CURRENT_STOCK": "Current stock",
+    "MINIMAL_STOCK_THRESHOLD": "Minimal stock threshold",
+    "STOCK_DIFFERENCE": "Stock difference",
+    "CREATE_INVENTORY_LIMIT_SUCCESS": "Created inventory limit stock successfully",
+    "CREATE_INVENTORY_LIMIT_FAILED": "Failed to create inventory limit stock",
+    "UPDATE_INVENTORY_LIMIT_SUCCESS": "Updated inventory limit stock successfully",
+    "UPDATE_INVENTORY_LIMIT_FAILED": "Failed to update inventory limit stock",
+    "DELETE_INVENTORY_LIMIT_SUCCESS": "Deleted inventory limit stock successfully",
+    "DELETE_INVENTORY_LIMIT_FAILED": "Failed to delete inventory limit stock",
+    "MEDICINE_ID": "Medicine ID",
+    "INVENTORY_MANAGEMENT": "Inventory Management",
+    "INVENTORY_LIMIT_STOCK": "Inventory Limit Stock",
+    "CREATE_MEDICINE_PRICE": "Add Medicine Price",
+    "MIN_STOCK": "Minimum Stock",
+    "MAX_STOCK": "Maximum Stock",
+    "INVENTORY_LIMIT_STOCK_STATUS": {
+        "Critical Low": "Critical Low",
+        "Low": "Low",
+        "Normal": "Normal",
+        "High": "High"
+    },
+    "MEDICINE_UNIT": {
+        "Dose": "Dose",
+        "Capsule": "Capsule"
+    },
+    "INVENTORY_LIMIT_STOCK_SUSPENSION_ENUM": {
+        "true": "Suspended",
+        "false": "Active"
+    },
+    "UPDATE_BOTH_STATUS_AND_STOCK_SUCCESS": "Successfully updated suspension status and minimal stock threshold",
+    "UPDATE_SUSPENSION_STATUS_SUCCESS": "Successfully updated suspension status",
+    "UPDATE_MINIMAL_STOCK_THRESHOLD_SUCCESS": "Successfully updated minimal stock threshold",
+    "UPDATE_BOTH_STATUS_AND_STOCK_FAILED": "Failed to update suspension status and minimal stock threshold",
+    "UPDATE_SUSPENSION_STATUS_FAILED": "Failed to update suspension status",
+    "UPDATE_MINIMAL_STOCK_THRESHOLD_FAILED": "Failed to update minimal stock threshold",
+    "NO_CHANGES_SAVED": "No changes were saved",
+    "INVENTORY_LIMIT_STOCK_SUSPENSION_STATUS": "Suspension Status",
+    "INVALID_UNIT_PRICE": "Invalid unit price.",
+    "INVALID_MEDICINE_ID": "Invalid medicine ID."
 }

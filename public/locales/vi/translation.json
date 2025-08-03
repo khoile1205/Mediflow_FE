@@ -486,8 +486,6 @@
     "ROUTE_ADMIN_IM": "Tiêm bắp (IM)",
     "ROUTE_ADMIN_SC": "Tiêm dưới da (SC)",
     "ROUTE_ADMIN_ID": "Tiêm trong da (ID)",
-    "ROUTE_ADMIN_PO": "Uống (PO)",
-    "ROUTE_ADMIN_IN": "Xịt mũi (IN)",
     "CREATE_MEDICINE_SUCCESS": "Tạo thuốc thành công",
     "CREATE_MEDICINE_FAILED": "Tạo thuốc thất bại",
     "MEDICINE_MANAGEMENT": "Quản lý dược",
@@ -525,5 +523,44 @@
     "CREATE_MEDICINE_PRICE_FAILED": "Tạo giá thuốc thất bại",
     "MEDICINE_ID_REQUIRED": "Vui lòng chọn thuốc",
     "VAT_RATE_MUST_BE_POSITIVE": "Tỷ lệ VAT phải lớn hơn hoặc bằng 0",
-    "VAT_RATE_TOO_HIGH": "Tỷ lệ VAT không được vượt quá 1"
+    "VAT_RATE_TOO_HIGH": "Tỷ lệ VAT không được vượt quá 1",
+    "CURRENT_STOCK": "Tồn kho hiện tại",
+    "MINIMAL_STOCK_THRESHOLD": "Ngưỡng tồn kho tối thiểu",
+    "STOCK_DIFFERENCE": "Chênh lệch tồn kho",
+    "CREATE_INVENTORY_LIMIT_SUCCESS": "Thêm giới hạn tồn kho thành công",
+    "CREATE_INVENTORY_LIMIT_FAILED": "Thêm giới hạn tồn kho thất bại",
+    "UPDATE_INVENTORY_LIMIT_SUCCESS": "Cập nhật giới hạn tồn kho thành công",
+    "UPDATE_INVENTORY_LIMIT_FAILED": "Cập nhật giới hạn tồn kho thất bại",
+    "DELETE_INVENTORY_LIMIT_SUCCESS": "Xoá giới hạn tồn kho thành công",
+    "DELETE_INVENTORY_LIMIT_FAILED": "Xoá giới hạn tồn kho thất bại",
+    "MEDICINE_ID": "Mã thuốc",
+    "INVENTORY_MANAGEMENT": "Quản lý tồn kho",
+    "INVENTORY_LIMIT_STOCK": "Tồn kho giới hạn",
+    "CREATE_MEDICINE_PRICE": "Thêm giá thuốc",
+    "MIN_STOCK": "Tồn kho tối thiểu",
+    "MAX_STOCK": "Tồn kho tối đa",
+    "INVENTORY_LIMIT_STOCK_STATUS": {
+        "Critical Low": "Tồn kho rất thấp",
+        "Low": "Tồn kho thấp",
+        "Normal": "Bình thường",
+        "High": "Tồn kho cao"
+    },
+    "MEDICINE_UNIT": {
+        "Dose": "Liều",
+        "Capsule": "Viên"
+    },
+    "INVENTORY_LIMIT_STOCK_SUSPENSION_ENUM": {
+        "true": "Đã dừng hoạt động",
+        "false": "Đang hoạt động"
+    },
+    "INVENTORY_LIMIT_STOCK_SUSPENSION_STATUS": "Trạng thái hoạt động",
+    "UPDATE_BOTH_STATUS_AND_STOCK_SUCCESS": "Cập nhật trạng thái hoạt động và ngưỡng tồn kho tối thiểu thành công",
+    "UPDATE_SUSPENSION_STATUS_SUCCESS": "Cập nhật trạng thái hoạt động thành công",
+    "UPDATE_MINIMAL_STOCK_THRESHOLD_SUCCESS": "Cập nhật ngưỡng tồn kho tối thiểu thành công",
+    "UPDATE_BOTH_STATUS_AND_STOCK_FAILED": "Cập nhật trạng thái hoạt động và ngưỡng tồn kho tối thiểu thất bại",
+    "UPDATE_SUSPENSION_STATUS_FAILED": "Cập nhật trạng thái hoạt động thất bại",
+    "UPDATE_MINIMAL_STOCK_THRESHOLD_FAILED": "Cập nhật ngưỡng tồn kho tối thiểu thất bại",
+    "NO_CHANGES_SAVED": "Không có thay đổi được lưu",
+    "INVALID_UNIT_PRICE": "Đơn giá không hợp lệ.",
+    "INVALID_MEDICINE_ID": "Mã thuốc không hợp lệ."
 }

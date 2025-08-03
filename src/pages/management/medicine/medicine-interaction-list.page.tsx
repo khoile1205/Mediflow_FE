@@ -33,6 +33,7 @@ type FormValues = Pick<
     | "preventiveActions"
     | "referenceInfo"
     | "notes"
+    | "isSuspended"
 >;
 
 export default function MedicineInteractionListPage() {
@@ -57,6 +58,7 @@ export default function MedicineInteractionListPage() {
             preventiveActions: "",
             referenceInfo: "",
             notes: "",
+            isSuspended: false,
         },
     });
 
@@ -74,6 +76,15 @@ export default function MedicineInteractionListPage() {
         query,
     });
 
+    const medicineInteractions = useMemo(() => {
+        return (
+            data?.medicineInteractions.map((item) => ({
+                ...item,
+                isSuspended: Boolean(item.isSuspended),
+            })) ?? []
+        );
+    }, [data]);
+
     const medicineOptions =
         medicineListData?.medicines.map((m) => ({
             label: m.medicineName,
@@ -89,18 +100,24 @@ export default function MedicineInteractionListPage() {
             { headerName: t(i18n.translationKey.preventiveActions), field: "preventiveActions", flex: 2 },
             { headerName: t(i18n.translationKey.referenceInfo), field: "referenceInfo", flex: 2 },
             { headerName: t(i18n.translationKey.note), field: "notes", flex: 2 },
+            {
+                headerName: t(i18n.translationKey.inventoryLimitStockSuspensionStatus),
+                field: "isSuspended",
+                flex: 1,
+                cellRenderer: "agCellWrapper",
+                valueFormatter: ({ value }) => t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.${value}`),
+            },
         ],
         [t],
     );
 
-    const medicineInteractions = data?.medicineInteractions ?? [];
     const totalItems = data?.totalItems ?? 0;
 
     const handleRowClick = (e: RowClickedEvent<MedicineInteraction>) => {
         setSelectedRow(e.data);
     };
 
-    const handleCreate = () => navigate("/pharmacy/create-medicine-interaction");
+    const handleCreate = () => navigate("/medicine/create-medicine-interaction");
 
     const handleEdit = () => {
         if (!selectedRow) return showToast.error(t(i18n.translationKey.noRowSelected));
@@ -109,7 +126,12 @@ export default function MedicineInteractionListPage() {
     };
 
     const handleSave = () => {
-        updateInteraction(editForm.getValues(), {
+        const values = editForm.getValues();
+        const updatedValues: FormValues = {
+            ...values,
+            isSuspended: Boolean(values.isSuspended),
+        };
+        updateInteraction(updatedValues, {
             onSuccess: () => {
                 showToast.success(t(i18n.translationKey.updateSuccess));
                 setIsEditModalOpen(false);
@@ -196,6 +218,23 @@ export default function MedicineInteractionListPage() {
                                     label={t(i18n.translationKey.medicine2)}
                                     render="select"
                                     options={medicineOptions}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12 }}>
+                                <FormItem
+                                    name="isSuspended"
+                                    label={t(i18n.translationKey.inventoryLimitStockSuspensionStatus)}
+                                    render="select"
+                                    options={[
+                                        {
+                                            value: "false",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.false`),
+                                        },
+                                        {
+                                            value: "true",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.true`),
+                                        },
+                                    ]}
                                 />
                             </Grid>
                             <Grid size={12}>
