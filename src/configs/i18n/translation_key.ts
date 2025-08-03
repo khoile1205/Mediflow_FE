@@ -124,6 +124,7 @@ const applicationTranslationKey = {
     allowUsage: "ALLOW_USAGE",
     usageDate: "USAGE_DATE",
     injectionDate: "INJECTION_DATE",
+    testDate: "TEST_DATE",
     instructedDoctor: "INSTRUCTED_DOCTOR",
     vaccinationHistory: "VACCINATION_HISTORY",
     vaccinationConfirmation: "VACCINATION_CONFIRMATION",
