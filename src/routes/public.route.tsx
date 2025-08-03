@@ -1,5 +1,6 @@
 import { Route } from "react-router";
 import { lazy } from "react";
+import { ExpiredMedicineCallbackPage } from "~/pages/pharmacy/expired-medicine";
 
 const LoginPage = lazy(() => import("../pages/auth/login.page"));
 const ExamplePage = lazy(() => import("../pages/template/app"));
@@ -15,6 +16,9 @@ export const PublicRoutes = (
         </Route>
         <Route>
             <Route path="login" element={<LoginPage />} />
+        </Route>
+        <Route path="/pharmacy">
+            <Route path="expired-medicine/:id/:action/callback" element={<ExpiredMedicineCallbackPage />} />
         </Route>
     </Route>
 );

@@ -4,3 +4,5 @@ export * from "./use-query-get-medicines";
 export * from "./use-query-get-vaccine-types";
 export * from "./use-query-get-medicine-interactions";
 export * from "./use-query-get-medicine-prices";
+export * from "./use-query-get-expired-medicine-batch";
+export * from "./use-query-generate-expired-return-code";

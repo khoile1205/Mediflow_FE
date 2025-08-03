@@ -11,6 +11,7 @@ import {
     Paid,
     PermContactCalendar,
     Vaccines,
+    WarningAmber,
 } from "@mui/icons-material";
 import { SidebarTabProps } from "~/components/layout/sidebar/tabs/sidebar.tab";
 import { Role } from "~/constants/roles";
@@ -176,6 +177,13 @@ export const sidebarTree: SidebarTabProps[] = [
                 labelKey: i18n.translationKey.importPharmacy,
                 pathName: "/pharmacy/import",
                 icon: <Inventory2 />,
+                requiredPermissions: [ResourceType.Inventory],
+                requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],
+            },
+            {
+                labelKey: i18n.translationKey.expiredMedicine,
+                pathName: "/pharmacy/expired-medicine",
+                icon: <WarningAmber />,
                 requiredPermissions: [ResourceType.Inventory],
                 requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],
             },

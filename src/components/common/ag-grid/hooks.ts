@@ -10,6 +10,7 @@ interface UseAgGridProps<T> {
     rowSelection?: "single" | "multiple";
     defaultSortModel?: Array<{ colId: string; sort: "asc" | "desc" }>;
     onRowDataChanged?: (params: RowDataTransaction) => void;
+    isRowSelectable?: (rowData: T, selectedRows: T[]) => boolean;
 }
 
 // Define interface for hook return value
@@ -29,6 +30,7 @@ export const useAgGrid = <T>({
     rowSelection = "single",
     defaultSortModel = [],
     onRowDataChanged,
+    isRowSelectable, // ✅ added
 }: UseAgGridProps<T>): UseAgGridResult<T> => {
     const gridApi = React.useRef<GridApi | null>(null);
 
@@ -63,6 +65,16 @@ export const useAgGrid = <T>({
             suppressMovableColumns: true,
             defaultColDef,
             columnDefs: initialColumnDefs,
+            onRowSelected: (event) => {
+                if (isRowSelectable && gridApi.current) {
+                    const selectedRows = gridApi.current.getSelectedRows();
+                    const isAllowed = isRowSelectable(event.data as T, selectedRows);
+
+                    if (!isAllowed && event.node.isSelected()) {
+                        event.node.setSelected(false); // auto-deselect invalid row
+                    }
+                }
+            },
         }),
         [rowSelection, suppressRowClickSelection, defaultColDef, initialColumnDefs],
     );

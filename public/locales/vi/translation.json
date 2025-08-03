@@ -595,5 +595,16 @@
     "FAX": "Số fax",
     "CONTACT_INFORMATION": "Thông tin liên hệ",
     "REGISTRATION_INFORMATION": "Thông tin đăng ký",
-    "ADDITIONAL_INFORMATION": "Thông tin bổ sung"
+    "ADDITIONAL_INFORMATION": "Thông tin bổ sung",
+    "CREATE_RETURN_FORM": "Tạo phiếu trả",
+    "LIST_OF_EXPIRED_MEDICINES": "Danh sách lô thuốc hết hạn",
+    "CREATE_EXPIRED_RETURN_FORM_SUCCESS": "Tạo phiếu trả thuốc hết hạn thành công",
+    "CREATE_EXPIRED_RETURN": "Tạo trả thuốc hết hạn",
+    "EXPIRED_RETURN_INFORMATION": "Thông tin trả thuốc hết hạn",
+    "REASON": "Lý do",
+    "RETURN_CODE": "Mã phiếu trả",
+    "EXPIRED_MEDICINE": "Lô thuốc hết hạn",
+    "APPROVE_EXPIRED_RETURN_FORM_SUCCESS": "Duyệt phiếu trả thuốc hết hạn thành công",
+    "REJECT_EXPIRED_RETURN_FORM_SUCCESS": "Từ chối phiếu trả thuốc hết hạn thành công",
+    "SEARCH_BATCH_OR_MEDICINE_NAME": "Tìm kiếm theo số lô hoặc tên thuốc"
 }

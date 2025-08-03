@@ -49,6 +49,23 @@ const InventoryQueryKey = {
     CREATE_MEDICINE_PRICE: "createMedicinePrice",
     UPDATE_MEDICINE_PRICE: "updateMedicinePrice",
     DELETE_MEDICINE_PRICE: "deleteMedicinePrice",
+    GET_MEDICINE_BATCHES_WITH_PAGINATION: "getMedicineBatchesWithPagination",
+    GET_MEDICINE_BATCH_BY_ID: "getMedicineBatchById",
+    CREATE_MEDICINE_BATCH: "createMedicineBatch",
+    UPDATE_MEDICINE_BATCH: "updateMedicineBatch",
+    DELETE_MEDICINE_BATCH: "deleteMedicineBatch",
+    GET_EXPIRY_MEDICINE_BATCH: "getExpiryMedicineBatch",
+    GET_EXPIRY_RETURN_CODE: "getExpiryReturnCode",
+    GENERATE_EXPIRY_RETURN_CODE: "generateExpiryReturnCode",
+    GET_MEDICINE_BATCHES_BY_ID: "getMedicineBatchesById",
+    GET_MEDICINE_BATCHES_BY_ID_FOR_RETURN: "getMedicineBatchesByIdForReturn",
+    CREATE_EXPIRED_FORM: "createExpiredForm",
+    GET_EXPIRED_MEDICINE_BATCH: "getExpiredMedicineBatch",
+    APPROVE_EXPIRED_FORM: "approveExpiredForm",
+    REJECT_EXPIRED_FORM: "rejectExpiredForm",
+    CREATE_EXPIRED_RETURN: "createExpiredReturn",
+    GET_EXPIRED_MEDICINE_BATCH_FORM_BY_ID: "getExpiredMedicineBatchFormById",
+    GET_ALL_EXPIRED_MEDICINE_BATCHES: "getAllExpiredMedicineBatches",
 };
 
 const PostVaccinationQueryKey = {
