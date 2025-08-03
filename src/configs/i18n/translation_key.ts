@@ -497,6 +497,17 @@ const applicationTranslationKey = {
     contactInformation: "CONTACT_INFORMATION",
     registrationInformation: "REGISTRATION_INFORMATION",
     additionalInformation: "ADDITIONAL_INFORMATION",
+    createReturnForm: "CREATE_RETURN_FORM",
+    listOfExpiredMedicines: "LIST_OF_EXPIRED_MEDICINES",
+    createExpiredReturn: "CREATE_EXPIRED_RETURN",
+    expiredReturnInformation: "EXPIRED_RETURN_INFORMATION",
+    reason: "REASON",
+    returnCode: "RETURN_CODE",
+    createExpiredReturnFormSuccess: "CREATE_EXPIRED_RETURN_FORM_SUCCESS",
+    expiredMedicine: "EXPIRED_MEDICINE",
+    approveExpiredReturnFormSuccess: "APPROVE_EXPIRED_RETURN_FORM_SUCCESS",
+    rejectExpiredReturnFormSuccess: "REJECT_EXPIRED_RETURN_FORM_SUCCESS",
+    searchBatchOrMedicineName: "SEARCH_BATCH_OR_MEDICINE_NAME",
 };
 
 const exceptionTranslationKey = {

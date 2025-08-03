@@ -21,6 +21,7 @@ import MedicinePriceListPage from "~/pages/management/medicine/medicine-price.pa
 import CreateMedicinePricePage from "~/pages/management/medicine/medicine-price-create.page";
 import InventoryLimitStockPage from "~/pages/management/inventory-stock/inventory-stock.page";
 import { SupplierManagementPage } from "~/pages/supplier";
+import { NearlyExpiredMedicineBatchPage } from "~/pages/pharmacy/expired-medicine";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -45,6 +46,7 @@ export const AuthenticatedRoutes = (
 
         <Route path="/pharmacy">
             <Route path="import" element={<ImportInventoryFromSupplier />} />
+            <Route path="expired-medicine" element={<NearlyExpiredMedicineBatchPage />} />
         </Route>
 
         <Route path="/medicine">

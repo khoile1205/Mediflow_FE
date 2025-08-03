@@ -593,5 +593,15 @@
     "CONTACT_INFORMATION": "Contact information",
     "REGISTRATION_INFORMATION": "Registration information",
     "ADDITIONAL_INFORMATION": "Additional information",
-    "VAT_RATE_TOO_HIGH": "VAT rate must not exceed 1",
+    "CREATE_RETURN_FORM": "Create return form",
+    "LIST_OF_EXPIRED_MEDICINES": "List of expired medicine batches",
+    "CREATE_EXPIRED_RETURN_FORM_SUCCESS": "Expired return form created successfully",
+    "CREATE_EXPIRED_RETURN": "Create expired return",
+    "EXPIRED_RETURN_INFORMATION": "Expired return information",
+    "REASON": "Reason",
+    "RETURN_CODE": "Return code",
+    "EXPIRED_MEDICINE": "Expired medicine batch",
+    "APPROVE_EXPIRED_RETURN_FORM_SUCCESS": "Expired return form approved successfully",
+    "REJECT_EXPIRED_RETURN_FORM_SUCCESS": "Expired return form rejected successfully",
+    "SEARCH_BATCH_OR_MEDICINE_NAME": "Search by batch number or medicine name"
 }

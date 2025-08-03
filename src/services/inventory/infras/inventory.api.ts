@@ -17,12 +17,14 @@ import {
     IDocumentImportMedicineSupplierResponse,
     ImportMedicineFromSupplierDocumentRequest,
     InventoryLimitStock,
+    CreateExpiredReturnRequest,
 } from "./types";
 import { IPaginationRequest, IPagination, HttpMethod, IBaseApiResponse } from "~/libs/axios/types";
 import { Supplier } from "~/entities/supplier";
 import { GetMedicineListRequest } from "../hooks/queries/use-query-get-medicines";
 import { inventoryEndpoints } from "~/constants/endpoints/inventory";
 import { ISearchParam } from "~/services/hospital-service/infras";
+import { MedicineBatch } from "~/entities";
 
 const getAllManufacturers = async () => {
     return await callApi<Manufacture[]>({
@@ -234,6 +236,59 @@ const deleteMedicinePrice = async (id: number) => {
     });
 };
 
+const getExpiryMedicineBatch = async (
+    params: IPaginationRequest & ISearchParam,
+): Promise<IBaseApiResponse<IPagination<MedicineBatch>>> => {
+    return await callApi({
+        url: endpoints.inventory.medicine.getExpiredMedicineBatches,
+        method: HttpMethod.GET,
+        params,
+    });
+};
+
+const generateExpiryReturnCode = async (): Promise<IBaseApiResponse<string>> => {
+    return await callApi({
+        url: endpoints.inventory.expiredReturn.generateReturnCode,
+        method: HttpMethod.GET,
+    });
+};
+
+const approveExpiredForm = async (id: number, token: string): Promise<IBaseApiResponse<void>> => {
+    return await callApi<void>({
+        url: endpoints.inventory.expiredReturn.approveExpiredForm(id),
+        method: HttpMethod.POST,
+        data: { token },
+    });
+};
+const rejectExpiredForm = async (id: number, token: string): Promise<IBaseApiResponse<void>> => {
+    return await callApi<void>({
+        url: endpoints.inventory.expiredReturn.rejectExpiredForm(id),
+        method: HttpMethod.POST,
+        data: { token },
+    });
+};
+const createExpiredReturn = async (data: CreateExpiredReturnRequest): Promise<IBaseApiResponse<number>> => {
+    return await callApi<number>({
+        url: endpoints.inventory.expiredReturn.createExpiredReturn,
+        method: HttpMethod.POST,
+        data,
+    });
+};
+
+const getExpiredMedicineBatchFormById = async (id: number): Promise<IBaseApiResponse<MedicineBatch[]>> => {
+    return await callApi({
+        url: endpoints.inventory.expiredReturn.getExpiredMedicineBatchById(id),
+        method: HttpMethod.GET,
+    });
+};
+
+const getAllExpiredMedicineBatches = async (): Promise<IBaseApiResponse<MedicineBatch[]>> => {
+    return await callApi({
+        url: endpoints.inventory.expiredReturn.getAllExpiredMedicineBatches,
+        method: HttpMethod.GET,
+    });
+};
+
 export const inventoryApis = {
     getAllManufacturers,
     getAllManufactureCountries,
@@ -256,4 +311,11 @@ export const inventoryApis = {
     updateMedicinePrice,
     deleteMedicinePrice,
     getMedicinePriceById,
+    getExpiryMedicineBatch,
+    generateExpiryReturnCode,
+    approveExpiredForm,
+    rejectExpiredForm,
+    createExpiredReturn,
+    getExpiredMedicineBatchFormById,
+    getAllExpiredMedicineBatches,
 };
