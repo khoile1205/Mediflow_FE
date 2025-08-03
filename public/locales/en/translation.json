@@ -604,5 +604,17 @@
     "REJECT_EXPIRED_RETURN_FORM_SUCCESS": "Expired return form rejected successfully",
     "SEARCH_BATCH_OR_MEDICINE_NAME": "Search by batch number or medicine name",
     "INVALID_MEDICINE_ID": "Invalid medicine ID.",
-    "CANNOT_ADD_SUSPENDED_MEDICINE": "Cannot add medicine '{{name}}' because it is suspended."
+    "CANNOT_ADD_SUSPENDED_MEDICINE": "Cannot add medicine '{{name}}' because it is suspended.",
+    "EXPIRED_RETURN_MANAGEMENT": "Expired Return Management",
+    "EXPIRED_RETURN_MANAGEMENT_DESCRIPTION": "Manage expired medicine return forms",
+    "ALL": "All",
+    "PENDING": "Pending",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "SEARCH_RETURN_FORM": "Search return form",
+    "NO_REASON_PROVIDED": "No reason provided",
+    "SUPPLIER_INFORMATION": "Supplier information",
+    "CLOSE": "Close",
+    "EXPIRED_RETURN_FORM_DETAIL": "Expired return form detail",
+    "EXPIRED_RETURN_FORM": "Expired return form"
 }

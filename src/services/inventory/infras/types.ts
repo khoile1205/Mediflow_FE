@@ -1,4 +1,6 @@
+import { MedicineBatchExpiredFormStatus } from "~/constants/enums";
 import { IPaginationRequest } from "~/libs/axios/types";
+import { ISearchParam } from "~/services/hospital-service/infras";
 
 export interface IDocumentImportMedicineSupplierResponse {
     documentCode: string;
@@ -233,4 +235,8 @@ export interface ExpiredMedicineBatch {
     batchNumber: string;
     expirationDate: string;
     quantity: number;
+}
+
+export interface IGetListMedicineBatchesReturnFormRequest extends IPaginationRequest, ISearchParam {
+    status: MedicineBatchExpiredFormStatus;
 }
