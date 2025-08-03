@@ -21,3 +21,10 @@ export enum ReceiptPaymentType {
     REFUND,
     CANCEL,
 }
+
+export enum UploadedFileType {
+    REPORT = "Report",
+    STATISTICS = "Statistics",
+    SUPPLIER = "Supplier",
+    CONTRACT = "Contract",
+}

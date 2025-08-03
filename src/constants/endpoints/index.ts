@@ -8,9 +8,12 @@ import { managementEndpoints } from "./management";
 import { patientEndpoints } from "./patient";
 import { publicApiEndpoints } from "./public-api";
 import { receptionEndpoints } from "./reception";
+import { supplierEndpoints } from "./supplier";
+import { uploadFileEndpoints } from "./upload-file";
 import { vaccinationEndpoints } from "./vaccination";
 
 export const endpoints = {
+    uploadFile: uploadFileEndpoints,
     inventory: inventoryEndpoints,
     auth: authEndpoints,
     publicApi: publicApiEndpoints,
@@ -22,4 +25,5 @@ export const endpoints = {
     vaccination: vaccinationEndpoints,
     appointment: appointmentEndpoints,
     examination: examinationEndpoints,
+    supplier: supplierEndpoints,
 };

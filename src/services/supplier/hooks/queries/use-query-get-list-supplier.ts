@@ -3,22 +3,22 @@ import React from "react";
 import { QueryKey } from "~/constants/query-key";
 import { Supplier } from "~/entities";
 import { IBaseApiResponse, IPagination, IPaginationRequest } from "~/libs/axios/types";
-import { inventoryApis } from "../../infras";
+import { inventoryApis } from "../../../inventory/infras";
+import { ISearchParam } from "~/services/hospital-service/infras";
 
 const transformSuppliers = (response: IBaseApiResponse<IPagination<Supplier>>): Supplier[] => {
     return response.Data.data.map((item) => ({ ...item })) as Supplier[];
 };
 
-export const useQueryGetListSupplier = (query: IPaginationRequest) => {
+export const useQueryGetListSupplier = (query: IPaginationRequest & ISearchParam) => {
     const {
         data: response,
         isLoading,
         isError,
         refetch,
     } = useQuery<IBaseApiResponse<IPagination<Supplier>>>({
-        queryKey: [QueryKey.INVENTORY.GET_LIST_SUPPLIER, query],
+        queryKey: [QueryKey.SUPPLIER.GET_LIST_SUPPLIER, query],
         queryFn: () => inventoryApis.getListSupplier(query),
-        staleTime: 1000 * 60 * 5,
     });
 
     const suppliers = React.useMemo(() => {

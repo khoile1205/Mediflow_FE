@@ -22,6 +22,7 @@ import { IPaginationRequest, IPagination, HttpMethod, IBaseApiResponse } from "~
 import { Supplier } from "~/entities/supplier";
 import { GetMedicineListRequest } from "../hooks/queries/use-query-get-medicines";
 import { inventoryEndpoints } from "~/constants/endpoints/inventory";
+import { ISearchParam } from "~/services/hospital-service/infras";
 
 const getAllManufacturers = async () => {
     return await callApi<Manufacture[]>({
@@ -44,13 +45,14 @@ const generateDocumentCode = async () => {
     });
 };
 
-const getListSupplier = async ({ pageIndex, pageSize }: IPaginationRequest) => {
+const getListSupplier = async ({ pageIndex, pageSize, searchTerm }: IPaginationRequest & ISearchParam) => {
     return await callApi<IPagination<Supplier>>({
         url: endpoints.inventory.supplier.standard,
         method: HttpMethod.GET,
         params: {
             pageIndex,
             pageSize,
+            searchTerm,
         },
     });
 };
