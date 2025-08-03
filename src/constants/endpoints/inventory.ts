@@ -52,6 +52,16 @@ const documentImportFromSupplierEndpoints = {
     generateDocumentCode: `${inventoryEndpointPrefix}/supplier-import-documents/generate-code`,
 };
 
+const inventoryLimitStockEndpointPrefix = `${inventoryEndpointPrefix}/inventory-limit-stocks`;
+
+const inventoryLimitStockEndpoints = {
+    standard: inventoryLimitStockEndpointPrefix,
+    getList: inventoryLimitStockEndpointPrefix,
+    create: inventoryLimitStockEndpointPrefix,
+    update: (id: number | string) => `${inventoryLimitStockEndpointPrefix}/${id}`,
+    delete: (id: number | string) => `${inventoryLimitStockEndpointPrefix}/${id}`,
+};
+
 export const inventoryEndpoints = {
     medicine: medicineEndpoints,
     medicinePrice: medicinePriceEndpoints,
@@ -59,6 +69,7 @@ export const inventoryEndpoints = {
     manufacturerCountry: manufacturerCountryEndpoints,
     supplierImportDocument: documentImportFromSupplierEndpoints,
     supplier: supplierEndpoints,
+    inventoryLimitStock: inventoryLimitStockEndpoints,
     vaccineType: vaccineTypeEndpoints,
     medicineInteraction: medicineInteractionEndpoints,
 };

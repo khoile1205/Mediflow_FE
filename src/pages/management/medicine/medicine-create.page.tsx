@@ -73,7 +73,7 @@ export default function CreateMedicinePage() {
         createMedicine(payload, {
             onSuccess: () => {
                 showToast.success(t(i18n.translationKey.createMedicineSuccess));
-                navigate("/pharmacy/medicine-list");
+                navigate("/medicine/medicine-list");
             },
             onError: () => {
                 showToast.error(t(i18n.translationKey.createMedicineFailed));
@@ -178,7 +178,7 @@ export default function CreateMedicinePage() {
                             fullWidth
                             variant="outlined"
                             startIcon={<CloseIcon />}
-                            onClick={() => navigate("/pharmacy/medicine-list")}
+                            onClick={() => navigate("/medicine/medicine-list")}
                         >
                             {t(i18n.translationKey.cancel)}
                         </Button>

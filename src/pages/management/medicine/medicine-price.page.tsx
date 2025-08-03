@@ -1,10 +1,11 @@
 import { AddCircle, Delete, Edit } from "@mui/icons-material";
 import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { ColDef, RowClickedEvent, IHeaderParams } from "ag-grid-community";
+import { ColDef, RowClickedEvent } from "ag-grid-community";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { ActionButton } from "~/components/common/action-button";
 import AgDataGrid from "~/components/common/ag-grid/ag-grid";
 import { useAgGrid } from "~/components/common/ag-grid/hooks";
@@ -15,11 +16,10 @@ import i18n from "~/configs/i18n";
 import usePagination from "~/hooks/use-pagination";
 import { useMutationDeleteMedicinePrice } from "~/services/inventory/hooks/mutations/use-mutation-delete-medicine-price";
 import { useMutationUpdateMedicinePrice } from "~/services/inventory/hooks/mutations/use-mutation-update-medicine-price";
-import { showToast } from "~/utils";
-import { ConfirmPasswordDialog } from "./ConfirmPasswordDialog";
 import { useQueryGetMedicinePrices } from "~/services/inventory/hooks/queries/use-query-get-medicine-prices";
 import { useQueryGetMedicinePriceById } from "~/services/inventory/hooks/queries/use-query-get-medicine-prices-by-id";
-import { useNavigate } from "react-router";
+import { showToast } from "~/utils";
+import { ConfirmPasswordDialog } from "./ConfirmPasswordDialog";
 
 interface MedicinePriceFormValues {
     id: number;
@@ -31,24 +31,11 @@ interface MedicinePriceFormValues {
     vatAmount: number;
     originalPriceAfterVat: number;
     originalPriceBeforeVat: number;
-    isSuspended?: boolean;
+    isSuspended: string;
     isCancelled?: boolean;
     createdAt?: string;
     lastUpdatedAt?: string;
 }
-
-interface CurrencyHeaderProps extends IHeaderParams {
-    onCurrencyToggle: () => void;
-}
-
-const CurrencyHeader: React.FC<CurrencyHeaderProps> = ({ onCurrencyToggle }) => {
-    const { t } = useTranslation();
-    return (
-        <span style={{ cursor: "pointer" }} onClick={onCurrencyToggle}>
-            {t(i18n.translationKey.currency)}
-        </span>
-    );
-};
 
 export default function MedicinePriceListPage() {
     const { t } = useTranslation();
@@ -58,7 +45,6 @@ export default function MedicinePriceListPage() {
     const [selectedMedicinePriceId, setSelectedMedicinePriceId] = useState<number | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-    const [globalCurrency, setGlobalCurrency] = useState<"VND" | "USD">("VND");
     const queryClient = useQueryClient();
 
     const form = useForm<MedicinePriceFormValues>({
@@ -70,10 +56,12 @@ export default function MedicinePriceListPage() {
             vatAmount: 0,
             originalPriceAfterVat: 0,
             originalPriceBeforeVat: 0,
+            isSuspended: "false",
+            isCancelled: false,
         },
     });
 
-    const { watch, setValue } = form;
+    const { watch, setValue, reset } = form;
 
     const mutationUpdateMedicinePrice = useMutationUpdateMedicinePrice();
     const mutationDeleteMedicinePrice = useMutationDeleteMedicinePrice();
@@ -95,9 +83,14 @@ export default function MedicinePriceListPage() {
 
     useEffect(() => {
         if (detailData) {
-            form.reset(detailData);
+            reset({
+                ...detailData,
+                currency: detailData.currency ?? "VND",
+                isSuspended: detailData.isSuspended ? "true" : "false",
+                isCancelled: detailData.isCancelled ?? false,
+            });
         }
-    }, [detailData, form]);
+    }, [detailData, reset]);
 
     const watchedUnitPrice = watch("unitPrice");
     const watchedVatRate = watch("vatRate");
@@ -123,38 +116,6 @@ export default function MedicinePriceListPage() {
         });
     }, [watchedUnitPrice, watchedVatRate, setValue]);
 
-    const handleCurrencyToggle = async () => {
-        const newCurrency = globalCurrency === "VND" ? "USD" : "VND";
-        const conversionRate = 25000;
-        const factor = globalCurrency === "VND" ? 1 / conversionRate : conversionRate;
-
-        try {
-            const updatePromises = data?.medicinePrices.map((item) =>
-                mutationUpdateMedicinePrice.mutateAsync({
-                    id: item.id,
-                    medicineId: item.medicineId || 0,
-                    unitPrice: Number((item.unitPrice * factor).toFixed(2)),
-                    currency: newCurrency,
-                    vatRate: item.vatRate,
-                    vatAmount: Number((item.vatAmount * factor).toFixed(2)),
-                    originalPriceBeforeVat: Number((item.originalPriceBeforeVat * factor).toFixed(2)),
-                    originalPriceAfterVat: Number((item.originalPriceAfterVat * factor).toFixed(2)),
-                }),
-            );
-
-            if (updatePromises) {
-                await Promise.all(updatePromises);
-                setGlobalCurrency(newCurrency);
-                queryClient.invalidateQueries({
-                    predicate: (query) => query.queryKey[0] === "getMedicinePrices",
-                });
-                refetch();
-            }
-        } catch {
-            showToast.error(t(i18n.translationKey.updateMedicinePriceFailed));
-        }
-    };
-
     useEffect(() => {
         setColumnDefs([
             {
@@ -177,10 +138,6 @@ export default function MedicinePriceListPage() {
                 field: "currency",
                 flex: 0.5,
                 sortable: false,
-                headerComponent: CurrencyHeader,
-                headerComponentParams: {
-                    onCurrencyToggle: handleCurrencyToggle,
-                },
             },
             {
                 headerName: t(i18n.translationKey.vatRate),
@@ -214,6 +171,14 @@ export default function MedicinePriceListPage() {
                 cellStyle: { textAlign: "right" },
             },
             {
+                headerName: t(i18n.translationKey.inventoryLimitStockSuspensionStatus),
+                field: "isSuspended",
+                flex: 1,
+                cellRenderer: "agCellWrapper",
+                valueFormatter: ({ value }) => t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.${value}`),
+                sortable: true,
+            },
+            {
                 headerName: t(i18n.translationKey.createdAt),
                 field: "createdAt",
                 flex: 1,
@@ -226,7 +191,7 @@ export default function MedicinePriceListPage() {
                 valueFormatter: ({ value }) => (value ? new Date(value).toLocaleString("vi-VN") : ""),
             },
         ]);
-    }, [t, handleCurrencyToggle]);
+    }, [t]);
 
     const handleRowClick = (event: RowClickedEvent<MedicinePriceFormValues>) => {
         const selected = event.data;
@@ -248,16 +213,20 @@ export default function MedicinePriceListPage() {
         const values = form.getValues();
 
         try {
-            await mutationUpdateMedicinePrice.mutateAsync({
+            const updatedValues = {
                 id: selectedMedicinePriceId,
                 medicineId: values.medicineId || 0,
                 unitPrice: values.unitPrice,
-                currency: values.currency,
+                currency: values.currency ?? "VND",
                 vatRate: values.vatRate,
                 vatAmount: values.vatAmount,
                 originalPriceBeforeVat: values.originalPriceBeforeVat,
                 originalPriceAfterVat: values.originalPriceAfterVat,
-            });
+                isSuspended: values.isSuspended === "true",
+                isCancelled: values.isCancelled ?? false,
+            };
+
+            await mutationUpdateMedicinePrice.mutateAsync(updatedValues);
 
             showToast.success(t(i18n.translationKey.updateMedicinePriceSuccess));
             setIsEditModalOpen(false);
@@ -287,7 +256,7 @@ export default function MedicinePriceListPage() {
                         startIcon={<AddCircle />}
                         size="small"
                         variant="outlined"
-                        onClick={() => navigate("/pharmacy/create-medicine-price")}
+                        onClick={() => navigate("/medicine/create-medicine-price")}
                     />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 4, md: 2 }}>
@@ -353,6 +322,23 @@ export default function MedicinePriceListPage() {
                             </Grid>
                             <Grid size={{ xs: 12 }}>
                                 <FormItem render="input-number" name="vatRate" label={t(i18n.translationKey.vatRate)} />
+                            </Grid>
+                            <Grid size={{ xs: 12 }}>
+                                <FormItem
+                                    render="select"
+                                    name="isSuspended"
+                                    label={t(i18n.translationKey.inventoryLimitStockSuspensionStatus)}
+                                    options={[
+                                        {
+                                            value: "false",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.false`),
+                                        },
+                                        {
+                                            value: "true",
+                                            label: t(`${i18n.translationKey.inventoryLimitStockSuspensionEnum}.true`),
+                                        },
+                                    ]}
+                                />
                             </Grid>
                             <Grid size={{ xs: 12 }}>
                                 <FormItem
