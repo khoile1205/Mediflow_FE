@@ -1,6 +1,8 @@
 import {
     AccessTime,
     Biotech,
+    Business,
+    Description,
     EventNote,
     Healing,
     Home,
@@ -265,5 +267,20 @@ export const sidebarTree: SidebarTabProps[] = [
         ],
         requiredPermissions: [ResourceType.Management],
         requiredRoles: [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport],
+    },
+    {
+        icon: <Description />,
+        labelKey: i18n.translationKey.contract,
+        children: [
+            {
+                labelKey: i18n.translationKey.supplier,
+                pathName: "/contract/supplier",
+                icon: <Business />,
+                requiredPermissions: [ResourceType.Management],
+                requiredRoles: [Role.Administrator, Role.Accountant],
+            },
+        ],
+        requiredPermissions: [ResourceType.Management],
+        requiredRoles: [Role.Administrator, Role.Accountant],
     },
 ];

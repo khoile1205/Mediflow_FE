@@ -34,7 +34,6 @@ const InventoryQueryKey = {
     GET_ALL_MANUFACTURE_COUNTRIES: "getAllManufactureCountries",
     GENERATE_DOCUMENT_CODE: "generateDocumentCode",
     CREATE_IMPORT_DOCUMENT: "createImportDocument",
-    GET_LIST_SUPPLIER: "getListSupplier",
     SAVE_IMPORT_DOCUMENT: "saveImportDocument",
     GET_LIST_INVENTORY_LIMIT_STOCK: "getListInventoryLimitStock",
     CREATE_INVENTORY_LIMIT_STOCK: "createInventoryLimitStock",
@@ -114,7 +113,23 @@ const AuthQueryKey = {
     CONFIRM_PASSWORD: "confirmPassword",
 };
 
+const UploadFileQueryKey = {
+    UPLOAD_FILE: "uploadFile",
+    CREATE_DOWNLOAD_URL: "createDownloadUrl",
+    DELETE_FILE: "deleteFile",
+};
+
+const SupplierQueryKey = {
+    GET_LIST_SUPPLIER: "getListSupplier",
+    GET_SUPPLIER_BY_ID: "getSupplierById",
+    CREATE_SUPPLIER: "createSupplier",
+    UPDATE_SUPPLIER: "updateSupplier",
+    DELETE_SUPPLIER: "deleteSupplier",
+};
+
 export const QueryKey = {
+    SUPPLIER: SupplierQueryKey,
+    UPLOAD_FILE: UploadFileQueryKey,
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
     HOSPITAL_SERVICE: HospitalServiceQueryKey,

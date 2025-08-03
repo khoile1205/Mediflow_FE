@@ -20,6 +20,7 @@ import MedicineInteractionListPage from "~/pages/management/medicine/medicine-in
 import MedicinePriceListPage from "~/pages/management/medicine/medicine-price.page";
 import CreateMedicinePricePage from "~/pages/management/medicine/medicine-price-create.page";
 import InventoryLimitStockPage from "~/pages/management/inventory-stock/inventory-stock.page";
+import { SupplierManagementPage } from "~/pages/supplier";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -59,6 +60,9 @@ export const AuthenticatedRoutes = (
             <Route path="limit-stock" element={<InventoryLimitStockPage />} />
         </Route>
 
+        <Route path="/contract">
+            <Route path="supplier" element={<SupplierManagementPage />} />
+        </Route>
         <Route path="/management">
             <Route path="users" element={<UserManagement />} />
             <Route path="departments" element={<DepartmentManagement />} />

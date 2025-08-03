@@ -4,6 +4,7 @@ import { CheckboxGroupFormItemProps } from "../form-item/checkbox-group";
 import { DatePickerFormItemProps } from "../form-item/date-picker";
 import { DateRangePickerFormItemProps } from "../form-item/date-range-picker";
 import { DateTimePickerFormItemProps } from "../form-item/date-time-picker";
+import { FileUploadFormItemProps } from "../form-item/file-upload";
 import { InputNumberFormItemProps } from "../form-item/input-number";
 import { RadioGroupFormItemProps } from "../form-item/radio-group";
 import { SelectFieldFormItemProps } from "../form-item/select";
@@ -27,7 +28,8 @@ export type FormItemProps =
     | ({ render: "text-area" } & TextAreaFormItemProps)
     | ({ render: "input-number" } & InputNumberFormItemProps)
     | ({ render: "date-time-picker" } & DateTimePickerFormItemProps)
-    | ({ render: "autocomplete" } & AutocompleteFieldFormItemProps);
+    | ({ render: "autocomplete" } & AutocompleteFieldFormItemProps)
+    | ({ render: "file-upload" } & FileUploadFormItemProps);
 
 export type BaseFormItemUIProps = {
     name: string;
