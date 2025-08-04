@@ -562,5 +562,6 @@
     "UPDATE_MINIMAL_STOCK_THRESHOLD_FAILED": "Cập nhật ngưỡng tồn kho tối thiểu thất bại",
     "NO_CHANGES_SAVED": "Không có thay đổi được lưu",
     "INVALID_UNIT_PRICE": "Đơn giá không hợp lệ.",
-    "INVALID_MEDICINE_ID": "Mã thuốc không hợp lệ."
+    "INVALID_MEDICINE_ID": "Mã thuốc không hợp lệ.",
+    "CANNOT_ADD_SUSPENDED_MEDICINE": "Không thể thêm thuốc '{{name}}' vì đã bị tạm ngưng."
 }

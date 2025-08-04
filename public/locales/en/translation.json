@@ -559,5 +559,6 @@
     "NO_CHANGES_SAVED": "No changes were saved",
     "INVENTORY_LIMIT_STOCK_SUSPENSION_STATUS": "Suspension Status",
     "INVALID_UNIT_PRICE": "Invalid unit price.",
-    "INVALID_MEDICINE_ID": "Invalid medicine ID."
+    "INVALID_MEDICINE_ID": "Invalid medicine ID.",
+    "CANNOT_ADD_SUSPENDED_MEDICINE": "Cannot add medicine '{{name}}' because it is suspended."
 }

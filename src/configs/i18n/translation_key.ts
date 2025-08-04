@@ -558,6 +558,7 @@ const exceptionTranslationKey = {
     pleaseSelectDiseaseGroupBeforeAdding: "PLEASE_SELECT_DISEASE_GROUP_BEFORE_ADDING",
     pleaseSelectServiceBeforeAdding: "PLEASE_SELECT_SERVICE_BEFORE_ADDING",
     vaccinationNotAllowed: "VACCINATION_NOT_ALLOWED",
+    cannotAddSuspendedMedicine: "CANNOT_ADD_SUSPENDED_MEDICINE",
 };
 
 export const TRANSLATION_KEY = {
