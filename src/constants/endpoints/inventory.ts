@@ -8,6 +8,7 @@ const medicineEndpoints = {
     createMedicine: `${medicineEndpointPrefix}`,
     updateMedicine: (id: number | string) => `${medicineEndpointPrefix}/${id}`,
     deleteMedicine: (id: number | string) => `${medicineEndpointPrefix}/${id}`,
+    getExpiredMedicineBatches: `${medicineEndpointPrefix}/expired-batches`,
 };
 
 const medicinePriceEndpointPrefix = `${inventoryEndpointPrefix}/medicine-prices`;
@@ -62,6 +63,15 @@ const inventoryLimitStockEndpoints = {
     delete: (id: number | string) => `${inventoryLimitStockEndpointPrefix}/${id}`,
 };
 
+const expiredReturnEndpointPrefix = `${inventoryEndpointPrefix}/medicine-batch-returns`;
+const expiredReturnEndpoints = {
+    generateReturnCode: `/inventory/unique-code/generate`,
+    approveExpiredForm: (id: number) => `/inventory/medicine-batch-returns/${id}/approve`,
+    rejectExpiredForm: (id: number) => `/inventory/medicine-batch-returns/${id}/reject`,
+    createExpiredReturn: `${expiredReturnEndpointPrefix}/`,
+    getAllExpiredMedicineBatches: `${expiredReturnEndpointPrefix}/`,
+    getExpiredMedicineBatchById: (id: number) => `${expiredReturnEndpointPrefix}/${id}`,
+};
 export const inventoryEndpoints = {
     medicine: medicineEndpoints,
     medicinePrice: medicinePriceEndpoints,
@@ -72,4 +82,5 @@ export const inventoryEndpoints = {
     inventoryLimitStock: inventoryLimitStockEndpoints,
     vaccineType: vaccineTypeEndpoints,
     medicineInteraction: medicineInteractionEndpoints,
+    expiredReturn: expiredReturnEndpoints,
 };

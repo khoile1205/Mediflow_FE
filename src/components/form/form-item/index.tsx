@@ -14,6 +14,7 @@ import { TextAreaFormItem } from "./text-area";
 import { TextFieldFormItem } from "./text-field";
 import { AutocompleteFieldFormItem } from "./auto-complete";
 import { TextFieldNoClearFormItem } from "./text-field-no-clear";
+import { FileUploadFormItem } from "./file-upload";
 
 const FormItem: React.FC<FormItemProps> = (props) => {
     // TODO: move the controller wrapper logic to a common place
@@ -48,6 +49,8 @@ const FormItem: React.FC<FormItemProps> = (props) => {
                 return <AutocompleteFieldFormItem {...props} />;
             case "text-input-no-clear":
                 return <TextFieldNoClearFormItem {...props} />;
+            case "file-upload":
+                return <FileUploadFormItem {...props} />;
             default:
                 return null;
         }

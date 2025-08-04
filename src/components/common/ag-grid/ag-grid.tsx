@@ -88,7 +88,7 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
                             >
                                 {pageSizeOptions.map((option) => (
                                     <MenuItem key={option} value={option}>
-                                        {option} / trang
+                                        {option} / {t(i18n.translationKey.page).toLowerCase()}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -96,8 +96,12 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
                     </Box>
                     <Typography fontSize={14}>
                         {totalItems === 0
-                            ? "0 to 0 of 0"
-                            : `${(pageIndex - 1) * pageSize + 1} to ${Math.min(pageIndex * pageSize, totalItems)} of ${totalItems}`}
+                            ? t(i18n.translationKey.paginationRange, { from: 0, to: 0, total: 0 })
+                            : t(i18n.translationKey.paginationRange, {
+                                  from: (pageIndex - 1) * pageSize + 1,
+                                  to: Math.min(pageIndex * pageSize, totalItems),
+                                  total: totalItems,
+                              })}
                     </Typography>
                     <Pagination
                         count={Math.ceil(totalItems / pageSize)}

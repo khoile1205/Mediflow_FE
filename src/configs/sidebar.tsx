@@ -1,6 +1,8 @@
 import {
     AccessTime,
     Biotech,
+    Business,
+    Description,
     EventNote,
     Healing,
     Home,
@@ -9,6 +11,7 @@ import {
     Paid,
     PermContactCalendar,
     Vaccines,
+    WarningAmber,
 } from "@mui/icons-material";
 import { SidebarTabProps } from "~/components/layout/sidebar/tabs/sidebar.tab";
 import { Role } from "~/constants/roles";
@@ -177,6 +180,13 @@ export const sidebarTree: SidebarTabProps[] = [
                 requiredPermissions: [ResourceType.Inventory],
                 requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],
             },
+            {
+                labelKey: i18n.translationKey.expiredMedicine,
+                pathName: "/pharmacy/expired-medicine",
+                icon: <WarningAmber />,
+                requiredPermissions: [ResourceType.Inventory],
+                requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],
+            },
         ],
         requiredPermissions: [ResourceType.Inventory],
         requiredRoles: [Role.Administrator, Role.PharmacyStaff, Role.WarehouseStaff],
@@ -265,5 +275,20 @@ export const sidebarTree: SidebarTabProps[] = [
         ],
         requiredPermissions: [ResourceType.Management],
         requiredRoles: [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport],
+    },
+    {
+        icon: <Description />,
+        labelKey: i18n.translationKey.contract,
+        children: [
+            {
+                labelKey: i18n.translationKey.supplier,
+                pathName: "/contract/supplier",
+                icon: <Business />,
+                requiredPermissions: [ResourceType.Management],
+                requiredRoles: [Role.Administrator, Role.Accountant],
+            },
+        ],
+        requiredPermissions: [ResourceType.Management],
+        requiredRoles: [Role.Administrator, Role.Accountant],
     },
 ];

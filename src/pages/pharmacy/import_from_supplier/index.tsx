@@ -16,12 +16,12 @@ import {
     useMutationGenerateImportDocumentCode,
     useMutationSaveImportDocument,
 } from "~/services/inventory/hooks/mutations";
-import { useQueryGetListSupplier } from "~/services/inventory/hooks/queries";
 import { ImportMedicineFromSupplierDocumentRequest } from "~/services/inventory/infras/types";
 import { showToast } from "~/utils";
 import { formatDate } from "~/utils/date-time";
 import ImportPharmaceuticalInformation from "./pharmaceutical_information";
 import { ImportMedicineFromSupplierFormValues } from "./types";
+import { useQueryGetListSupplier } from "~/services/supplier/hooks/queries";
 
 const defaultValues: ImportMedicineFromSupplierFormValues = {
     documentCode: "",

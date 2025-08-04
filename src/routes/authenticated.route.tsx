@@ -3,7 +3,7 @@ import HospitalFeePage from "~/pages/hospital-fee";
 import LandingBackground from "~/pages/landing";
 import ImportInventoryFromSupplier from "~/pages/pharmacy/import_from_supplier";
 import ReceptionVaccination from "~/pages/reception/vaccination";
-import PatientVaccinationHistory from "~/pages/vaccination/patient-vacciation-history/patient-vacciation-history";
+import VaccinationHistory from "~/pages/vaccination/vaccination-history/vaccination-history";
 import VaccinationPage from "~/pages/vaccination";
 import AuthenticatedGuard from "../guards/authenticated.guard";
 import PostVaccinationPage from "~/pages/post-vaccination";
@@ -20,6 +20,8 @@ import MedicineInteractionListPage from "~/pages/management/medicine/medicine-in
 import MedicinePriceListPage from "~/pages/management/medicine/medicine-price.page";
 import CreateMedicinePricePage from "~/pages/management/medicine/medicine-price-create.page";
 import InventoryLimitStockPage from "~/pages/management/inventory-stock/inventory-stock.page";
+import { SupplierManagementPage } from "~/pages/supplier";
+import { NearlyExpiredMedicineBatchPage } from "~/pages/pharmacy/expired-medicine";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -36,7 +38,7 @@ export const AuthenticatedRoutes = (
 
         <Route path="/vaccination">
             <Route index element={<VaccinationPage />} />
-            <Route path="history" element={<PatientVaccinationHistory />} />
+            <Route path="history" element={<VaccinationHistory />} />
             <Route path="post-injection" element={<PostVaccinationPage />} />
         </Route>
 
@@ -44,6 +46,7 @@ export const AuthenticatedRoutes = (
 
         <Route path="/pharmacy">
             <Route path="import" element={<ImportInventoryFromSupplier />} />
+            <Route path="expired-medicine" element={<NearlyExpiredMedicineBatchPage />} />
         </Route>
 
         <Route path="/medicine">
@@ -59,6 +62,9 @@ export const AuthenticatedRoutes = (
             <Route path="limit-stock" element={<InventoryLimitStockPage />} />
         </Route>
 
+        <Route path="/contract">
+            <Route path="supplier" element={<SupplierManagementPage />} />
+        </Route>
         <Route path="/management">
             <Route path="users" element={<UserManagement />} />
             <Route path="departments" element={<DepartmentManagement />} />

@@ -34,7 +34,6 @@ const InventoryQueryKey = {
     GET_ALL_MANUFACTURE_COUNTRIES: "getAllManufactureCountries",
     GENERATE_DOCUMENT_CODE: "generateDocumentCode",
     CREATE_IMPORT_DOCUMENT: "createImportDocument",
-    GET_LIST_SUPPLIER: "getListSupplier",
     SAVE_IMPORT_DOCUMENT: "saveImportDocument",
     GET_LIST_INVENTORY_LIMIT_STOCK: "getListInventoryLimitStock",
     CREATE_INVENTORY_LIMIT_STOCK: "createInventoryLimitStock",
@@ -50,6 +49,23 @@ const InventoryQueryKey = {
     CREATE_MEDICINE_PRICE: "createMedicinePrice",
     UPDATE_MEDICINE_PRICE: "updateMedicinePrice",
     DELETE_MEDICINE_PRICE: "deleteMedicinePrice",
+    GET_MEDICINE_BATCHES_WITH_PAGINATION: "getMedicineBatchesWithPagination",
+    GET_MEDICINE_BATCH_BY_ID: "getMedicineBatchById",
+    CREATE_MEDICINE_BATCH: "createMedicineBatch",
+    UPDATE_MEDICINE_BATCH: "updateMedicineBatch",
+    DELETE_MEDICINE_BATCH: "deleteMedicineBatch",
+    GET_EXPIRY_MEDICINE_BATCH: "getExpiryMedicineBatch",
+    GET_EXPIRY_RETURN_CODE: "getExpiryReturnCode",
+    GENERATE_EXPIRY_RETURN_CODE: "generateExpiryReturnCode",
+    GET_MEDICINE_BATCHES_BY_ID: "getMedicineBatchesById",
+    GET_MEDICINE_BATCHES_BY_ID_FOR_RETURN: "getMedicineBatchesByIdForReturn",
+    CREATE_EXPIRED_FORM: "createExpiredForm",
+    GET_EXPIRED_MEDICINE_BATCH: "getExpiredMedicineBatch",
+    APPROVE_EXPIRED_FORM: "approveExpiredForm",
+    REJECT_EXPIRED_FORM: "rejectExpiredForm",
+    CREATE_EXPIRED_RETURN: "createExpiredReturn",
+    GET_EXPIRED_MEDICINE_BATCH_FORM_BY_ID: "getExpiredMedicineBatchFormById",
+    GET_ALL_EXPIRED_MEDICINE_BATCHES: "getAllExpiredMedicineBatches",
 };
 
 const PostVaccinationQueryKey = {
@@ -89,6 +105,7 @@ const VaccinationQueryKey = {
     UPDATE_VACCINATION_STATUS: "updateVaccinationStatus",
     INJECT_VACCINATION: "injectVaccination",
     CONFIRM_VACCINATION_TODAY: "confirmVaccinationToday",
+    GET_VACCINATION_HISTORY_BY_PATIENT_ID: "getVaccinationHistoryByPatientId",
 };
 
 const AppointmentQueryKey = {
@@ -113,7 +130,23 @@ const AuthQueryKey = {
     CONFIRM_PASSWORD: "confirmPassword",
 };
 
+const UploadFileQueryKey = {
+    UPLOAD_FILE: "uploadFile",
+    CREATE_DOWNLOAD_URL: "createDownloadUrl",
+    DELETE_FILE: "deleteFile",
+};
+
+const SupplierQueryKey = {
+    GET_LIST_SUPPLIER: "getListSupplier",
+    GET_SUPPLIER_BY_ID: "getSupplierById",
+    CREATE_SUPPLIER: "createSupplier",
+    UPDATE_SUPPLIER: "updateSupplier",
+    DELETE_SUPPLIER: "deleteSupplier",
+};
+
 export const QueryKey = {
+    SUPPLIER: SupplierQueryKey,
+    UPLOAD_FILE: UploadFileQueryKey,
     PATIENT: QueryKeyPatient,
     RECEPTION: ReceptionQueryKey,
     HOSPITAL_SERVICE: HospitalServiceQueryKey,

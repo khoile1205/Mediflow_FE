@@ -1,5 +1,6 @@
-export interface Supplier {
-    id: number;
+import { BaseEntity } from "./base.entity";
+
+export interface Supplier extends BaseEntity {
     supplierCode: string;
     supplierName: string;
     address: string;
@@ -7,13 +8,14 @@ export interface Supplier {
     fax: string;
     email: string;
     taxCode: string;
+    contracts: SupplierDocumentFile[];
+    expiredDate?: Date;
     director: string;
     contactPerson: string;
     normalizedName: string;
-    isSuspended: boolean;
-    isCancelled: boolean;
-    createdAt: Date;
-    createdBy: number;
-    lastUpdatedAt: Date;
-    lastUpdatedBy: number;
+}
+
+export interface SupplierDocumentFile {
+    id: string;
+    fileName: string;
 }

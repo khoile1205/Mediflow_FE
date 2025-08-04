@@ -1,6 +1,23 @@
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 
 /**
+ * Get the difference in days between now and the given date
+ * @param date The date to compare with the current date
+ * @returns The number of days between the two dates
+ */
+export const getDiffDays = (date: Date) => {
+    const now = new Date();
+    const diffInTime = now.getTime() - date.getTime();
+    return Math.floor(diffInTime / (1000 * 60 * 60 * 24));
+};
+
+export const getExpiredDays = (date: Date) => {
+    const now = new Date();
+    const diffInTime = date.getTime() - now.getTime();
+    return Math.floor(diffInTime / (1000 * 60 * 60 * 24));
+};
+
+/**
  * Normalize fromDate to start of the day (00:00)
  */
 export const normalizeStartDate = (date: Date | null): Date | null => {

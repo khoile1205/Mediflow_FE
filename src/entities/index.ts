@@ -7,3 +7,4 @@ export * from "./hospital-service.entity";
 export * from "./service.entity";
 export * from "./service-type.entity";
 export * from "./examination";
+export * from "./medicine-batch.entity";
