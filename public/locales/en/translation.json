@@ -560,7 +560,6 @@
     "NO_CHANGES_SAVED": "No changes were saved",
     "INVENTORY_LIMIT_STOCK_SUSPENSION_STATUS": "Suspension Status",
     "INVALID_UNIT_PRICE": "Invalid unit price.",
-    "INVALID_MEDICINE_ID": "Invalid medicine ID.",
     "SUPPLIER_MANAGEMENT": "Supplier Management",
     "SUPPLIER_MANAGEMENT_DESCRIPTION": "Manage your suppliers, view their details, and update supplier information.",
     "FILTER_SUPPLIERS": "Filter Suppliers",
@@ -603,5 +602,7 @@
     "EXPIRED_MEDICINE": "Expired medicine batch",
     "APPROVE_EXPIRED_RETURN_FORM_SUCCESS": "Expired return form approved successfully",
     "REJECT_EXPIRED_RETURN_FORM_SUCCESS": "Expired return form rejected successfully",
-    "SEARCH_BATCH_OR_MEDICINE_NAME": "Search by batch number or medicine name"
+    "SEARCH_BATCH_OR_MEDICINE_NAME": "Search by batch number or medicine name",
+    "INVALID_MEDICINE_ID": "Invalid medicine ID.",
+    "CANNOT_ADD_SUSPENDED_MEDICINE": "Cannot add medicine '{{name}}' because it is suspended."
 }

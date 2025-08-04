@@ -1,5 +1,5 @@
 export interface InventoryLimitStockFormValues {
-    medicineId: string;
+    medicineId: number;
     medicineName: string;
     unit: string;
     currentStock: number;

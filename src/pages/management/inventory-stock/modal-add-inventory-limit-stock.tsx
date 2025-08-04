@@ -11,6 +11,7 @@ import { useDebounce, usePagination } from "~/hooks";
 import { useQueryGetMedicinesWithPagination } from "~/services/medicine/hooks/queries";
 import { InventoryLimitStockFormValues } from "./types";
 import { Medicine } from "~/entities";
+import { showToast } from "~/utils";
 
 interface Props {
     open: boolean;
@@ -20,7 +21,7 @@ interface Props {
 }
 
 const defaultValues: InventoryLimitStockFormValues = {
-    medicineId: "",
+    medicineId: 0,
     medicineName: "",
     unit: "",
     minQuantity: 0,
@@ -61,7 +62,7 @@ const ModalAddInventoryLimitStock: React.FC<Props> = ({ open, onClose, onSubmit,
 
     const handleSelectMedicine = (event: RowSelectedEvent<Medicine>) => {
         if (!event.data) return;
-        form.setValue("medicineId", event.data.id.toString());
+        form.setValue("medicineId", event.data.id);
         form.setValue("medicineName", event.data.medicineName);
         form.setValue("unit", event.data.unit);
         form.setValue("currentStock", event.data.currentStock || 0);
@@ -73,6 +74,27 @@ const ModalAddInventoryLimitStock: React.FC<Props> = ({ open, onClose, onSubmit,
     };
 
     const handleSubmit = form.handleSubmit((values) => {
+        const selectedMedicine = listMedicines.find((m) => m.id === values.medicineId);
+
+        if (!selectedMedicine) {
+            showToast.error(
+                t(i18n.translationKey.notFoundMedicineWithId as string, {
+                    id: values.medicineId,
+                }),
+            );
+            return;
+        }
+
+        if (selectedMedicine.isSuspended) {
+            showToast.error(
+                t(i18n.translationKey.cannotAddSuspendedMedicine as string, {
+                    name: selectedMedicine.medicineName,
+                    id: selectedMedicine.id,
+                }),
+            );
+            return;
+        }
+
         onSubmit(values);
         onClose();
     });
@@ -102,9 +124,9 @@ const ModalAddInventoryLimitStock: React.FC<Props> = ({ open, onClose, onSubmit,
                                     },
                                     { field: "unit", headerName: t(i18n.translationKey.unit), width: 100 },
                                 ]}
-                                rowData={[...listMedicines].sort((a, b) =>
-                                    a.medicineCode.localeCompare(b.medicineCode),
-                                )}
+                                rowData={[...listMedicines]
+                                    .filter((m) => !m.isSuspended)
+                                    .sort((a, b) => a.medicineCode.localeCompare(b.medicineCode))}
                                 displayField="medicineName"
                                 valueField="id"
                                 pageIndex={pageIndex}
