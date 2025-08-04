@@ -325,7 +325,7 @@ const ReceptionVaccination: React.FC = () => {
                                         readOnly: receptionId != null,
                                     }}
                                     label={t(i18n.translationKey.pregnant)}
-                                    disabled={isRecepting || patientReceptionForm.watch("gender") === Gender.MALE}
+                                    disabled={!isRecepting || patientReceptionForm.watch("gender") === Gender.MALE}
                                 />
                             </Box>
                         </Grid>
