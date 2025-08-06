@@ -28,3 +28,9 @@ export enum UploadedFileType {
     SUPPLIER = "Supplier",
     CONTRACT = "Contract",
 }
+
+export enum MedicineBatchExpiredFormStatus {
+    PENDING,
+    APPROVED,
+    REJECTED,
+}

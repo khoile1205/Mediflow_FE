@@ -6,3 +6,5 @@ export * from "./use-query-get-medicine-interactions";
 export * from "./use-query-get-medicine-prices";
 export * from "./use-query-get-expired-medicine-batch";
 export * from "./use-query-generate-expired-return-code";
+export * from "./use-query-get-list-medicine-batch-return-form";
+export * from "./use-query-get-medicine-batch-return-form-detail";

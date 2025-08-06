@@ -18,13 +18,14 @@ import {
     ImportMedicineFromSupplierDocumentRequest,
     InventoryLimitStock,
     CreateExpiredReturnRequest,
+    IGetListMedicineBatchesReturnFormRequest,
 } from "./types";
 import { IPaginationRequest, IPagination, HttpMethod, IBaseApiResponse } from "~/libs/axios/types";
 import { Supplier } from "~/entities/supplier";
 import { GetMedicineListRequest } from "../hooks/queries/use-query-get-medicines";
 import { inventoryEndpoints } from "~/constants/endpoints/inventory";
 import { ISearchParam } from "~/services/hospital-service/infras";
-import { MedicineBatch } from "~/entities";
+import { MedicineBatch, MedicineBatchExpiredReturn } from "~/entities";
 
 const getAllManufacturers = async () => {
     return await callApi<Manufacture[]>({
@@ -275,17 +276,20 @@ const createExpiredReturn = async (data: CreateExpiredReturnRequest): Promise<IB
     });
 };
 
-const getExpiredMedicineBatchFormById = async (id: number): Promise<IBaseApiResponse<MedicineBatch[]>> => {
+const getExpiredMedicineBatchFormById = async (id: number): Promise<IBaseApiResponse<MedicineBatchExpiredReturn>> => {
     return await callApi({
-        url: endpoints.inventory.expiredReturn.getExpiredMedicineBatchById(id),
+        url: endpoints.inventory.expiredReturn.getExpiredMedicineBatchFormById(id),
         method: HttpMethod.GET,
     });
 };
 
-const getAllExpiredMedicineBatches = async (): Promise<IBaseApiResponse<MedicineBatch[]>> => {
+const getAllExpiredMedicineBatchForm = async (
+    params: IGetListMedicineBatchesReturnFormRequest,
+): Promise<IBaseApiResponse<IPagination<MedicineBatchExpiredReturn>>> => {
     return await callApi({
-        url: endpoints.inventory.expiredReturn.getAllExpiredMedicineBatches,
+        url: endpoints.inventory.expiredReturn.getAllExpiredMedicineBatchForms,
         method: HttpMethod.GET,
+        params,
     });
 };
 
@@ -317,5 +321,5 @@ export const inventoryApis = {
     rejectExpiredForm,
     createExpiredReturn,
     getExpiredMedicineBatchFormById,
-    getAllExpiredMedicineBatches,
+    getAllExpiredMedicineBatchForm,
 };
