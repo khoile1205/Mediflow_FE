@@ -69,8 +69,8 @@ const expiredReturnEndpoints = {
     approveExpiredForm: (id: number) => `/inventory/medicine-batch-returns/${id}/approve`,
     rejectExpiredForm: (id: number) => `/inventory/medicine-batch-returns/${id}/reject`,
     createExpiredReturn: `${expiredReturnEndpointPrefix}/`,
-    getAllExpiredMedicineBatches: `${expiredReturnEndpointPrefix}/`,
-    getExpiredMedicineBatchById: (id: number) => `${expiredReturnEndpointPrefix}/${id}`,
+    getAllExpiredMedicineBatchForms: `${expiredReturnEndpointPrefix}/`,
+    getExpiredMedicineBatchFormById: (id: number) => `${expiredReturnEndpointPrefix}/${id}`,
 };
 export const inventoryEndpoints = {
     medicine: medicineEndpoints,
