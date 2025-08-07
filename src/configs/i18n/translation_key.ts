@@ -508,6 +508,9 @@ const applicationTranslationKey = {
     approveExpiredReturnFormSuccess: "APPROVE_EXPIRED_RETURN_FORM_SUCCESS",
     rejectExpiredReturnFormSuccess: "REJECT_EXPIRED_RETURN_FORM_SUCCESS",
     searchBatchOrMedicineName: "SEARCH_BATCH_OR_MEDICINE_NAME",
+    selectDate: "SELECT_DATE",
+    mustTestBeforeInjection: "MUST_TEST_BEFORE_INJECTION",
+    positiveCannotInject: "POSITIVE_TEST_CANNOT_INJECT",
 };
 
 const exceptionTranslationKey = {
