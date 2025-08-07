@@ -22,6 +22,8 @@ import CreateMedicinePricePage from "~/pages/management/medicine/medicine-price-
 import InventoryLimitStockPage from "~/pages/management/inventory-stock/inventory-stock.page";
 import { SupplierManagementPage } from "~/pages/supplier";
 import { NearlyExpiredMedicineBatchPage } from "~/pages/pharmacy/expired-medicine";
+import HospitalServiceGroupPage from "~/pages/hospital-services/hospital-service-group-list.page";
+import ServiceListPage from "~/pages/hospital-services/service-list.page";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -65,9 +67,12 @@ export const AuthenticatedRoutes = (
         <Route path="/contract">
             <Route path="supplier" element={<SupplierManagementPage />} />
         </Route>
+
         <Route path="/management">
             <Route path="users" element={<UserManagement />} />
             <Route path="departments" element={<DepartmentManagement />} />
+            <Route path="hospital-service-groups" element={<HospitalServiceGroupPage />} />
+            <Route path="hospital-service" element={<ServiceListPage />} />
         </Route>
 
         <Route path="/examination">
