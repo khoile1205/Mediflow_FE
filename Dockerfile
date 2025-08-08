@@ -3,29 +3,24 @@ FROM node:22-alpine as builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json yarn.lock ./
+ARG VITE_API_BASE_URL
+ARG VITE_BASE_URL
 
-# Install dependencies
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_BASE_URL=$VITE_BASE_URL
+
+COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-# Copy source code
 COPY . .
 
-# Create production build
 RUN yarn build
 
 # Production stage
 FROM nginx:alpine
 
-# Copy built assets from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx configuration (optional)
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-# Expose port 80
 EXPOSE 80
 
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

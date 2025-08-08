@@ -1,4 +1,4 @@
-name: Build Docker Image for Master
+name: Deploy FE App To Production Environment
 
 on:
     push:
