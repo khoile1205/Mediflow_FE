@@ -1,11 +1,11 @@
 import { Box, Button, Paper, Typography } from "@mui/material";
-import { RowSelectedEvent } from "ag-grid-community";
+import { CheckboxSelectionCallbackParams, RowSelectedEvent } from "ag-grid-community";
 import { ColDef } from "node_modules/ag-grid-community/dist/types/src/entities/colDef";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
-import i18n from "~/configs/i18n";
 import SearchBox from "~/components/common/search-box";
+import i18n from "~/configs/i18n";
 import { MedicineBatch } from "~/entities";
 import { usePagination } from "~/hooks";
 import { useQueryGetExpiredMedicineBatchBatch } from "~/services/inventory/hooks/queries";
@@ -27,7 +27,9 @@ const NearlyExpiredMedicineBatchPage: React.FC = () => {
 
     const columnDefs: ColDef<MedicineBatch>[] = [
         {
-            checkboxSelection: true,
+            checkboxSelection: (params: CheckboxSelectionCallbackParams<MedicineBatch>) => {
+                return !selectedSupplierId || params.data.supplierId === selectedSupplierId;
+            },
             headerCheckboxSelection: true,
             width: 50,
             pinned: true,

@@ -4,6 +4,8 @@ import { QueryKey } from "~/constants/query-key";
 import { SupplierFormValues } from "~/pages/supplier/types";
 import { showToast } from "~/utils";
 import { supplierApi, UpdateSupplierRequest } from "../../infras";
+import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { formatDate } from "~/utils/date-time";
 
 export const useMutationUpdateSupplier = () => {
     const queryClient = useQueryClient();
@@ -13,6 +15,11 @@ export const useMutationUpdateSupplier = () => {
             const body: UpdateSupplierRequest = {
                 id,
                 ...formValue,
+                expiredDate: formatDate(formValue.expiredDate, DATE_TIME_FORMAT["yyyy-MM-dd"]),
+                contracts: formValue.contracts?.map((file) => ({
+                    id: file.id,
+                    fileName: file.fileName,
+                })),
             };
             return await supplierApi.updateSupplier(id, body);
         },

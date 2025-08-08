@@ -16,13 +16,25 @@ export type RoutePermissionMap = {
     };
 };
 
-const inventoryRequiredRoles = [Role.HeadOfDepartment, Role.PharmacyStaff, Role.WarehouseStaff];
+const inventoryRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.PharmacyStaff, Role.WarehouseStaff];
 const managementRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport];
-const vaccinationReceptionRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, Role.Nurse, Role.Receptionist];
-const vaccinationRequiredRoles = [Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
-const appointmentsRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, Role.Receptionist];
-const examinationRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician];
-const financeRequiredRoles = [Role.Accountant, Role.Receptionist, Role.Nurse];
+const vaccinationReceptionRequiredRoles = [
+    Role.Administrator,
+    Role.HeadOfDepartment,
+    Role.Doctor,
+    Role.Nurse,
+    Role.Receptionist,
+];
+const vaccinationRequiredRoles = [Role.Administrator, Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
+const appointmentsRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.Doctor, Role.Receptionist];
+const examinationRequiredRoles = [
+    Role.Administrator,
+    Role.HeadOfDepartment,
+    Role.Doctor,
+    Role.LaboratoryStaff,
+    Role.ImagingTechnician,
+];
+const financeRequiredRoles = [Role.Administrator, Role.Accountant, Role.Receptionist, Role.Nurse];
 const contractRequiredRoles = [Role.Administrator, Role.Accountant];
 
 const createRoute = (permission: ResourceType, roles: Role[]): RoutePermissionMap[string] => ({

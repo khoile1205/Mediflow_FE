@@ -8,6 +8,7 @@ interface SupplierExpiredStatusLabelProps {
     expiredAt: Date;
 }
 
+const THREE_MONTHS_IN_DAYS = 90;
 export const SupplierStatusLabel: React.FC<SupplierExpiredStatusLabelProps> = ({ expiredAt }) => {
     const { t } = useTranslation();
 
@@ -25,7 +26,7 @@ export const SupplierStatusLabel: React.FC<SupplierExpiredStatusLabelProps> = ({
             />
         );
     }
-    if (diffInDays < 7) {
+    if (diffInDays <= THREE_MONTHS_IN_DAYS) {
         return (
             <Chip
                 label={t(i18n.translationKey.expiringSoon)}

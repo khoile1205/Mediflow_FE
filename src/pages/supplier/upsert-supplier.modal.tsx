@@ -11,11 +11,11 @@ import i18n from "~/configs/i18n";
 import { UploadedFileType } from "~/constants/enums";
 import { useAuth } from "~/contexts/auth.context";
 import { useMutationDeleteFile, useMutationUploadFile } from "~/services/public-api/upload-file/hooks/mutation";
-import { ConfirmPasswordDialog } from "../management/medicine/ConfirmPasswordDialog";
-import { SupplierFormValues } from "./types";
-import { Supplier } from "~/entities";
 import { UploadedFile } from "~/services/public-api/upload-file/infras";
 import { useMutationCreateSupplier, useMutationUpdateSupplier } from "~/services/supplier/hooks/mutation";
+import { useQueryGetSupplierById } from "~/services/supplier/hooks/queries";
+import { ConfirmPasswordDialog } from "../management/medicine/ConfirmPasswordDialog";
+import { SupplierFormValues } from "./types";
 
 type CreateSupplierModalProps = {
     mode: "create";
@@ -27,7 +27,7 @@ type EditSupplierModalProps = {
     mode: "edit";
     open: boolean;
     onClose: () => void;
-    supplier: Supplier;
+    supplierId?: number;
 };
 
 type UpsertSupplierModalProps = CreateSupplierModalProps | EditSupplierModalProps;
@@ -40,6 +40,10 @@ export const UpsertSupplierModal: React.FC<UpsertSupplierModalProps> = ({ open, 
     const { mutateAsync: deleteFile } = useMutationDeleteFile();
     const { mutateAsync: createSupplier } = useMutationCreateSupplier();
     const { mutateAsync: updateSupplier } = useMutationUpdateSupplier();
+
+    const { data: supplier } = useQueryGetSupplierById(
+        "supplierId" in props && mode === "edit" ? props.supplierId : undefined,
+    );
 
     const [isConfirmPasswordDialogOpen, setConfirmPasswordDialogOpen] = React.useState<boolean>(false);
 
@@ -59,8 +63,8 @@ export const UpsertSupplierModal: React.FC<UpsertSupplierModalProps> = ({ open, 
     });
 
     const handleSubmit = async (data: SupplierFormValues) => {
-        if (mode === "edit" && "supplier" in props) {
-            await updateSupplier({ formValue: data, id: props.supplier.id });
+        if (mode === "edit" && "supplierId" in props) {
+            await updateSupplier({ formValue: data, id: props.supplierId });
         } else {
             // Handle create logic here
             await createSupplier(data);
@@ -75,17 +79,17 @@ export const UpsertSupplierModal: React.FC<UpsertSupplierModalProps> = ({ open, 
 
     React.useEffect(() => {
         if (open) {
-            if (mode === "edit" && "supplier" in props) {
-                form.setValue("supplierName", props.supplier.supplierName);
-                form.setValue("contactPerson", props.supplier.contactPerson);
-                form.setValue("phone", props.supplier.phone);
-                form.setValue("email", props.supplier.email);
-                form.setValue("address", props.supplier.address);
-                form.setValue("expiredDate", props.supplier.expiredDate);
-                form.setValue("director", props.supplier.director);
-                form.setValue("fax", props.supplier.fax);
-                form.setValue("taxCode", props.supplier.taxCode);
-                form.setValue("contracts", (props.supplier.contracts as UploadedFile[]) || []);
+            if (mode === "edit" && "supplierId" in props) {
+                form.setValue("supplierName", supplier?.supplierName);
+                form.setValue("contactPerson", supplier?.contactPerson);
+                form.setValue("phone", supplier?.phone);
+                form.setValue("email", supplier?.email);
+                form.setValue("address", supplier?.address);
+                form.setValue("expiredDate", supplier?.expiredDate);
+                form.setValue("director", supplier?.director);
+                form.setValue("fax", supplier?.fax);
+                form.setValue("taxCode", supplier?.taxCode);
+                form.setValue("contracts", (supplier?.contracts as UploadedFile[]) || []);
             } else {
                 form.reset();
             }
@@ -173,16 +177,23 @@ export const UpsertSupplierModal: React.FC<UpsertSupplierModalProps> = ({ open, 
                                     <FormItem
                                         render="text-input"
                                         name="director"
+                                        required
                                         label={t(i18n.translationKey.director)}
                                     />
                                 </Grid>
                                 <Grid size={6}>
-                                    <FormItem render="text-input" name="fax" label={t(i18n.translationKey.fax)} />
+                                    <FormItem
+                                        render="text-input"
+                                        name="fax"
+                                        label={t(i18n.translationKey.fax)}
+                                        required
+                                    />
                                 </Grid>
                                 <Grid size={6}>
                                     <FormItem
                                         render="text-input"
                                         name="taxCode"
+                                        required
                                         label={t(i18n.translationKey.taxCode)}
                                     />
                                 </Grid>
@@ -194,7 +205,7 @@ export const UpsertSupplierModal: React.FC<UpsertSupplierModalProps> = ({ open, 
                             </Typography>
                             <FormItem
                                 render="file-upload"
-                                name="documents"
+                                name="contracts"
                                 multiple
                                 required
                                 label={t(i18n.translationKey.documents)}

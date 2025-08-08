@@ -1,4 +1,5 @@
 import { Box, Button, Dialog, DialogContent, DialogTitle, Grid, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { ColDef } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -7,10 +8,11 @@ import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
-import { PreExaminationRow } from "./types";
+import { QueryKey } from "~/constants/query-key";
 import { useMutationUpdatePreExaminationResult } from "~/services/pre-examination/hooks/mutations/use-mutation-update-pre-examination-result";
-import { showToast } from "~/utils";
 import { useQueryPreExaminationMedicines } from "~/services/pre-examination/hooks/queries/useQueryPreExaminationMedicines";
+import { showToast } from "~/utils";
+import { PreExaminationRow } from "./types";
 
 interface PreExaminationTestingPageProps {
     open: boolean;
@@ -20,6 +22,7 @@ interface PreExaminationTestingPageProps {
 
 const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ open, onClose, receptionId }) => {
     const { t } = useTranslation();
+    const queryClient = useQueryClient();
     const resultForm = useForm();
     const resultAgGrid = useAgGrid<PreExaminationRow>({ rowSelection: "multiple" });
 
@@ -49,7 +52,9 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
                         }),
                 ),
             );
-
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.VACCINATION.GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID, receptionId],
+            });
             showToast.success(t(i18n.translationKey.updateTestResultSuccessfully));
             onClose();
         } catch (error) {

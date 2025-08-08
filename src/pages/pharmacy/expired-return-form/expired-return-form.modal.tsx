@@ -7,13 +7,13 @@ import { Dialog } from "~/components/common/dialog";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
+import { EMAIL_PATTERN, PHONE_NUMBER_PATTERN } from "~/components/form/validation/pattern";
 import i18n from "~/configs/i18n";
 import { MedicineBatch } from "~/entities";
 import { ConfirmPasswordDialog } from "~/pages/management/medicine/ConfirmPasswordDialog";
+import { useMutationCreateExpiredForm } from "~/services/inventory/hooks/mutations";
 import { useQueryGenerateExpiredReturnCode } from "~/services/inventory/hooks/queries";
 import { ExpiredReturnFormValues } from "./types";
-import { EMAIL_PATTERN, PHONE_NUMBER_PATTERN } from "~/components/form/validation/pattern";
-import { useMutationCreateExpiredForm } from "~/services/inventory/hooks/mutations";
 
 interface CreateExpiredReturnModalProps {
     open: boolean;
@@ -178,7 +178,12 @@ export const CreateExpiredReturnModal: React.FC<CreateExpiredReturnModalProps> =
                                     />
                                 </Grid>
                                 <Grid size={12}>
-                                    <FormItem render="text-area" name="reason" label={t(i18n.translationKey.reason)} />
+                                    <FormItem
+                                        render="text-area"
+                                        name="reason"
+                                        label={t(i18n.translationKey.reason)}
+                                        required
+                                    />
                                 </Grid>
                             </Grid>
                         </Box>
