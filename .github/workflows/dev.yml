@@ -2,7 +2,7 @@ name: Deploy FE App
 
 on:
     push:
-        branches: ["master", "dev"]
+        branches: ["dev"]
 
 jobs:
     build-and-deploy:
