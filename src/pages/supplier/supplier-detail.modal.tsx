@@ -6,18 +6,19 @@ import { Dialog } from "~/components/common/dialog";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { useMutationCreateDownloadFileUrl } from "~/services/public-api/upload-file/hooks/mutation";
+import { useQueryGetSupplierById } from "~/services/supplier/hooks/queries";
 import { formatDate } from "~/utils/date-time";
 import { SupplierStatusLabel } from "./components";
-import { Supplier } from "~/entities";
 
 interface SupplierDetailsModalProps {
     open: boolean;
     onClose: () => void;
-    supplier?: Supplier;
+    supplierId?: number;
 }
-export const SupplierDetailsModal: React.FC<SupplierDetailsModalProps> = ({ open, onClose, supplier }) => {
+export const SupplierDetailsModal: React.FC<SupplierDetailsModalProps> = ({ open, onClose, supplierId }) => {
     const { t } = useTranslation();
     const { mutate: createDownloadUrl } = useMutationCreateDownloadFileUrl();
+    const { data: supplier } = useQueryGetSupplierById(supplierId);
 
     const handleDownload = (fileId: string) => {
         createDownloadUrl(fileId, {
@@ -32,7 +33,7 @@ export const SupplierDetailsModal: React.FC<SupplierDetailsModalProps> = ({ open
         });
     };
 
-    if (!supplier) {
+    if (!supplierId || !supplier) {
         return null;
     }
 
@@ -168,60 +169,6 @@ export const SupplierDetailsModal: React.FC<SupplierDetailsModalProps> = ({ open
                         {t(i18n.translationKey.documents)}
                     </Typography>
                     <List disablePadding>
-                        <ListItem
-                            className="mb-2 rounded-lg bg-gray-100 hover:bg-gray-200"
-                            secondaryAction={
-                                <Tooltip title={t(i18n.translationKey.download)}>
-                                    <IconButton size="small">
-                                        <Download fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                            }
-                        >
-                            <ListItemText
-                                primary="Supplier_Contract_MediPharma_Supplies_2025.pdf"
-                                slotProps={{
-                                    primary: { variant: "body1", fontWeight: 500 },
-                                }}
-                            />
-                        </ListItem>
-
-                        <ListItem
-                            className="mb-2 rounded-lg bg-gray-100 hover:bg-gray-200"
-                            secondaryAction={
-                                <Tooltip title={t(i18n.translationKey.download)}>
-                                    <IconButton size="small">
-                                        <Download fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                            }
-                        >
-                            <ListItemText
-                                primary="Purchase_Agreement_MediPharma_Supplies_2025.docx"
-                                slotProps={{
-                                    primary: { variant: "body1", fontWeight: 500 },
-                                }}
-                            />
-                        </ListItem>
-
-                        <ListItem
-                            className="mb-2 rounded-lg bg-gray-100 hover:bg-gray-200"
-                            secondaryAction={
-                                <Tooltip title={t(i18n.translationKey.download)}>
-                                    <IconButton size="small">
-                                        <Download fontSize="small" />
-                                    </IconButton>
-                                </Tooltip>
-                            }
-                        >
-                            <ListItemText
-                                primary="Service_Contract_MediPharma_Supplies_2025.pdf"
-                                slotProps={{
-                                    primary: { variant: "body1", fontWeight: 500 },
-                                }}
-                            />
-                        </ListItem>
-
                         {supplier.contracts?.map((document) => (
                             <ListItem
                                 className="mb-2 rounded-lg bg-gray-100 hover:bg-gray-200"

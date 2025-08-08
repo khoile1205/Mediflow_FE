@@ -22,15 +22,17 @@ import { formatCurrencyVND } from "~/utils/currency";
 import { formatDate, getCurrentAge } from "~/utils/date-time";
 import { ReceiptPrinter } from "./receipt-printer";
 import { HospitalFeeFormValue, HospitalServiceItem } from "./types";
+import { useQueryClient } from "@tanstack/react-query";
+import { QueryKey } from "~/constants/query-key";
 
 const HospitalFeePage: React.FC = () => {
     const { t } = useTranslation();
+    const queryClient = useQueryClient();
 
     const receiptRef = React.useRef<HTMLDivElement>(null);
 
     const [patientId, setPatientId] = React.useState<number | null>(null);
     const [searchUnpaidPatientTerm, setSearchUnpaidPatientTerm] = React.useState("");
-
     // Queries
     const {
         data: { unpaidPatientList },
@@ -116,6 +118,10 @@ const HospitalFeePage: React.FC = () => {
         setPatientId(null);
         hospitalServiceFeeAgGrid.gridApi.deselectAll();
         unpaidPatientAgGrid.gridApi.deselectAll();
+        queryClient.invalidateQueries({ queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_PATIENT_LIST] });
+        queryClient.invalidateQueries({
+            queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_SERVICE_BY_PATIENT_ID, patientId],
+        });
     };
 
     const handlePrint = useReactToPrint({

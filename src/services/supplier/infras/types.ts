@@ -8,7 +8,7 @@ export interface CreateSupplierRequest {
     director: string;
     contactPerson: string;
     //
-    expiredDate?: Date;
+    expiredDate?: string;
     contracts?: SupplierDocumentFile[];
 }
 

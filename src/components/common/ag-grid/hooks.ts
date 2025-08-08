@@ -30,7 +30,7 @@ export const useAgGrid = <T>({
     rowSelection = "single",
     defaultSortModel = [],
     onRowDataChanged,
-    isRowSelectable, // ✅ added
+    isRowSelectable,
 }: UseAgGridProps<T>): UseAgGridResult<T> => {
     const gridApi = React.useRef<GridApi | null>(null);
 

@@ -10,10 +10,10 @@ import i18n from "~/configs/i18n";
 import SearchBox from "~/components/common/search-box";
 import { Supplier } from "~/entities";
 import { usePagination } from "~/hooks";
+import { useQueryGetListSupplier } from "~/services/supplier/hooks/queries";
 import { SupplierStatusLabel } from "./components";
 import { SupplierDetailsModal } from "./supplier-detail.modal";
 import { UpsertSupplierModal } from "./upsert-supplier.modal";
-import { useQueryGetListSupplier } from "~/services/supplier/hooks/queries";
 
 const SupplierManagementPage: React.FC = () => {
     const { t } = useTranslation();
@@ -174,11 +174,11 @@ const SupplierManagementPage: React.FC = () => {
                     setSelectedSupplier(null);
                     setOpenSupplierDetails(false);
                 }}
-                supplier={selectedSupplier}
+                supplierId={selectedSupplier?.id}
             />
             <UpsertSupplierModal
                 mode={isEditMode ? "edit" : "create"}
-                supplier={selectedSupplier}
+                supplierId={selectedSupplier?.id}
                 onClose={() => {
                     setOpenAddSupplier(false);
                     setIsEditMode(false);
