@@ -106,6 +106,5 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
         };
     }
 
-    console.log("Validation rules:", validation);
     return validation;
 };

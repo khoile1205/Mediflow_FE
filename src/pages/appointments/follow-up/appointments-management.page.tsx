@@ -105,7 +105,6 @@ const AppointmentsManagementPage: React.FC = () => {
     const {
         data: { listAppointments, totalItems: totalAppointmentsItems },
     } = useQueryGetUpcomingAppointments(appliedAppointmentFilters);
-    console.log("appliedAppointmentFilters", appliedAppointmentFilters);
     const [filtersExpanded, setFiltersExpanded] = React.useState(true);
     const [open, setOpen] = React.useState(false);
 
