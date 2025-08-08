@@ -204,6 +204,19 @@ const VaccinationPage: React.FC = () => {
             return;
         }
 
+        const isRequiredTesting = vaccinationForm.watch("isRequiredTesting");
+        const testResult = vaccinationForm.watch("testResult");
+
+        if (isRequiredTesting && testResult == null) {
+            showToast.warning(t(i18n.translationKey.mustTestBeforeInjection));
+            return;
+        }
+
+        if (testResult === TestResultStatus.POSITIVE) {
+            showToast.error(t(i18n.translationKey.positiveCannotInject));
+            return;
+        }
+
         await injectVaccine(vaccinationForm.watch());
     };
 

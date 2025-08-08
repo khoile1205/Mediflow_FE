@@ -520,6 +520,9 @@ const applicationTranslationKey = {
     close: "CLOSE",
     expiredReturnFormDetail: "EXPIRED_RETURN_FORM_DETAIL",
     expiredReturnForm: "EXPIRED_RETURN_FORM",
+    selectDate: "SELECT_DATE",
+    mustTestBeforeInjection: "MUST_TEST_BEFORE_INJECTION",
+    positiveCannotInject: "POSITIVE_TEST_CANNOT_INJECT",
 };
 
 const exceptionTranslationKey = {

@@ -11,6 +11,8 @@ import {
     TValidationNoFutureDate,
     TValidationNoPastDate,
 } from "../types/validation";
+import { useTranslation } from "react-i18next";
+import i18n from "~/configs/i18n";
 
 type BaseDatePickerValidationRules = TValidationMinDate &
     TValidationMaxDate &
@@ -30,7 +32,7 @@ export type BaseDatePickerFormItemProps = Omit<BaseFormItemProps, "defaultValue"
 
 export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
     name,
-    placeholder = "Chọn ngày",
+    placeholder,
     fullWidth = true,
     defaultValue = new Date(),
     label = "",
@@ -40,6 +42,7 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
     datePickerProps,
     ...validationProps
 }) => {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
 
     const renderLabel = label ? `${label} ${validationProps.required ? "*" : ""}` : "";
@@ -53,6 +56,8 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
         if (validationProps.noFutureDate) return new Date();
         return validationProps.maxDate;
     }, [validationProps.noFutureDate, validationProps.maxDate]);
+
+    const translatedPlaceholder = placeholder ?? t(i18n.translationKey.selectDate);
 
     return (
         <ControllerWrapper
@@ -76,7 +81,7 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
                                     showYearDropdown
                                     dropdownMode="scroll"
                                     showTimeSelect={mode === "datetime"}
-                                    timeIntervals={datePickerProps.timeIntervals}
+                                    timeIntervals={datePickerProps?.timeIntervals}
                                     timeFormat="HH:mm"
                                     timeCaption="Thời gian"
                                     selected={dateValue}
@@ -88,11 +93,11 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
                                     onCalendarClose={() => setOpen(false)}
                                     showIcon={false}
                                     open={!datePickerProps?.readOnly && open}
-                                    dateFormat={datePickerProps.dateFormat}
+                                    dateFormat={datePickerProps?.dateFormat}
                                     minDate={minDate}
                                     maxDate={maxDate}
-                                    readOnly={datePickerProps.readOnly}
-                                    placeholderText={placeholder}
+                                    readOnly={datePickerProps?.readOnly}
+                                    placeholderText={translatedPlaceholder}
                                     popperPlacement="bottom-end"
                                     disabled={disabled}
                                     customInput={
@@ -104,19 +109,15 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
                                             disabled={disabled}
                                             size={size}
                                             variant="outlined"
-                                            placeholder={placeholder}
+                                            placeholder={translatedPlaceholder}
                                             label={renderLabel}
                                             slotProps={{
-                                                root: {
-                                                    className: "w-full",
-                                                },
+                                                root: { className: "w-full" },
                                                 input: {
                                                     readOnly: true,
-                                                    sx: {
-                                                        width: "100%",
-                                                    },
+                                                    sx: { width: "100%" },
                                                     endAdornment:
-                                                        !datePickerProps.readOnly && !disabled ? (
+                                                        !datePickerProps?.readOnly && !disabled ? (
                                                             <InputAdornment position="end">
                                                                 <IconButton
                                                                     disabled={disabled}
@@ -132,9 +133,7 @@ export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
                                                             </InputAdornment>
                                                         ) : null,
                                                     onClick: () => {
-                                                        if (datePickerProps.readOnly || disabled) {
-                                                            return;
-                                                        }
+                                                        if (datePickerProps?.readOnly || disabled) return;
                                                         setOpen(true);
                                                     },
                                                 },
