@@ -1,6 +1,6 @@
 import { Box, Button, Grid, InputAdornment, Stack, Typography } from "@mui/material";
 import React from "react";
-import { UseFormReturn } from "react-hook-form";
+import { useFormContext, UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
@@ -10,9 +10,10 @@ import {
     useMutationUpdateVaccinationPrescreening,
 } from "~/services/reception/hooks/mutations";
 import { VaccinationPreScreeningRequest } from "~/services/reception/infras/types";
-import { VaccinationPrescreeningFormValue } from "../types";
+import { PatientReceptionFormValue, VaccinationPrescreeningFormValue } from "../types";
 import { useConclusionCheckboxStatus } from "./use-conclusion-checkbox-status";
 import { PHONE_NUMBER_PATTERN } from "~/components/form/validation/pattern";
+import { under1MonthOptions, over1MonthOptions } from "./vaccination-options";
 
 interface PreVaccinationProps {
     receptionId?: number;
@@ -25,6 +26,7 @@ const ADULT_MONTH_AGE = 18 * 12;
 // TODO: research for under 1 month old children pre-screening form
 export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, form, patientDOB }) => {
     const { t } = useTranslation();
+    const patientReceptionForm = useFormContext<PatientReceptionFormValue>();
 
     const { mutateAsync: createVaccinationPrescreening } = useMutationCreatePreVaccination();
     const { mutateAsync: updateVaccinationPrescreening } = useMutationUpdateVaccinationPrescreening();
@@ -82,11 +84,18 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
 
         const MILISECOND_OF_MONTH = 1000 * 60 * 60 * 24 * 30;
 
-        const ageInMilliseconds = Date.now() - patientDOB.getTime();
+        const ageInMilliseconds = Date.now() - patientReceptionForm.watch("dob").getTime();
         const monthAge = Math.floor(ageInMilliseconds / MILISECOND_OF_MONTH);
 
         return monthAge;
-    }, [patientDOB]);
+    }, [patientReceptionForm.watch("dob")]);
+
+    const optionsToRender = React.useMemo(() => {
+        if (patientMonthAge !== null && patientMonthAge < 1) {
+            return under1MonthOptions;
+        }
+        return over1MonthOptions;
+    }, [patientMonthAge]);
 
     React.useEffect(() => {
         if (receptionId) {
@@ -101,7 +110,9 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
             <Stack className="pt-3" spacing={2} direction="column">
                 <Box>
                     <Typography variant="subtitle2" className="ms-2 text-lg">
-                        {t(i18n.translationKey.screeningForChildrenOver1Month)}
+                        {patientMonthAge !== null && patientMonthAge < 1
+                            ? t(i18n.translationKey.screeningForChildrenUnder1Month)
+                            : t(i18n.translationKey.screeningForChildrenOver1Month)}
                     </Typography>
                     <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-2 border p-5">
                         <Grid container spacing={2.5}>
@@ -185,72 +196,143 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     <Typography>{t(i18n.translationKey.unitMmhg)}</Typography>
                                 </Stack>
                             </Grid>
-                            <Grid size={12}>
+                            {/* <Grid size={12}>
                                 <Grid container spacing={2}>
-                                    <Grid size={4}>
-                                        <FormItem
-                                            render="checkbox"
-                                            name="hasSevereFeverAfterPreviousVaccination"
-                                            label={t(i18n.translationKey.severeReactionPreviousVaccination)}
-                                            disabled={!receptionId}
-                                        />
-                                    </Grid>
-                                    <Grid size={4}>
-                                        <FormItem
-                                            render="checkbox"
-                                            name="hasAcuteOrChronicDisease"
-                                            label={t(i18n.translationKey.acuteOrChronicDisease)}
-                                            disabled={!receptionId}
-                                        />
-                                    </Grid>
-                                    <Grid size={4}>
-                                        <FormItem
-                                            render="checkbox"
-                                            name="isOnOrRecentlyEndedCorticosteroids"
-                                            label={t(i18n.translationKey.recentImmunosuppressiveTreatment)}
-                                            disabled={!receptionId}
-                                        />
-                                    </Grid>
-                                    <Grid size={4}>
-                                        <FormItem
-                                            render="checkbox"
-                                            name="hasAbnormalTemperatureOrVitals"
-                                            label={t(i18n.translationKey.abnormalTemperatureOrVitals)}
-                                            disabled={!receptionId}
-                                        />
-                                    </Grid>
-                                    <Grid size={4}>
-                                        <FormItem
-                                            render="checkbox"
-                                            name="hasAbnormalHeartSound"
-                                            label={t(i18n.translationKey.abnormalHeartSound)}
-                                            disabled={!receptionId}
-                                        />
-                                    </Grid>
-                                    <Grid size={4}>
-                                        <FormItem
-                                            render="checkbox"
-                                            name="hasHeartValveDisorder"
-                                            label={t(i18n.translationKey.heartValveAbnormality)}
-                                            disabled={!receptionId}
-                                        />
-                                    </Grid>
-                                    <Grid size={4}>
-                                        <FormItem
-                                            render="checkbox"
-                                            name="hasNeurologicalAbnormalities"
-                                            label={t(i18n.translationKey.abnormalDisorder)}
-                                            disabled={!receptionId}
-                                        />
-                                    </Grid>
-                                    <Grid size={4}>
-                                        <FormItem
-                                            render="checkbox"
-                                            name="isUnderweightBelow2000g"
-                                            label={t(i18n.translationKey.weightUnder2000g)}
-                                            disabled={!receptionId}
-                                        />
-                                    </Grid>
+                                    {patientMonthAge !== null && patientMonthAge < 1 ? (
+                                        <>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAcuteOrChronicDisease"
+                                                    label={t(i18n.translationKey.acuteOrChronicDisease)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAbnormalTemperatureOrVitals"
+                                                    label={t(i18n.translationKey.abnormalTemperatureOrVitals)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="isUnderweightBelow2000g"
+                                                    label={t(i18n.translationKey.weightUnder2000g)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasNeurologicalAbnormalities"
+                                                    label={t(i18n.translationKey.abnormalCry)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasHeartValveDisorder"
+                                                    label={t(i18n.translationKey.abnormalSkinColor)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAbnormalHeartSound"
+                                                    label={t(i18n.translationKey.poorFeeding)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="isOnOrRecentlyEndedCorticosteroids"
+                                                    label={t(i18n.translationKey.gestationalAgeUnder34Weeks)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasSevereFeverAfterPreviousVaccination"
+                                                    label={t(i18n.translationKey.severeImmunodeficiency)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasSevereFeverAfterPreviousVaccination"
+                                                    label={t(i18n.translationKey.severeReactionPreviousVaccination)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAcuteOrChronicDisease"
+                                                    label={t(i18n.translationKey.acuteOrChronicDisease)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="isOnOrRecentlyEndedCorticosteroids"
+                                                    label={t(i18n.translationKey.recentImmunosuppressiveTreatment)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAbnormalTemperatureOrVitals"
+                                                    label={t(i18n.translationKey.abnormalTemperatureOrVitals)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasSevereFeverAfterPreviousVaccination"
+                                                    label={t(i18n.translationKey.severeImmunodeficiency)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAbnormalHeartSound"
+                                                    label={t(i18n.translationKey.abnormalHeartSound)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasHeartValveDisorder"
+                                                    label={t(i18n.translationKey.abnormalBreathing)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasNeurologicalAbnormalities"
+                                                    label={t(i18n.translationKey.abnormalConsciousness)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                        </>
+                                    )}
                                     <Grid size={4}>
                                         <FormItem
                                             render="checkbox"
@@ -259,6 +341,174 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                             disabled={!receptionId}
                                         />
                                     </Grid>
+                                </Grid>
+                            </Grid> */}
+                            <Grid size={12}>
+                                {/* <Grid container spacing={2}>
+                                    {patientMonthAge !== null && patientMonthAge < 1 ? (
+                                        <>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAcuteOrChronicDisease"
+                                                    label={t(i18n.translationKey.acuteOrChronicDisease)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAbnormalTemperatureOrVitals"
+                                                    label={t(i18n.translationKey.abnormalTemperatureOrVitals)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="isUnderweightBelow2000g"
+                                                    label={t(i18n.translationKey.weightUnder2000g)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasNeurologicalAbnormalities"
+                                                    label={t(i18n.translationKey.abnormalCry)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasHeartValveDisorder"
+                                                    label={t(i18n.translationKey.abnormalSkinColor)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAbnormalHeartSound"
+                                                    label={t(i18n.translationKey.poorFeeding)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="isOnOrRecentlyEndedCorticosteroids"
+                                                    label={t(i18n.translationKey.gestationalAgeUnder34Weeks)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasSevereFeverAfterPreviousVaccination"
+                                                    label={t(i18n.translationKey.severeImmunodeficiency)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasOtherContraindications"
+                                                    label={t(i18n.translationKey.otherContraindications)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                        </>
+                                    ) : (
+                                        // ----- PHỤ LỤC III: 1 MONTH AND OLDER -----
+                                        <>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasSevereFeverAfterPreviousVaccination"
+                                                    label={t(i18n.translationKey.severeReactionPreviousVaccination)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAcuteOrChronicDisease"
+                                                    label={t(i18n.translationKey.acuteOrChronicDisease)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="isOnOrRecentlyEndedCorticosteroids"
+                                                    label={t(i18n.translationKey.recentImmunosuppressiveTreatment)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAbnormalTemperatureOrVitals"
+                                                    label={t(i18n.translationKey.abnormalTemperatureOrVitals)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasSevereImmunodeficiency"
+                                                    label={t(i18n.translationKey.severeImmunodeficiency)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasAbnormalHeartSound"
+                                                    label={t(i18n.translationKey.abnormalHeartSound)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasHeartValveDisorder"
+                                                    label={t(i18n.translationKey.abnormalBreathing)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasNeurologicalAbnormalities"
+                                                    label={t(i18n.translationKey.abnormalConsciousness)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                            <Grid size={4}>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="hasOtherContraindications"
+                                                    label={t(i18n.translationKey.otherContraindications)}
+                                                    disabled={!receptionId}
+                                                />
+                                            </Grid>
+                                        </>
+                                    )}
+                                </Grid> */}
+                                <Grid container spacing={2}>
+                                    {optionsToRender.map((opt) => (
+                                        <Grid key={opt.name} size={4}>
+                                            <FormItem
+                                                render="checkbox"
+                                                name={opt.name}
+                                                label={t(opt.labelKey)}
+                                                disabled={!receptionId}
+                                            />
+                                        </Grid>
+                                    ))}
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -295,7 +545,6 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     disabled={!receptionId}
                                 />
                             </Grid>
-                            {/* TODO: change the word  */}
                             <Grid size={6}>
                                 <FormItem
                                     render="checkbox"

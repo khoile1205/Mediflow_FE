@@ -1,5 +1,5 @@
 import { AddCircle, Delete, Update } from "@mui/icons-material";
-import { Box, Grid, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import { ColDef, RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -33,7 +33,7 @@ interface VaccinationIndicationProps {
 
 export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
     receptionId,
-    isAllowedToVaccinate,
+    // isAllowedToVaccinate,
     form,
 }) => {
     const { t } = useTranslation();
@@ -114,10 +114,10 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
     ];
 
     const handleAddNewVaccination = async (data: VaccinationIndicateReceptionFormValues) => {
-        if (!isAllowedToVaccinate && data.isReadyToUse) {
-            showToast.error(t(i18n.translationKey.vaccinationNotAllowed));
-            return;
-        }
+        // if (data.isReadyToUse) {
+        //     showToast.error(t(i18n.translationKey.vaccinationNotAllowed));
+        //     return;
+        // }
 
         if (data.isReadyToUse) {
             data.scheduledDate = new Date(Date.now() + 60 * 1000);
@@ -151,10 +151,10 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
             return;
         }
 
-        if (!isAllowedToVaccinate && form.getValues("isReadyToUse")) {
-            showToast.error(t(i18n.translationKey.vaccinationNotAllowed));
-            return;
-        }
+        // if (!isAllowedToVaccinate && form.getValues("isReadyToUse")) {
+        //     showToast.error(t(i18n.translationKey.vaccinationNotAllowed));
+        //     return;
+        // }
 
         const data: VaccinationIndicateReceptionFormValues = {
             vaccineId: form.getValues("vaccineId"),
@@ -374,22 +374,22 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                         />
                                     </Stack>
                                     <Box>
-                                        <Tooltip
+                                        {/* <Tooltip
                                             title={
                                                 !isAllowedToVaccinate
                                                     ? t(i18n.translationKey.vaccinationNotAllowed)
                                                     : ""
                                             }
-                                        >
-                                            <Box>
-                                                <FormItem
-                                                    render="checkbox"
-                                                    name="isReadyToUse"
-                                                    label={t(i18n.translationKey.useToday)}
-                                                    disabled={!receptionId || !isAllowedToVaccinate}
-                                                />
-                                            </Box>
-                                        </Tooltip>
+                                        > */}
+                                        <Box>
+                                            <FormItem
+                                                render="checkbox"
+                                                name="isReadyToUse"
+                                                label={t(i18n.translationKey.useToday)}
+                                                disabled={!receptionId}
+                                            />
+                                        </Box>
+                                        {/* </Tooltip> */}
                                     </Box>
 
                                     <Stack direction="row" spacing={1}></Stack>

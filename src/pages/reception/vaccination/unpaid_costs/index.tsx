@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import DynamicForm from "~/components/form/dynamic-form";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
+import { HospitalServiceType } from "~/constants/enums";
+import { useQueryHospitalServices } from "~/services/hospital-service/hooks/queries";
 import { useQueryReceptionUnpaidServices } from "~/services/reception/hooks/queries";
 import { formatCurrencyVND } from "~/utils/currency";
 
@@ -15,25 +17,36 @@ export const UnpaidCosts: React.FC<UnpaidCostsProps> = ({ receptionId }) => {
     const { t } = useTranslation();
     const { data: unpaidServices } = useQueryReceptionUnpaidServices(receptionId);
 
+    const {
+        data: { hospitalServices: examHospitalServices },
+    } = useQueryHospitalServices({ serviceType: HospitalServiceType.Exam });
+    const {
+        data: { hospitalServices: injectHospitalServices },
+    } = useQueryHospitalServices({ serviceType: HospitalServiceType.Injection });
+
     const consultationFee = React.useMemo(() => {
         return 0;
     }, []);
 
     const examinationFee = React.useMemo(() => {
+        const examHospitalServicesIds = examHospitalServices.map((service) => service.id);
+
         return unpaidServices.services
-            .filter((service) => service.serviceName.includes("Công khám"))
+            .filter((service) => examHospitalServicesIds.includes(service.serviceId))
             .reduce((total, service) => {
                 return total + service.unitPrice * service.quantity;
             }, 0);
-    }, [unpaidServices.services]);
+    }, [examHospitalServices, unpaidServices.services]);
 
     const injectionFee = React.useMemo(() => {
+        const injectHospitalServicesIds = injectHospitalServices.map((service) => service.id);
+
         return unpaidServices.services
-            .filter((service) => service.serviceName.includes("Công tiêm"))
+            .filter((service) => injectHospitalServicesIds.includes(service.serviceId))
             .reduce((total, service) => {
                 return total + service.unitPrice * service.quantity;
             }, 0);
-    }, [unpaidServices.services]);
+    }, [injectHospitalServices, unpaidServices.services]);
 
     const vaccineFee = React.useMemo(() => {
         return unpaidServices.vaccinations.reduce((total, vaccination) => {
@@ -42,12 +55,16 @@ export const UnpaidCosts: React.FC<UnpaidCostsProps> = ({ receptionId }) => {
     }, [unpaidServices.vaccinations]);
 
     const examinationPrice = React.useMemo(() => {
+        const examHospitalServicesIds = [...examHospitalServices, ...injectHospitalServices].map(
+            (service) => service.id,
+        );
+
         return unpaidServices.services
-            .filter((service) => !["Công khám", "Công tiêm"].includes(service.serviceName))
+            .filter((service) => !examHospitalServicesIds.includes(service.serviceId))
             .reduce((total, service) => {
                 return total + service.unitPrice * service.quantity;
             }, 0);
-    }, [unpaidServices.services]);
+    }, [examHospitalServices, injectHospitalServices, unpaidServices.services]);
 
     const totalUnpaid = React.useMemo(() => {
         return consultationFee + examinationFee + injectionFee + vaccineFee + examinationPrice;

@@ -1,8 +1,8 @@
 import { TimeOfDay } from "~/pages/appointments/follow-up/types";
 
 export type IAppointmentFilter = {
-    fromDate?: Date;
-    toDate?: Date;
+    fromDate?: string;
+    toDate?: string;
     timeOfDay?: TimeOfDay;
     vaccineId?: number;
 };
