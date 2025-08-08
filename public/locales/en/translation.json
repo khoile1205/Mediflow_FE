@@ -616,5 +616,9 @@
     "SUPPLIER_INFORMATION": "Supplier information",
     "CLOSE": "Close",
     "EXPIRED_RETURN_FORM_DETAIL": "Expired return form detail",
-    "EXPIRED_RETURN_FORM": "Expired return form"
+    "EXPIRED_RETURN_FORM": "Expired return form",
+    "CANNOT_ADD_SUSPENDED_MEDICINE": "Cannot add medicine '{{name}}' because it is suspended.",
+    "SELECT_DATE": "Select date",
+    "MUST_TEST_BEFORE_INJECTION": "Testing is required before injection.",
+    "POSITIVE_TEST_CANNOT_INJECT": "Cannot inject because test result is positive."
 }

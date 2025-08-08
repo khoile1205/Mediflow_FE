@@ -111,6 +111,7 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
                 <Box className="w-full">
                     <TextField
                         {...field}
+                        value={field.value ?? ""}
                         label={label || placeholder}
                         placeholder={placeholder}
                         required={required}
