@@ -1,14 +1,16 @@
-import { BrowserRouter, Routes } from "react-router";
+import { Suspense } from "react";
+import { Routes } from "react-router";
 import { AuthenticatedRoutes } from "./authenticated.route";
 import { PublicRoutes } from "./public.route";
+import { Spinner } from "~/components/layout/spinner";
 
 export const ApplicationRoutes = () => {
     return (
-        <BrowserRouter basename={import.meta.env.BASE_URL}>
+        <Suspense fallback={<Spinner />}>
             <Routes>
                 {PublicRoutes}
                 {AuthenticatedRoutes}
             </Routes>
-        </BrowserRouter>
+        </Suspense>
     );
 };

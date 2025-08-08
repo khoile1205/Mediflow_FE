@@ -1,4 +1,4 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { HighlightOff, Visibility, VisibilityOff } from "@mui/icons-material";
 import { Box, IconButton, InputAdornment, TextField, TextFieldProps } from "@mui/material";
 import React from "react";
 import { ControllerWrapper, FormErrorMessage } from "../common";
@@ -33,24 +33,43 @@ const getAdornmentProps = ({
     onTogglePassword,
     startAdornment,
     endAdornment,
+    hasValue,
+    onClear,
 }: {
     isPassword: boolean;
     showPassword: boolean;
     onTogglePassword: () => void;
     startAdornment?: React.ReactNode;
     endAdornment?: React.ReactNode;
+    hasValue: boolean;
+    onClear: () => void;
 }) => {
-    const start = startAdornment ? <InputAdornment position="start">{startAdornment}</InputAdornment> : undefined;
+    let start: React.ReactNode | undefined = undefined;
+    let end: React.ReactNode | undefined = undefined;
 
-    const end = endAdornment ? (
-        <InputAdornment position="end">{endAdornment}</InputAdornment>
-    ) : isPassword ? (
-        <InputAdornment position="end">
-            <IconButton aria-label="toggle password visibility" onClick={onTogglePassword} edge="end">
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-        </InputAdornment>
-    ) : undefined;
+    if (startAdornment) {
+        start = <InputAdornment position="start">{startAdornment}</InputAdornment>;
+    }
+
+    if (endAdornment) {
+        end = <InputAdornment position="end">{endAdornment}</InputAdornment>;
+    } else if (isPassword) {
+        end = (
+            <InputAdornment position="end">
+                <IconButton aria-label="toggle password visibility" onClick={onTogglePassword} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+            </InputAdornment>
+        );
+    } else if (hasValue) {
+        end = (
+            <InputAdornment position="end">
+                <IconButton aria-label="clear input" onClick={onClear} edge="end">
+                    <HighlightOff />
+                </IconButton>
+            </InputAdornment>
+        );
+    }
 
     return { startAdornment: start, endAdornment: end };
 };
@@ -62,6 +81,7 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
     placeholder,
     label = "",
     size = "small",
+    fullWidth = true,
     startAdornment = undefined,
     endAdornment = undefined,
     isEmail = false,
@@ -83,17 +103,19 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
             name={name}
             isEmail={isEmail}
             maxLength={maxLength}
-            isPassword={isPassword}
             minLength={minLength}
             pattern={pattern}
             required={required}
             defaultValue={defaultValue ?? ""}
             render={({ field, error }) => (
-                <Box>
+                <Box className="w-full">
                     <TextField
                         {...field}
+                        value={field.value ?? ""}
+                        label={label || placeholder}
                         placeholder={placeholder}
-                        fullWidth
+                        required={required}
+                        fullWidth={fullWidth}
                         type={isPassword && !showPassword ? "password" : "text"}
                         error={!!error}
                         variant="outlined"
@@ -110,12 +132,13 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
                                 onTogglePassword: handleTogglePasswordVisibility,
                                 startAdornment,
                                 endAdornment,
+                                hasValue: !!field.value,
+                                onClear: () => field.onChange(""),
                             }),
                         }}
-                        label={""}
                         {...props}
                     />
-                    <FormErrorMessage errorMessage={error} />
+                    <FormErrorMessage errorMessage={error} label={label} />
                 </Box>
             )}
         />

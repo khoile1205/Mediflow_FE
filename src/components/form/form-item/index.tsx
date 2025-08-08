@@ -1,10 +1,10 @@
 import { Stack } from "@mui/material";
-import React from "react";
-import FormLabel from "../common/label";
 import { FormItemProps } from "../types/form-item";
 import { CheckboxFormItem } from "./checkbox";
+import { CheckboxGroupFormItem } from "./checkbox-group";
 import { DatePickerFormItem } from "./date-picker";
 import { DateRangePickerFormItem } from "./date-range-picker";
+import { DateTimePickerFormItem } from "./date-time-picker";
 import { InputNumberFormItem } from "./input-number";
 import { RadioGroupFormItem } from "./radio-group";
 import { SelectFieldFormItem } from "./select";
@@ -12,13 +12,16 @@ import { AgGridDropdownFormItem } from "./select-data-grid";
 import { SwitchFormItem } from "./switch";
 import { TextAreaFormItem } from "./text-area";
 import { TextFieldFormItem } from "./text-field";
+import { AutocompleteFieldFormItem } from "./auto-complete";
+import { TextFieldNoClearFormItem } from "./text-field-no-clear";
+import { FileUploadFormItem } from "./file-upload";
 
 const FormItem: React.FC<FormItemProps> = (props) => {
-    const renderLabel = props.label ? <FormLabel required={props.required} label={props.label} /> : null;
+    // TODO: move the controller wrapper logic to a common place
 
     const getFormComponent = () => {
         switch (props.render) {
-            case "text_input":
+            case "text-input":
                 return <TextFieldFormItem {...props} />;
             case "select":
                 return <SelectFieldFormItem {...props} />;
@@ -26,18 +29,28 @@ const FormItem: React.FC<FormItemProps> = (props) => {
                 return <AgGridDropdownFormItem {...props} />;
             case "checkbox":
                 return <CheckboxFormItem {...props} />;
+            case "checkbox-group":
+                return <CheckboxGroupFormItem {...props} />;
             case "date-picker":
                 return <DatePickerFormItem {...props} />;
             case "switch":
                 return <SwitchFormItem {...props} />;
             case "radio-group":
                 return <RadioGroupFormItem {...props} />;
-            case "text_area":
+            case "text-area":
                 return <TextAreaFormItem {...props} />;
-            case "input_number":
+            case "input-number":
                 return <InputNumberFormItem {...props} />;
             case "date-range-picker":
                 return <DateRangePickerFormItem {...props} />;
+            case "date-time-picker":
+                return <DateTimePickerFormItem {...props} />;
+            case "autocomplete":
+                return <AutocompleteFieldFormItem {...props} />;
+            case "text-input-no-clear":
+                return <TextFieldNoClearFormItem {...props} />;
+            case "file-upload":
+                return <FileUploadFormItem {...props} />;
             default:
                 return null;
         }
@@ -45,7 +58,6 @@ const FormItem: React.FC<FormItemProps> = (props) => {
 
     return (
         <Stack direction={"row"} spacing={2} alignItems={"start"} className="mb-2">
-            {renderLabel}
             {getFormComponent()}
         </Stack>
     );

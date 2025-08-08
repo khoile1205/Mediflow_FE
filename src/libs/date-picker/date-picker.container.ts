@@ -111,6 +111,7 @@ export const DatePickerContainer = styled(Box)<BoxProps>(({ theme }) => {
             backgroundColor: theme.palette.background.paper,
             boxShadow: theme.shadows[7],
             border: "none",
+            width: "max-content",
             "& .react-datepicker__header": {
                 padding: 0,
                 border: "none",
@@ -195,21 +196,6 @@ export const DatePickerContainer = styled(Box)<BoxProps>(({ theme }) => {
                 borderRadius: "50%",
                 lineHeight: "2.25rem",
                 color: theme.palette.text.primary,
-                // "&.react-datepicker__day--selected.react-datepicker__day--in-selecting-range.react-datepicker__day--selecting-range-start, &.react-datepicker__day--selected.react-datepicker__day--range-start.react-datepicker__day--in-range, &.react-datepicker__day--range-start":
-                // 	{
-                // 		borderRadius: "50%",
-                // 		borderTopLeftRadius: "50%",
-                // 		borderBottomLeftRadius: "50%",
-                // 		color: `${theme.palette.common.white} !important`,
-                // 		backgroundColor: `${theme.palette.primary.main} !important`,
-                // 	},
-                // "&.react-datepicker__day--range-end.react-datepicker__day--in-range": {
-                // 	borderTopRightRadius: "50%",
-                // 	borderBottomRightRadius: "50%",
-                // 	borderRadius: "50%",
-                // 	color: `${theme.palette.common.white} !important`,
-                // 	backgroundColor: `${theme.palette.primary.main} !important`,
-                // },
                 "&:focus, &:active": {
                     outline: 0,
                 },

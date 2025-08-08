@@ -1,10 +1,9 @@
 import { Box, TextField, TextFieldProps } from "@mui/material";
 import React from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { ControllerWrapper } from "../common";
+import FormErrorMessage from "../common/error";
 import { BaseFormItemProps } from "../types/form-item";
 import { TValidationMaxLength, TValidationMinLength, TValidationPattern } from "../types/validation";
-import { mapValidationRules } from "../utils";
-import FormErrorMessage from "../common/error";
 
 type TextAreaUIProps = TextFieldProps & {
     rows?: number;
@@ -25,47 +24,37 @@ export const TextAreaFormItem: React.FC<TextAreaFormItemProps> = ({
     minLength = 0,
     pattern,
     required = false,
+    fullWidth = true,
     rows = 4,
     maxRows = 4,
     ...props
 }) => {
-    const {
-        control,
-        formState: { errors },
-    } = useFormContext();
-
-    const rules = mapValidationRules({
-        maxLength,
-        minLength,
-        pattern,
-        required,
-    });
-    const error = errors[name]?.message as string | undefined;
-
     return (
-        <Controller
+        <ControllerWrapper
             name={name}
-            control={control}
+            maxLength={maxLength}
+            minLength={minLength}
+            pattern={pattern}
+            required={required}
             defaultValue={defaultValue ?? ""}
-            rules={rules}
-            render={({ field }) => (
-                <Box style={{ width: "100%" }}>
+            render={({ field, error }) => (
+                <Box className="w-full">
                     <TextField
                         {...field}
-                        label={null}
+                        label={label || placeholder}
+                        required={required}
                         placeholder={placeholder}
-                        fullWidth
+                        fullWidth={fullWidth}
                         multiline
                         rows={rows}
                         maxRows={maxRows}
                         error={!!error}
-                        helperText={error}
                         variant="outlined"
                         disabled={disabled}
                         margin="normal"
                         {...props}
                     />
-                    <FormErrorMessage errorMessage={error} />
+                    <FormErrorMessage errorMessage={error} label={label} />
                 </Box>
             )}
         />

@@ -1,0 +1,32 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import i18n from "~/configs/i18n";
+import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { QueryKey } from "~/constants/query-key";
+import { SupplierFormValues } from "~/pages/supplier/types";
+import { showToast } from "~/utils";
+import { formatDate } from "~/utils/date-time";
+import { CreateSupplierRequest, supplierApi } from "../../infras";
+
+export const useMutationCreateSupplier = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (formValue: SupplierFormValues) => {
+            const body: CreateSupplierRequest = {
+                ...formValue,
+                expiredDate: formatDate(formValue.expiredDate, DATE_TIME_FORMAT["yyyy-MM-dd"]),
+                contracts: formValue.contracts?.map((file) => ({
+                    id: file.id,
+                    fileName: file.fileName,
+                })),
+            };
+            return await supplierApi.createSupplier(body);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.SUPPLIER.GET_LIST_SUPPLIER],
+            });
+            showToast.success(i18n.t(i18n.translationKey.createSupplierSuccess));
+        },
+    });
+};

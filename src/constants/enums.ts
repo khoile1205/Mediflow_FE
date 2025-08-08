@@ -1,23 +1,36 @@
-export enum HttpMethod {
-    GET = "get",
-    POST = "post",
-    PUT = "put",
-    DELETE = "delete",
-    PATCH = "patch",
+export enum Gender {
+    FEMALE = 0,
+    MALE = 1,
+    OTHER = 2,
 }
 
-export enum HttpStatus {
-    OK = 200,
-    CREATED = 201,
-    NO_CONTENT = 204,
-    BAD_REQUEST = 400,
-    UNAUTHORIZED = 401,
-    FORBIDDEN = 403,
-    NOT_FOUND = 404,
-    INTERNAL_SERVER_ERROR = 500,
+export enum TestResultStatus {
+    POSITIVE = "positive",
+    NEGATIVE = "negative",
 }
 
-export enum HttpStatusText {
-    OK = "OK",
-    CREATED = "Created",
+export enum PaymentType {
+    CASH,
+    ATM,
+    TRANSFER,
+}
+
+export enum ReceiptPaymentType {
+    PAID,
+    UNPAID,
+    REFUND,
+    CANCEL,
+}
+
+export enum UploadedFileType {
+    REPORT = "Report",
+    STATISTICS = "Statistics",
+    SUPPLIER = "Supplier",
+    CONTRACT = "Contract",
+}
+
+export enum MedicineBatchExpiredFormStatus {
+    PENDING,
+    APPROVED,
+    REJECTED,
 }

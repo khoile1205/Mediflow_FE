@@ -1,0 +1,152 @@
+import { CalendarMonth, Close } from "@mui/icons-material";
+import { Box, FormControl, FormControlProps, IconButton, InputAdornment, TextField } from "@mui/material";
+import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import DatePickerContainer from "../../../libs/date-picker/date-picker.container";
+import { ControllerWrapper, FormErrorMessage } from "../common";
+import { BaseFormItemProps } from "../types/form-item";
+import {
+    TValidationMaxDate,
+    TValidationMinDate,
+    TValidationNoFutureDate,
+    TValidationNoPastDate,
+} from "../types/validation";
+import { useTranslation } from "react-i18next";
+import i18n from "~/configs/i18n";
+
+type BaseDatePickerValidationRules = TValidationMinDate &
+    TValidationMaxDate &
+    TValidationNoFutureDate &
+    TValidationNoPastDate;
+
+type BaseDatePickerUIProps = {
+    defaultValue?: Date | string;
+    size?: FormControlProps["size"];
+    mode: "date" | "datetime";
+    datePickerProps?: Omit<Partial<React.ComponentProps<typeof DatePicker>>, "onChange" | "selected">;
+};
+
+export type BaseDatePickerFormItemProps = Omit<BaseFormItemProps, "defaultValue"> &
+    BaseDatePickerValidationRules &
+    BaseDatePickerUIProps;
+
+export const BaseDatePickerFormItem: React.FC<BaseDatePickerFormItemProps> = ({
+    name,
+    placeholder,
+    fullWidth = true,
+    defaultValue = new Date(),
+    label = "",
+    disabled,
+    size = "small",
+    mode = "date",
+    datePickerProps,
+    ...validationProps
+}) => {
+    const { t } = useTranslation();
+    const [open, setOpen] = useState(false);
+
+    const renderLabel = label ? `${label} ${validationProps.required ? "*" : ""}` : "";
+
+    const minDate = React.useMemo(() => {
+        if (validationProps.noPastDate) return new Date();
+        return validationProps.minDate;
+    }, [validationProps.noPastDate, validationProps.minDate]);
+
+    const maxDate = React.useMemo(() => {
+        if (validationProps.noFutureDate) return new Date();
+        return validationProps.maxDate;
+    }, [validationProps.noFutureDate, validationProps.maxDate]);
+
+    const translatedPlaceholder = placeholder ?? t(i18n.translationKey.selectDate);
+
+    return (
+        <ControllerWrapper
+            name={name}
+            {...validationProps}
+            defaultValue={defaultValue}
+            render={({ field: { onChange, value, ref }, fieldState, error }) => {
+                const dateValue = value ? new Date(value) : null;
+
+                const handleClearDate = () => {
+                    onChange(null);
+                    setOpen(false);
+                };
+
+                return (
+                    <FormControl fullWidth={fullWidth} margin="normal" size={size}>
+                        <Box className="relative">
+                            <DatePickerContainer className="w-full">
+                                <DatePicker
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="scroll"
+                                    showTimeSelect={mode === "datetime"}
+                                    timeIntervals={datePickerProps?.timeIntervals}
+                                    timeFormat="HH:mm"
+                                    timeCaption="Thời gian"
+                                    selected={dateValue}
+                                    onChange={(date: Date | null) => onChange(date)}
+                                    onClickOutside={() => setOpen(false)}
+                                    onCalendarOpen={() => {
+                                        if (!datePickerProps?.readOnly) setOpen(true);
+                                    }}
+                                    onCalendarClose={() => setOpen(false)}
+                                    showIcon={false}
+                                    open={!datePickerProps?.readOnly && open}
+                                    dateFormat={datePickerProps?.dateFormat}
+                                    minDate={minDate}
+                                    maxDate={maxDate}
+                                    readOnly={datePickerProps?.readOnly}
+                                    placeholderText={translatedPlaceholder}
+                                    popperPlacement="bottom-end"
+                                    disabled={disabled}
+                                    customInput={
+                                        <TextField
+                                            inputRef={ref}
+                                            className="w-full"
+                                            error={!!fieldState.error}
+                                            required={validationProps.required}
+                                            disabled={disabled}
+                                            size={size}
+                                            variant="outlined"
+                                            placeholder={translatedPlaceholder}
+                                            label={renderLabel}
+                                            slotProps={{
+                                                root: { className: "w-full" },
+                                                input: {
+                                                    readOnly: true,
+                                                    sx: { width: "100%" },
+                                                    endAdornment:
+                                                        !datePickerProps?.readOnly && !disabled ? (
+                                                            <InputAdornment position="end">
+                                                                <IconButton
+                                                                    disabled={disabled}
+                                                                    size="small"
+                                                                    className="ml-3"
+                                                                >
+                                                                    {dateValue ? (
+                                                                        <Close onClick={handleClearDate} />
+                                                                    ) : (
+                                                                        <CalendarMonth />
+                                                                    )}
+                                                                </IconButton>
+                                                            </InputAdornment>
+                                                        ) : null,
+                                                    onClick: () => {
+                                                        if (datePickerProps?.readOnly || disabled) return;
+                                                        setOpen(true);
+                                                    },
+                                                },
+                                            }}
+                                        />
+                                    }
+                                />
+                            </DatePickerContainer>
+                            <FormErrorMessage errorMessage={error} label={label} />
+                        </Box>
+                    </FormControl>
+                );
+            }}
+        />
+    );
+};

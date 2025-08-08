@@ -1,11 +1,11 @@
 import axios from "axios";
-import { appConfig } from "../../configs/config";
+import { appConfig } from "~/configs/config";
+import { TokenRefresher } from "./handler/token.refresher";
 
 export const axiosInstance = axios.create({
     baseURL: appConfig.baseUrl,
+    withCredentials: true,
 });
 
-axiosInstance.interceptors.request.use(async (config) => {
-    config.withCredentials = true;
-    return config;
-});
+const tokenRefresher = new TokenRefresher(axiosInstance);
+tokenRefresher.setupInterceptor();

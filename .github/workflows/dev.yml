@@ -1,0 +1,72 @@
+name: Deploy FE App
+
+on:
+    push:
+        branches: ["dev"]
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [22.x]
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set Start Time
+              id: start-time
+              run: echo "start_time=$(date +%s)" >> $GITHUB_OUTPUT
+
+            - name: Notify start on Discord
+              run: |
+                  curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d "{\"content\": \"🚀 **mediflow » mediflow-fe - #${{ github.run_number }}** Started by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+                  ${{ secrets.DISCORD_WEBHOOK }}
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "yarn"
+
+            - name: Create .env file
+              run: |
+                  echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
+                  echo "VITE_BASE_URL=${{ secrets.VITE_BASE_URL }}" >> .env
+
+            - name: Install dependencies
+              run: yarn install
+
+            - name: Build Vite app
+              run: yarn build
+
+            - name: Install Netlify CLI
+              run: |
+                  yarn global add netlify-cli
+
+            - name: Deploy to Netlify
+              run: |
+                  netlify deploy --prod --dir=./dist --message "Deployed from GitHub Actions 🚀" --auth ${{ secrets.NETLIFY_ACCESS_TOKEN }} --site ${{ secrets.NETLIFY_SITE_ID }}
+
+            - name: Notify success on Discord
+              if: success()
+              run: |
+                  end_time=$(date +%s)
+                  duration=$((end_time - ${{ steps.start-time.outputs.start_time }}))
+                  mins=$((duration / 60))
+                  secs=$((duration % 60))
+                  curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d "{\"content\": \"✅ **mediflow » mediflow-fe - #${{ github.run_number }}** Success after ${mins} min ${secs} sec ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+                  ${{ secrets.DISCORD_WEBHOOK }}
+
+            - name: Notify failure on Discord
+              if: failure()
+              run: |
+                  curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d "{\"content\": \"❌ **mediflow » mediflow-fe - #${{ github.run_number }}** Failed. Triggered by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+                  ${{ secrets.DISCORD_WEBHOOK }}

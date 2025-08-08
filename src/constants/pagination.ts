@@ -1,0 +1,5 @@
+export const DEFAULT_PAGINATION_PARAMS = {
+    PAGE_INDEX: 1,
+    PAGE_SIZE: 10,
+    PAGE_SIZE_OPTIONS: [5, 10, 20, 50],
+};

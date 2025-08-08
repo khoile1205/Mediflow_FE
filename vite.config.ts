@@ -11,9 +11,12 @@ export default defineConfig({
     css: {
         devSourcemap: true,
     },
+    build: {
+        outDir: "dist",
+    },
     resolve: {
         alias: {
-            "~": path.resolve(__dirname, "./src"),
+            "~": path.resolve(__dirname, "src"),
         },
     },
 });

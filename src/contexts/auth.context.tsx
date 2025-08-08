@@ -1,26 +1,28 @@
+import { AxiosError } from "axios";
 import React, { PropsWithChildren } from "react";
-import { endpoints } from "../constants/endpoints";
-import { HttpMethod } from "../constants/enums";
-import { User } from "../entities";
-import { useHttpContext } from "./http.context";
-
-export type LoginParams = {
-    email: string;
-    password: string;
-};
+import { useNavigate } from "react-router";
+import { IBaseApiResponse } from "~/libs/axios/types";
+import { authService } from "~/services/auth";
+import { TLoginRequest, TLoginResponse } from "~/services/auth/types";
+import { showToast } from "~/utils";
+import i18n from "~/configs/i18n";
+import { useTranslation } from "react-i18next";
+import { Staff } from "~/entities/person-info.entity";
+import { UserPermission } from "~/entities/user-permission";
 
 export type AuthContextProps = {
     isLoading: boolean;
-    user: User | null;
-    error: string;
-    login: (params: LoginParams) => void;
+    isInitialized: boolean;
+    user: Staff | null;
+    userPermission?: UserPermission;
+    login: (params: TLoginRequest) => Promise<void>;
     logout: () => void;
 };
 
 const defaultProvider: AuthContextProps = {
     isLoading: true,
+    isInitialized: false,
     user: null,
-    error: "",
     login: () => Promise.resolve(),
     logout: () => {},
 };
@@ -28,74 +30,92 @@ const defaultProvider: AuthContextProps = {
 export const AuthContext = React.createContext(defaultProvider);
 
 export const AuthContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
-    const { callApi } = useHttpContext();
-    const [user, setUser] = React.useState<User | null>(null);
-    const [error, setError] = React.useState<string>("");
+    const [user, setUser] = React.useState<Staff | null>(null);
+    const [userPermission, setUserPermission] = React.useState<UserPermission | null>(null);
+    const [isInitialized, setIsInitialized] = React.useState<boolean>(false);
+    const navigate = useNavigate();
 
     const loadUserInfor = React.useCallback(async () => {
         try {
+            const response = await authService.getCurrentUser();
+            setUser(response.Data);
+        } catch {
+            setUser(null);
+        }
+    }, []);
+
+    const loadUserPermission = React.useCallback(async () => {
+        try {
+            const response = await authService.getUserPermission();
+            setUserPermission(response.Data);
+        } catch {
+            setUserPermission(null);
+        }
+    }, []);
+
+    const handleLogin = React.useCallback(async (params: TLoginRequest) => {
+        try {
             setIsLoading(true);
-            const data = await callApi({
-                url: endpoints.authEndpoints.me,
-                method: HttpMethod.GET,
-            });
-            setUser(data);
-            setIsLoading(false);
+
+            await authService.login(params);
+            await initializeUser();
+
+            showToast.success(t(i18n.translationKey.loginSuccessfully));
+
+            const redirectUrl = sessionStorage.getItem("redirectUrl");
+            sessionStorage.removeItem("redirectUrl");
+            navigate(redirectUrl ?? "/");
         } catch (error) {
-            setError((error as any).message);
+            const axiosError = error as AxiosError<IBaseApiResponse<TLoginResponse>>;
+            if (!axiosError.response) {
+                showToast.error(t(i18n.translationKey.somethingWentWrong));
+                return;
+            }
+            showToast.error(t(axiosError.response.data.MessageKey));
+        } finally {
             setIsLoading(false);
         }
     }, []);
 
-    const handleLogin = async (params: LoginParams) => {
+    const handleLogout = React.useCallback(async () => {
         try {
             setIsLoading(true);
-            await callApi({
-                url: endpoints.authEndpoints.login,
-                method: HttpMethod.POST,
-                data: params,
-            });
-            await loadUserInfor();
-            setIsLoading(false);
-        } catch (error) {
-            setError((error as any).message);
-            setIsLoading(false);
-        }
-    };
-
-    const handleLogout = async () => {
-        try {
-            setIsLoading(true);
-            await callApi({
-                url: endpoints.authEndpoints.logout,
-                method: HttpMethod.POST,
-                data: {},
-            });
+            await authService.logout();
+            navigate("/login");
+            showToast.success(t(i18n.translationKey.logoutSuccessfully));
             setUser(null);
-            setIsLoading(false);
-        } catch (error) {
-            setError((error as any).message);
+        } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
     const initializeUser = async () => {
-        await loadUserInfor();
-        setError("");
+        setIsInitialized(false);
+        setIsLoading(true);
+
+        await Promise.all([loadUserInfor(), loadUserPermission()]);
+
+        setIsInitialized(true);
+        setIsLoading(false);
     };
 
     React.useEffect(() => {
         initializeUser();
     }, []);
 
-    const value = {
-        isLoading,
-        user,
-        error,
-        login: handleLogin,
-        logout: handleLogout,
-    };
+    const value = React.useMemo(
+        () => ({
+            isLoading,
+            isInitialized,
+            user,
+            userPermission,
+            login: handleLogin,
+            logout: handleLogout,
+        }),
+        [isLoading, isInitialized, user, userPermission, handleLogin, handleLogout],
+    );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
