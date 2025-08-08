@@ -1,4 +1,4 @@
-name: Deploy FE App
+name: Deploy FE App To Testing Environment
 
 on:
     push:
