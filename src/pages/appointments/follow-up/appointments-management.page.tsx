@@ -1,5 +1,6 @@
 import { ExpandLess, ExpandMore, FilterList } from "@mui/icons-material";
 import { Box, Button, Collapse, Grid, Paper, Typography } from "@mui/material";
+import { ColDef, ICellRendererParams } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
@@ -7,19 +8,18 @@ import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
-import { AppointmentDetailsModal } from "./appointment-detail.modal";
-import { FilterVaccinationFormValue, TimeOfDay } from "./types";
-import { ColDef, ICellRendererParams } from "ag-grid-community";
-import { Medicine } from "~/entities";
-import { usePagination } from "~/hooks";
-import { useQueryGetMedicinesWithPagination } from "~/services/medicine/hooks/queries";
-import { useQueryGetUpcomingAppointments } from "~/services/appointments/hooks/queries";
-import { AppointmentSummary } from "~/entities/appointment.entity";
-import { formatDate, normalizeEndDate, normalizeStartDate } from "~/utils/date-time";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { DEFAULT_PAGINATION_PARAMS } from "~/constants/pagination";
+import { Medicine } from "~/entities";
+import { AppointmentSummary } from "~/entities/appointment.entity";
+import { usePagination } from "~/hooks";
 import { IPaginationRequest } from "~/libs/axios/types";
+import { useQueryGetUpcomingAppointments } from "~/services/appointments/hooks/queries";
 import { IAppointmentFilter } from "~/services/appointments/infras";
+import { useQueryGetMedicinesWithPagination } from "~/services/medicine/hooks/queries";
+import { convertIsoToYYYYMMDD, formatDate } from "~/utils/date-time";
+import { AppointmentDetailsModal } from "./appointment-detail.modal";
+import { FilterVaccinationFormValue, TimeOfDay } from "./types";
 
 const AppointmentsManagementPage: React.FC = () => {
     const { t } = useTranslation();
@@ -101,15 +101,10 @@ const AppointmentsManagementPage: React.FC = () => {
         pageIndex: DEFAULT_PAGINATION_PARAMS.PAGE_INDEX,
         pageSize: DEFAULT_PAGINATION_PARAMS.PAGE_SIZE,
     });
-    const {
-        pageSize: appointmentPageSize,
-        handlePageChange: handleAppointmentPageChange,
-        pageIndex: appointmentPageIndex,
-    } = usePagination();
+    const { pageSize: appointmentPageSize, pageIndex: appointmentPageIndex } = usePagination();
     const {
         data: { listAppointments, totalItems: totalAppointmentsItems },
     } = useQueryGetUpcomingAppointments(appliedAppointmentFilters);
-
     const [filtersExpanded, setFiltersExpanded] = React.useState(true);
     const [open, setOpen] = React.useState(false);
 
@@ -252,10 +247,12 @@ const AppointmentsManagementPage: React.FC = () => {
                                         setAppliedAppointmentFilters({
                                             pageIndex: appointmentPageIndex,
                                             pageSize: appointmentPageSize,
-                                            fromDate: normalizeStartDate(values.fromDate),
-                                            toDate: normalizeEndDate(values.toDate),
-                                            timeOfDay: values.timeOfDay,
-                                            vaccineId: values.vaccineId,
+                                            fromDate: values.fromDate
+                                                ? convertIsoToYYYYMMDD(values.fromDate)
+                                                : undefined,
+                                            toDate: values.toDate ? convertIsoToYYYYMMDD(values.toDate) : undefined,
+                                            timeOfDay: values.timeOfDay ? values.timeOfDay : undefined,
+                                            vaccineId: values.vaccineId ? values.vaccineId : undefined,
                                         });
                                     }}
                                 >
@@ -271,10 +268,16 @@ const AppointmentsManagementPage: React.FC = () => {
                     rowData={listAppointments}
                     columnDefs={columnDefs}
                     totalItems={totalAppointmentsItems}
-                    pageSize={appointmentPageSize}
+                    pageSize={appliedAppointmentFilters.pageSize}
                     pagination
-                    pageIndex={appointmentPageIndex}
-                    onPageChange={handleAppointmentPageChange}
+                    pageIndex={appliedAppointmentFilters.pageIndex}
+                    onPageChange={(newPageIndex, newPageSize) => {
+                        setAppliedAppointmentFilters((prev) => ({
+                            ...prev,
+                            pageIndex: newPageIndex,
+                            pageSize: newPageSize,
+                        }));
+                    }}
                 />
             </Box>
             <AppointmentDetailsModal

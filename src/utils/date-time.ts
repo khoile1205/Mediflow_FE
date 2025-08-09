@@ -1,5 +1,18 @@
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 
+export const convertIsoToYYYYMMDD = (isoDateString: Date): string => {
+    if (!isoDateString) return "";
+
+    const date = new Date(isoDateString);
+    if (isNaN(date.getTime())) return "";
+
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+    const year = date.getFullYear();
+
+    return `${year}-${month}-${day}`;
+};
+
 /**
  * Get the difference in days between now and the given date
  * @param date The date to compare with the current date

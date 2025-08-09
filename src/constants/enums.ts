@@ -34,3 +34,9 @@ export enum MedicineBatchExpiredFormStatus {
     APPROVED,
     REJECTED,
 }
+
+export enum HospitalServiceType {
+    Exam,
+    Injection,
+    Test,
+}

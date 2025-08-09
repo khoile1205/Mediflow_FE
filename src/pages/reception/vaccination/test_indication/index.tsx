@@ -1,6 +1,5 @@
 import { AddCircle, Delete } from "@mui/icons-material";
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { ColDef } from "ag-grid-community";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -11,6 +10,7 @@ import FormItem from "~/components/form/form-item";
 import { toBaseOption } from "~/components/form/utils";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { HospitalServiceType } from "~/constants/enums";
 import { Service } from "~/entities";
 import { useQueryHospitalServices } from "~/services/hospital-service/hooks/queries";
 import {
@@ -50,7 +50,13 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
     // } = useQueryHospitalDiseaseGroup();
     const {
         data: { hospitalServices },
-    } = useQueryHospitalServices();
+    } = useQueryHospitalServices({ serviceType: HospitalServiceType.Test });
+    const {
+        data: { hospitalServices: examHospitalServices },
+    } = useQueryHospitalServices({ serviceType: HospitalServiceType.Exam });
+    const {
+        data: { hospitalServices: injectHospitalServices },
+    } = useQueryHospitalServices({ serviceType: HospitalServiceType.Injection });
     // const {
     //     data: { listDepartments, totalItems },
     // } = useQueryDepartmentsWithPagination({
@@ -63,39 +69,6 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
     const { mutateAsync: deleteServiceReception } = useMutationDeleteServiceReception();
 
     const agGrid = useAgGrid<VaccinationServiceReception>({ rowSelection: "multiple" });
-    const columnDefs: ColDef<VaccinationServiceReception>[] = React.useMemo(
-        () => [
-            {
-                checkboxSelection: true,
-                headerCheckboxSelection: true,
-                width: 50,
-                pinned: true,
-                resizable: false,
-            },
-            { field: "requestNumber", headerName: t(i18n.translationKey.requestNumber), cellClass: "ag-cell-center" },
-            { field: "serviceName", headerName: t(i18n.translationKey.serviceName), cellClass: "ag-cell-center" },
-            { field: "quantity", headerName: t(i18n.translationKey.quantity), cellClass: "ag-cell-center" },
-            {
-                field: "unitPrice",
-                headerName: t(i18n.translationKey.unitPrice),
-                cellClass: "ag-cell-center",
-                valueFormatter: (params) => formatCurrencyVND(params.value),
-            },
-            {
-                headerName: t(i18n.translationKey.totalAmount),
-                cellClass: "ag-cell-center",
-                valueGetter: (params) => params.data.quantity * params.data.unitPrice,
-                valueFormatter: (params) => formatCurrencyVND(params.value),
-            },
-            {
-                field: "invoiceDate",
-                cellClass: "ag-cell-center",
-                headerName: t(i18n.translationKey.invoiceDate),
-                valueFormatter: (params) => formatDate(params.value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
-            },
-        ],
-        [],
-    );
 
     const onSubmitVaccinationPrescreening = async (
         data: TestExaminationIndicationFormValue,
@@ -159,6 +132,16 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
     const handleSelectionChanged = () => {
         setSelectedRowsCount(agGrid.gridApi.getSelectedRows().length);
     };
+
+    const examinationHospitalServices = React.useMemo(() => {
+        return listServiceReception.filter((item) => {
+            const hospitalService = [...examHospitalServices, ...injectHospitalServices].map(
+                (service) => service.serviceCode,
+            );
+
+            return !hospitalService.includes(item.serviceCode);
+        });
+    }, [listServiceReception, examHospitalServices, injectHospitalServices]);
 
     return (
         <DynamicForm form={form}>
@@ -284,8 +267,68 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
                     </Typography>
                     <Box className="mt-2 border p-5" sx={{ borderColor: "primary.main", borderRadius: 2 }}>
                         <AgDataGrid
-                            columnDefs={columnDefs}
-                            rowData={listServiceReception}
+                            columnDefs={[
+                                {
+                                    checkboxSelection: true,
+                                    headerCheckboxSelection: true,
+                                    width: 50,
+                                    pinned: true,
+                                    resizable: false,
+                                },
+                                {
+                                    field: "requestNumber",
+                                    headerName: t(i18n.translationKey.requestNumber),
+                                    cellClass: "ag-cell-center",
+                                    flex: 1,
+                                },
+                                {
+                                    field: "serviceName",
+                                    headerName: t(i18n.translationKey.serviceName),
+                                    cellClass: "ag-cell-center",
+                                    flex: 1,
+                                },
+                                {
+                                    field: "quantity",
+                                    headerName: t(i18n.translationKey.quantity),
+                                    cellClass: "ag-cell-center",
+                                    flex: 1,
+                                },
+                                {
+                                    field: "unitPrice",
+                                    headerName: t(i18n.translationKey.unitPrice),
+                                    cellClass: "ag-cell-center",
+                                    flex: 1,
+                                    valueFormatter: (params) => formatCurrencyVND(params.value),
+                                },
+                                {
+                                    headerName: t(i18n.translationKey.totalAmount),
+                                    cellClass: "ag-cell-center",
+                                    flex: 1,
+                                    valueGetter: (params) => params.data.quantity * params.data.unitPrice,
+                                    valueFormatter: (params) => formatCurrencyVND(params.value),
+                                },
+                                {
+                                    field: "invoiceDate",
+                                    cellClass: "ag-cell-center",
+                                    flex: 1,
+                                    headerName: t(i18n.translationKey.invoiceDate),
+                                    valueGetter: (params) => {
+                                        const invoiceDate = params.data.invoiceDate;
+                                        if (!invoiceDate) {
+                                            return t(i18n.translationKey.notAvailable);
+                                        }
+                                        return formatDate(invoiceDate, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]);
+                                    },
+                                },
+                            ]}
+                            // rowData={listServiceReception.filter((item) => {
+                            //     const hospitalService = [...examHospitalServices, ...injectHospitalServices].map(
+                            //         (service) => service.serviceCode,
+                            //     );
+
+                            //     return !hospitalService.includes(item.serviceCode);
+                            // })}
+                            rowData={examinationHospitalServices}
                             {...agGrid}
                             onSelectionChanged={handleSelectionChanged}
                             // pinnedBottomRowData={[]}

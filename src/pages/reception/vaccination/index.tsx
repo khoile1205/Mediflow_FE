@@ -373,8 +373,7 @@ const ReceptionVaccination: React.FC = () => {
                                 placeholder={t(i18n.translationKey.receptionTime)}
                                 label={t(i18n.translationKey.receptionTime)}
                                 required
-                                datePickerProps={{ readOnly: receptionId != null }}
-                                disabled={!isRecepting}
+                                disabled={true}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -419,15 +418,15 @@ const ReceptionVaccination: React.FC = () => {
                         />
                     </Stack>
                 </Box>
+                <Box sx={{ display: tab === "pre_vaccination" ? "block" : "none" }}>
+                    <PreVaccination
+                        receptionId={receptionId}
+                        form={vaccinationPrescreeningForm}
+                        patientDOB={patientReceptionForm.getValues("dob")}
+                    />
+                </Box>
             </DynamicForm>
 
-            <Box sx={{ display: tab === "pre_vaccination" ? "block" : "none" }}>
-                <PreVaccination
-                    receptionId={receptionId}
-                    form={vaccinationPrescreeningForm}
-                    patientDOB={patientReceptionForm.getValues("dob")}
-                />
-            </Box>
             <Box sx={{ display: tab === "vaccination_indication" ? "block" : "none" }}>
                 <VaccinationIndication
                     receptionId={receptionId}

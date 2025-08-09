@@ -1,8 +1,8 @@
-import { Box } from "@mui/material";
 import React from "react";
+import VNFlag from "~/assets/images/home-page.jpg";
 
 const LandingBackground: React.FC = () => {
-    return <Box>Landing page</Box>;
+    return <img src={VNFlag} className="min-h-screen w-full" alt="Vietnam Flag" />;
 };
 
 export default LandingBackground;
