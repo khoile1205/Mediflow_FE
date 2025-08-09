@@ -537,6 +537,37 @@ const applicationTranslationKey = {
     immunodeficiencyOrSuspectedHiv: "IMMUNODEFICIENCY_OR_SUSPECTED_HIV",
     progressiveReactionAfterPreviousVaccination: "PROGRESSIVE_REACTION_AFTER_PREVIOUS_VACCINATION",
     abnormalLungSound: "ABNORMAL_LUNG_SOUND",
+
+    // Page Titles
+    pageTitle: {
+        home: "PAGE_TITLE_HOME",
+        login: "PAGE_TITLE_LOGIN",
+        receptionVaccination: "PAGE_TITLE_RECEPTION_VACCINATION",
+        appointmentsFollowUp: "PAGE_TITLE_APPOINTMENTS_FOLLOW_UP",
+        vaccination: "PAGE_TITLE_VACCINATION",
+        vaccinationHistory: "PAGE_TITLE_VACCINATION_HISTORY",
+        postVaccination: "PAGE_TITLE_POST_VACCINATION",
+        hospitalFee: "PAGE_TITLE_HOSPITAL_FEE",
+        pharmacyImport: "PAGE_TITLE_PHARMACY_IMPORT",
+        pharmacyExpiredMedicine: "PAGE_TITLE_PHARMACY_EXPIRED_MEDICINE",
+        pharmacyExpiredReturnForm: "PAGE_TITLE_PHARMACY_EXPIRED_RETURN_FORM",
+        medicineList: "PAGE_TITLE_MEDICINE_LIST",
+        medicineCreate: "PAGE_TITLE_MEDICINE_CREATE",
+        medicineInteractionCreate: "PAGE_TITLE_MEDICINE_INTERACTION_CREATE",
+        medicineInteractionList: "PAGE_TITLE_MEDICINE_INTERACTION_LIST",
+        medicinePriceList: "PAGE_TITLE_MEDICINE_PRICE_LIST",
+        medicinePriceCreate: "PAGE_TITLE_MEDICINE_PRICE_CREATE",
+        inventoryLimitStock: "PAGE_TITLE_INVENTORY_LIMIT_STOCK",
+        supplierManagement: "PAGE_TITLE_SUPPLIER_MANAGEMENT",
+        userManagement: "PAGE_TITLE_USER_MANAGEMENT",
+        departmentManagement: "PAGE_TITLE_DEPARTMENT_MANAGEMENT",
+        examination: "PAGE_TITLE_EXAMINATION",
+        examinationHistoryPatients: "PAGE_TITLE_EXAMINATION_HISTORY_PATIENTS",
+        examinationHistoryPatientDetail: "PAGE_TITLE_EXAMINATION_HISTORY_PATIENT_DETAIL",
+        templateApp: "PAGE_TITLE_TEMPLATE_APP",
+        templateForm: "PAGE_TITLE_TEMPLATE_FORM",
+        templateLayout: "PAGE_TITLE_TEMPLATE_LAYOUT",
+    },
 };
 
 const exceptionTranslationKey = {

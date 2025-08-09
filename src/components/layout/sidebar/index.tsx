@@ -1,7 +1,7 @@
 import { ExitToApp } from "@mui/icons-material";
 import { Avatar, Box, Drawer, Stack, Typography } from "@mui/material";
 import React from "react";
-import AppLogo from "~/assets/images/app_logo.png";
+import AppLogo from "~/assets/images/logo.png";
 import i18n from "~/configs/i18n";
 import { sidebarTree } from "~/configs/sidebar";
 import { useAuth } from "~/contexts/auth.context";
@@ -52,7 +52,7 @@ export const Sidebar: React.FC = () => {
             <Stack direction="column" spacing={1.5} sx={{ minHeight: "100%" }}>
                 <Box className="flex items-center px-6 py-2">
                     <Avatar src={AppLogo}>H</Avatar>
-                    <Typography className="ml-3 truncate text-[16px]">MediFlows</Typography>
+                    <Typography className="ml-3 truncate text-[16px] font-bold">MediFlow</Typography>
                 </Box>
                 <Box className="no-scrollbar mx-6 w-full flex-1 overflow-y-auto overflow-x-hidden pb-4 pt-2">
                     {filteredSidebarTree.map((sideBar, idx) => (
