@@ -310,7 +310,7 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                     render="date-time-picker"
                                     required
                                     name="appointmentDate"
-                                    noPastDate
+                                    minDate={new Date()}
                                     datePickerProps={{
                                         dateFormat: DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"],
                                     }}

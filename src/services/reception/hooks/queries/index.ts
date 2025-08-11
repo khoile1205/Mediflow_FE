@@ -3,3 +3,5 @@ export * from "./use-query-reception-unpaid-service";
 export * from "./use-query-service-reception-by-reception-id";
 export * from "./use-query-vaccination-reception-by-reception-id";
 export * from "./use-query-get-latest-reception-id-by-patient-id";
+export * from "./use-query-get-available-patient-receptions";
+export * from "./use-query-get-pre-vaccination-by-reception-id";

@@ -12,6 +12,11 @@ const FIELD_KEYS = [
     "hasNeurologicalAbnormalities",
     "isUnderweightBelow2000g",
     "hasOtherContraindications",
+    "hasAbnormalCry",
+    "hasPaleSkinOrLips",
+    "hasPoorFeeding",
+    "isPretermBelow34Weeks",
+    "hasImmunodeficiencyOrSuspectedHiv",
 ] as const;
 
 export const useConclusionCheckboxStatus = (form: UseFormReturn<VaccinationPrescreeningFormValue>) => {
@@ -26,9 +31,15 @@ export const useConclusionCheckboxStatus = (form: UseFormReturn<VaccinationPresc
         heartValve,
         neuroAbnormalities,
         underweight,
+        hasOtherContraindications,
+        abnormalCry,
+        paleSkinOrLips,
+        poorFeeding,
+        pretermBelow34Weeks,
+        immunodeficiencyOrSuspectedHiv,
     ] = values;
 
-    const isContraindicatedEnabled = React.useMemo(() => underweight, [underweight]);
+    const isContraindicatedEnabled = React.useMemo(() => hasOtherContraindications, [hasOtherContraindications]);
 
     const isDeferredEnabled = React.useMemo(
         () =>
@@ -38,8 +49,28 @@ export const useConclusionCheckboxStatus = (form: UseFormReturn<VaccinationPresc
             abnormalVitals ||
             heartSound ||
             heartValve ||
+            neuroAbnormalities ||
+            underweight ||
+            paleSkinOrLips ||
+            poorFeeding ||
+            pretermBelow34Weeks ||
+            immunodeficiencyOrSuspectedHiv ||
+            abnormalCry,
+        [
+            severeFever,
+            acuteDisease,
+            corticosteroids,
+            abnormalVitals,
+            heartSound,
+            heartValve,
             neuroAbnormalities,
-        [severeFever, acuteDisease, corticosteroids, abnormalVitals, heartSound, heartValve, neuroAbnormalities],
+            underweight,
+            paleSkinOrLips,
+            poorFeeding,
+            pretermBelow34Weeks,
+            immunodeficiencyOrSuspectedHiv,
+            abnormalCry,
+        ],
     );
 
     const isEligibleEnabled = React.useMemo(() => values.every((v) => !v), [values]);
