@@ -21,6 +21,9 @@ export const useMutationPatientReception = () => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.PATIENT.GET_LIST_PATIENT_WITH_PAGINATION],
             });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.RECEPTION.GET_AVAILABLE_PATIENT_RECEPTIONS],
+            });
             showToast.success(i18n.t(i18n.translationKey.patientReceptionSuccessfully));
         },
     });

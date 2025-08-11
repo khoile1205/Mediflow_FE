@@ -612,7 +612,11 @@ const HospitalFeePage: React.FC = () => {
             </DynamicForm>
 
             <Box style={{ display: "none" }}>
-                <ReceiptPrinter ref={receiptRef} formValue={hospitalFeeForm.watch()} />
+                <ReceiptPrinter
+                    ref={receiptRef}
+                    formValue={hospitalFeeForm.watch()}
+                    attachedHospitalFeeItems={attachedHospitalServiceFee}
+                />
             </Box>
         </Box>
     );

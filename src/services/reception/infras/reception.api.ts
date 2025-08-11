@@ -1,9 +1,10 @@
 import { endpoints } from "~/constants/endpoints";
 import { ServiceType } from "~/entities/service-type.entity";
 import { callApi } from "~/libs/axios/request";
-import { HttpMethod } from "~/libs/axios/types";
+import { HttpMethod, IPagination, IPaginationRequest } from "~/libs/axios/types";
 import {
     AddVaccinationIndicateReceptionRequest,
+    AvailablePatientReceptionResponse,
     PatientReceptionRequest,
     PatientReceptionResponse,
     ReceptionUnpaidServicesResponse,
@@ -11,8 +12,10 @@ import {
     UpdateVaccinationIndicateReceptionRequest,
     VaccinationIndicateReception,
     VaccinationPreScreeningRequest,
+    VaccinationPrescreeningResponse,
     VaccinationServiceReception,
 } from "./types";
+import { ISearchParam } from "~/services/hospital-service/infras";
 
 const generatePatientIdentifier = async () => {
     return await callApi<string>({
@@ -131,6 +134,21 @@ const getLatestReceptionIdByPatientId = async (patientId?: number) => {
     });
 };
 
+const getAvailablePatientReceptions = async (params: IPaginationRequest & ISearchParam) => {
+    return await callApi<IPagination<AvailablePatientReceptionResponse>>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.getAvailablePatientReceptions,
+        method: HttpMethod.GET,
+        params,
+    });
+};
+
+const getPrevaccinationByReceptionId = async (receptionId?: number) => {
+    return await callApi<VaccinationPrescreeningResponse>({
+        url: endpoints.reception.vaccinationReceptionEndpoints.getPrevaccinationByReceptionId(receptionId),
+        method: HttpMethod.GET,
+    });
+};
+
 export const receptionApis = {
     generatePatientIdentifier,
     createPatientReception,
@@ -146,4 +164,6 @@ export const receptionApis = {
     addVaccinationReception,
     updateVaccinationReceptionByReceptionId,
     getLatestReceptionIdByPatientId,
+    getAvailablePatientReceptions,
+    getPrevaccinationByReceptionId,
 };

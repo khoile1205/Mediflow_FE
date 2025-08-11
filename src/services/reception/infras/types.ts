@@ -85,7 +85,20 @@ export interface VaccinationPreScreeningRequest {
     isContraindicatedForVaccination: boolean;
     isVaccinationDeferred: boolean;
     isReferredToHospital: boolean;
+    hasAbnormalCry: boolean;
+    hasPaleSkinOrLips: boolean;
+    hasPoorFeeding: boolean;
+    isPretermBelow34Weeks: boolean;
+    hasImmunodeficiencyOrSuspectedHiv: boolean;
     receptionId: number;
+}
+
+export interface VaccinationPrescreeningResponse extends VaccinationPreScreeningRequest {
+    id: number;
+    createdBy: number;
+    lastUpdatedBy: number;
+    createdAt: string;
+    lastUpdatedAt: string;
 }
 
 export interface VaccinationServiceReception {
@@ -144,4 +157,36 @@ export interface UpdateVaccinationIndicateReceptionRequest {
     scheduledDate?: Date;
     appointmentDate: Date;
     note?: string;
+}
+
+export interface IPatientReception {
+    id: number;
+    code: string;
+    name: string;
+    gender: Gender;
+    dob: Date;
+    email: string;
+    phoneNumber: string;
+    identityCard: string;
+    addressDetail: string;
+    province: string;
+    district: string;
+    ward: string;
+    isPregnant: boolean;
+    isForeigner: boolean;
+}
+
+export interface AvailablePatientReceptionResponse {
+    receptionId: number;
+    receptionDate: Date;
+    lastUpdatedAt: Date;
+    serviceTypeId: number;
+    patient: IPatientReception;
+}
+
+export interface AvailablePatientReception extends IPatientReception {
+    receptionId: number;
+    receptionDate: Date;
+    lastUpdatedAt: Date;
+    serviceTypeId: number;
 }

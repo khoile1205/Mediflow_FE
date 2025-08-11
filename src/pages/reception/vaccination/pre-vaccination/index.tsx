@@ -14,6 +14,7 @@ import { PatientReceptionFormValue, VaccinationPrescreeningFormValue } from "../
 import { useConclusionCheckboxStatus } from "./use-conclusion-checkbox-status";
 import { PHONE_NUMBER_PATTERN } from "~/components/form/validation/pattern";
 import { under1MonthOptions, over1MonthOptions } from "./vaccination-options";
+import { useQueryGetPrevaccinationByReceptionId } from "~/services/reception/hooks/queries";
 
 interface PreVaccinationProps {
     receptionId?: number;
@@ -30,6 +31,8 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
 
     const { mutateAsync: createVaccinationPrescreening } = useMutationCreatePreVaccination();
     const { mutateAsync: updateVaccinationPrescreening } = useMutationUpdateVaccinationPrescreening();
+
+    const { data: prevaccinationData } = useQueryGetPrevaccinationByReceptionId(receptionId);
 
     const { isEligibleEnabled, isContraindicatedEnabled, isDeferredEnabled } = useConclusionCheckboxStatus(form);
 
@@ -64,6 +67,11 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
             isContraindicatedForVaccination: data.isContraindicatedForVaccination ?? false,
             isVaccinationDeferred: data.isVaccinationDeferred ?? false,
             isReferredToHospital: data.isReferredToHospital ?? false,
+            hasAbnormalCry: data.hasAbnormalCry ?? false,
+            hasPaleSkinOrLips: data.hasPaleSkinOrLips ?? false,
+            hasPoorFeeding: data.hasPoorFeeding ?? false,
+            isPretermBelow34Weeks: data.isPretermBelow34Weeks ?? false,
+            hasImmunodeficiencyOrSuspectedHiv: data.hasImmunodeficiencyOrSuspectedHiv ?? false,
         };
     };
 
@@ -105,6 +113,29 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
         }
     }, [isEligibleEnabled, isContraindicatedEnabled, isDeferredEnabled, receptionId]);
 
+    React.useEffect(() => {
+        if (prevaccinationData) {
+            form.setValue("id", prevaccinationData.id);
+            form.setValue("parentFullName", prevaccinationData.parentFullName);
+            form.setValue("parentPhoneNumber", prevaccinationData.parentPhoneNumber);
+            form.setValue("weightKg", prevaccinationData.weightKg);
+            form.setValue("isUnderweightBelow2000g", prevaccinationData.isUnderweightBelow2000g);
+            form.setValue("bodyTemperatureC", prevaccinationData.bodyTemperatureC);
+            form.setValue("bloodPressureSystolic", prevaccinationData.bloodPressureSystolic);
+            form.setValue("bloodPressureDiastolic", prevaccinationData.bloodPressureDiastolic);
+            form.setValue(
+                "hasSevereFeverAfterPreviousVaccination",
+                prevaccinationData.hasSevereFeverAfterPreviousVaccination,
+            );
+            form.setValue("hasAcuteOrChronicDisease", prevaccinationData.hasAcuteOrChronicDisease);
+            form.setValue("isOnOrRecentlyEndedCorticosteroids", prevaccinationData.isOnOrRecentlyEndedCorticosteroids);
+            form.setValue("hasAbnormalTemperatureOrVitals", prevaccinationData.hasAbnormalTemperatureOrVitals);
+            form.setValue("hasAbnormalHeartSound", prevaccinationData.hasAbnormalHeartSound);
+            form.setValue("hasHeartValveDisorder", prevaccinationData.hasHeartValveDisorder);
+            form.setValue("hasNeurologicalAbnormalities", prevaccinationData.hasNeurologicalAbnormalities);
+            form.setValue("hasOtherContraindications", prevaccinationData.hasOtherContraindications);
+        }
+    }, [prevaccinationData]);
     return (
         <DynamicForm form={form}>
             <Stack className="pt-3" spacing={2} direction="column">
