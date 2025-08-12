@@ -537,6 +537,11 @@ const applicationTranslationKey = {
     immunodeficiencyOrSuspectedHiv: "IMMUNODEFICIENCY_OR_SUSPECTED_HIV",
     progressiveReactionAfterPreviousVaccination: "PROGRESSIVE_REACTION_AFTER_PREVIOUS_VACCINATION",
     abnormalLungSound: "ABNORMAL_LUNG_SOUND",
+    notFoundExamFee: "NOT_FOUND_EXAM_FEE",
+    unpaidExamFee: "UNPAID_EXAM_FEE",
+    generatedResultsDoNotReproduce: "GENERATED_RESULTS_DO_NOT_REPRODUCE",
+    invalidIdMismatch: "INVALID_ID_MISMATCH",
+    paidVaccineQuantityUpdateFailed: "PAID_VACCINE_QUANTITY_UPDATE_FAILED",
 
     // Page Titles
     pageTitle: {
