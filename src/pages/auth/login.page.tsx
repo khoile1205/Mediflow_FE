@@ -1,7 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import AppLogo from "~/assets/images/app_logo.png";
+import AppLogo from "~/assets/images/logo.png";
 import BackgroundLogin from "~/assets/images/bg_login.png";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";

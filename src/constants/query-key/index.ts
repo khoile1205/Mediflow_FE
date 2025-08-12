@@ -19,6 +19,8 @@ const ReceptionQueryKey = {
     GET_SERVICE_RECEPTION_BY_RECEPTION_ID: "getServiceReceptionByReceptionId",
     GET_VACCINATION_RECEPTION_BY_RECEPTION_ID: "getVaccinationReceptionByReceptionId",
     GET_LATEST_RECEPTION_ID_BY_PATIENT_ID: "getLatestReceptionIdByPatientId",
+    GET_AVAILABLE_PATIENT_RECEPTIONS: "getAvailablePatientReceptions",
+    GET_PRE_VACCINATION_BY_RECEPTION_ID: "getPreVaccinationByReceptionId",
 };
 
 const DepartmentQueryKey = {

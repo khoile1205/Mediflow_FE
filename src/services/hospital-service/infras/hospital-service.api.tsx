@@ -3,6 +3,7 @@ import { DiseaseGroup, Service, ServiceGroup } from "~/entities";
 import { callApi } from "~/libs/axios/request";
 import { HttpMethod } from "~/libs/axios/types";
 import { ISearchParam } from "./types";
+import { HospitalServiceType } from "~/constants/enums";
 
 const getAllHospitalServiceGroup = async ({ searchTerm = "" }: ISearchParam) => {
     return await callApi<ServiceGroup[]>({
@@ -20,10 +21,13 @@ const getAllHospitalDiseaseGroup = async ({ searchTerm = "" }: ISearchParam) => 
     });
 };
 
-const getAllHospitalServices = async () => {
+const getAllHospitalServices = async ({ serviceType }: { serviceType?: HospitalServiceType }) => {
     return await callApi<Service[]>({
         url: `${endpoints.hospitalService.serviceEndpoints.getAll}`,
         method: HttpMethod.GET,
+        params: {
+            serviceType,
+        },
     });
 };
 

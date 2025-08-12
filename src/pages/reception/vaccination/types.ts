@@ -56,4 +56,9 @@ export interface VaccinationPrescreeningFormValue {
     isContraindicatedForVaccination: boolean;
     isVaccinationDeferred: boolean;
     isReferredToHospital: boolean;
+    hasAbnormalCry: boolean;
+    hasPaleSkinOrLips: boolean;
+    hasPoorFeeding: boolean;
+    isPretermBelow34Weeks: boolean;
+    hasImmunodeficiencyOrSuspectedHiv: boolean;
 }

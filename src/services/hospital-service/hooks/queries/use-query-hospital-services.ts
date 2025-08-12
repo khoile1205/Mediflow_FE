@@ -4,21 +4,22 @@ import { QueryKey } from "~/constants/query-key";
 import { Service } from "~/entities";
 import { IBaseApiResponse } from "~/libs/axios/types";
 import { hospitalServiceApis } from "../../infras";
+import { HospitalServiceType } from "~/constants/enums";
 
 const transformData = (response: IBaseApiResponse<Service[]>): Service[] => {
     return response.Data || [];
 };
 
-export const useQueryHospitalServices = () => {
+export const useQueryHospitalServices = ({ serviceType }: { serviceType?: HospitalServiceType } = {}) => {
     const {
         data: response,
         isLoading,
         isError,
         refetch,
     } = useQuery<IBaseApiResponse<Service[]>>({
-        queryKey: [QueryKey.HOSPITAL_SERVICE.GET_HOSPITAL_SERVICE_LIST],
+        queryKey: [QueryKey.HOSPITAL_SERVICE.GET_HOSPITAL_SERVICE_LIST, serviceType],
         queryFn: async () => {
-            const patientApiResponse = await hospitalServiceApis.getAllHospitalServices();
+            const patientApiResponse = await hospitalServiceApis.getAllHospitalServices({ serviceType });
             return patientApiResponse;
         },
         staleTime: 1000 * 60 * 5,
