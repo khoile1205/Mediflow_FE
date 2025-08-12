@@ -170,6 +170,7 @@ const VaccinationPage: React.FC = () => {
                 vaccinationForm.setValue("receptionVaccinationId", selectedMedicine.receptionVaccinationId);
                 vaccinationForm.setValue("isInjected", selectedMedicine.isConfirmed);
                 vaccinationForm.setValue("isRequiredTesting", selectedMedicine.isRequiredTesting);
+                vaccinationForm.setValue("startTestingTime", selectedMedicine.startTestingTime);
                 vaccinationForm.setValue("medicineName", selectedMedicine.medicineName);
                 vaccinationForm.setValue("testResult", selectedMedicine.testResultEntry);
                 vaccinationForm.setValue("doctorId", user.id);
@@ -193,7 +194,7 @@ const VaccinationPage: React.FC = () => {
             receptionId: receptionVaccinationId,
         });
 
-        vaccinationForm.setValue("testingStartTime", new Date());
+        vaccinationForm.setValue("startTestingTime", new Date());
         setIsStartEnabled(true);
     };
 
@@ -405,7 +406,7 @@ const VaccinationPage: React.FC = () => {
                                     <Grid size={12}>
                                         <FormItem
                                             render="date-time-picker"
-                                            name="testingStartTime"
+                                            name="startTestingTime"
                                             label={t(i18n.translationKey.testStartTime)}
                                             disabled
                                         />

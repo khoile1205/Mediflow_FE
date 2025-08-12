@@ -22,14 +22,19 @@ export const useMutationInjectVaccine = () => {
                 doctorId: data.doctorId,
             });
         },
-        onSuccess: () => {
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.VACCINATION.GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID],
             });
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.VACCINATION.GET_NEAREST_EXPIRY_MEDICINE_BATCH],
             });
-
+            queryClient.invalidateQueries({
+                queryKey: [
+                    QueryKey.RECEPTION.GET_VACCINATION_RECEPTION_BY_RECEPTION_ID,
+                    variables.receptionVaccinationId,
+                ],
+            });
             showToast.success(i18n.t(i18n.translationKey.confirmInjectedSuccessfully));
         },
     });
