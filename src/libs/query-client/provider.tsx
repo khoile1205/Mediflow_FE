@@ -13,8 +13,8 @@ const queryClient = new QueryClient({
             retry: false,
         },
         mutations: {
-            onError: (error) => {
-                showToast.error(i18n.t(getAxiosErrorMessageKey(error)));
+            onError: (error, variables) => {
+                showToast.error(i18n.t(getAxiosErrorMessageKey(error), { variables }));
             },
         },
     },

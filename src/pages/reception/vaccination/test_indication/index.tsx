@@ -26,13 +26,13 @@ import { TestExaminationGroupType, TestExaminationIndicationFormValue } from "..
 
 interface TestIndicationProps {
     receptionId?: number;
-    disabled?: boolean;
+    // disabled?: boolean;
     isReferredToHospital?: boolean;
     form: UseFormReturn<TestExaminationIndicationFormValue>;
 }
 
 export const TestIndication: React.FC<TestIndicationProps> = ({
-    disabled,
+    // disabled,
     receptionId,
     isReferredToHospital,
     form,
@@ -172,7 +172,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
                                     label={t(i18n.translationKey.examinationIndication)}
                                     name="serviceId"
                                     placeholder={t(i18n.translationKey.selectExaminationService)}
-                                    disabled={disabled}
+                                    disabled={!receptionId}
                                     options={toBaseOption<Service>(hospitalServices, {
                                         label: "serviceName",
                                         value: "id",
@@ -218,7 +218,7 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
                                     name="defaultQuantity"
                                     label={t(i18n.translationKey.quantity)}
                                     placeholder={t(i18n.translationKey.quantity)}
-                                    disabled={disabled}
+                                    disabled={!receptionId}
                                     required
                                     minNumber={1}
                                 />
@@ -246,14 +246,14 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
                                                 TestExaminationGroupType.SERVICE_GROUP,
                                             ),
                                         )}
-                                        disabled={disabled}
+                                        disabled={!receptionId}
                                     />
                                     <ActionButton
                                         label={t(i18n.translationKey.delete)}
                                         startIcon={<Delete />}
                                         onClick={handleDeleteServiceReception}
                                         color="error"
-                                        disabled={disabled || selectedRowsCount === 0}
+                                        disabled={!receptionId || selectedRowsCount === 0}
                                     />
                                 </Stack>
                             </Grid>
