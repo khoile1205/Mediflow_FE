@@ -22,6 +22,9 @@ export const useMutationConfirmVaccinationToday = () => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.VACCINATION.GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID, receptionId],
             });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.RECEPTION.GET_AVAILABLE_PATIENT_RECEPTIONS, receptionId],
+            });
 
             showToast.success(i18n.t(i18n.translationKey.confirmVaccinationTodaySuccessfully));
         },

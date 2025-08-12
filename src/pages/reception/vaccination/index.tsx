@@ -166,9 +166,9 @@ const ReceptionVaccination: React.FC = () => {
         }
     }, [patientReceptionForm.watch("gender")]);
 
-    const isEnableProcessSubtask = React.useMemo(() => {
-        return isRecepting && receptionId != null;
-    }, [isRecepting, receptionId]);
+    // const isEnableProcessSubtask = React.useMemo(() => {
+    //     return isRecepting && receptionId != null;
+    // }, [isRecepting, receptionId]);
 
     return (
         <>
@@ -501,7 +501,7 @@ const ReceptionVaccination: React.FC = () => {
             </Box>
             <Box sx={{ display: tab === "examination_indication" ? "block" : "none" }}>
                 <TestIndication
-                    disabled={!isEnableProcessSubtask}
+                    // disabled={!isEnableProcessSubtask}
                     receptionId={receptionId}
                     isReferredToHospital={vaccinationPrescreeningForm.watch("isReferredToHospital")}
                     form={testExaminationIndicationForm}

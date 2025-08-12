@@ -64,8 +64,13 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
 
     if (rules.pattern) {
         const pattern = typeof rules.pattern === "string" ? new RegExp(rules.pattern) : rules.pattern;
-        validation.validate.pattern = (value: string) =>
-            pattern.test(value) ? true : t(i18n.translationKey.invalidFormat);
+        validation.validate.pattern = (value: string) => {
+            if (!rules.required && !value) {
+                return true;
+            }
+
+            return pattern.test(value) ? true : t(i18n.translationKey.invalidFormat);
+        };
     }
 
     if (rules.isEmail) {
