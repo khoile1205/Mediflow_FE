@@ -844,7 +844,6 @@
     "IMMUNODEFICIENCY_OR_SUSPECTED_HIV": "Undiagnosed or severe immunodeficiency with clinical signs suggestive of HIV infection",
     "PROGRESSIVE_REACTION_AFTER_PREVIOUS_VACCINATION": "Progressive reaction after previous vaccinations (vaccine with the same components)",
     "ABNORMAL_LUNG_SOUND": "Abnormal breathing rate or lung sounds",
-    
     "PAGE_TITLE_HOME": "Home",
     "PAGE_TITLE_LOGIN": "Login",
     "PAGE_TITLE_RECEPTION_VACCINATION": "Vaccination Reception",
@@ -871,5 +870,10 @@
     "PAGE_TITLE_EXAMINATION_HISTORY_PATIENT_DETAIL": "Examination History Detail",
     "PAGE_TITLE_TEMPLATE_APP": "Template App",
     "PAGE_TITLE_TEMPLATE_FORM": "Template Form",
-    "PAGE_TITLE_TEMPLATE_LAYOUT": "Template Layout"
+    "PAGE_TITLE_TEMPLATE_LAYOUT": "Template Layout",
+    "NOT_FOUND_EXAM_FEE": "Exam fee not found.",
+    "UNPAID_EXAM_FEE": "Exam fee is unpaid.",
+    "GENERATED_RESULTS_DO_NOT_REPRODUCE": "Screening results already generated, do not recreate.",
+    "INVALID_ID_MISMATCH": "The provided ID does not match",
+    "PAID_VACCINE_QUANTITY_UPDATE_FAILED": "Unable to update the quantity of paid vaccine"
 }

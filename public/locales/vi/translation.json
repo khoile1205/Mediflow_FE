@@ -848,7 +848,6 @@
     "IMMUNODEFICIENCY_OR_SUSPECTED_HIV": "Suy giảm miễn dịch chưa xác định mức độ hoặc mức độ nặng, có biểu hiện lâm sàng nghi nhiễm HIV",
     "PROGRESSIVE_REACTION_AFTER_PREVIOUS_VACCINATION": "Phản ứng tăng dần sau các lần tiêm chủng trước (vắc xin có cùng thành phần)",
     "ABNORMAL_LUNG_SOUND": "Nhịp thở, nghe phổi bất thường",
-    
     "PAGE_TITLE_HOME": "Trang chủ",
     "PAGE_TITLE_LOGIN": "Đăng nhập",
     "PAGE_TITLE_RECEPTION_VACCINATION": "Tiếp nhận tiêm chủng",
@@ -875,5 +874,10 @@
     "PAGE_TITLE_EXAMINATION_HISTORY_PATIENT_DETAIL": "Chi tiết lịch sử xét nghiệm",
     "PAGE_TITLE_TEMPLATE_APP": "Template App",
     "PAGE_TITLE_TEMPLATE_FORM": "Template Form",
-    "PAGE_TITLE_TEMPLATE_LAYOUT": "Template Layout"
+    "PAGE_TITLE_TEMPLATE_LAYOUT": "Template Layout",
+    "NOT_FOUND_EXAM_FEE": "Không tìm thấy phí khám.",
+    "UNPAID_EXAM_FEE": "Phí khám chưa được thanh toán.",
+    "GENERATED_RESULTS_DO_NOT_REPRODUCE": "Đã tạo kết quả khám sàng lọc không tạo lại",
+    "INVALID_ID_MISMATCH": "ID được cung cấp không khớp",
+    "PAID_VACCINE_QUANTITY_UPDATE_FAILED": "Không thể cập nhật số lượng vắc xin đã được thanh toán"
 }
