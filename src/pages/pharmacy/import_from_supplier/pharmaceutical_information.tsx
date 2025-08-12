@@ -81,14 +81,14 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
             pinned: true,
             resizable: false,
         },
-        { field: "medicineName", headerName: t(i18n.translationKey.medicineName) },
-        { field: "note", headerName: t(i18n.translationKey.note) },
-        { field: "unit", headerName: t(i18n.translationKey.unit) },
+        { field: "medicineName", headerName: t(i18n.translationKey.medicineName), flex: 1 },
+        { field: "unit", headerName: t(i18n.translationKey.unit), flex: 1 },
         {
             field: "quantity",
             headerName: t(i18n.translationKey.quantity),
             valueFormatter: (params: ValueFormatterParams<ImportMedicineFromSupplierDetail>) =>
                 Number(params.value).toString(),
+            flex: 1,
         },
         {
             field: "unitPrice",
@@ -97,6 +97,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                 const unitPrice = Number(params.data.unitPrice) || 0;
                 return formatCurrencyVND(unitPrice);
             },
+            flex: 1,
         },
         {
             field: "totalPrice",
@@ -105,16 +106,19 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                 const totalPrice = params.data.isFree ? 0 : params.data.quantity * params.data.unitPrice;
                 return formatCurrencyVND(totalPrice);
             },
+            flex: 1,
         },
-        { field: "batchNumber", headerName: t(i18n.translationKey.batchNumber) },
+        { field: "batchNumber", headerName: t(i18n.translationKey.batchNumber), flex: 1 },
         {
             field: "expiryDate",
             headerName: t(i18n.translationKey.expiryDate),
             valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy"]),
+            flex: 1,
         },
-        { field: "sgk_CPNK", headerName: t(i18n.translationKey.sgkCpnk) },
-        { field: "manufacturerName", headerName: t(i18n.translationKey.manufacturer) },
-        { field: "countryName", headerName: t(i18n.translationKey.countryOfOrigin) },
+        { field: "sgk_CPNK", headerName: t(i18n.translationKey.sgkCpnk), flex: 1 },
+        { field: "manufacturerName", headerName: t(i18n.translationKey.manufacturer), flex: 1 },
+        { field: "countryName", headerName: t(i18n.translationKey.countryOfOrigin), flex: 1 },
+        { field: "note", headerName: t(i18n.translationKey.note), flex: 1 },
     ];
 
     const handleSelectedMedicine = (event: RowSelectedEvent<Medicine>) => {

@@ -56,8 +56,8 @@ const ImportInventoryFromSupplier: React.FC = () => {
     const form = useForm<ImportMedicineFromSupplierFormValues>({
         defaultValues: {
             ...defaultValues,
-            receivedById: user.id,
-            receivedByName: user.name,
+            receivedById: user?.id,
+            receivedByName: user?.name,
         },
     });
 
@@ -87,18 +87,53 @@ const ImportInventoryFromSupplier: React.FC = () => {
         form.setValue("details", newDetails);
     };
 
-    const onSaveImportDocument = async (importDocument: ImportMedicineFromSupplierFormValues) => {
+    const onSaveImportDocument = async (
+        importDocument: ImportMedicineFromSupplierFormValues,
+        isRetry: boolean = false,
+    ) => {
         if (importDocument.details.length === 0) {
             showToast.error(t(i18n.translationKey.pleaseAddPharmaceuticalInformation));
             return;
         }
 
         const importDocumentRequest = getDocumentRequest(importDocument);
-        await saveImportDocument(importDocumentRequest);
+        await saveImportDocument(importDocumentRequest, {
+            onSuccess: () => {
+                showToast.success(t(i18n.translationKey.documentCreateSuccessfully));
+                setIsAddNew(false);
+                form.reset(form.formState.defaultValues);
+            },
+            onError: async () => {
+                if (!isRetry) {
+                    const response = await generateDocumentCode();
+                    form.setValue("documentCode", response.documentCode);
+                    form.setValue("documentNumber", response.documentNumber);
 
-        showToast.success(t(i18n.translationKey.documentCreateSuccessfully));
-        setIsAddNew(false);
-        form.reset(form.formState.defaultValues);
+                    await onSaveImportDocument(form.getValues(), true);
+
+                    setIsAddNew(false);
+                    form.reset(form.formState.defaultValues);
+                    return;
+                }
+            },
+        });
+        // try {
+        //     setIsAddNew(false);
+        //     form.reset(form.formState.defaultValues);
+        // } catch (_) {
+        //     if (!isRetry) {
+        //         const response = await generateDocumentCode();
+        //         form.setValue("documentCode", response.documentCode);
+        //         form.setValue("documentNumber", response.documentNumber);
+
+        //         // Retry once automatically
+        //         await onSaveImportDocument(form.getValues(), true);
+
+        //         setIsAddNew(false);
+        //         form.reset(form.formState.defaultValues);
+        //         return;
+        //     }
+        // }
     };
 
     const getDocumentRequest = (
@@ -146,7 +181,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                         label={t(i18n.translationKey.save)}
                         startIcon={<Save />}
                         disabled={!isAddNew}
-                        onClick={form.handleSubmit(onSaveImportDocument)}
+                        onClick={form.handleSubmit((values) => onSaveImportDocument(values))}
                     />
                     <ActionButton
                         label={t(i18n.translationKey.cancel)}
