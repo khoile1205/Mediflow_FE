@@ -1,7 +1,6 @@
 export enum Gender {
-    FEMALE = 0,
-    MALE = 1,
-    OTHER = 2,
+    FEMALE,
+    MALE,
 }
 
 export enum TestResultStatus {
@@ -27,4 +26,16 @@ export enum UploadedFileType {
     STATISTICS = "Statistics",
     SUPPLIER = "Supplier",
     CONTRACT = "Contract",
+}
+
+export enum MedicineBatchExpiredFormStatus {
+    PENDING,
+    APPROVED,
+    REJECTED,
+}
+
+export enum HospitalServiceType {
+    Exam,
+    Injection,
+    Test,
 }

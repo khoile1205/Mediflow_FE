@@ -2,8 +2,10 @@ import { FieldValues, Path, RegisterOptions } from "react-hook-form";
 import { TValidationRules } from "../types/validation";
 import { BaseOption } from "../types/form-item";
 import i18n from "~/configs/i18n";
-import { formatDate } from "~/utils/date-time";
+import { formatDate, normalizeStartDate } from "~/utils/date-time";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
+import { EMAIL_PATTERN } from "../validation/pattern";
+import { TFunction } from "i18next";
 
 export const toBaseOption = <T>(source: T[], options: { label: keyof T; value: keyof T }): BaseOption[] => {
     return source.map((item) => ({
@@ -14,93 +16,98 @@ export const toBaseOption = <T>(source: T[], options: { label: keyof T; value: k
 
 export const mapValidationRules = <TFieldValues extends FieldValues, TName extends Path<TFieldValues>>(
     rules: TValidationRules,
+    t: TFunction,
 ): RegisterOptions<TFieldValues, TName> => {
     const validation: RegisterOptions<TFieldValues, TName> = {};
 
+    validation.validate = {};
+
     if (rules.required) {
-        validation.required = i18n.t(i18n.translationKey.requiredField);
+        validation.validate.required = (value: unknown) => (value ? true : t(i18n.translationKey.requiredField));
     }
 
     if (rules.minLength !== undefined && rules.minLength > 0) {
-        validation.minLength = {
-            value: rules.minLength,
-            message: i18n.t(i18n.translationKey.enterAtLeastMinLengthCharacter, { min_length: rules.minLength }),
-        };
+        validation.validate.minLength = (value: string) =>
+            value?.length >= rules.minLength
+                ? true
+                : t(i18n.translationKey.enterAtLeastMinLengthCharacter, {
+                      min_length: rules.minLength,
+                  });
     }
 
     if (rules.maxLength !== undefined) {
-        validation.maxLength = {
-            value: rules.maxLength,
-            message: i18n.t(i18n.translationKey.onlyEnterUpToMaxLengthCharacter, { max_length: rules.maxLength }),
-        };
+        validation.validate.maxLength = (value: string) =>
+            value?.length <= rules.maxLength
+                ? true
+                : t(i18n.translationKey.onlyEnterUpToMaxLengthCharacter, {
+                      max_length: rules.maxLength,
+                  });
     }
 
     if (rules.minNumber !== undefined) {
-        validation.min = {
-            value: rules.minNumber,
-            message: i18n.t(i18n.translationKey.valueMustBeGreaterThanOrEqualTo, { value: rules.minNumber }),
-        };
+        validation.validate.minNumber = (value: number) =>
+            Number(value) >= rules.minNumber
+                ? true
+                : t(i18n.translationKey.valueMustBeGreaterThanOrEqualTo, {
+                      value: rules.minNumber,
+                  });
     }
 
     if (rules.maxNumber !== undefined) {
-        validation.max = {
-            value: rules.maxNumber,
-            message: i18n.t(i18n.translationKey.valueMustBeLessThanOrEqualTo, { value: rules.maxNumber }),
-        };
+        validation.validate.maxNumber = (value: number) =>
+            Number(value) <= rules.maxNumber
+                ? true
+                : t(i18n.translationKey.valueMustBeLessThanOrEqualTo, {
+                      value: rules.maxNumber,
+                  });
     }
 
     if (rules.pattern) {
-        validation.pattern = {
-            value: typeof rules.pattern === "string" ? new RegExp(rules.pattern) : rules.pattern,
-            message: i18n.t(i18n.translationKey.invalidFormat),
+        const pattern = typeof rules.pattern === "string" ? new RegExp(rules.pattern) : rules.pattern;
+        validation.validate.pattern = (value: string) => {
+            if (!rules.required && !value) {
+                return true;
+            }
+
+            return pattern.test(value) ? true : t(i18n.translationKey.invalidFormat);
         };
     }
 
     if (rules.isEmail) {
-        validation.pattern = {
-            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            message: i18n.t(i18n.translationKey.invalidEmail),
-        };
+        validation.validate.isEmail = (value: string) =>
+            EMAIL_PATTERN.test(value) ? true : t(i18n.translationKey.invalidEmail);
     }
 
-    // if (rules.isPassword) {
-    //     validation.pattern = {
-    //         value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
-    //         message: "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ và số",
-    //     };
-    // }
-
     if (rules.minDate) {
-        validation.validate = (value: Date) => {
-            return new Date(value) >= new Date(rules.minDate)
+        validation.validate.minDate = (value: Date) =>
+            new Date(value) >= new Date(rules.minDate)
                 ? true
-                : i18n.t(i18n.translationKey.pleaseSelectADateAfter, {
+                : t(i18n.translationKey.pleaseSelectADateAfter, {
                       date: formatDate(rules.minDate, DATE_TIME_FORMAT["dd/MM/yyyy"]),
                   });
-        };
     }
 
     if (rules.maxDate) {
-        validation.validate = (value: Date) => {
-            return new Date(value) <= new Date(rules.maxDate)
+        validation.validate.maxDate = (value: Date) =>
+            new Date(value) <= new Date(rules.maxDate)
                 ? true
-                : i18n.t(i18n.translationKey.pleaseSelectADateBefore, {
+                : t(i18n.translationKey.pleaseSelectADateBefore, {
                       date: formatDate(rules.maxDate, DATE_TIME_FORMAT["dd/MM/yyyy"]),
                   });
-        };
     }
 
     if (rules.noPastDate) {
-        validation.validate = (value: Date) => {
-            const today = new Date();
-            return new Date(value) >= today ? true : i18n.t(i18n.translationKey.dateMustNotBeInThePast);
+        validation.validate.noPastDate = (value: Date) => {
+            const today = normalizeStartDate(new Date());
+
+            return new Date(value) >= today ? true : t(i18n.translationKey.dateMustNotBeInThePast);
         };
     }
 
     if (rules.noFutureDate) {
-        validation.validate = (value: Date) => {
-            const today = new Date();
-            return new Date(value) <= today ? true : i18n.t(i18n.translationKey.dateMustNotBeInTheFuture);
+        validation.validate.noFutureDate = (value: Date) => {
+            const today = normalizeStartDate(new Date());
+            return new Date(value) <= today ? true : t(i18n.translationKey.dateMustNotBeInTheFuture);
         };
     }
 

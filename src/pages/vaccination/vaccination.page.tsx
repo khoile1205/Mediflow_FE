@@ -1,8 +1,8 @@
 import { Box, Button, Grid, Stack, Typography } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
 import { ColDef, RowClickedEvent, RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import SearchBox from "~/components/common/search-box";
 import DynamicForm from "~/components/form/dynamic-form";
@@ -10,7 +10,6 @@ import FormItem from "~/components/form/form-item";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { TestResultStatus } from "~/constants/enums";
-import { QueryKey } from "~/constants/query-key";
 import { useAuth } from "~/contexts/auth.context";
 import { useMutationAddVaccineToPreExamination } from "~/services/pre-examination/hooks/mutations";
 import {
@@ -33,7 +32,6 @@ import { showToast } from "~/utils";
 import { formatDate } from "~/utils/date-time";
 import PreExaminationTestingPage from "../pre-examination-testing";
 import { useCreateVaccinationForm } from "./hooks/use-create-vaccination-form";
-import { useNavigate } from "react-router";
 
 const VaccinationPage: React.FC = () => {
     const { t } = useTranslation();
@@ -43,8 +41,6 @@ const VaccinationPage: React.FC = () => {
 
     const patientAgGrid = useAgGrid<WaitingPatientVaccination>({});
     const vaccineAgGrid = useAgGrid<MedicineVaccinationInformation>({});
-
-    const queryClient = useQueryClient();
 
     const [selectedVaccinationMedicineCount, setSelectedVaccinationMedicineCount] = React.useState<number>(0);
     const [searchWaitingPatientTerm, setSearchWaitingPatientTerm] = React.useState<string>("");
@@ -174,12 +170,15 @@ const VaccinationPage: React.FC = () => {
                 vaccinationForm.setValue("receptionVaccinationId", selectedMedicine.receptionVaccinationId);
                 vaccinationForm.setValue("isInjected", selectedMedicine.isConfirmed);
                 vaccinationForm.setValue("isRequiredTesting", selectedMedicine.isRequiredTesting);
+                vaccinationForm.setValue("startTestingTime", selectedMedicine.startTestingTime);
                 vaccinationForm.setValue("medicineName", selectedMedicine.medicineName);
                 vaccinationForm.setValue("testResult", selectedMedicine.testResultEntry);
                 vaccinationForm.setValue("doctorId", user.id);
                 vaccinationForm.setValue("injectionDate", new Date());
             } else {
+                const currentPatientId = vaccinationForm.getValues("patientId");
                 vaccinationForm.reset();
+                vaccinationForm.setValue("patientId", currentPatientId);
             }
         }
     };
@@ -195,7 +194,7 @@ const VaccinationPage: React.FC = () => {
             receptionId: receptionVaccinationId,
         });
 
-        vaccinationForm.setValue("testingStartTime", new Date());
+        vaccinationForm.setValue("startTestingTime", new Date());
         setIsStartEnabled(true);
     };
 
@@ -203,6 +202,19 @@ const VaccinationPage: React.FC = () => {
         const receptionVaccinationId = vaccinationForm.watch("receptionVaccinationId");
         if (!receptionVaccinationId) {
             showToast.warning(t(i18n.translationKey.selectAtLeastOneDose));
+            return;
+        }
+
+        const isRequiredTesting = vaccinationForm.watch("isRequiredTesting");
+        const testResult = vaccinationForm.watch("testResult");
+
+        if (isRequiredTesting && testResult == null) {
+            showToast.warning(t(i18n.translationKey.mustTestBeforeInjection));
+            return;
+        }
+
+        if (testResult === TestResultStatus.POSITIVE) {
+            showToast.error(t(i18n.translationKey.positiveCannotInject));
             return;
         }
 
@@ -236,10 +248,6 @@ const VaccinationPage: React.FC = () => {
     };
 
     const isDisablePreTesting = React.useMemo(() => {
-        console.log("isDisablePreTesting", vaccinationForm.watch("isRequiredTesting"));
-        console.log("testResult", vaccinationForm.watch("testResult"));
-        console.log("isInjected", vaccinationForm.watch("isInjected"));
-
         if (vaccinationForm.watch("isInjected")) {
             return true;
         }
@@ -398,7 +406,7 @@ const VaccinationPage: React.FC = () => {
                                     <Grid size={12}>
                                         <FormItem
                                             render="date-time-picker"
-                                            name="testingStartTime"
+                                            name="startTestingTime"
                                             label={t(i18n.translationKey.testStartTime)}
                                             disabled
                                         />
@@ -497,13 +505,6 @@ const VaccinationPage: React.FC = () => {
                 open={isOpenTestingModal}
                 onClose={() => {
                     setIsOpenTestingModal(false);
-
-                    queryClient.invalidateQueries({
-                        queryKey: [
-                            QueryKey.VACCINATION.GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID,
-                            patientForm.watch("receptionId"),
-                        ],
-                    });
                 }}
                 receptionId={patientForm.watch("receptionId")}
             />

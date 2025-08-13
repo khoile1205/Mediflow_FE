@@ -24,6 +24,7 @@ import { SupplierManagementPage } from "~/pages/supplier";
 import VaccinationPage from "~/pages/vaccination";
 import VaccinationHistory from "~/pages/vaccination/vaccination-history/vaccination-history";
 import AuthenticatedGuard from "../guards/authenticated.guard";
+import { ExpiredReturnManagementPage } from "~/pages/pharmacy/expired-return-form";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -49,6 +50,7 @@ export const AuthenticatedRoutes = (
         <Route path="/pharmacy">
             <Route path="import" element={<ImportInventoryFromSupplier />} />
             <Route path="expired-medicine" element={<NearlyExpiredMedicineBatchPage />} />
+            <Route path="expired-return-form" element={<ExpiredReturnManagementPage />} />
         </Route>
 
         <Route path="/medicine">

@@ -1,0 +1,81 @@
+name: Deploy FE App To Production Environment
+
+on:
+    push:
+        branches: ["master"]
+
+env:
+    DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+    DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+    PROD_API_URL: ${{ secrets.PROD_API_URL }}
+    PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
+    IMAGE_NAME: mediflow
+    VERSION_TAG: ${{ github.sha }}
+
+jobs:
+    build-docker:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set Start Time
+              id: start-time
+              run: echo "start_time=$(date +%s)" >> $GITHUB_OUTPUT
+
+            - name: Notify start on Discord
+              run: |
+                  curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d "{\"content\": \"🚀 **mediflow » mediflow-fe (production) - Docker Build #${{ github.run_number }}** Started by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+                  ${{ secrets.DISCORD_WEBHOOK }}
+
+            - name: Build Docker Image
+              run: |
+                  docker build --build-arg VITE_API_BASE_URL=${{ env.PROD_API_URL }} --build-arg VITE_BASE_URL=${{ env.PROD_BASE_URL }} -t ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }} .
+
+            - uses: docker/login-action@v3
+              with:
+                  username: ${{ env.DOCKER_HUB_USERNAME }}
+                  password: ${{ env.DOCKER_HUB_TOKEN }}
+
+            - name: Push Docker Image
+              run: |
+                  docker push ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
+
+            - name: Set up SSH
+              run: |
+                  install -m 600 -D /dev/null ~/.ssh/id_rsa
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+                  ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+            - name: Deploy to Production
+              run: |
+                  ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+                    docker pull ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
+                    docker stop mediflow-fe || true
+                    docker rm mediflow-fe || true
+                    docker run -d --name mediflow-fe \
+                        -p 3000:80 \
+                        ${{ env.DOCKER_HUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}
+                  "
+
+            - name: Notify success on Discord
+              if: success()
+              run: |
+                  end_time=$(date +%s)
+                  duration=$((end_time - ${{ steps.start-time.outputs.start_time }}))
+                  mins=$((duration / 60))
+                  secs=$((duration % 60))
+                  curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d "{\"content\": \"✅ **mediflow » mediflow-fe (production) - Docker Build #${{ github.run_number }}** Success after ${mins} min ${secs} sec ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+                  ${{ secrets.DISCORD_WEBHOOK }}
+
+            - name: Notify failure on Discord
+              if: failure()
+              run: |
+                  curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d "{\"content\": \"❌ **mediflow » mediflow-fe (production) - Docker Build #${{ github.run_number }}** Failed. Triggered by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+                  ${{ secrets.DISCORD_WEBHOOK }}

@@ -1,5 +1,5 @@
 import { CheckCircle, Error } from "@mui/icons-material";
-import { Box, Button, CircularProgress, Paper, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import React from "react";
 import { useParams, useSearchParams } from "react-router";
 import { useMutationApproveExpiredForm, useMutationRejectExpiredForm } from "~/services/inventory/hooks/mutations";
@@ -51,7 +51,6 @@ const ExpiredMedicineCallbackPage: React.FC = () => {
             <Paper sx={{ p: 4, textAlign: "center", width: 400 }}>
                 {isLoading && (
                     <>
-                        <CircularProgress size={60} sx={{ mb: 2 }} />
                         <Typography variant="h6" gutterBottom>
                             Processing Request
                         </Typography>

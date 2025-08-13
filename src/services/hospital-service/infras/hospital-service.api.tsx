@@ -15,6 +15,7 @@ import {
     UpdateHospitalServiceRequest,
 } from "./types";
 import { HospitalServiceGroup } from "~/pages/hospital-services/types";
+import { HospitalServiceType } from "~/constants/enums";
 
 const getHospitalServiceGroupListWithPagination = async (
     params: ISearchParam,
@@ -95,7 +96,7 @@ const getAllHospitalDiseaseGroup = async ({ searchTerm = "" }: ISearchParam) => 
     });
 };
 
-const getAllHospitalServices = async () => {
+const getAllHospitalServices = async ({ serviceType }: { serviceType?: HospitalServiceType }) => {
     return await callApi<Service[]>({
         url: endpoints.hospitalService.serviceEndpoints.getAll,
         method: HttpMethod.GET,
@@ -188,6 +189,9 @@ const getServiceTestParametersByExaminationId = async (examinationId: number) =>
             examinationId,
         ),
         method: HttpMethod.GET,
+        params: {
+            serviceType,
+        },
     });
 };
 

@@ -21,7 +21,7 @@ export const useCreateVaccinationForm = () => {
             medicineExpiryDate: null,
             isInjected: false,
             testResult: null,
-            testingStartTime: null,
+            startTestingTime: null,
             isRequiredTesting: false,
             injectionDate: null,
             note: "",

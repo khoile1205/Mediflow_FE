@@ -11,6 +11,7 @@ import {
 } from "react-hook-form";
 import { TValidationRules } from "../types/validation";
 import { mapValidationRules } from "../utils";
+import { useTranslation } from "react-i18next";
 
 type ControllerFormItemRenderProps<TFieldValues extends FieldValues, TName extends Path<TFieldValues>> = {
     field: ControllerRenderProps<TFieldValues, TName>;
@@ -35,7 +36,12 @@ const ControllerWrapper = <TFieldValues extends FieldValues, TName extends Path<
 }: ControllerWrapperProps<TFieldValues, TName>) => {
     const { control, formState } = useFormContext<TFieldValues>();
 
-    const rules = mapValidationRules<TFieldValues, TName>({ ...validationProps });
+    const { i18n, t } = useTranslation();
+
+    // Recompute validation rules when language changes
+    const rules = React.useMemo(() => {
+        return mapValidationRules<TFieldValues, TName>({ ...validationProps }, t);
+    }, [i18n.language, validationProps]);
 
     return (
         <Controller

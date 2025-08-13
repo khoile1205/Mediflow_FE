@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import i18n from "~/configs/i18n";
-import { showToast } from "~/utils";
+import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { QueryKey } from "~/constants/query-key";
-import { CreateSupplierRequest, supplierApi } from "../../infras";
 import { SupplierFormValues } from "~/pages/supplier/types";
+import { showToast } from "~/utils";
+import { formatDate } from "~/utils/date-time";
+import { CreateSupplierRequest, supplierApi } from "../../infras";
 
 export const useMutationCreateSupplier = () => {
     const queryClient = useQueryClient();
@@ -12,6 +14,11 @@ export const useMutationCreateSupplier = () => {
         mutationFn: async (formValue: SupplierFormValues) => {
             const body: CreateSupplierRequest = {
                 ...formValue,
+                expiredDate: formatDate(formValue.expiredDate, DATE_TIME_FORMAT["yyyy-MM-dd"]),
+                contracts: formValue.contracts?.map((file) => ({
+                    id: file.id,
+                    fileName: file.fileName,
+                })),
             };
             return await supplierApi.createSupplier(body);
         },

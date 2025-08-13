@@ -1,5 +1,6 @@
 import { AddCircle, Print } from "@mui/icons-material";
 import { Box, Button, Grid, Stack, Typography } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { ColDef, RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -13,9 +14,11 @@ import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { PaymentType, ReceiptPaymentType } from "~/constants/enums";
+import { QueryKey } from "~/constants/query-key";
 import { useMutationCreateReceiptPayment } from "~/services/hospital-fee/hooks/mutations";
 import { useQueryGetUnpaidServiceByPatientId, useQueryUnpaidPatientList } from "~/services/hospital-fee/hooks/queries";
 import { CreateReceiptPaymentRequest, HospitalServiceType, UnpaidPatientSummary } from "~/services/hospital-fee/infras";
+import { useQueryGetAttachHospitalService } from "~/services/hospital-service/hooks/queries";
 import { useQueryGetPatientById } from "~/services/patient/hooks/queries";
 import { useQueryGetLatestReceptionIdByPatientId } from "~/services/reception/hooks/queries";
 import { formatCurrencyVND } from "~/utils/currency";
@@ -25,12 +28,12 @@ import { HospitalFeeFormValue, HospitalServiceItem } from "./types";
 
 const HospitalFeePage: React.FC = () => {
     const { t } = useTranslation();
+    const queryClient = useQueryClient();
 
     const receiptRef = React.useRef<HTMLDivElement>(null);
 
     const [patientId, setPatientId] = React.useState<number | null>(null);
     const [searchUnpaidPatientTerm, setSearchUnpaidPatientTerm] = React.useState("");
-
     // Queries
     const {
         data: { unpaidPatientList },
@@ -49,21 +52,14 @@ const HospitalFeePage: React.FC = () => {
     const { mutateAsync: createReceiptPayment } = useMutationCreateReceiptPayment();
     // AG Grid
     const unpaidPatientAgGrid = useAgGrid({});
-    const unpaidPatientColumnDefs: ColDef<UnpaidPatientSummary>[] = React.useMemo(() => {
-        return [
-            { field: "code", headerName: t(i18n.translationKey.medicalCode) },
-            { field: "name", headerName: t(i18n.translationKey.patientName) },
-            {
-                field: "dob",
-                headerName: t(i18n.translationKey.yearOfBirth),
-                valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy"]),
-                cellClass: "ag-cell-center",
-            },
-        ] as ColDef<UnpaidPatientSummary>[];
-    }, []);
 
     // const attachedServiceFeeAgGrid = useAgGrid({});
     const hospitalServiceFeeAgGrid = useAgGrid({ rowSelection: "multiple" });
+    const attachedServiceFeeAgGrid = useAgGrid({});
+
+    const {
+        data: { attachHospitalServices },
+    } = useQueryGetAttachHospitalService();
 
     // Form
     const hospitalFeeForm = useForm<HospitalFeeFormValue>({
@@ -116,6 +112,10 @@ const HospitalFeePage: React.FC = () => {
         setPatientId(null);
         hospitalServiceFeeAgGrid.gridApi.deselectAll();
         unpaidPatientAgGrid.gridApi.deselectAll();
+        queryClient.invalidateQueries({ queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_PATIENT_LIST] });
+        queryClient.invalidateQueries({
+            queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_SERVICE_BY_PATIENT_ID, patientId],
+        });
     };
 
     const handlePrint = useReactToPrint({
@@ -123,6 +123,11 @@ const HospitalFeePage: React.FC = () => {
     });
 
     const getCreateReceiptPaymentPayload = (data: HospitalFeeFormValue): CreateReceiptPaymentRequest => {
+        const serviceRequestIds = data.hospitalServiceItems
+            .filter((service) => service.serviceType === HospitalServiceType.SERVICE)
+            .map((service) => service.id);
+        const attachedServiceIds = attachedHospitalServiceFee.map((service) => service.id);
+
         return {
             receptionId,
             method: data.method,
@@ -130,9 +135,7 @@ const HospitalFeePage: React.FC = () => {
             receptionVaccinationIds: data.hospitalServiceItems
                 .filter((service) => service.serviceType === HospitalServiceType.VACCINATION)
                 .map((service) => service.id),
-            serviceRequestDetailIds: data.hospitalServiceItems
-                .filter((service) => service.serviceType === HospitalServiceType.SERVICE)
-                .map((service) => service.id),
+            serviceRequestDetailIds: [...serviceRequestIds, ...attachedServiceIds],
         };
     };
 
@@ -150,6 +153,40 @@ const HospitalFeePage: React.FC = () => {
         }
     }, [patientData]);
 
+    const unpaidHospitalServiceFee = React.useMemo(() => {
+        return patientPaymentList.filter((service) => {
+            if (service.serviceType === HospitalServiceType.VACCINATION) {
+                return true;
+            }
+            return !attachHospitalServices.some((attachService) => attachService.id === service.serviceId);
+        });
+    }, [attachHospitalServices, patientPaymentList]);
+
+    const attachedHospitalServiceFee = React.useMemo(() => {
+        const result = [];
+
+        const examinationFee = patientPaymentList.find((service) => service.serviceName === "Công khám");
+        if (examinationFee) {
+            result.push(examinationFee);
+        }
+
+        const gridApi = hospitalServiceFeeAgGrid?.gridApi;
+        if (!gridApi) return result;
+
+        const selectedRows = gridApi.getSelectedRows?.() as HospitalServiceItem[];
+        if (selectedRows.length === 0) return result;
+
+        const allAttachedHospitalService = patientPaymentList.filter((service) =>
+            attachHospitalServices.some((attachService) => attachService.id === service.serviceId),
+        );
+
+        const attachedService = allAttachedHospitalService.filter((service) => {
+            return selectedRows.some((row) => row.requestNumber === service.requestNumber);
+        });
+
+        return [...result, ...attachedService].filter(Boolean);
+    }, [hospitalServiceFeeAgGrid, attachHospitalServices, patientPaymentList]);
+
     const currentReceiptSummary = React.useMemo(() => {
         const selectedHospitalServices = hospitalFeeForm.watch("hospitalServiceItems") ?? [];
 
@@ -157,6 +194,7 @@ const HospitalFeePage: React.FC = () => {
         const totalAmount = selectedHospitalServices.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
 
         return {
+            serviceName: t(i18n.translationKey.totalServiceFee),
             quantity: totalQuantity,
             amountBeforeDiscount: totalAmount,
             support: 0,
@@ -175,7 +213,8 @@ const HospitalFeePage: React.FC = () => {
                         disabled={
                             !patientId ||
                             patientPaymentList.length === 0 ||
-                            hospitalServiceFeeAgGrid.gridApi.getSelectedRows().length === 0 ||
+                            (hospitalFeeForm.watch("hospitalServiceItems").length === 0 &&
+                                attachedHospitalServiceFee.length === 0) ||
                             !!hospitalFeeForm.watch("invoiceNumber")
                         }
                     />
@@ -209,7 +248,17 @@ const HospitalFeePage: React.FC = () => {
                         />
                         <AgDataGrid
                             className="mt-3"
-                            columnDefs={unpaidPatientColumnDefs}
+                            columnDefs={[
+                                { field: "code", headerName: t(i18n.translationKey.medicalCode), flex: 1 },
+                                { field: "name", headerName: t(i18n.translationKey.patientName), flex: 1 },
+                                {
+                                    field: "dob",
+                                    headerName: t(i18n.translationKey.yearOfBirth),
+                                    valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy"]),
+                                    cellClass: "ag-cell-center",
+                                    flex: 1,
+                                },
+                            ]}
                             rowData={unpaidPatientList}
                             maxRows={7}
                             onRowSelected={handleSelectedPatient}
@@ -245,9 +294,10 @@ const HospitalFeePage: React.FC = () => {
                                     name="invoiceValue"
                                     label={t(i18n.translationKey.invoiceValue)}
                                     value={formatCurrencyVND(
-                                        hospitalFeeForm
-                                            .watch("hospitalServiceItems")
-                                            .reduce((total, item) => total + item.unitPrice * item.quantity, 0),
+                                        [
+                                            ...hospitalFeeForm.watch("hospitalServiceItems"),
+                                            ...attachedHospitalServiceFee,
+                                        ].reduce((total, item) => total + item.unitPrice * item.quantity, 0),
                                     )}
                                     slotProps={{
                                         input: {
@@ -416,6 +466,7 @@ const HospitalFeePage: React.FC = () => {
                                     width: 50,
                                     pinned: true,
                                     resizable: false,
+                                    flex: 1,
                                 },
                                 {
                                     field: "serviceName",
@@ -427,6 +478,7 @@ const HospitalFeePage: React.FC = () => {
                                     headerName: t(i18n.translationKey.quantity),
                                     width: 100,
                                     cellClass: "ag-cell-center",
+                                    flex: 1,
                                 },
                                 {
                                     field: "unitPrice",
@@ -446,6 +498,7 @@ const HospitalFeePage: React.FC = () => {
                                             ? formatCurrencyVND(params.data.amountBeforeDiscount)
                                             : formatCurrencyVND(params.data.unitPrice * params.data.quantity),
                                 },
+
                                 {
                                     field: "support",
                                     headerName: t(i18n.translationKey.discountAmount),
@@ -480,7 +533,7 @@ const HospitalFeePage: React.FC = () => {
                                 },
                             ]}
                             maxRows={5}
-                            rowData={patientPaymentList}
+                            rowData={unpaidHospitalServiceFee}
                             onRowSelected={handleSelectedHospitalService}
                             pinnedBottomRowData={
                                 hospitalFeeForm.watch("hospitalServiceItems").length > 0 ? [currentReceiptSummary] : []
@@ -488,51 +541,82 @@ const HospitalFeePage: React.FC = () => {
                             {...hospitalServiceFeeAgGrid}
                         />
                     </Box>
-                    {/* <Box>
+                    <Box>
                         <Typography className="mb-2 ms-3 font-bold">
                             {t(i18n.translationKey.medicalAttachedService)}
                         </Typography>
                         <AgDataGrid
-                            columnDefs={[
-                                {
-                                    field: "content",
-                                    headerName: t(i18n.translationKey.content),
-                                },
-                                {
-                                    field: "quantity",
-                                    headerName: t(i18n.translationKey.quantity),
-                                    cellClass: "ag-cell-center",
-                                },
-                                {
-                                    field: "beforeDiscount",
-                                    headerName: t(i18n.translationKey.amountBeforeDiscount),
-                                    cellClass: "ag-cell-center",
-                                },
-                                {
-                                    field: "support",
-                                    headerName: t(i18n.translationKey.discountAmount),
-                                    cellClass: "ag-cell-center",
-                                },
+                            columnDefs={
+                                [
+                                    {
+                                        field: "serviceName",
+                                        headerName: t(i18n.translationKey.serviceName),
+                                        flex: 1.3,
+                                        cellClass: "ag-cell-center",
+                                    },
+                                    {
+                                        field: "quantity",
+                                        headerName: t(i18n.translationKey.quantity),
+                                        width: 100,
+                                        cellClass: "ag-cell-center",
+                                        flex: 1,
+                                    },
+                                    {
+                                        field: "unitPrice",
+                                        headerName: t(i18n.translationKey.unitPrice),
+                                        cellClass: "ag-cell-center",
+                                        flex: 1,
+                                        valueGetter: (params) =>
+                                            params.data?.unitPrice ? formatCurrencyVND(params.data.unitPrice) : "",
+                                    },
+                                    {
+                                        field: "support",
+                                        headerName: t(i18n.translationKey.discountAmount),
+                                        cellClass: "ag-cell-center",
+                                        flex: 1,
+                                        valueGetter: () => formatCurrencyVND(0),
+                                    },
 
-                                {
-                                    field: "cost",
-                                    headerName: t(i18n.translationKey.amountAfterDiscount),
-                                    cellClass: "ag-cell-center",
-                                },
-                            ]}
-                            rowData={[]}
+                                    {
+                                        field: "unitPrice",
+                                        headerName: t(i18n.translationKey.amountAfterDiscount),
+                                        cellClass: "ag-cell-center",
+                                        flex: 1,
+                                        // valueGetter: (params) =>
+                                        //     params.data?.cost !== undefined
+                                        //         ? formatCurrencyVND(params.data.cost)
+                                        //         : formatCurrencyVND(params.data.unitPrice * params.data.quantity),
+                                    },
+                                    {
+                                        field: "createdAt",
+                                        headerName: t(i18n.translationKey.invoiceDate),
+                                        valueGetter: (params) => {
+                                            if (!params.data.createdAt) return "";
+
+                                            return formatDate(
+                                                params.data.createdAt,
+                                                DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"],
+                                            );
+                                        },
+                                        cellClass: "ag-cell-center",
+                                        flex: 1,
+                                    },
+                                ] as ColDef<HospitalServiceItem>[]
+                            }
+                            rowData={attachedHospitalServiceFee}
                             {...attachedServiceFeeAgGrid}
-                            gridOptions={{
-                                ...attachedServiceFeeAgGrid.gridOptions,
-                                pinnedBottomRowData: [],
-                            }}
+                            // pinnedBottomRowData={unpaidHospitalServiceFee}
                         />
-                    </Box> */}
+                    </Box>
                 </Stack>
             </DynamicForm>
 
             <Box style={{ display: "none" }}>
-                <ReceiptPrinter ref={receiptRef} formValue={hospitalFeeForm.watch()} />
+                <ReceiptPrinter
+                    ref={receiptRef}
+                    formValue={hospitalFeeForm.watch()}
+                    attachedHospitalFeeItems={attachedHospitalServiceFee}
+                />
             </Box>
         </Box>
     );
