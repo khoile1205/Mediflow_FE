@@ -6,5 +6,6 @@ export const useQueryGetHospitalServices = () => {
     return useQuery({
         queryKey: [QueryKey.HOSPITAL_SERVICE.GET_HOSPITAL_SERVICE_LIST],
         queryFn: () => hospitalServiceApis.getAllHospitalServices(),
+        enabled: true,
     });
 };

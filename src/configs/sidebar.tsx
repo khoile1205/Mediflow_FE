@@ -16,7 +16,8 @@ import {
 } from "@mui/icons-material";
 import { SidebarTabProps } from "~/components/layout/sidebar/tabs/sidebar.tab";
 import i18n from "./i18n";
-import { routePermissions } from "./route-permission";
+import { ResourceType, routePermissions } from "./route-permission";
+import { Role } from "~/constants/roles";
 
 const getRoutePermissions = (path: string) => routePermissions[path];
 

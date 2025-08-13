@@ -96,7 +96,7 @@ const getAllHospitalDiseaseGroup = async ({ searchTerm = "" }: ISearchParam) => 
     });
 };
 
-const getAllHospitalServices = async ({ serviceType }: { serviceType?: HospitalServiceType }) => {
+const getAllHospitalServices = async () => {
     return await callApi<Service[]>({
         url: endpoints.hospitalService.serviceEndpoints.getAll,
         method: HttpMethod.GET,
@@ -183,7 +183,7 @@ const updateExaminationService = async (id: number, data: UpdateExaminationServi
     });
 };
 
-const getServiceTestParametersByExaminationId = async (examinationId: number) => {
+const getServiceTestParametersByExaminationId = async (examinationId: number, serviceType: string) => {
     return await callApi({
         url: endpoints.hospitalService.examinationReceptionEndpoints.getServiceTestParametersByExaminationId(
             examinationId,

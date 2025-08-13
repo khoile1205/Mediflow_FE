@@ -13,14 +13,11 @@ import FormItem from "~/components/form/form-item";
 import i18n from "~/configs/i18n";
 import useDebounce from "~/hooks/use-debounce";
 import usePagination from "~/hooks/use-pagination";
-import { useMutationCreateHospitalServiceGroup } from "~/services/hospital-service/hooks/mutations/use-mutation-create-hospital-service-group";
 import { useMutationDeleteHospitalServiceGroup } from "~/services/hospital-service/hooks/mutations/use-mutation-delete-hospital-service-group";
-import { useMutationUpdateHospitalServiceGroup } from "~/services/hospital-service/hooks/mutations/use-mutation-update-hospital-service-group";
 import { useQueryGetHospitalServiceGroupList } from "~/services/hospital-service/hooks/queries/use-query-get-hospital-service-group-list";
 import { useQueryServicesByGroupId } from "~/services/hospital-service/hooks/queries/use-query-services-by-group-id";
 import { showToast } from "~/utils";
 import { ConfirmPasswordDialog } from "../management/medicine/ConfirmPasswordDialog";
-import ModalEditServiceGroup from "./modal-edit-service-group";
 import { HospitalServiceGroup } from "./types";
 
 interface SearchFormValues {
@@ -32,7 +29,7 @@ export default function HospitalServiceGroupPage() {
     const queryClient = useQueryClient();
 
     const [selectedRow, setSelectedRow] = useState<HospitalServiceGroup | null>(null);
-    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [, setIsEditOpen] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
     const searchForm = useForm<SearchFormValues>({ defaultValues: { serviceGroupId: null } });
@@ -47,8 +44,6 @@ export default function HospitalServiceGroupPage() {
         searchTerm: debouncedGroupName,
     });
 
-    const createGroup = useMutationCreateHospitalServiceGroup();
-    const updateGroup = useMutationUpdateHospitalServiceGroup();
     const deleteGroup = useMutationDeleteHospitalServiceGroup();
 
     const { onGridReady } = useAgGrid({});
@@ -172,26 +167,6 @@ export default function HospitalServiceGroupPage() {
                     onGridReady={onGridReady}
                 />
             </Box>
-
-            <ModalEditServiceGroup
-                open={isEditOpen}
-                defaultValues={selectedRow}
-                onClose={() => {
-                    setIsEditOpen(false);
-                    if (!selectedRow?.id) {
-                        setSelectedRow(null);
-                        searchForm.setValue("serviceGroupId", null);
-                    }
-                }}
-                onSuccess={() => {
-                    queryClient.invalidateQueries({ queryKey: ["hospitalServiceGroups"] });
-                    refetch();
-                    setSelectedRow(null);
-                    searchForm.setValue("serviceGroupId", null);
-                }}
-                createMutation={createGroup}
-                updateMutation={updateGroup}
-            />
 
             <ConfirmPasswordDialog
                 open={isDeleteConfirmOpen}
