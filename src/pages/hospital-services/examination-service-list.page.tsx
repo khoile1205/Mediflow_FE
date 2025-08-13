@@ -18,26 +18,18 @@ import { useMutationCreateExaminationService } from "~/services/hospital-service
 import { useMutationDeleteExaminationService } from "~/services/hospital-service/hooks/mutations/use-mutation-delete-examination-service";
 import { useMutationUpdateExaminationService } from "~/services/hospital-service/hooks/mutations/use-mutation-update-examination-service";
 import { useQueryExaminationService } from "~/services/hospital-service/hooks/queries/use-query-get-all-examination-service";
-import { ExaminationService } from "~/services/hospital-service/infras/types";
+import { ExaminationService, ServiceTestParameter } from "~/services/hospital-service/infras/types";
 import { showToast } from "~/utils";
 import { ConfirmPasswordDialog } from "../management/medicine/ConfirmPasswordDialog";
 import ModalEditExaminationService from "./ModalEditExaminationService";
 
-interface ServiceTestParameter {
-    serviceId: number;
+interface ServiceTestParameterAPI {
     parameterName: string;
     unit: string;
     standardValue: string;
     equipmentName: string;
     specimenType: string;
-    id: number;
-    isSuspended: boolean;
-    isCancelled: boolean;
-    createdAt: string;
-    createdBy: number;
-    lastUpdatedAt: string;
-    lastUpdatedBy: number;
-    index?: number;
+    id?: number;
 }
 
 interface ExaminationServiceWithParams extends ExaminationService {
@@ -224,9 +216,9 @@ export default function ExaminationServicePage() {
     };
 
     const handleSave = (
-        formData: ExaminationServiceFormValues & { id?: number; serviceTestParameters: ServiceTestParameter[] },
+        formData: ExaminationServiceFormValues & { id?: number; serviceTestParameters: ServiceTestParameterAPI[] },
     ) => {
-        const departmentId = parseInt(formData.departmentId);
+        const departmentId = parseInt(formData.departmentId as string);
         const payload = {
             serviceCode: formData.serviceCode,
             serviceName: formData.serviceName,
@@ -256,11 +248,6 @@ export default function ExaminationServicePage() {
                 },
             );
         } else {
-            const existingService = services.find((svc) => svc.id === formData.id);
-            if (existingService) {
-                showToast.error(t(i18n.translationKey.duplicateExaminationIdError));
-                return;
-            }
             createMutation.mutate(payload, {
                 onSuccess: () => {
                     showToast.success(t(i18n.translationKey.createExaminationServiceSuccess));

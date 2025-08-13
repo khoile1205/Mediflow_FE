@@ -672,7 +672,6 @@
     "SERVICE": "Service",
     "SERVICE_HOSPITAL": "Hospital Service",
     "EXAMINATION_SERVICE": "Examination Service",
-    "CANNOT_ADD_SUSPENDED_MEDICINE": "Cannot add medicine '{{name}}' because it is suspended.",
     "EXPIRED_RETURN_MANAGEMENT": "Expired Return Management",
     "EXPIRED_RETURN_MANAGEMENT_DESCRIPTION": "Manage expired medicine return forms",
     "ALL": "All",
@@ -682,7 +681,6 @@
     "SEARCH_RETURN_FORM": "Search return form",
     "NO_REASON_PROVIDED": "No reason provided",
     "SUPPLIER_INFORMATION": "Supplier information",
-    "CLOSE": "Close",
     "EXPIRED_RETURN_FORM_DETAIL": "Expired return form detail",
     "EXPIRED_RETURN_FORM": "Expired Return Form",
     "SELECT_DATE": "Select date",
@@ -983,5 +981,6 @@
     "FILE_NOT_FOUND": "File with ID {{id}} was not found.",
     "NOT_FOUND_APPOINTMENT_WITH_ID": "Appointment with ID {{id}} was not found.",
     "NOT_FOUND_APPOINTMENT_WITH_PATIENT_ID": "Appointment with patient ID {{id}} was not found.",
-    "NOT_FOUND_APPOINTMENT_WITH_DATE": "Appointment with date {{date}} was not found."
+    "NOT_FOUND_APPOINTMENT_WITH_DATE": "Appointment with date {{date}} was not found.",
+    "INVALID_SERVICE_CODE": "Invalid service code"
 }

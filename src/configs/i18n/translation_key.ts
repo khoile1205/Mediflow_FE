@@ -11,6 +11,7 @@ const validationTranslationKey = {
     dateMustNotBeInThePast: "DATE_MUST_NOT_BE_IN_THE_PAST",
     dateMustNotBeInTheFuture: "DATE_MUST_NOT_BE_IN_THE_FUTURE",
     accessDenied: "ACCESS_DENIED",
+    invalidServiceCode: "INVALID_SERVICE_CODE",
 };
 
 const applicationTranslationKey = {

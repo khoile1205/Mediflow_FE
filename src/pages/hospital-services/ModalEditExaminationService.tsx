@@ -1,33 +1,30 @@
 import { AddCircle, Delete } from "@mui/icons-material";
 import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid, Stack, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { GridReadyEvent } from "ag-grid-community";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { ActionButton } from "~/components/common/action-button";
 import AgDataGrid from "~/components/common/ag-grid/ag-grid";
-import { useAgGrid } from "~/components/common/ag-grid/hooks";
 import Dialog from "~/components/common/dialog/dialog";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import i18n from "~/configs/i18n";
-import { ExaminationService } from "~/services/hospital-service/infras/types";
+import { ExaminationService, ServiceTestParameter } from "~/services/hospital-service/infras/types";
 import { useQueryDepartmentsWithPagination } from "~/services/management/department/hooks/queries/use-query-departments-with-pagination";
+import { showToast } from "~/utils";
 
-interface ServiceTestParameter {
+interface UseAgGridProps {
+    rowSelection?: "single" | "multiple";
+}
+
+interface ServiceTestParameterAPI {
     parameterName: string;
     unit: string;
     standardValue: string;
     equipmentName: string;
     specimenType: string;
-    serviceId: number;
-    id: number;
-    isSuspended: boolean;
-    isCancelled: boolean;
-    createdAt: string;
-    createdBy: number;
-    lastUpdatedAt: string;
-    lastUpdatedBy: number;
-    index?: number;
+    id?: number;
 }
 
 interface ExaminationServiceWithParams extends ExaminationService {
@@ -46,7 +43,7 @@ interface ModalEditExaminationServiceProps {
     defaultValues: ExaminationServiceWithParams | null;
     onClose: () => void;
     onSave: (
-        data: ExaminationServiceFormValues & { id?: number; serviceTestParameters: ServiceTestParameter[] },
+        data: ExaminationServiceFormValues & { id?: number; serviceTestParameters: ServiceTestParameterAPI[] },
     ) => void;
 }
 
@@ -56,6 +53,12 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
         pageIndex: 1,
         pageSize: 1000,
     });
+
+    const gridRef = useRef<any>(null);
+    const agGridProps: UseAgGridProps = { rowSelection: "multiple" };
+    const onGridReady = (params: GridReadyEvent) => {
+        gridRef.current = params.api;
+    };
 
     const form = useForm<ExaminationServiceFormValues>({
         defaultValues: {
@@ -75,6 +78,13 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
             equipmentName: "",
             specimenType: "",
             serviceId: defaultValues?.id || 0,
+            id: Date.now(),
+            isSuspended: false,
+            isCancelled: false,
+            createdAt: new Date().toISOString(),
+            createdBy: 0,
+            lastUpdatedAt: new Date().toISOString(),
+            lastUpdatedBy: 0,
         },
     });
 
@@ -86,12 +96,7 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
                 unitPrice: defaultValues.unitPrice || 0,
                 departmentId: defaultValues.departmentId?.toString() || "",
             });
-            setServiceTestParams(
-                defaultValues.serviceTestParameters.map((param) => ({
-                    ...param,
-                    serviceId: defaultValues.id || 0,
-                })) || [],
-            );
+            setServiceTestParams(defaultValues.serviceTestParameters || []);
         } else if (open && !defaultValues) {
             form.reset({
                 serviceCode: "",
@@ -107,6 +112,13 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
                 equipmentName: "",
                 specimenType: "",
                 serviceId: 0,
+                id: Date.now(),
+                isSuspended: false,
+                isCancelled: false,
+                createdAt: new Date().toISOString(),
+                createdBy: 0,
+                lastUpdatedAt: new Date().toISOString(),
+                lastUpdatedBy: 0,
             });
         }
     }, [open, defaultValues, form]);
@@ -123,13 +135,8 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
             const newParam: ServiceTestParameter = {
                 ...values,
                 id: Date.now(),
-                isSuspended: false,
-                isCancelled: false,
                 createdAt: new Date().toISOString(),
-                createdBy: 0,
                 lastUpdatedAt: new Date().toISOString(),
-                lastUpdatedBy: 0,
-                index: serviceTestParams.length + 1,
             };
             setServiceTestParams([...serviceTestParams, newParam]);
             paramForm.reset({
@@ -139,23 +146,52 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
                 equipmentName: "",
                 specimenType: "",
                 serviceId: defaultValues?.id || 0,
+                id: Date.now(),
+                isSuspended: false,
+                isCancelled: false,
+                createdAt: new Date().toISOString(),
+                createdBy: 0,
+                lastUpdatedAt: new Date().toISOString(),
+                lastUpdatedBy: 0,
             });
         }
     };
 
     const handleSubmit = () => {
         const values = form.getValues();
+        if (!values.serviceCode || !/^[A-Za-z0-9_-]+$/.test(values.serviceCode)) {
+            showToast.error(t(i18n.translationKey.invalidServiceCode));
+            return;
+        }
+
+        const formattedParams: ServiceTestParameterAPI[] = serviceTestParams.map((param) => ({
+            parameterName: param.parameterName,
+            unit: param.unit,
+            standardValue: param.standardValue,
+            equipmentName: param.equipmentName || "Default Equipment",
+            specimenType: param.specimenType || "Blood",
+            id: param.id,
+        }));
+
         onSave({
             id: defaultValues?.id,
             serviceCode: values.serviceCode,
             serviceName: values.serviceName,
             unitPrice: Number(values.unitPrice),
             departmentId: values.departmentId,
-            serviceTestParameters: serviceTestParams.map((param) => ({
-                ...param,
-                serviceId: defaultValues?.id || 0,
-            })),
+            serviceTestParameters: formattedParams,
         });
+    };
+
+    const handleDeleteParams = () => {
+        const selectedRows = gridRef.current.getSelectedRows() as ServiceTestParameter[];
+        if (selectedRows.length > 0) {
+            const remainingParams = serviceTestParams.filter(
+                (param) => !selectedRows.some((selected) => selected.id === param.id),
+            );
+            setServiceTestParams(remainingParams);
+            gridRef.current.deselectAll();
+        }
     };
 
     const departmentOptions = useMemo(() => {
@@ -176,8 +212,6 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
         ],
         [t],
     );
-
-    const { onGridReady } = useAgGrid({});
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
@@ -332,6 +366,7 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
                                     pagination
                                     pageSize={5}
                                     loading={false}
+                                    {...agGridProps}
                                 />
                             </Box>
                         )}
@@ -354,16 +389,7 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
                                 startIcon={<Delete />}
                                 size="small"
                                 disabled={serviceTestParams.length === 0}
-                                onClick={() => {
-                                    const selectedRows = serviceTestParams.filter(
-                                        (_, i) => i === serviceTestParams.length - 1,
-                                    );
-                                    if (selectedRows.length > 0) {
-                                        setServiceTestParams(
-                                            serviceTestParams.filter((_, i) => i !== serviceTestParams.length - 1),
-                                        );
-                                    }
-                                }}
+                                onClick={handleDeleteParams}
                                 sx={{
                                     borderRadius: 4,
                                     px: { xs: 1, sm: 2 },
