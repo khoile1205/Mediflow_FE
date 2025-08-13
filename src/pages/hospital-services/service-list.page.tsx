@@ -195,7 +195,7 @@ export default function ServiceListPage() {
         return () => subscription.unsubscribe();
     }, [searchForm]);
 
-    const { data: serviceData, isLoading, refetch } = useQueryGetHospitalServices();
+    const { data: serviceData, isLoading, refetch } = useQueryGetHospitalServices({});
 
     useEffect(() => {
         refetch();
