@@ -1,3 +1,4 @@
+import { ExaminationService } from "~/services/hospital-service/infras/types";
 import { BaseEntity } from "./base.entity";
 
 export interface Service extends BaseEntity {
@@ -5,4 +6,5 @@ export interface Service extends BaseEntity {
     serviceName: string;
     unitPrice: number;
     departmentId: number;
+    examinationService?: ExaminationService;
 }

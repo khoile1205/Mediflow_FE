@@ -113,6 +113,49 @@ export const sidebarTree: SidebarTabProps[] = [
         ],
     },
     {
+        icon: <LocalHospital />,
+        labelKey: i18n.translationKey.service,
+        children: [
+            {
+                labelKey: i18n.translationKey.serviceHospital,
+                pathName: "/service/hospital-service",
+                icon: <LocalHospital />,
+                requiredPermissions: [ResourceType.VaccinationReception],
+                requiredRoles: [
+                    Role.Administrator,
+                    Role.Doctor,
+                    Role.Nurse,
+                    Role.Receptionist,
+                    Role.LaboratoryStaff,
+                    Role.ImagingTechnician,
+                ],
+            },
+            {
+                labelKey: i18n.translationKey.examinationService,
+                pathName: "/service/examination-service",
+                icon: <Biotech />,
+                requiredPermissions: [ResourceType.VaccinationReception],
+                requiredRoles: [
+                    Role.Administrator,
+                    Role.Doctor,
+                    Role.Nurse,
+                    Role.Receptionist,
+                    Role.LaboratoryStaff,
+                    Role.ImagingTechnician,
+                ],
+            },
+        ],
+        requiredPermissions: [ResourceType.VaccinationReception],
+        requiredRoles: [
+            Role.Administrator,
+            Role.Doctor,
+            Role.Nurse,
+            Role.Receptionist,
+            Role.LaboratoryStaff,
+            Role.ImagingTechnician,
+        ],
+    },
+    {
         icon: <Vaccines />,
         labelKey: i18n.translationKey.vaccination,
         children: [

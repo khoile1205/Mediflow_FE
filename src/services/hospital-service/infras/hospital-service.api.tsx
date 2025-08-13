@@ -4,10 +4,13 @@ import { callApi } from "~/libs/axios/request";
 import { HttpMethod, IBaseApiResponse } from "~/libs/axios/types";
 import {
     AssignServicesToGroupRequest,
+    CreateExaminationServiceRequest,
     CreateHospitalServiceGroupRequest,
     CreateHospitalServiceRequest,
+    ExaminationService,
     HospitalServiceGroupListResponse,
     ISearchParam,
+    UpdateExaminationServiceRequest,
     UpdateHospitalServiceGroupRequest,
     UpdateHospitalServiceRequest,
 } from "./types";
@@ -155,6 +158,46 @@ const getServicesByGroupId = async (groupId: number) => {
     });
 };
 
+const getAllExaminationServices = async (params?: ISearchParam) => {
+    return await callApi<ExaminationService[]>({
+        url: endpoints.hospitalService.examinationServiceEndpoints.getAll,
+        method: HttpMethod.GET,
+        params,
+    });
+};
+
+const createExaminationService = async (data: CreateExaminationServiceRequest) => {
+    return await callApi({
+        url: endpoints.hospitalService.examinationServiceEndpoints.create,
+        method: HttpMethod.POST,
+        data,
+    });
+};
+
+const updateExaminationService = async (id: number, data: UpdateExaminationServiceRequest) => {
+    return await callApi({
+        url: endpoints.hospitalService.examinationServiceEndpoints.update(id),
+        method: HttpMethod.PUT,
+        data,
+    });
+};
+
+const getServiceTestParametersByExaminationId = async (examinationId: number) => {
+    return await callApi({
+        url: endpoints.hospitalService.examinationReceptionEndpoints.getServiceTestParametersByExaminationId(
+            examinationId,
+        ),
+        method: HttpMethod.GET,
+    });
+};
+
+const deleteExaminationService = async (id: number) => {
+    return await callApi({
+        url: endpoints.hospitalService.examinationServiceEndpoints.delete(id),
+        method: HttpMethod.DELETE,
+    });
+};
+
 export const hospitalServiceApis = {
     getHospitalServiceGroupListWithPagination,
     getAllHospitalServiceGroup,
@@ -173,4 +216,9 @@ export const hospitalServiceApis = {
     deleteHospitalService,
     getServicesByIds,
     getServicesByGroupId,
+    getAllExaminationServices,
+    createExaminationService,
+    updateExaminationService,
+    deleteExaminationService,
+    getServiceTestParametersByExaminationId,
 };

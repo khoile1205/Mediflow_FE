@@ -1,9 +1,11 @@
 import { AddCircle, Delete, Edit } from "@mui/icons-material";
 import { Box, Button, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
+import { RowClickedEvent } from "ag-grid-community";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { ActionButton } from "~/components/common/action-button";
 import AgDataGrid from "~/components/common/ag-grid/ag-grid";
 import { useAgGrid } from "~/components/common/ag-grid/hooks";
 import Dialog from "~/components/common/dialog/dialog";
@@ -19,10 +21,20 @@ import { useQueryDepartmentById } from "~/services/management/department/hooks/q
 import { useQueryDepartmentsWithPagination } from "~/services/management/department/hooks/queries/use-query-departments-with-pagination";
 import { showToast } from "~/utils";
 import { ConfirmPasswordDialog } from "../management/medicine/ConfirmPasswordDialog";
-import { HospitalService } from "./types";
+import useDebounce from "~/hooks/use-debounce";
+
+interface HospitalService {
+    id: number;
+    serviceCode: string;
+    serviceName: string;
+    serviceType: number;
+    unitPrice: number;
+    departmentId: number;
+    examinationService: number | null;
+}
 
 interface SearchFormValues {
-    searchTerm: string;
+    searchKeyword: string;
 }
 
 interface ServiceFormValues {
@@ -57,12 +69,12 @@ function ModalEditService({ open, defaultValues, onClose, onSave }: ModalEditSer
     });
 
     useEffect(() => {
-        if (open) {
+        if (open && defaultValues) {
             form.reset({
-                serviceCode: defaultValues?.serviceCode || "",
-                serviceName: defaultValues?.serviceName || "",
-                unitPrice: defaultValues?.unitPrice || 0,
-                departmentId: defaultValues?.departmentId || 0,
+                serviceCode: defaultValues.serviceCode || "",
+                serviceName: defaultValues.serviceName || "",
+                unitPrice: defaultValues.unitPrice || 0,
+                departmentId: defaultValues.departmentId || 0,
             });
         }
     }, [open, defaultValues, form]);
@@ -152,79 +164,96 @@ const DepartmentCell = ({ departmentId }: { departmentId: number }) => {
 export default function ServiceListPage() {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
-
-    const [selectedService, setSelectedService] = useState<HospitalService | null>(null);
+    const { handlePageChange, pageIndex, pageSize } = usePagination();
+    const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+    const { onGridReady } = useAgGrid({ rowSelection: "single" });
 
-    const searchForm = useForm<SearchFormValues>({ defaultValues: { searchTerm: "" } });
-    const [, setSearchTerm] = useState("");
-
-    const { handlePageChange, pageIndex, pageSize, resetPagination } = usePagination();
-
-    useEffect(() => {
-        const sub = searchForm.watch((v) => {
-            setSearchTerm(v.searchTerm || "");
-            resetPagination();
-        });
-        return () => sub.unsubscribe();
-    }, [searchForm, resetPagination]);
-
-    const { data: serviceData, isLoading, refetch } = useQueryGetHospitalServices();
+    const searchForm = useForm<SearchFormValues>({
+        defaultValues: {
+            searchKeyword: "",
+        },
+    });
 
     const createService = useMutationCreateHospitalService();
     const deleteService = useMutationDeleteHospitalService();
     const updateService = useMutationUpdateHospitalService();
 
-    const { onGridReady } = useAgGrid({ rowSelection: "single" });
+    const [searchInputs, setSearchInputs] = useState<SearchFormValues>({
+        searchKeyword: "",
+    });
 
-    const columns = useMemo(
-        () => [
-            { headerName: t(i18n.translationKey.serviceCode), field: "serviceCode", flex: 1 },
-            { headerName: t(i18n.translationKey.serviceName), field: "serviceName", flex: 2 },
-            { headerName: t(i18n.translationKey.unitPrice), field: "unitPrice", flex: 1 },
-            {
-                headerName: t(i18n.translationKey.department),
-                field: "departmentId",
-                flex: 1,
-                cellRenderer: ({ value }: any) => <DepartmentCell departmentId={value} />,
-            },
-            {
-                headerName: t(i18n.translationKey.actions),
-                field: "actions",
-                flex: 1,
-                cellRenderer: ({ data }: any) => (
-                    <>
-                        <Button startIcon={<Edit />} onClick={() => handleEditService(data)} size="small">
-                            {t(i18n.translationKey.edit)}
-                        </Button>
-                        <Button
-                            startIcon={<Delete />}
-                            onClick={() => handleDeleteService(data.id)}
-                            size="small"
-                            color="error"
-                        >
-                            {t(i18n.translationKey.delete)}
-                        </Button>
-                    </>
-                ),
-            },
-        ],
-        [t],
-    );
+    const debouncedSearchInputs = useDebounce(searchInputs, 500);
+
+    useEffect(() => {
+        const subscription = searchForm.watch((value) => {
+            setSearchInputs({
+                searchKeyword: value.searchKeyword,
+            });
+        });
+        return () => subscription.unsubscribe();
+    }, [searchForm]);
+
+    const { data: serviceData, isLoading, refetch } = useQueryGetHospitalServices();
+
+    useEffect(() => {
+        refetch();
+    }, [debouncedSearchInputs, refetch]);
+
+    const services = useMemo<HospitalService[]>(() => {
+        const rawData = serviceData?.Data ?? [];
+
+        return rawData
+            .filter((svc) => svc.examinationService === null)
+            .filter((svc) => {
+                if (!debouncedSearchInputs.searchKeyword.trim()) return true;
+                const lower = debouncedSearchInputs.searchKeyword.toLowerCase();
+                return svc.serviceCode?.toLowerCase().includes(lower) || svc.serviceName?.toLowerCase().includes(lower);
+            })
+            .map((svc) => ({
+                id: svc.id,
+                serviceCode: svc.serviceCode ?? "",
+                serviceName: svc.serviceName ?? "",
+                serviceType: (svc as any).serviceType ?? 0,
+                unitPrice: svc.unitPrice ?? 0,
+                departmentId: svc.departmentId ?? 0,
+                examinationService:
+                    svc.examinationService &&
+                    typeof svc.examinationService === "object" &&
+                    "id" in svc.examinationService
+                        ? (svc.examinationService as any).id
+                        : (svc.examinationService ?? null),
+            }))
+            .sort((a, b) => a.serviceCode.localeCompare(b.serviceCode));
+    }, [serviceData, debouncedSearchInputs]);
+
+    const paginatedServices = useMemo(() => {
+        const start = (pageIndex - 1) * pageSize;
+        const end = start + pageSize;
+        return services.slice(start, end);
+    }, [services, pageIndex, pageSize]);
+
+    const totalItems = services.length;
+
+    const handleRowClick = (event: RowClickedEvent<HospitalService>) => {
+        const selected = event.data;
+        if (!selected) return;
+        setSelectedServiceId(selected.id);
+    };
 
     const handleAdd = () => {
-        setSelectedService(null);
+        setSelectedServiceId(null);
         setIsEditOpen(true);
     };
 
-    const handleEditService = (service: HospitalService) => {
-        setSelectedService(service);
+    const handleEditService = () => {
+        if (!selectedServiceId) return;
         setIsEditOpen(true);
     };
 
-    const handleDeleteService = (serviceId: string) => {
-        setSelectedService((prev) => (prev?.id === Number(serviceId) ? prev : { ...prev!, id: Number(serviceId) }));
+    const handleDeleteService = () => {
+        if (!selectedServiceId) return;
         setIsDeleteConfirmOpen(true);
     };
 
@@ -248,6 +277,7 @@ export default function ServiceListPage() {
                     onSuccess: () => {
                         showToast.success(t(i18n.translationKey.updateHospitalServiceSuccess));
                         setIsEditOpen(false);
+                        setSelectedServiceId(null);
                         refetch();
                         queryClient.invalidateQueries({ queryKey: ["hospitalServices"] });
                     },
@@ -257,6 +287,11 @@ export default function ServiceListPage() {
                 },
             );
         } else {
+            const existingService = services.find((svc) => svc.serviceCode === serviceData.serviceCode);
+            if (existingService) {
+                showToast.error(t(i18n.translationKey.duplicateServiceCodeError));
+                return;
+            }
             createService.mutate(
                 {
                     serviceCode: serviceData.serviceCode,
@@ -268,6 +303,7 @@ export default function ServiceListPage() {
                     onSuccess: () => {
                         showToast.success(t(i18n.translationKey.createHospitalServiceSuccess));
                         setIsEditOpen(false);
+                        setSelectedServiceId(null);
                         refetch();
                         queryClient.invalidateQueries({ queryKey: ["hospitalServices"] });
                     },
@@ -279,45 +315,95 @@ export default function ServiceListPage() {
         }
     };
 
+    const columns = useMemo(
+        () => [
+            { headerName: t(i18n.translationKey.serviceCode), field: "serviceCode", flex: 1, sortable: true },
+            { headerName: t(i18n.translationKey.serviceName), field: "serviceName", flex: 2, sortable: true },
+            {
+                headerName: t(i18n.translationKey.unitPrice),
+                field: "unitPrice",
+                flex: 1,
+                valueFormatter: ({ value }: { value: number }) => `${value?.toLocaleString("vi-VN")} ₫`,
+            },
+            {
+                headerName: t(i18n.translationKey.department),
+                field: "departmentId",
+                flex: 1,
+                cellRenderer: ({ value }: { value: number }) => <DepartmentCell departmentId={value} />,
+            },
+        ],
+        [t],
+    );
+
     return (
         <Box p={3}>
             <DynamicForm form={searchForm}>
-                <Grid container spacing={2} alignItems="center" justifyContent="flex-start" className="px-4 py-5">
-                    <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-                        <Button fullWidth startIcon={<AddCircle />} variant="contained" onClick={handleAdd}>
-                            {t(i18n.translationKey.add)}
-                        </Button>
+                <Grid container spacing={2} className="px-4 py-5" alignItems="center" justifyContent="flex-start">
+                    <Grid size={{ xs: 12, sm: 4, md: 2 }}>
+                        <ActionButton
+                            fullWidth
+                            label={t(i18n.translationKey.addNew)}
+                            startIcon={<AddCircle />}
+                            size="small"
+                            variant="outlined"
+                            onClick={handleAdd}
+                            sx={{ borderRadius: 4 }}
+                        />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 12, md: 4 }}>
+                    <Grid size={{ xs: 12, sm: 4, md: 2 }}>
+                        <ActionButton
+                            fullWidth
+                            label={t(i18n.translationKey.edit)}
+                            startIcon={<Edit />}
+                            size="small"
+                            variant="outlined"
+                            onClick={handleEditService}
+                            disabled={!selectedServiceId}
+                            sx={{ borderRadius: 4 }}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 4, md: 2 }}>
+                        <ActionButton
+                            fullWidth
+                            label={t(i18n.translationKey.delete)}
+                            startIcon={<Delete />}
+                            size="small"
+                            variant="outlined"
+                            onClick={handleDeleteService}
+                            disabled={!selectedServiceId}
+                            sx={{ borderRadius: 4 }}
+                        />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 12, md: 6 }} sx={{ pt: "18px" }}>
                         <FormItem
                             render="text-input"
-                            name="searchTerm"
-                            label={t(i18n.translationKey.search)}
-                            placeholder={t(i18n.translationKey.searchPlaceholder)}
+                            name="searchKeyword"
+                            label={t(i18n.translationKey.searchKeyword)}
+                            placeholder={t(i18n.translationKey.search)}
                         />
                     </Grid>
                 </Grid>
-            </DynamicForm>
 
-            <Grid size={{ xs: 12 }}>
-                <AgDataGrid
-                    onGridReady={onGridReady}
-                    columnDefs={columns}
-                    rowData={serviceData?.Data ?? []}
-                    pagination
-                    pageIndex={pageIndex}
-                    pageSize={pageSize}
-                    totalItems={serviceData?.Data?.length ?? 0}
-                    onPageChange={handlePageChange}
-                    loading={isLoading}
-                    rowSelection="single"
-                    onRowClicked={(e) => setSelectedService(e.data)}
-                />
-            </Grid>
+                <Grid size={12} p={2}>
+                    <AgDataGrid
+                        onGridReady={onGridReady}
+                        columnDefs={columns}
+                        rowData={paginatedServices}
+                        onRowClicked={handleRowClick}
+                        rowSelection="single"
+                        pagination
+                        pageIndex={pageIndex}
+                        pageSize={pageSize}
+                        totalItems={totalItems}
+                        onPageChange={handlePageChange}
+                        loading={isLoading}
+                    />
+                </Grid>
+            </DynamicForm>
 
             <ModalEditService
                 open={isEditOpen}
-                defaultValues={selectedService}
+                defaultValues={services.find((s) => s.id === selectedServiceId) || null}
                 onClose={() => setIsEditOpen(false)}
                 onSave={handleSaveService}
             />
@@ -326,13 +412,13 @@ export default function ServiceListPage() {
                 open={isDeleteConfirmOpen}
                 onClose={() => setIsDeleteConfirmOpen(false)}
                 onConfirmed={() => {
-                    if (!selectedService) return;
-                    deleteService.mutate(selectedService.id, {
+                    if (!selectedServiceId) return;
+                    deleteService.mutate(selectedServiceId, {
                         onSuccess: () => {
                             showToast.success(t(i18n.translationKey.deleteHospitalServiceSuccess));
-                            refetch();
-                            setSelectedService(null);
+                            setSelectedServiceId(null);
                             setIsDeleteConfirmOpen(false);
+                            refetch();
                             queryClient.invalidateQueries({ queryKey: ["hospitalServices"] });
                         },
                         onError: () => {

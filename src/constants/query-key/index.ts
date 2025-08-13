@@ -28,6 +28,11 @@ const HospitalServiceQueryKey = {
     DELETE_HOSPITAL_SERVICE: "deleteHospitalService",
     GET_SERVICES_BY_IDS: "getServicesByIds",
     GET_SERVICES_BY_GROUP_ID: "getServicesByGroupId",
+
+    GET_ALL_EXAMINATION_SERVICE: "getAllExaminationService",
+    CREATE_EXAMINATION_SERVICE: "createExaminationService",
+    UPDATE_EXAMINATION_SERVICE: "updateExaminationService",
+    DELETE_EXAMINATION_SERVICE: "deleteExaminationService",
 };
 
 const ReceptionQueryKey = {

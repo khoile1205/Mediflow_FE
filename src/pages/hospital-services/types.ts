@@ -24,9 +24,9 @@ export interface HospitalService {
         specimenType: string;
         isSuspended: boolean;
         isCancelled: boolean;
-        createdAt: string;
+        createdAt?: Date | string;
         createdBy: number;
-        lastUpdatedAt: string;
+        lastUpdatedAt?: Date | string;
         lastUpdatedBy: number;
     }[];
 }

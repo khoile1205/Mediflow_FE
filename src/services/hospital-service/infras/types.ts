@@ -52,4 +52,51 @@ export interface PaginationResult<T> {
     hasNextPage: boolean;
 }
 
+export interface CreateExaminationServiceRequest {
+    serviceName: string;
+    serviceCode: string;
+    unitPrice: number;
+    description?: string;
+}
+
+export interface UpdateExaminationServiceRequest {
+    serviceName: string;
+    serviceCode: string;
+    unitPrice: number;
+    description?: string;
+}
+
+export interface ServiceTestParameter {
+    id: number;
+    serviceId: number;
+    parameterName: string;
+    unit: string;
+    standardValue: string;
+    equipmentName: string;
+    specimenType: string;
+    isSuspended: boolean;
+    isCancelled: boolean;
+    createdAt: string;
+    createdBy: number;
+    lastUpdatedAt: string;
+    lastUpdatedBy: number;
+}
+
+export interface ExaminationService {
+    id: number;
+    serviceCode: string;
+    serviceName: string;
+    unitPrice: number;
+    serviceType: number;
+    examinationService: number;
+    departmentId: number;
+    serviceTestParameters: ServiceTestParameter[];
+    description?: string;
+    serviceGroupId?: number;
+    serviceGroupName?: string;
+    departmentName?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 export type HospitalServiceGroupListResponse = PaginationResult<HospitalServiceGroup>;

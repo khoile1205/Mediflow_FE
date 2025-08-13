@@ -29,8 +29,26 @@ const serviceEndpoints = {
     getServicesByGroupId: `${serviceEndpointPrefix}/group`,
 };
 
+const examinationServiceEndpointPrefix = `${serviceEndpointPrefix}/examination`;
+const examinationServiceEndpoints = {
+    getAll: `${examinationServiceEndpointPrefix}`,
+    create: `${examinationServiceEndpointPrefix}`,
+    update: (id: number) => `${examinationServiceEndpointPrefix}/${id}`,
+    delete: (id: number) => `${examinationServiceEndpointPrefix}/${id}`,
+};
+
+const vaccinationReceptionEndpointPrefix = "vaccination-reception";
+const examinationReceptionEndpointPrefix = `${vaccinationReceptionEndpointPrefix}/examinations`;
+
+const examinationReceptionEndpoints = {
+    getServiceTestParametersByExaminationId: (examinationId: number) =>
+        `${examinationReceptionEndpointPrefix}/${examinationId}/service-test-parameters`,
+};
+
 export const hospitalServiceEndpoints = {
     serviceGroupEndpoints,
     diseaseGroupEndpoints,
     serviceEndpoints,
+    examinationServiceEndpoints,
+    examinationReceptionEndpoints,
 };

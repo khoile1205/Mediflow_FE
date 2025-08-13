@@ -94,7 +94,7 @@ export default function ModalEditServiceGroup({
                 {
                     onSuccess: () => {
                         showToast.success(t(i18n.translationKey.updateHospitalServiceGroupSuccess));
-                        onSuccess(undefined); // 🔧 Reset dropdown về null sau update
+                        onSuccess(undefined);
                         onClose();
                     },
                     onError: () => {
