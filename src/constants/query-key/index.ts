@@ -10,6 +10,29 @@ const HospitalServiceQueryKey = {
     GET_HOSPITAL_SERVICE_GROUP_LIST: "getHospitalServiceGroupList",
     GET_HOSPITAL_DISEASE_GROUP_LIST: "getHospitalDiseaseGroupList",
     GET_HOSPITAL_SERVICE_LIST: "getHospitalServiceList",
+    GET_HOSPITAL_SERVICE_GROUP_LIST_WITH_PAGINATION: "getHospitalServiceGroupListWithPagination",
+    GET_HOSPITAL_SERVICE_GROUP_ALL: "getHospitalServiceGroupAll",
+    GET_HOSPITAL_DISEASE_GROUP_LIST_WITH_PAGINATION: "getHospitalDiseaseGroupListWithPagination",
+    GET_HOSPITAL_DISEASE_GROUP_ALL: "getHospitalDiseaseGroupAll",
+    GET_HOSPITAL_SERVICE_ALL: "getHospitalServiceAll",
+    GET_HOSPITAL_SERVICE_DETAILS: "getHospitalServiceDetails",
+
+    CREATE_HOSPITAL_SERVICE_GROUP: "createHospitalServiceGroup",
+    UPDATE_HOSPITAL_SERVICE_GROUP: "updateHospitalServiceGroup",
+    DELETE_HOSPITAL_SERVICE_GROUP: "deleteHospitalServiceGroup",
+    ASSIGN_SERVICES_TO_GROUP: "assignServicesToGroup",
+    REMOVE_SERVICES_FROM_GROUP: "removeServicesFromGroup",
+
+    CREATE_HOSPITAL_SERVICE: "createHospitalService",
+    UPDATE_HOSPITAL_SERVICE: "updateHospitalService",
+    DELETE_HOSPITAL_SERVICE: "deleteHospitalService",
+    GET_SERVICES_BY_IDS: "getServicesByIds",
+    GET_SERVICES_BY_GROUP_ID: "getServicesByGroupId",
+
+    GET_ALL_EXAMINATION_SERVICE: "getAllExaminationService",
+    CREATE_EXAMINATION_SERVICE: "createExaminationService",
+    UPDATE_EXAMINATION_SERVICE: "updateExaminationService",
+    DELETE_EXAMINATION_SERVICE: "deleteExaminationService",
 };
 
 const ReceptionQueryKey = {

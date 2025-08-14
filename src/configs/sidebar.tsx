@@ -16,7 +16,8 @@ import {
 } from "@mui/icons-material";
 import { SidebarTabProps } from "~/components/layout/sidebar/tabs/sidebar.tab";
 import i18n from "./i18n";
-import { routePermissions } from "./route-permission";
+import { ResourceType, routePermissions } from "./route-permission";
+import { Role } from "~/constants/roles";
 
 const getRoutePermissions = (path: string) => routePermissions[path];
 
@@ -76,6 +77,49 @@ export const sidebarTree: SidebarTabProps[] = [
             },
         ],
         ...getRoutePermissions("/examination"),
+    },
+    {
+        icon: <LocalHospital />,
+        labelKey: i18n.translationKey.service,
+        children: [
+            {
+                labelKey: i18n.translationKey.serviceHospital,
+                pathName: "/service/hospital-service",
+                icon: <LocalHospital />,
+                requiredPermissions: [ResourceType.VaccinationReception],
+                requiredRoles: [
+                    Role.Administrator,
+                    Role.Doctor,
+                    Role.Nurse,
+                    Role.Receptionist,
+                    Role.LaboratoryStaff,
+                    Role.ImagingTechnician,
+                ],
+            },
+            {
+                labelKey: i18n.translationKey.examinationService,
+                pathName: "/service/examination-service",
+                icon: <Biotech />,
+                requiredPermissions: [ResourceType.VaccinationReception],
+                requiredRoles: [
+                    Role.Administrator,
+                    Role.Doctor,
+                    Role.Nurse,
+                    Role.Receptionist,
+                    Role.LaboratoryStaff,
+                    Role.ImagingTechnician,
+                ],
+            },
+        ],
+        requiredPermissions: [ResourceType.VaccinationReception],
+        requiredRoles: [
+            Role.Administrator,
+            Role.Doctor,
+            Role.Nurse,
+            Role.Receptionist,
+            Role.LaboratoryStaff,
+            Role.ImagingTechnician,
+        ],
     },
     {
         icon: <Vaccines />,
