@@ -220,6 +220,7 @@ export default function ExaminationServicePage() {
     ) => {
         const departmentId = parseInt(formData.departmentId as string);
         const payload = {
+            serviceId: formData.id!,
             serviceCode: formData.serviceCode,
             serviceName: formData.serviceName,
             unitPrice: formData.unitPrice,

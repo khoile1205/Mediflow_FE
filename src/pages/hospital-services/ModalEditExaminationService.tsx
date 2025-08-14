@@ -32,6 +32,7 @@ interface ExaminationServiceWithParams extends ExaminationService {
 }
 
 interface ExaminationServiceFormValues {
+    serviceId: number;
     serviceCode: string;
     serviceName: string;
     unitPrice: number;
@@ -175,6 +176,7 @@ function ModalEditExaminationService({ open, defaultValues, onClose, onSave }: M
 
         onSave({
             id: defaultValues?.id,
+            serviceId: defaultValues?.id,
             serviceCode: values.serviceCode,
             serviceName: values.serviceName,
             unitPrice: Number(values.unitPrice),

@@ -60,6 +60,7 @@ export interface CreateExaminationServiceRequest {
 }
 
 export interface UpdateExaminationServiceRequest {
+    serviceId: number;
     serviceName: string;
     serviceCode: string;
     unitPrice: number;
