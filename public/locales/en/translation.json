@@ -983,5 +983,19 @@
     "NOT_FOUND_APPOINTMENT_WITH_PATIENT_ID": "Appointment with patient ID {{id}} was not found.",
     "NOT_FOUND_APPOINTMENT_WITH_DATE": "Appointment with date {{date}} was not found.",
     "INVALID_SERVICE_CODE": "Invalid service code",
-    "OVERVIEW": "Overview"
+    "OVERVIEW": "Overview",
+    "CURRENT_PATIENTS": "Current Patients",
+    "TODAY_INJECTIONS": "Today's Injections",
+    "CURRENT_REVENUE": "Current Revenue",
+    "PROCESSED_ORDERS": "Processed Orders",
+    "PATIENTS_TREND_BY_MONTH": "Patient Trend by Month",
+    "VACCINE_TRAFFIC_CHART": "Vaccine Traffic",
+    "REVENUE_TREND_BY_MONTH": "Revenue Trend by Month",
+    "MONTH": "Month",
+    "YEAR": "Year",
+    "PATIENTS_UNIT": "patients",
+    "DOSES_UNIT": "doses",
+    "USED_DOSES": "Used",
+    "REVENUE_OF_MONTH": "Revenue of month",
+    "REVENUE": "Revenue"
 }

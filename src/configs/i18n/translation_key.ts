@@ -637,6 +637,21 @@ const applicationTranslationKey = {
     serviceHospital: "SERVICE_HOSPITAL",
     examinationService: "EXAMINATION_SERVICE",
     overview: "OVERVIEW",
+    // Overview Statistics
+    currentPatients: "CURRENT_PATIENTS",
+    todayInjections: "TODAY_INJECTIONS",
+    currentRevenue: "CURRENT_REVENUE",
+    processedOrders: "PROCESSED_ORDERS",
+    patientsTrendByMonth: "PATIENTS_TREND_BY_MONTH",
+    vaccineTrafficChart: "VACCINE_TRAFFIC_CHART",
+    revenueTrendByMonth: "REVENUE_TREND_BY_MONTH",
+    month: "MONTH",
+    year: "YEAR",
+    patientsUnit: "PATIENTS_UNIT",
+    dosesUnit: "DOSES_UNIT",
+    usedDoses: "USED_DOSES",
+    revenueOfMonth: "REVENUE_OF_MONTH",
+    revenue: "REVENUE",
 };
 
 const exceptionTranslationKey = {
