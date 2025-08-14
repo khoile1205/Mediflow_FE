@@ -985,5 +985,6 @@
     "SERVICE": "Dịch vụ",
     "SERVICE_HOSPITAL": "Dịch vụ bệnh viện",
     "EXAMINATION_SERVICE": "Dịch vụ xét nghiệm",
-    "INVALID_SERVICE_CODE": "Mã dịch vụ không hợp lệ"
+    "INVALID_SERVICE_CODE": "Mã dịch vụ không hợp lệ",
+    "OVERVIEW": "Tổng quan"
 }

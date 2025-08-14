@@ -636,6 +636,7 @@ const applicationTranslationKey = {
     service: "SERVICE",
     serviceHospital: "SERVICE_HOSPITAL",
     examinationService: "EXAMINATION_SERVICE",
+    overview: "OVERVIEW",
 };
 
 const exceptionTranslationKey = {

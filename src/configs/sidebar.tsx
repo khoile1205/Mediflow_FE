@@ -6,6 +6,7 @@ import {
     EventNote,
     Healing,
     Home,
+    HomeOutlined,
     Inventory2,
     LocalHospital,
     MedicationLiquid,
@@ -26,6 +27,12 @@ export const sidebarTree: SidebarTabProps[] = [
         icon: <Home />,
         labelKey: i18n.translationKey.home,
         pathName: "/",
+    },
+    {
+        icon: <HomeOutlined />,
+        labelKey: i18n.translationKey.overview,
+        pathName: "/management/overview",
+        ...getRoutePermissions("/management/overview"),
     },
     {
         icon: <LocalHospital />,

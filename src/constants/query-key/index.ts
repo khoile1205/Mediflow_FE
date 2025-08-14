@@ -169,6 +169,10 @@ const SupplierQueryKey = {
     DELETE_SUPPLIER: "deleteSupplier",
 };
 
+const StatisticQueryKey = {
+    GET_OVERVIEW: "getOverview",
+};
+
 export const QueryKey = {
     SUPPLIER: SupplierQueryKey,
     UPLOAD_FILE: UploadFileQueryKey,
@@ -185,4 +189,5 @@ export const QueryKey = {
     APPOINTMENT: AppointmentQueryKey,
     EXAMINATION: ExaminationQueryKey,
     AUTH: AuthQueryKey,
+    STATISTIC: StatisticQueryKey,
 };

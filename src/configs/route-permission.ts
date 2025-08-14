@@ -89,4 +89,5 @@ export const routePermissions: RoutePermissionMap = {
         Role.HeadOfDepartment,
         Role.ITSupport,
     ]),
+    "/management/overview": createRoute(ResourceType.Management, managementRequiredRoles),
 };
