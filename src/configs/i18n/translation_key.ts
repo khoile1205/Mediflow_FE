@@ -642,6 +642,8 @@ const applicationTranslationKey = {
     viewDetail: "VIEW_DETAIL",
     searchTerm: "SEARCH_TERM",
     importPrice: "IMPORT_PRICE",
+    medicineImportList: "MEDICINE_IMPORT_LIST",
+    back: "BACK",
 };
 
 const exceptionTranslationKey = {

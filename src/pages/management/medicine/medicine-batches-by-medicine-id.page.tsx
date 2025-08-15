@@ -1,10 +1,11 @@
-import { Box } from "@mui/material";
+import { ArrowBack } from "@mui/icons-material";
+import { Box, Link } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { ColDef, RowClassParams } from "ag-grid-community";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import AgDataGrid from "~/components/common/ag-grid/ag-grid";
 import { useAgGrid } from "~/components/common/ag-grid/hooks";
 import DynamicForm from "~/components/form/dynamic-form";
@@ -26,8 +27,9 @@ export default function MedicineBatchesByMedicineIdPage() {
 
     const form = useForm<SearchFormValues>({ defaultValues: { batchNumber: "" } });
     const { pageIndex, pageSize, handlePageChange } = usePagination();
+    const navigate = useNavigate();
 
-    const { onGridReady } = useAgGrid({ rowSelection: "single" });
+    const agGrid = useAgGrid({ rowSelection: "single" });
 
     const [batchNumber, setBatchNumber] = useState("");
     const debouncedBatchNumber = useDebounce(batchNumber, 500);
@@ -62,7 +64,7 @@ export default function MedicineBatchesByMedicineIdPage() {
         refetch();
     }, [pageIndex, pageSize, debouncedBatchNumber, refetch]);
 
-    const rows = data?.data ?? [];
+    const rowData = data?.data ?? [];
     const totalItems = data?.totalItems ?? 0;
 
     const columns = useMemo<ColDef[]>(
@@ -71,25 +73,27 @@ export default function MedicineBatchesByMedicineIdPage() {
                 headerName: t(i18n.translationKey.no),
                 valueGetter: ({ node }) => (node ? (node.rowIndex ?? 0) + 1 : 1),
                 width: 90,
-                sortable: false,
             },
-            { headerName: t(i18n.translationKey.medicineName), field: "medicineName", flex: 2, sortable: true },
-            { headerName: t(i18n.translationKey.batchNumber), field: "batchNumber", flex: 1, sortable: true },
-            { headerName: t(i18n.translationKey.importDate), field: "importDate", flex: 1, sortable: true },
-            { headerName: t(i18n.translationKey.expiryDate), field: "expiryDate", flex: 1, sortable: true },
+            { headerName: t(i18n.translationKey.medicineName), field: "medicineName", flex: 2 },
+            { headerName: t(i18n.translationKey.batchNumber), field: "batchNumber", flex: 1 },
+            { headerName: t(i18n.translationKey.importDate), field: "importDate", flex: 1 },
+            { headerName: t(i18n.translationKey.expiryDate), field: "expiryDate", flex: 1 },
             {
                 headerName: t(i18n.translationKey.importPrice),
                 field: "importPrice",
                 flex: 1,
-                sortable: true,
                 valueFormatter: ({ value }) => (value == null ? "" : `${Number(value).toLocaleString("vi-VN")} VNĐ`),
                 cellClass: "text-link",
             },
-            { headerName: t(i18n.translationKey.supplier), field: "supplierName", flex: 1, sortable: true },
-            { headerName: t(i18n.translationKey.manufacturer), field: "manufacturerName", flex: 1, sortable: true },
-            { headerName: t(i18n.translationKey.quantity), field: "quantity", flex: 1, sortable: true },
+            { headerName: t(i18n.translationKey.supplier), field: "supplierName", flex: 1 },
+            {
+                headerName: t(i18n.translationKey.manufacturer),
+                field: "manufacturerName",
+                flex: 1,
+            },
+            { headerName: t(i18n.translationKey.quantity), field: "quantity", flex: 1 },
         ],
-        [t],
+        [],
     );
 
     const rowClassRules = useMemo(
@@ -115,7 +119,7 @@ export default function MedicineBatchesByMedicineIdPage() {
           }
         `}
             </style>
-            <Box sx={{ marginTop: 2 }}>
+            <Box sx={{ marginTop: 2 }} display="flex" justifyContent="space-between" alignItems="center">
                 <DynamicForm form={form}>
                     <FormItem
                         render="text-input"
@@ -125,27 +129,34 @@ export default function MedicineBatchesByMedicineIdPage() {
                         sx={{ maxWidth: 400 }}
                     />
                 </DynamicForm>
+                <Link
+                    component="button"
+                    underline="none"
+                    color="primary"
+                    fontWeight={500}
+                    sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 2 }}
+                    onClick={() => navigate("/pharmacy/medicine-import-list")}
+                >
+                    <ArrowBack fontSize="small" sx={{ mr: 0.5 }} /> {t(i18n.translationKey.back)}
+                </Link>
             </Box>
 
-            {rows.length === 0 && !isFetching && (
+            {rowData.length === 0 && !isFetching && (
                 <Box sx={{ textAlign: "center", padding: 2 }}>{t(i18n.translationKey.noData)}</Box>
             )}
-            <Box className="custom-ag-grid" sx={{ height: "600px", overflow: "auto" }}>
-                <AgDataGrid
-                    onGridReady={onGridReady}
-                    columnDefs={columns}
-                    rowData={rows}
-                    rowSelection="single"
-                    pagination
-                    pageIndex={pageIndex}
-                    pageSize={pageSize}
-                    totalItems={totalItems}
-                    onPageChange={handlePageChange}
-                    loading={isFetching}
-                    domLayout="normal"
-                    rowClassRules={rowClassRules}
-                />
-            </Box>
+
+            <AgDataGrid
+                columnDefs={columns}
+                rowData={rowData}
+                pagination
+                pageIndex={pageIndex}
+                pageSize={pageSize}
+                totalItems={totalItems}
+                onPageChange={handlePageChange}
+                loading={isFetching}
+                rowClassRules={rowClassRules}
+                {...agGrid}
+            />
         </Box>
     );
 }

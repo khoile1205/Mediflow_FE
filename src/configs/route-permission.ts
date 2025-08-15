@@ -66,6 +66,12 @@ export const routePermissions: RoutePermissionMap = {
     "/pharmacy/import": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/pharmacy/expired-medicine": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/pharmacy/expired-return-form": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
+    "/pharmacy/limit-stock": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
+    "/pharmacy/medicine-quantity-statistics/medicines/:medicineId/medicine-batches": createRoute(
+        ResourceType.Inventory,
+        inventoryRequiredRoles,
+    ),
+    "/pharmacy/medicine-import-list": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
 
     // Medicine Management
     "/medicine/medicine-list": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
@@ -74,10 +80,8 @@ export const routePermissions: RoutePermissionMap = {
     "/medicine/medicine-interaction-list": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/medicine/medicine-price-list": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/medicine/create-medicine-price": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
-
+    "/medicine/medicine-statistics": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     // Inventory Management
-    "/inventory/limit-stock": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
-
     // Contract Management
     "/contract/supplier": createRoute(ResourceType.Management, contractRequiredRoles),
 

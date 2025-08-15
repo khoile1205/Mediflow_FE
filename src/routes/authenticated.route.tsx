@@ -53,6 +53,12 @@ export const AuthenticatedRoutes = (
             <Route path="import" element={<ImportInventoryFromSupplier />} />
             <Route path="expired-medicine" element={<NearlyExpiredMedicineBatchPage />} />
             <Route path="expired-return-form" element={<ExpiredReturnManagementPage />} />
+            <Route path="medicine-import-list" element={<MedicineQuantityStatisticsPage />} />
+            <Route path="limit-stock" element={<InventoryLimitStockPage />} />
+            <Route
+                path="medicine-quantity-statistics/medicines/:medicineId/medicine-batches"
+                element={<MedicineBatchesByMedicineIdPage />}
+            />
         </Route>
 
         <Route path="/medicine">
@@ -62,16 +68,9 @@ export const AuthenticatedRoutes = (
             <Route path="medicine-interaction-list" element={<MedicineInteractionListPage />} />
             <Route path="medicine-price-list" element={<MedicinePriceListPage />} />
             <Route path="create-medicine-price" element={<CreateMedicinePricePage />} />
-            <Route path="medicine-statistics" element={<MedicineQuantityStatisticsPage />} />
         </Route>
 
-        <Route path="/inventory">
-            <Route path="limit-stock" element={<InventoryLimitStockPage />} />
-            <Route
-                path="medicine-quantity-statistics/medicines/:medicineId/medicine-batches"
-                element={<MedicineBatchesByMedicineIdPage />}
-            />
-        </Route>
+        {/* <Route path="/inventory"></Route> */}
 
         <Route path="/contract">
             <Route path="supplier" element={<SupplierManagementPage />} />

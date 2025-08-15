@@ -988,5 +988,7 @@
     "BATCH_DETAILS": "Batch details",
     "VIEW_DETAIL": "View detail",
     "SEARCH_TERM": "Search term",
-    "IMPORT_PRICE": "Import price"
+    "IMPORT_PRICE": "Import price",
+    "MEDICINE_IMPORT_LIST": "Medicine Import List",
+    "BACK": "Back"
 }

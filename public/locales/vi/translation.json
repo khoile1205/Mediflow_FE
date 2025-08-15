@@ -991,5 +991,7 @@
     "BATCH_DETAILS": "Chi tiết lô hàng",
     "VIEW_DETAIL": "Xem chi tiết",
     "SEARCH_TERM": "Tìm kiếm",
-    "IMPORT_PRICE": "Giá nhập"
+    "IMPORT_PRICE": "Giá nhập",
+    "MEDICINE_IMPORT_LIST": "Danh sách nhập dược",
+    "BACK": "Quay lại"
 }

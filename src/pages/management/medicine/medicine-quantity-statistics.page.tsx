@@ -27,7 +27,7 @@ export default function MedicineQuantityStatisticsPage() {
     const form = useForm<SearchFormValues>({ defaultValues: { searchTerm: "" } });
     const { pageIndex, pageSize, handlePageChange } = usePagination();
 
-    const { onGridReady } = useAgGrid({ rowSelection: "single" });
+    const agGrid = useAgGrid({});
 
     const [searchTerm, setSearchTerm] = useState("");
     const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -128,7 +128,7 @@ export default function MedicineQuantityStatisticsPage() {
                 },
                 onCellClicked: (p) => {
                     const id = p.data?.medicineId;
-                    if (id) navigate(`/inventory/medicine-quantity-statistics/medicines/${id}/medicine-batches`);
+                    if (id) navigate(`/pharmacy/medicine-quantity-statistics/medicines/${id}/medicine-batches`);
                 },
             },
         ],
@@ -149,24 +149,17 @@ export default function MedicineQuantityStatisticsPage() {
                 </DynamicForm>
             </Box>
 
-            {rows.length === 0 && !isFetching && (
-                <Box sx={{ textAlign: "center", padding: 2 }}>{t(i18n.translationKey.noData)}</Box>
-            )}
-            <Box className="custom-ag-grid" sx={{ height: "600px", overflow: "auto" }}>
-                <AgDataGrid
-                    onGridReady={onGridReady}
-                    columnDefs={columns}
-                    rowData={rows}
-                    rowSelection="single"
-                    pagination
-                    pageIndex={pageIndex}
-                    pageSize={pageSize}
-                    totalItems={totalItems}
-                    onPageChange={handlePageChange}
-                    loading={isFetching}
-                    domLayout="normal"
-                />
-            </Box>
+            <AgDataGrid
+                columnDefs={columns}
+                rowData={rows}
+                pagination
+                pageIndex={pageIndex}
+                pageSize={pageSize}
+                totalItems={totalItems}
+                onPageChange={handlePageChange}
+                loading={isFetching}
+                {...agGrid}
+            />
         </Box>
     );
 }
