@@ -636,6 +636,14 @@ const applicationTranslationKey = {
     service: "SERVICE",
     serviceHospital: "SERVICE_HOSPITAL",
     examinationService: "EXAMINATION_SERVICE",
+    numberOfBatches: "NUMBER_OF_BATCHES",
+    totalQuantity: "TOTAL_QUANTITY",
+    batchDetails: "BATCH_DETAILS",
+    viewDetail: "VIEW_DETAIL",
+    searchTerm: "SEARCH_TERM",
+    importPrice: "IMPORT_PRICE",
+    medicineImportList: "MEDICINE_IMPORT_LIST",
+    back: "BACK",
 };
 
 const exceptionTranslationKey = {
