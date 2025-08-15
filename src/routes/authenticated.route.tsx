@@ -25,6 +25,8 @@ import VaccinationPage from "~/pages/vaccination";
 import VaccinationHistory from "~/pages/vaccination/vaccination-history/vaccination-history";
 import AuthenticatedGuard from "../guards/authenticated.guard";
 import { ExpiredReturnManagementPage } from "~/pages/pharmacy/expired-return-form";
+import MedicineQuantityStatisticsPage from "~/pages/management/medicine/medicine-quantity-statistics.page";
+import MedicineBatchesByMedicineIdPage from "~/pages/management/medicine/medicine-batches-by-medicine-id.page";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -60,10 +62,15 @@ export const AuthenticatedRoutes = (
             <Route path="medicine-interaction-list" element={<MedicineInteractionListPage />} />
             <Route path="medicine-price-list" element={<MedicinePriceListPage />} />
             <Route path="create-medicine-price" element={<CreateMedicinePricePage />} />
+            <Route path="medicine-statistics" element={<MedicineQuantityStatisticsPage />} />
         </Route>
 
         <Route path="/inventory">
             <Route path="limit-stock" element={<InventoryLimitStockPage />} />
+            <Route
+                path="medicine-quantity-statistics/medicines/:medicineId/medicine-batches"
+                element={<MedicineBatchesByMedicineIdPage />}
+            />
         </Route>
 
         <Route path="/contract">

@@ -982,5 +982,11 @@
     "NOT_FOUND_APPOINTMENT_WITH_ID": "Appointment with ID {{id}} was not found.",
     "NOT_FOUND_APPOINTMENT_WITH_PATIENT_ID": "Appointment with patient ID {{id}} was not found.",
     "NOT_FOUND_APPOINTMENT_WITH_DATE": "Appointment with date {{date}} was not found.",
-    "INVALID_SERVICE_CODE": "Invalid service code"
+    "INVALID_SERVICE_CODE": "Invalid service code",
+    "NUMBER_OF_BATCHES": "Number of batches",
+    "TOTAL_QUANTITY": "Total quantity",
+    "BATCH_DETAILS": "Batch details",
+    "VIEW_DETAIL": "View detail",
+    "SEARCH_TERM": "Search term",
+    "IMPORT_PRICE": "Import price"
 }

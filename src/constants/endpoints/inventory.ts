@@ -72,6 +72,13 @@ const expiredReturnEndpoints = {
     getAllExpiredMedicineBatchForms: `${expiredReturnEndpointPrefix}/`,
     getExpiredMedicineBatchFormById: (id: number) => `${expiredReturnEndpointPrefix}/${id}`,
 };
+
+const medicineQuantityStatisticsEndpoints = {
+    getList: `${inventoryEndpointPrefix}/medicine-quantity-statistics`,
+    getBatchesByMedicineId: (medicineId: number | string) =>
+        `${inventoryEndpointPrefix}/medicine-quantity-statistics/medicines/${medicineId}/medicine-batches`,
+};
+
 export const inventoryEndpoints = {
     medicine: medicineEndpoints,
     medicinePrice: medicinePriceEndpoints,
@@ -83,4 +90,5 @@ export const inventoryEndpoints = {
     vaccineType: vaccineTypeEndpoints,
     medicineInteraction: medicineInteractionEndpoints,
     expiredReturn: expiredReturnEndpoints,
+    medicineQuantityStatistics: medicineQuantityStatisticsEndpoints,
 };
