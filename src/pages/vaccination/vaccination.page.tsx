@@ -49,6 +49,7 @@ const VaccinationPage: React.FC = () => {
     const [isOpenTestingModal, setIsOpenTestingModal] = React.useState<boolean>(false);
     const [isStartEnabled, setIsStartEnabled] = React.useState(false);
     const [isOpenRejectModal, setIsOpenRejectModal] = React.useState<boolean>(false);
+    const [isAllowReject, setIsAllowReject] = React.useState<boolean>(false);
     // Queries
     const {
         data: { waitingPatientList },
@@ -83,7 +84,15 @@ const VaccinationPage: React.FC = () => {
     );
 
     const vaccineColumnDefs: ColDef<MedicineVaccinationInformation>[] = [
-        { checkboxSelection: true, headerCheckboxSelection: true, width: 50, pinned: true, resizable: false },
+        // { checkboxSelection: true, headerCheckboxSelection: true, width: 50, pinned: true, resizable: false },
+        {
+            headerName: t(i18n.translationKey.no),
+            valueGetter: (p) => p.node?.rowIndex + 1,
+            width: 60,
+            pinned: "left",
+            suppressSizeToFit: true,
+            cellClass: "text-center",
+        },
         {
             field: "medicineName",
             headerName: t(i18n.translationKey.vaccineSerumName),
@@ -102,6 +111,9 @@ const VaccinationPage: React.FC = () => {
             field: "isConfirmed",
             headerName: t(i18n.translationKey.vaccinationConfirmation),
             valueGetter: (params) => {
+                if (params.data.isRejected) {
+                    return t(i18n.translationKey.rejected);
+                }
                 return params.data.isConfirmed ? t(i18n.translationKey.isInjected) : t(i18n.translationKey.notInjected);
             },
             cellClass: "ag-cell-center",
@@ -199,6 +211,7 @@ const VaccinationPage: React.FC = () => {
                 vaccinationForm.setValue("testResult", selectedMedicine.testResultEntry);
                 vaccinationForm.setValue("doctorId", user.id);
                 vaccinationForm.setValue("injectionDate", new Date());
+                setIsAllowReject(selectedMedicine.isRejected || selectedMedicine.isConfirmed);
             } else {
                 const currentPatientId = vaccinationForm.getValues("patientId");
                 vaccinationForm.reset();
@@ -521,7 +534,7 @@ const VaccinationPage: React.FC = () => {
                                         !(
                                             selectedVaccinationMedicineCount != 0 &&
                                             vaccinationForm.watch("receptionVaccinationId")
-                                        )
+                                        ) || isAllowReject
                                     }
                                 >
                                     {t(i18n.translationKey.rejectInjection)}

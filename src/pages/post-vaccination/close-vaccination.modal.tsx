@@ -9,17 +9,16 @@ import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
-import { useQueryGetPendingVaccinationTodayByReceptionId } from "~/services/vaccination/hooks/queries";
-import { PendingVaccination } from "~/services/vaccination/infras";
+import { PendingVaccination, PendingVaccinationTodayResponse } from "~/services/vaccination/infras";
 import { addDaysToDate, formatDate } from "~/utils/date-time";
 import { CloseVaccinationFormValues } from "./types";
 
 interface CloseVaccinationModalProps {
-    receptionId: number;
     open: boolean;
     onSubmit?: (data: CloseVaccinationFormValues) => Promise<void>;
+    pendingVaccinations: PendingVaccinationTodayResponse;
 }
-const CloseVaccinationModal: React.FC<CloseVaccinationModalProps> = ({ receptionId, open, onSubmit }) => {
+const CloseVaccinationModal: React.FC<CloseVaccinationModalProps> = ({ open, onSubmit, pendingVaccinations }) => {
     const { t } = useTranslation();
     const agGrid = useAgGrid<PendingVaccination>({});
 
@@ -29,9 +28,6 @@ const CloseVaccinationModal: React.FC<CloseVaccinationModalProps> = ({ reception
             reScheduleDate: null,
         },
     });
-    const {
-        data: { pendingVaccinations },
-    } = useQueryGetPendingVaccinationTodayByReceptionId(receptionId);
 
     const handleCloseVaccination = async (data: CloseVaccinationFormValues) => {
         await onSubmit(data);

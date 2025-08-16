@@ -20,6 +20,7 @@ import { formatDate } from "~/utils/date-time";
 import CloseVaccinationModal from "./close-vaccination.modal";
 import { useMutationCloseReception } from "~/services/vaccination/hooks/mutations";
 import { CloseVaccinationFormValues } from "./types";
+import { useQueryGetPendingVaccinationTodayByReceptionId } from "~/services/vaccination/hooks/queries";
 
 const PostVaccinationPage: React.FC = () => {
     const { t } = useTranslation();
@@ -57,6 +58,9 @@ const PostVaccinationPage: React.FC = () => {
 
     const { patients: listPatients = [] } = useQueryPostVaccinationPatients(searchName);
     const { medicines: postVaccinationMedicines = [] } = useQueryPostVaccinationMedicines(selectedReceptionId);
+    const {
+        data: { pendingVaccinations },
+    } = useQueryGetPendingVaccinationTodayByReceptionId(selectedReceptionId);
 
     const { mutateAsync: updatePostVaccination } = useMutationUpdatePostVaccinationResult();
     const { mutateAsync: closeVaccination } = useMutationCloseReception();
@@ -279,7 +283,10 @@ const PostVaccinationPage: React.FC = () => {
                                 variant="contained"
                                 color="primary"
                                 onClick={() => {
-                                    if (followUpForm.watch("testResult") === TestResultStatus.POSITIVE) {
+                                    if (
+                                        followUpForm.watch("testResult") === TestResultStatus.POSITIVE &&
+                                        pendingVaccinations.totalPendingDoses > 0
+                                    ) {
                                         setOpenCloseReceptionModal(true);
                                     } else {
                                         handleSave();
@@ -472,9 +479,9 @@ const PostVaccinationPage: React.FC = () => {
                 </DynamicForm>
             </Box>
             <CloseVaccinationModal
-                receptionId={selectedReceptionId}
                 open={openCloseReceptionModal}
                 onSubmit={handleCloseVaccination}
+                pendingVaccinations={pendingVaccinations}
             />
         </Box>
     );

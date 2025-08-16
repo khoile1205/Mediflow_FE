@@ -22,6 +22,7 @@ export type MedicineVaccinationInformation = {
     medicineName: string;
     isRequiredTesting: boolean;
     isConfirmed: boolean;
+    isRejected?: boolean;
     testResultEntry?: string;
     startTestingTime?: Date;
     doctorName?: string;
