@@ -24,6 +24,18 @@ export const useMutationPatientReception = () => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.RECEPTION.GET_AVAILABLE_PATIENT_RECEPTIONS],
             });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_PATIENT_LIST],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.HOSPITAL_FEE.GET_PAYMENT_DETAIL_BY_PAYMENT_ID],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.HOSPITAL_FEE.GET_PATIENT_PAYMENT_LIST],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_SERVICE_BY_PATIENT_ID],
+            });
             showToast.success(i18n.t(i18n.translationKey.patientReceptionSuccessfully));
         },
     });

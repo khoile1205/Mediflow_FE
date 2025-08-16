@@ -17,6 +17,12 @@ export const useMutationUpdatePostVaccinationResult = () => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.POST_VACCINATION.GET_PATIENT_LIST],
             });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.POST_VACCINATION.GET_MEDICINE_LIST],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.VACCINATION.GET_WAITING_PATIENT_VACCINATION_LIST],
+            });
             showToast.success(i18n.t(i18n.translationKey.updatePostVaccinationResultSuccessfully));
         },
     });
