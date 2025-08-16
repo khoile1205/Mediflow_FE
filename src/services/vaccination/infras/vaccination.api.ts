@@ -9,6 +9,9 @@ import {
     UpdateVaccinationStatusRequest,
     WaitingPatientVaccination,
     VaccinationHistoryResponse,
+    RejectVaccinationRequest,
+    PendingVaccinationTodayResponse,
+    ClosingReceptionRequest,
 } from "./types";
 
 const getWaitingPatientVaccinationList = async ({ searchTerm = "" }: ISearchParam) => {
@@ -66,6 +69,29 @@ const getVaccinationHistory = async (patientId: number) => {
     });
 };
 
+const rejectInject = async (receptionVaccinationId: number, data: RejectVaccinationRequest) => {
+    return await callApi({
+        url: endpoints.vaccination.rejectInject(receptionVaccinationId),
+        method: HttpMethod.PUT,
+        data,
+    });
+};
+
+const getPendingVaccinationsToday = async (receptionId: number) => {
+    return await callApi<PendingVaccinationTodayResponse>({
+        url: endpoints.vaccination.getPendingVaccinationsToday(receptionId),
+        method: HttpMethod.GET,
+    });
+};
+
+const closingReception = async (receptionId: number, data: ClosingReceptionRequest) => {
+    return await callApi({
+        url: endpoints.vaccination.closingReception(receptionId),
+        method: HttpMethod.PUT,
+        data,
+    });
+};
+
 export const vaccinationApis = {
     getWaitingPatientVaccinationList,
     getMedicineVaccinationByReceptionId,
@@ -74,4 +100,7 @@ export const vaccinationApis = {
     injectVaccine,
     confirmVaccinationToday,
     getVaccinationHistory,
+    rejectInject,
+    getPendingVaccinationsToday,
+    closingReception,
 };

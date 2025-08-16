@@ -27,8 +27,7 @@ import {
 } from "@mui/icons-material";
 import { SidebarTabProps } from "~/components/layout/sidebar/tabs/sidebar.tab";
 import i18n from "./i18n";
-import { ResourceType, routePermissions } from "./route-permission";
-import { Role } from "~/constants/roles";
+import { routePermissions } from "./route-permission";
 
 const getRoutePermissions = (path: string) => routePermissions[path];
 
@@ -97,40 +96,20 @@ export const sidebarTree: SidebarTabProps[] = [
                 labelKey: i18n.translationKey.serviceHospital,
                 pathName: "/service/hospital-service",
                 icon: <LocalHospital />, // Hospital
-                requiredPermissions: [ResourceType.VaccinationReception],
-                requiredRoles: [
-                    Role.Administrator,
-                    Role.Doctor,
-                    Role.Nurse,
-                    Role.Receptionist,
-                    Role.LaboratoryStaff,
-                    Role.ImagingTechnician,
-                ],
+                ...getRoutePermissions("/service/hospital-service"),
             },
             {
                 labelKey: i18n.translationKey.examinationService,
                 pathName: "/service/examination-service",
                 icon: <Assignment />, // General service task
-                requiredPermissions: [ResourceType.VaccinationReception],
-                requiredRoles: [
-                    Role.Administrator,
-                    Role.Doctor,
-                    Role.Nurse,
-                    Role.Receptionist,
-                    Role.LaboratoryStaff,
-                    Role.ImagingTechnician,
-                ],
+                ...getRoutePermissions("/service/examination-service"),
             },
         ],
-        requiredPermissions: [ResourceType.VaccinationReception],
-        requiredRoles: [
-            Role.Administrator,
-            Role.Doctor,
-            Role.Nurse,
-            Role.Receptionist,
-            Role.LaboratoryStaff,
-            Role.ImagingTechnician,
-        ],
+        ...Object.assign(
+            {},
+            getRoutePermissions("/service/hospital-service"),
+            getRoutePermissions("/service/examination-service"),
+        ),
     },
     {
         icon: <Vaccines />, // Vaccination

@@ -990,5 +990,21 @@
     "SEARCH_TERM": "Search term",
     "IMPORT_PRICE": "Import price",
     "MEDICINE_IMPORT_LIST": "Medicine Import List",
-    "BACK": "Back"
+    "BACK": "Back",
+    "CLOSE_VACCINATION_CONFIRMATION": "Close vaccination confirmation",
+    "STEP": "Step {{step}}",
+    "PENDING_VACCINATION_TODAY": "There are {{count}} pending vaccinations today",
+    "CHECK_BEFORE_CONFIRM": "Check before confirm",
+    "PENDING_DOSES": "Pending doses",
+    "PROVIDE_CLOSE_VACCINATION_INFO": "Provide close vaccination information",
+    "ISSUE_NOTE": "Issue note",
+    "RESCHEDULE_DATE": "Reschedule date",
+    "NUMBER_OF_DAYS": "{{day}} days",
+    "RESCHEDULE_VACCINATION_AFTER": "Reschedule vaccination after",
+    "CLOSE_VACCINATION": "Close vaccination",
+    "REJECT_INJECTION": "Reject injection",
+    "CONFIRM_REJECT_INJECTED_SUCCESSFULLY": "Injection rejection confirmed successfully.",
+    "CONFIRM_CLOSING_RECEPTION_SUCCESSFULLY": "Reception closed successfully.",
+    "DOCTOR_PRESCRIBED_VACCINES": "Doctor prescribed vaccines",
+    "CUSTOMER_WAREHOUSE_VACCINES": "Customer warehouse vaccines"
 }

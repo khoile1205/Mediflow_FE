@@ -1,30 +1,31 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import { Dialog, Grid, SelectChangeEvent } from "@mui/material";
+import { AddCircle, Delete, Recycling, Save } from "@mui/icons-material";
+import { Dialog, Grid, Stack } from "@mui/material";
 import { RowSelectedEvent } from "node_modules/ag-grid-community/dist/types/src/events";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ActionButton } from "~/components/common/action-button";
+import { useAgGrid } from "~/components/common/ag-grid";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
-import { ActionButton } from "~/components/common/action-button";
-import { AddCircle, Delete, Recycling, Save } from "@mui/icons-material";
-import { I18N_LANGUAGE } from "~/configs/i18n/types";
+import { PHONE_NUMBER_PATTERN } from "~/components/form/validation/pattern";
 import i18n from "~/configs/i18n";
-import { useStaffForm } from "./hooks";
+import { I18N_LANGUAGE } from "~/configs/i18n/types";
+import { Staff } from "~/entities";
 import { usePagination } from "~/hooks";
+import { useQueryDepartmentsWithPagination } from "~/services/management/department/hooks/queries";
+import {
+    useMutationCreateUser,
+    useMutationDeleteUser,
+    useMutationResetPassword,
+    useMutationUpdateUser,
+} from "~/services/management/user/hooks/mutation";
 import {
     useQueryRoleNames,
     useQueryUserById,
     useQueryUsersWithPagination,
 } from "~/services/management/user/hooks/queries";
-import { useAgGrid } from "~/components/common/ag-grid";
-import {
-    useMutationCreateUser,
-    useMutationUpdateUser,
-    useMutationDeleteUser,
-    useMutationResetPassword,
-} from "~/services/management/user/hooks/mutation";
+import { useStaffForm } from "./hooks";
 import { StaffFormValues } from "./types";
-import { useQueryDepartmentsWithPagination } from "~/services/management/department/hooks/queries";
-import { Staff } from "~/entities";
 
 export const UserManagement: React.FC = () => {
     const { t, i18n: reactI18n } = useTranslation();
@@ -33,8 +34,8 @@ export const UserManagement: React.FC = () => {
     const [isAddingNewUser, setIsAddingNewUser] = useState(false);
     const [isEditingUser, setIsEditingUser] = useState(false);
 
-    const [selectedRoleName, setSelectedRoleName] = useState<string>(null);
-    const [selectedDepartmentId, setSelectedDepartmentId] = useState<number>(null);
+    const [, setSelectedRoleName] = useState<string>(null);
+    const [, setSelectedDepartmentId] = useState<number>(null);
 
     const { handlePageChange, pageIndex, pageSize } = usePagination();
 
@@ -76,7 +77,9 @@ export const UserManagement: React.FC = () => {
             form.setValue("phoneNumber", user.phoneNumber);
             form.setValue("address", user.address);
             form.setValue("profilePictureUrl", user.profilePictureUrl);
+            form.setValue("roleName", user.roles[0]);
             form.setValue("roleNames", user.roles);
+            form.setValue("departmentId", user.departments[0].id);
             form.setValue(
                 "departmentIds",
                 user.departments.map((dept) => dept.id),
@@ -93,17 +96,7 @@ export const UserManagement: React.FC = () => {
     }, [user]);
 
     const resetFormValues = () => {
-        form.resetField("id");
-        form.resetField("code");
-        form.resetField("name");
-        form.resetField("userName");
-        form.resetField("email");
-        form.resetField("phoneNumber");
-        form.resetField("address");
-        form.resetField("profilePictureUrl");
-        form.resetField("roleNames");
-        form.resetField("departmentIds");
-        form.resetField("isSuspended");
+        form.reset();
     };
 
     const handleSelectUser = (selectedRow: RowSelectedEvent<Staff>) => {
@@ -122,10 +115,18 @@ export const UserManagement: React.FC = () => {
     const { mutateAsync: deleteUser } = useMutationDeleteUser();
     const { mutateAsync: resetPassword } = useMutationResetPassword();
 
+    const prepareUserData = (data: StaffFormValues) => {
+        const { roleName, departmentId, ...rest } = data;
+
+        return {
+            ...rest,
+            roleNames: [roleName],
+            departmentIds: [departmentId],
+        };
+    };
     const handleAddNewUser = async (data: StaffFormValues) => {
-        data.roleNames = [selectedRoleName];
-        data.departmentIds = [selectedDepartmentId];
-        await createUser(data);
+        const userData = prepareUserData(data);
+        await createUser(userData);
 
         resetFormValues();
         setIsFormEnabled(false);
@@ -134,9 +135,8 @@ export const UserManagement: React.FC = () => {
     };
 
     const handleSaveUser = async (data: StaffFormValues) => {
-        data.roleNames = [selectedRoleName];
-        data.departmentIds = [selectedDepartmentId];
-        await updateUser(data);
+        const userData = prepareUserData(data);
+        await updateUser(userData);
 
         resetFormValues();
         setIsFormEnabled(false);
@@ -181,17 +181,17 @@ export const UserManagement: React.FC = () => {
                     <Grid size={8}>
                         <FormItem
                             render="data-grid"
-                            name="name"
+                            name="id"
                             label={t(i18n.translationKey.user)}
                             placeholder={t(i18n.translationKey.fullName)}
                             columnDefs={[
                                 {
                                     field: "code",
-                                    headerName: t(i18n.translationKey.departmentCode),
+                                    headerName: t(i18n.translationKey.userCode),
                                 },
                                 {
                                     field: "name",
-                                    headerName: t(i18n.translationKey.departmentName),
+                                    headerName: t(i18n.translationKey.userName),
                                 },
                                 {
                                     field: "isSuspended",
@@ -206,7 +206,6 @@ export const UserManagement: React.FC = () => {
                             rowData={listUsers}
                             onRowSelected={handleSelectUser}
                             displayField="name"
-                            valueField="id"
                             pagination
                             pageIndex={pageIndex}
                             pageSize={pageSize}
@@ -280,6 +279,7 @@ export const UserManagement: React.FC = () => {
                             disabled={!isFormEnabled}
                             render="text-input"
                             name="phoneNumber"
+                            pattern={PHONE_NUMBER_PATTERN}
                             label={t(i18n.translationKey.phoneNumber)}
                         />
                     </Grid>
@@ -313,16 +313,12 @@ export const UserManagement: React.FC = () => {
                             required
                             disabled={!isFormEnabled}
                             render="select"
-                            name=""
+                            name="roleName"
                             label={t(i18n.translationKey.userRole)}
                             options={roleNames.map((role) => ({
-                                label: role,
+                                label: role.toCase("readable"),
                                 value: role,
                             }))}
-                            value={selectedRoleName}
-                            onChange={(event: SelectChangeEvent<unknown>, _child: ReactNode) => {
-                                setSelectedRoleName(event.target.value as string);
-                            }}
                         />
                     </Grid>
                     <Grid size={4}>
@@ -330,16 +326,12 @@ export const UserManagement: React.FC = () => {
                             required
                             disabled={!isFormEnabled}
                             render="select"
-                            name=""
+                            name="departmentId"
                             label={t(i18n.translationKey.department)}
                             options={listDepartments.map((dept) => ({
                                 label: reactI18n.language === I18N_LANGUAGE.VIETNAMESE ? dept.name : dept.nameInEnglish,
                                 value: dept.id,
                             }))}
-                            value={`${selectedDepartmentId ?? ""}`}
-                            onChange={(event: SelectChangeEvent<unknown>, _child: ReactNode) => {
-                                setSelectedDepartmentId(Number(event.target.value));
-                            }}
                         />
                     </Grid>
                     <Grid size={4} justifyContent={"center"} container>
@@ -390,48 +382,40 @@ export const UserManagement: React.FC = () => {
                         />
                     </Grid>
                 </Grid>
-                <Grid container spacing={2} my={2}>
-                    <Grid container offset={8} size={4}>
-                        <Grid size={6}>
-                            <ActionButton
-                                label={t(i18n.translationKey.resetPassword)}
-                                startIcon={<Recycling />}
-                                size="small"
-                                variant="outlined"
-                                fullWidth
-                                onClick={() => {
-                                    setDialogType("reset");
-                                    setIsOpenDialog(true);
-                                }}
-                                sx={{
-                                    borderRadius: 4,
-                                    px: 2,
-                                }}
-                                className="bg-yellow-700 text-white"
-                                hidden={!isEditingUser}
-                            />
-                        </Grid>
-                        <Grid size={6}>
-                            <ActionButton
-                                label={t(i18n.translationKey.delete)}
-                                startIcon={<Delete />}
-                                size="small"
-                                variant="outlined"
-                                fullWidth
-                                onClick={() => {
-                                    setDialogType("delete");
-                                    setIsOpenDialog(true);
-                                }}
-                                sx={{
-                                    borderRadius: 4,
-                                    px: 2,
-                                }}
-                                className="bg-red-700 text-white"
-                                hidden={!isEditingUser}
-                            />
-                        </Grid>
-                    </Grid>
-                </Grid>
+                <Stack direction="row" justifyContent="flex-end" spacing={2} mt={2}>
+                    <ActionButton
+                        label={t(i18n.translationKey.resetPassword)}
+                        startIcon={<Recycling />}
+                        size="small"
+                        variant="outlined"
+                        onClick={() => {
+                            setDialogType("reset");
+                            setIsOpenDialog(true);
+                        }}
+                        sx={{
+                            borderRadius: 4,
+                            px: 2,
+                        }}
+                        className="bg-yellow-700 text-white"
+                        hidden={!isEditingUser}
+                    />
+                    <ActionButton
+                        label={t(i18n.translationKey.delete)}
+                        startIcon={<Delete />}
+                        size="small"
+                        variant="outlined"
+                        onClick={() => {
+                            setDialogType("delete");
+                            setIsOpenDialog(true);
+                        }}
+                        sx={{
+                            borderRadius: 4,
+                            px: 2,
+                        }}
+                        className="bg-red-700 text-white"
+                        hidden={!isEditingUser}
+                    />
+                </Stack>
             </DynamicForm>
 
             <Dialog open={isOpenDialog} onClose={() => setIsOpenDialog(false)}>

@@ -11,4 +11,8 @@ export const vaccinationEndpoints = {
     confirmVaccinationToday: (receptionId: number) =>
         `${vaccinationEndpointPrefix}/receptions/${receptionId}/confirm-vaccination-today`,
     getVaccinationHistory: (patientId: number) => `${vaccinationEndpointPrefix}/patient/${patientId}/history`,
+    rejectInject: (receptionVaccinationId: number) => `/vaccination-reception/${receptionVaccinationId}/reject`,
+    getPendingVaccinationsToday: (receptionId: number) =>
+        `${vaccinationEndpointPrefix}/reception/${receptionId}/pending-vaccinations-today`,
+    closingReception: (receptionId: number) => `/vaccination-reception/closing-reception/reception/${receptionId}`,
 };

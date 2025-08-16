@@ -644,6 +644,22 @@ const applicationTranslationKey = {
     importPrice: "IMPORT_PRICE",
     medicineImportList: "MEDICINE_IMPORT_LIST",
     back: "BACK",
+    closeVaccinationConfirmation: "CLOSE_VACCINATION_CONFIRMATION",
+    step: "STEP",
+    pendingVaccinationToday: "PENDING_VACCINATION_TODAY",
+    checkBeforeConfirm: "CHECK_BEFORE_CONFIRM",
+    pendingDoses: "PENDING_DOSES",
+    provideCloseVaccinationInfo: "PROVIDE_CLOSE_VACCINATION_INFO",
+    issueNote: "ISSUE_NOTE",
+    rescheduleDate: "RESCHEDULE_DATE",
+    numberOfDays: "NUMBER_OF_DAYS",
+    rescheduleVaccinationAfter: "RESCHEDULE_VACCINATION_AFTER",
+    closeVaccination: "CLOSE_VACCINATION",
+    rejectInjection: "REJECT_INJECTION",
+    confirmRejectInjectedSuccessfully: "CONFIRM_REJECT_INJECTED_SUCCESSFULLY",
+    confirmClosingReceptionSuccessfully: "CONFIRM_CLOSING_RECEPTION_SUCCESSFULLY",
+    doctorPrescribedVaccines: "DOCTOR_PRESCRIBED_VACCINES",
+    customerWarehouseVaccines: "CUSTOMER_WAREHOUSE_VACCINES",
 };
 
 const exceptionTranslationKey = {
