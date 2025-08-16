@@ -85,3 +85,29 @@ export interface VaccinationHistoryResponse {
     province: string;
     vaccinationHistoryItems: VaccinationHistoryItem[];
 }
+
+export interface RejectVaccinationRequest {
+    receptionVaccinationId: number;
+    issueNote: string;
+}
+
+export interface PendingVaccinationTodayResponse {
+    totalPendingDoses: number;
+    pendingVaccinations: PendingVaccination[];
+}
+
+export interface PendingVaccination {
+    receptionVaccinationId: number;
+    vaccineId: number;
+    vaccineName: string;
+    totalQuantity: number;
+    completedDoses: number;
+    pendingDoses: number;
+    scheduledDate: Date;
+}
+
+export interface ClosingReceptionRequest {
+    receptionId: number;
+    issueNote: string;
+    reScheduleDate: Date;
+}

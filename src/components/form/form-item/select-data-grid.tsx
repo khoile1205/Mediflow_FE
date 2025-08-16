@@ -83,13 +83,18 @@ export const AgGridDropdownFormItem = <T extends object>({
     }, []);
 
     React.useEffect(() => {
-        if (!selectedRow && !formContext.getValues(name)) return;
+        if (!selectedRow) return;
 
-        if (!formContext.getValues(name)) {
+        if (!formContext.watch(name)) {
             setSelectedRow(null);
         }
-    }, [formContext.getValues(name)]);
+    }, [formContext.watch(name)]);
 
+    React.useEffect(() => {
+        if (!selectedRow) return;
+
+        setSelectedRow(null);
+    }, [rowData]);
     return (
         <ControllerWrapper
             name={name}

@@ -35,6 +35,13 @@ export const useMutationInjectVaccine = () => {
                     variables.receptionVaccinationId,
                 ],
             });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.POST_VACCINATION.GET_PATIENT_LIST],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.POST_VACCINATION.GET_MEDICINE_LIST],
+            });
+
             showToast.success(i18n.t(i18n.translationKey.confirmInjectedSuccessfully));
         },
     });

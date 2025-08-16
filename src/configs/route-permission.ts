@@ -26,7 +26,7 @@ const vaccinationReceptionRequiredRoles = [
     Role.Receptionist,
 ];
 const vaccinationRequiredRoles = [Role.Administrator, Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
-const appointmentsRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.Doctor, Role.Receptionist];
+const appointmentsRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.Doctor];
 const examinationRequiredRoles = [
     Role.Administrator,
     Role.HeadOfDepartment,
@@ -82,6 +82,7 @@ export const routePermissions: RoutePermissionMap = {
     "/medicine/create-medicine-price": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/medicine/medicine-statistics": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     // Inventory Management
+
     // Contract Management
     "/contract/supplier": createRoute(ResourceType.Management, contractRequiredRoles),
 
@@ -93,4 +94,7 @@ export const routePermissions: RoutePermissionMap = {
         Role.HeadOfDepartment,
         Role.ITSupport,
     ]),
+
+    "/service/hospital-service": createRoute(ResourceType.HospitalService, managementRequiredRoles),
+    "/service/examination-service": createRoute(ResourceType.HospitalService, managementRequiredRoles),
 };
