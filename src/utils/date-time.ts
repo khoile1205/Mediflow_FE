@@ -1,5 +1,11 @@
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 
+export const addDaysToDate = (date: Date, days: number): Date => {
+    const newDate = new Date(date);
+    newDate.setDate(newDate.getDate() + days);
+    return newDate;
+};
+
 export const convertIsoToYYYYMMDD = (isoDateString: Date): string => {
     if (!isoDateString) return "";
 

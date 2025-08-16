@@ -19,3 +19,8 @@ export interface ReactionDetail {
     reactionDate?: string | Date;
     doctor?: string;
 }
+
+export interface CloseVaccinationFormValues {
+    issueNote: string;
+    reScheduleDate?: string;
+}

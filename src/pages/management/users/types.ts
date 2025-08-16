@@ -9,7 +9,9 @@ export interface StaffFormValues {
     phoneNumber: string;
     address: string;
     profilePictureUrl?: string;
+    roleName?: string;
     roleNames: string[];
+    departmentId?: number;
     departmentIds: number[];
     isSuspended: boolean;
 }
