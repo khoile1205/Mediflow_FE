@@ -15,6 +15,7 @@ import "./index.css";
 import { MaterialUIThemeProvider } from "./libs/material-ui/theme.provider.tsx";
 import { ReactQueryProvider } from "./libs/query-client/provider.tsx";
 import { ApplicationRoutes } from "./routes/index.tsx";
+import "~/utils/string.exts.ts";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 

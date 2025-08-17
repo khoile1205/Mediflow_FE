@@ -91,6 +91,8 @@ const InventoryQueryKey = {
     CREATE_EXPIRED_RETURN: "createExpiredReturn",
     GET_EXPIRED_MEDICINE_BATCH_FORM_BY_ID: "getExpiredMedicineBatchFormById",
     GET_ALL_EXPIRED_MEDICINE_BATCHES: "getAllExpiredMedicineBatches",
+    GET_MEDICINE_QUANTITY_STATISTICS_WITH_PAGINATION: "getMedicineQuantityStatisticsWithPagination",
+    GET_MEDICINE_BATCHES_BY_MEDICINE_ID_WITH_PAGINATION: "getMedicineBatchesByMedicineIdWithPagination",
 };
 
 const PostVaccinationQueryKey = {
@@ -131,6 +133,9 @@ const VaccinationQueryKey = {
     INJECT_VACCINATION: "injectVaccination",
     CONFIRM_VACCINATION_TODAY: "confirmVaccinationToday",
     GET_VACCINATION_HISTORY_BY_PATIENT_ID: "getVaccinationHistoryByPatientId",
+    REJECT_INJECT_VACCINE: "rejectInjectVaccine",
+    GET_PENDING_VACCINATIONS_TODAY: "getPendingVaccinationsToday",
+    CLOSING_RECEPTION: "closingReception",
 };
 
 const AppointmentQueryKey = {

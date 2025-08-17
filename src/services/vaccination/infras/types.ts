@@ -22,6 +22,7 @@ export type MedicineVaccinationInformation = {
     medicineName: string;
     isRequiredTesting: boolean;
     isConfirmed: boolean;
+    isRejected?: boolean;
     testResultEntry?: string;
     startTestingTime?: Date;
     doctorName?: string;
@@ -84,4 +85,30 @@ export interface VaccinationHistoryResponse {
     district: string;
     province: string;
     vaccinationHistoryItems: VaccinationHistoryItem[];
+}
+
+export interface RejectVaccinationRequest {
+    receptionVaccinationId: number;
+    issueNote: string;
+}
+
+export interface PendingVaccinationTodayResponse {
+    totalPendingDoses: number;
+    pendingVaccinations: PendingVaccination[];
+}
+
+export interface PendingVaccination {
+    receptionVaccinationId: number;
+    vaccineId: number;
+    vaccineName: string;
+    totalQuantity: number;
+    completedDoses: number;
+    pendingDoses: number;
+    scheduledDate: Date;
+}
+
+export interface ClosingReceptionRequest {
+    receptionId: number;
+    issueNote: string;
+    reScheduleDate: Date;
 }

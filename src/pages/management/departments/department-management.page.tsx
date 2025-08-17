@@ -116,7 +116,7 @@ export const DepartmentMangement: React.FC = () => {
                     <Grid size={8}>
                         <FormItem
                             render="data-grid"
-                            name="departmentName"
+                            name="name"
                             label={t(i18n.translationKey.department)}
                             placeholder={t(i18n.translationKey.departmentName)}
                             columnDefs={[

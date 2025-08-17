@@ -240,3 +240,66 @@ export interface ExpiredMedicineBatch {
 export interface IGetListMedicineBatchesReturnFormRequest extends IPaginationRequest, ISearchParam {
     status: MedicineBatchExpiredFormStatus;
 }
+
+export interface MedicineQuantityStatisticDto {
+    medicineId: number;
+    medicineCode: string;
+    medicineName: string;
+    unit?: string;
+    numberOfBatches?: number;
+    totalQuantity?: number;
+    availableQuantity?: number;
+    reservedQuantity?: number;
+}
+
+export interface MedicineBatchForStatisticDto {
+    id: number;
+    medicineId: number;
+    batchNumber: string;
+    quantity?: number;
+    medicineName?: string;
+    importDate?: string;
+    expiryDate?: string;
+    importPrice?: number;
+    supplierName?: string;
+    manufacturerName?: string;
+    warehouseName?: string;
+}
+
+export interface PaginationResponse<T> {
+    data: T[];
+    pageIndex: number;
+    pageSize: number;
+    totalItems: number;
+}
+
+export interface MedicineQuantityStatisticsSearchParam {
+    pageIndex: number;
+    pageSize: number;
+    searchTerm?: string;
+}
+
+export interface MedicineBatchesSearchParam {
+    medicineId: number | string;
+    pageIndex: number;
+    pageSize: number;
+    batchNumber?: string;
+}
+
+export interface RawPaginationResponse<T> {
+    pageIndex: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages?: number;
+    hasPreviousPage?: boolean;
+    hasNextPage?: boolean;
+    data: T[];
+}
+
+export interface ApiPaginationResponse<T> {
+    data: T[];
+    pageIndex: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages: number;
+}

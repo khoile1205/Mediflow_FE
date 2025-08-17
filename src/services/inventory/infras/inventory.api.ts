@@ -19,6 +19,11 @@ import {
     InventoryLimitStock,
     CreateExpiredReturnRequest,
     IGetListMedicineBatchesReturnFormRequest,
+    MedicineQuantityStatisticsSearchParam,
+    MedicineQuantityStatisticDto,
+    PaginationResponse,
+    MedicineBatchesSearchParam,
+    MedicineBatchForStatisticDto,
 } from "./types";
 import { IPaginationRequest, IPagination, HttpMethod, IBaseApiResponse } from "~/libs/axios/types";
 import { Supplier } from "~/entities/supplier";
@@ -293,6 +298,27 @@ const getAllExpiredMedicineBatchForm = async (
     });
 };
 
+export const getMedicineQuantityStatistics = async (
+    params: MedicineQuantityStatisticsSearchParam,
+): Promise<IBaseApiResponse<PaginationResponse<MedicineQuantityStatisticDto>>> => {
+    return await callApi({
+        url: inventoryEndpoints.medicineQuantityStatistics.getList,
+        method: HttpMethod.GET,
+        params,
+    });
+};
+
+export const getMedicineBatchesByMedicineId = async (
+    params: MedicineBatchesSearchParam,
+): Promise<IBaseApiResponse<PaginationResponse<MedicineBatchForStatisticDto>>> => {
+    const { medicineId, ...rest } = params;
+    return await callApi({
+        url: inventoryEndpoints.medicineQuantityStatistics.getBatchesByMedicineId(medicineId),
+        method: HttpMethod.GET,
+        params: rest,
+    });
+};
+
 export const inventoryApis = {
     getAllManufacturers,
     getAllManufactureCountries,
@@ -322,4 +348,8 @@ export const inventoryApis = {
     createExpiredReturn,
     getExpiredMedicineBatchFormById,
     getAllExpiredMedicineBatchForm,
+    medicineQuantityStatistics: {
+        getList: getMedicineQuantityStatistics,
+        getMedicineBatchesByMedicineId,
+    },
 };

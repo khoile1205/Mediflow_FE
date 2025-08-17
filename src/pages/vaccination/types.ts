@@ -56,3 +56,7 @@ export interface VaccinationHistoryItem {
     vaccinationConfirmation: boolean;
     doctorName: string;
 }
+
+export interface RejectVaccinationFormValues {
+    issueNote: string;
+}

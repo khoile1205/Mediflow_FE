@@ -32,6 +32,7 @@ import { showToast } from "~/utils";
 import { formatDate } from "~/utils/date-time";
 import PreExaminationTestingPage from "../pre-examination-testing";
 import { useCreateVaccinationForm } from "./hooks/use-create-vaccination-form";
+import RejectVaccinationModal from "./reject-vaccination.modal";
 
 const VaccinationPage: React.FC = () => {
     const { t } = useTranslation();
@@ -40,13 +41,15 @@ const VaccinationPage: React.FC = () => {
     const { patientForm, vaccinationForm } = useCreateVaccinationForm();
 
     const patientAgGrid = useAgGrid<WaitingPatientVaccination>({});
-    const vaccineAgGrid = useAgGrid<MedicineVaccinationInformation>({});
+    const vaccineAgGridDoctor = useAgGrid<MedicineVaccinationInformation>({});
+    const vaccineAgGridCustomer = useAgGrid<MedicineVaccinationInformation>({});
 
     const [selectedVaccinationMedicineCount, setSelectedVaccinationMedicineCount] = React.useState<number>(0);
     const [searchWaitingPatientTerm, setSearchWaitingPatientTerm] = React.useState<string>("");
     const [isOpenTestingModal, setIsOpenTestingModal] = React.useState<boolean>(false);
     const [isStartEnabled, setIsStartEnabled] = React.useState(false);
-
+    const [isOpenRejectModal, setIsOpenRejectModal] = React.useState<boolean>(false);
+    const [isAllowReject, setIsAllowReject] = React.useState<boolean>(false);
     // Queries
     const {
         data: { waitingPatientList },
@@ -81,23 +84,36 @@ const VaccinationPage: React.FC = () => {
     );
 
     const vaccineColumnDefs: ColDef<MedicineVaccinationInformation>[] = [
-        { checkboxSelection: true, headerCheckboxSelection: true, width: 50, pinned: true, resizable: false },
+        // { checkboxSelection: true, headerCheckboxSelection: true, width: 50, pinned: true, resizable: false },
+        {
+            headerName: t(i18n.translationKey.no),
+            valueGetter: (p) => p.node?.rowIndex + 1,
+            width: 60,
+            pinned: "left",
+            suppressSizeToFit: true,
+            cellClass: "text-center",
+        },
         {
             field: "medicineName",
             headerName: t(i18n.translationKey.vaccineSerumName),
             headerStyle: { backgroundColor: "#98D2C0" },
-            flex: 2,
+            flex: 1.5,
+            cellClass: "ag-cell-center",
         },
         {
             field: "medicineBatchNumber",
             headerName: t(i18n.translationKey.batchNumber),
             headerStyle: { backgroundColor: "#98D2C0" },
+            cellClass: "ag-cell-center",
             flex: 1,
         },
         {
             field: "isConfirmed",
             headerName: t(i18n.translationKey.vaccinationConfirmation),
             valueGetter: (params) => {
+                if (params.data.isRejected) {
+                    return t(i18n.translationKey.rejected);
+                }
                 return params.data.isConfirmed ? t(i18n.translationKey.isInjected) : t(i18n.translationKey.notInjected);
             },
             cellClass: "ag-cell-center",
@@ -159,6 +175,26 @@ const VaccinationPage: React.FC = () => {
         patientForm.setValue("patientVaccinationCode", selectedPatient.patientVaccinationCode);
     };
 
+    const handleSelectVaccinationMedicineFromDoctor = (row: RowSelectedEvent<MedicineVaccinationInformation>) => {
+        if (row.node.isSelected()) {
+            // Clear selection in the other grid first
+            vaccineAgGridCustomer.gridApi?.deselectAll();
+
+            // Populate form
+            handleSelectVaccinationMedicine(row);
+        }
+    };
+
+    const handleSelectVaccinationMedicineFromCustomer = (row: RowSelectedEvent<MedicineVaccinationInformation>) => {
+        if (row.node.isSelected()) {
+            // Clear selection in the other grid first
+            vaccineAgGridDoctor.gridApi?.deselectAll();
+
+            // Populate form
+            handleSelectVaccinationMedicine(row);
+        }
+    };
+
     const handleSelectVaccinationMedicine = (row: RowSelectedEvent<MedicineVaccinationInformation>) => {
         if (row.type == "rowSelected") {
             const selectedRows = row.api.getSelectedRows();
@@ -175,6 +211,7 @@ const VaccinationPage: React.FC = () => {
                 vaccinationForm.setValue("testResult", selectedMedicine.testResultEntry);
                 vaccinationForm.setValue("doctorId", user.id);
                 vaccinationForm.setValue("injectionDate", new Date());
+                setIsAllowReject(selectedMedicine.isRejected || selectedMedicine.isConfirmed);
             } else {
                 const currentPatientId = vaccinationForm.getValues("patientId");
                 vaccinationForm.reset();
@@ -274,6 +311,13 @@ const VaccinationPage: React.FC = () => {
             vaccinationForm.setValue("medicineExpiryDate", firstBatch.expiryDate);
             vaccinationForm.setValue("medicineBatchId", firstBatch.medicineBatchId);
             vaccinationForm.setValue("medicineBatchNumber", firstBatch.medicineBatchNumber);
+            console.log(vaccinationForm.watch());
+        } else {
+            // Clear fields if no batch available
+            vaccinationForm.setValue("medicineBatchCode", "");
+            vaccinationForm.setValue("medicineExpiryDate", null);
+            vaccinationForm.setValue("medicineBatchId", null);
+            vaccinationForm.setValue("medicineBatchNumber", "");
         }
     }, [nearestExpiryMedicineBatch]);
 
@@ -433,7 +477,6 @@ const VaccinationPage: React.FC = () => {
 
                         <Grid size={4}>
                             <Stack spacing={2.5} height="100%">
-                                {/* <Button>{t(i18n.translationKey.sendToCustomer)}</Button> */}
                                 <Button disabled={isDisablePreTesting} onClick={handleConfirmTesting}>
                                     {t(i18n.translationKey.confirmStart)}
                                 </Button>
@@ -466,7 +509,13 @@ const VaccinationPage: React.FC = () => {
                         </Grid>
 
                         <Grid size={2}>
-                            <Stack height="100%" display="flex" flexDirection="column" spacing={2.5}>
+                            <Stack
+                                height="100%"
+                                display="flex"
+                                flexDirection="column"
+                                spacing={2.5}
+                                justifyContent={"space-evenly"}
+                            >
                                 <Button onClick={handleConfirmStart} disabled={!isStartEnabled}>
                                     {t(i18n.translationKey.inputTestResult)}
                                 </Button>
@@ -477,28 +526,44 @@ const VaccinationPage: React.FC = () => {
                                 >
                                     {t(i18n.translationKey.vaccinationHistory)}
                                 </Button>
+                                <Button
+                                    onClick={() => {
+                                        setIsOpenRejectModal(true);
+                                    }}
+                                    disabled={
+                                        !(
+                                            selectedVaccinationMedicineCount != 0 &&
+                                            vaccinationForm.watch("receptionVaccinationId")
+                                        ) || isAllowReject
+                                    }
+                                >
+                                    {t(i18n.translationKey.rejectInjection)}
+                                </Button>
                             </Stack>
                         </Grid>
                     </Grid>
-
+                    <Typography variant="subtitle1" className="mb-2 mt-4">
+                        {t(i18n.translationKey.doctorPrescribedVaccines)}
+                    </Typography>
                     <Box mt={2}>
                         <AgDataGrid
                             columnDefs={vaccineColumnDefs}
                             rowData={doctorPrescribedVaccines}
-                            onRowSelected={handleSelectVaccinationMedicine}
-                            {...vaccineAgGrid}
+                            onRowSelected={handleSelectVaccinationMedicineFromDoctor}
+                            {...vaccineAgGridDoctor}
                         />
                     </Box>
-                    {customerWarehouseVaccines.length > 0 && (
-                        <Box mt={2}>
-                            <AgDataGrid
-                                columnDefs={vaccineColumnDefs}
-                                rowData={customerWarehouseVaccines}
-                                // onRowSelected={handleSelectVaccinationMedicine}
-                                {...vaccineAgGrid}
-                            />
-                        </Box>
-                    )}
+                    <Typography variant="subtitle1" className="mb-2 mt-4">
+                        {t(i18n.translationKey.customerWarehouseVaccines)}
+                    </Typography>
+                    <Box mt={2}>
+                        <AgDataGrid
+                            columnDefs={vaccineColumnDefs}
+                            rowData={customerWarehouseVaccines}
+                            onRowSelected={handleSelectVaccinationMedicineFromCustomer}
+                            {...vaccineAgGridCustomer}
+                        />
+                    </Box>
                 </DynamicForm>
             </Box>
             <PreExaminationTestingPage
@@ -507,6 +572,13 @@ const VaccinationPage: React.FC = () => {
                     setIsOpenTestingModal(false);
                 }}
                 receptionId={patientForm.watch("receptionId")}
+            />
+            <RejectVaccinationModal
+                receptionVaccinationId={vaccinationForm.watch("receptionVaccinationId")}
+                open={isOpenRejectModal}
+                onClose={() => {
+                    setIsOpenRejectModal(false);
+                }}
             />
         </Box>
     );
