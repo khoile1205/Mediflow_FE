@@ -22,6 +22,12 @@ export function useMutationCreateReceiptPayment() {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.VACCINATION.GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID],
             });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.EXAMINATION.GET_PATIENTS_FOR_EXAMINATION],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.EXAMINATION.GET_ALL_EXAMINATION_OF_RECEPTION_BY_RECEPTION_ID],
+            });
             showToast.success(i18n.t(i18n.translationKey.createReceiptPaymentSuccessfully));
 
             return invoiceNumber;

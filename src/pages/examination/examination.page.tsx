@@ -439,7 +439,6 @@ export const ExaminationPage: React.FC = () => {
                                             { label: t(i18n.translationKey.sixtyMinutes), value: "60" },
                                             { label: t(i18n.translationKey.ninetyMinutes), value: "90" },
                                         ]}
-                                        required
                                     />
                                 </Grid>
                             </FormControl>
@@ -447,7 +446,6 @@ export const ExaminationPage: React.FC = () => {
                                 render="select"
                                 name="sampleType"
                                 label={t(i18n.translationKey.sampleType)}
-                                required
                                 options={[
                                     { label: t(i18n.translationKey.blood), value: SampleType.BLOOD },
                                     { label: t(i18n.translationKey.fluid), value: SampleType.FLUID },
