@@ -3,7 +3,6 @@ import React from "react";
 import DialogAction, { DialogActionType } from "./dialog-action";
 import DialogBody, { DialogBodyType } from "./dialog-body";
 import DialogHeader, { DialogHeaderType } from "./dialog-header";
-import { useDisableBodyScroll } from "~/hooks";
 
 export interface DialogComposition {
     Header: React.FC<DialogHeaderType>;
@@ -11,9 +10,7 @@ export interface DialogComposition {
     Action: React.FC<DialogActionType>;
 }
 
-const Dialog: React.FC<DialogProps> & DialogComposition = ({ children, ...props }) => {
-    useDisableBodyScroll(props.open);
-
+const Dialog: React.FC<DialogProps> & DialogComposition = ({ children, open, ...props }) => {
     return (
         <MUIDialog
             sx={{
@@ -23,6 +20,7 @@ const Dialog: React.FC<DialogProps> & DialogComposition = ({ children, ...props 
             }}
             maxWidth="md"
             fullWidth
+            open={open}
             {...props}
         >
             {children}

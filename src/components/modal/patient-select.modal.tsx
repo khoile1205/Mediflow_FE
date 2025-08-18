@@ -1,15 +1,4 @@
-import { Close } from "@mui/icons-material";
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    IconButton,
-    Stack,
-    Typography,
-} from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -18,6 +7,7 @@ import { Patient } from "~/entities";
 import { usePagination } from "~/hooks";
 import { useQueryPatients } from "~/services/patient/hooks/queries";
 import { AgDataGrid, useAgGrid } from "../common/ag-grid";
+import { Dialog } from "../common/dialog";
 import DynamicForm from "../form/dynamic-form";
 import FormItem from "../form/form-item";
 import { useForm } from "../form/hooks/use-form";
@@ -100,15 +90,8 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
 
     return (
         <Dialog open={open} maxWidth="lg" fullWidth onClose={handleCloseForm}>
-            <DialogTitle>
-                <Box className="flex items-center justify-between">
-                    <Typography>Chọn bệnh nhân</Typography>
-                    <IconButton>
-                        <Close onClick={handleCloseForm} />
-                    </IconButton>
-                </Box>
-            </DialogTitle>
-            <DialogContent className="no-scrollbar h-full">
+            <Dialog.Header title={t(i18n.translationKey.selectPatient)} onClose={handleCloseForm} />
+            <Dialog.Body className="no-scrollbar h-full">
                 <DynamicForm form={patientSelectForm}>
                     <Stack className="flex rounded-lg border border-gray-100 p-4" spacing={2} direction="row">
                         <Stack
@@ -197,24 +180,24 @@ export const PatientSelectModal: React.FC<PatientSelectModalProps> = ({ open, on
                         {...listPatientAgGrid}
                     />
                 </Box>
-            </DialogContent>
-            <DialogActions>
+            </Dialog.Body>
+            <Dialog.Action>
                 <Box className="flex items-center justify-end gap-2 p-4">
                     <Button
                         className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                         onClick={handleSubmit}
                     >
-                        Chọn
+                        {t(i18n.translationKey.select)}
                     </Button>
                     <Button
                         type="button"
                         className="rounded bg-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-400"
                         onClick={handleCloseForm}
                     >
-                        Hủy
+                        {t(i18n.translationKey.cancel)}
                     </Button>
                 </Box>
-            </DialogActions>
+            </Dialog.Action>
         </Dialog>
     );
 };

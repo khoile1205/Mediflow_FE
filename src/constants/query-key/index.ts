@@ -107,6 +107,8 @@ const HospitalFeeQueryKey = {
     GET_PAYMENT_DETAIL_BY_PAYMENT_ID: "getPaymentDetailByPaymentId",
     GET_UNPAID_SERVICE_BY_PATIENT_ID: "getUnpaidServiceByPatientId",
     CREATE_PAYMENT: "createPayment",
+    CREATE_QR_PAYMENT: "createQrPayment",
+    CHECK_PAYMENT_STATUS: "checkPaymentStatus",
 };
 
 const UserQueryKey = {

@@ -4,6 +4,8 @@ const getPaymentDetailByPaymentId = (paymentId: number) => `vaccination-receptio
 const getUnpaidServiceByPatientId = (patientId: number) =>
     `vaccination-reception/patients/${patientId}/unpaid-services`;
 const createReceiptPayment = (patientId: number) => `vaccination-reception/receptions/${patientId}/payments`;
+const createQRPayment = (patientId: number) => `vaccination-reception/receptions/${patientId}/payos-payment`;
+const checkPaymentStatus = `vaccination-reception/payment-status`;
 
 export const hospitalEndpoints = {
     getUnpaidPatientList,
@@ -11,4 +13,6 @@ export const hospitalEndpoints = {
     getPaymentDetailByPaymentId,
     getUnpaidServiceByPatientId,
     createReceiptPayment,
+    createQRPayment,
+    checkPaymentStatus,
 };

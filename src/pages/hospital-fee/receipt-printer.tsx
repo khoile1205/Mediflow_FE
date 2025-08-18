@@ -1,30 +1,36 @@
 import { Box, Grid, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import React from "react";
+import QRCode from "react-qrcode-logo";
+import AppLogo from "~/assets/images/logo.png";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { PaymentType } from "~/constants/enums";
 import { formatCurrencyVND } from "~/utils/currency";
 import { formatDate } from "~/utils/date-time";
 import { HospitalFeeFormValue, HospitalServiceItem } from "./types";
+import { useTranslation } from "react-i18next";
+import i18n from "~/configs/i18n";
 
 interface ReceiptPrinterProps {
     formValue: HospitalFeeFormValue;
     attachedHospitalFeeItems?: HospitalServiceItem[];
+    qrCode?: string;
 }
 
 export const ReceiptPrinter = React.forwardRef<HTMLDivElement, ReceiptPrinterProps>(
-    ({ formValue, attachedHospitalFeeItems }, ref) => {
+    ({ formValue, attachedHospitalFeeItems, qrCode }, ref) => {
+        const { t } = useTranslation();
         const { name, patientCode, dob, age, address, invoiceNumber, paidType, hospitalServiceItems = [] } = formValue;
 
         const formatPaidType = (type?: PaymentType) => {
             switch (type) {
                 case PaymentType.CASH:
-                    return "Tiền mặt";
+                    return t(i18n.translationKey.cash);
                 case PaymentType.ATM:
-                    return "ATM";
+                    return t(i18n.translationKey.atm);
                 case PaymentType.TRANSFER:
-                    return "Chuyển khoản";
+                    return t(i18n.translationKey.transfer);
                 default:
-                    return "Không xác định";
+                    return t(i18n.translationKey.notAvailable);
             }
         };
 
@@ -40,69 +46,69 @@ export const ReceiptPrinter = React.forwardRef<HTMLDivElement, ReceiptPrinterPro
                         <Box className="flex items-center">
                             <Box>
                                 <Typography variant="h6" fontWeight="bold">
-                                    Mediflow
+                                    {t(i18n.translationKey.mediflow)}
                                 </Typography>
-                                <Typography variant="body2">123 Đường Y Tế, Quận Hải Châu, Đà Nẵng</Typography>
-                                <Typography variant="body2">Điện thoại: (0236) 123 4567</Typography>
+                                <Typography variant="body2">{t(i18n.translationKey.hospitalAddress)}</Typography>
+                                <Typography variant="body2">{t(i18n.translationKey.hospitalPhone)}</Typography>
                             </Box>
                         </Box>
                         <Box textAlign="right">
                             <Typography variant="body2">
-                                Số: <strong>{invoiceNumber || "N/A"}</strong>
+                                {t(i18n.translationKey.no)}: <strong>{invoiceNumber || "N/A"}</strong>
                             </Typography>
                             <Typography variant="body2">
-                                Ngày: {formatDate(new Date(), DATE_TIME_FORMAT["dd/MM/yyyy"])}
+                                {t(i18n.translationKey.date)}: {formatDate(new Date(), DATE_TIME_FORMAT["dd/MM/yyyy"])}
                             </Typography>
                             <Typography variant="body2">
-                                Giờ: {formatDate(new Date(), DATE_TIME_FORMAT["HH:mm:ss"])}
+                                {t(i18n.translationKey.time)}: {formatDate(new Date(), DATE_TIME_FORMAT["HH:mm:ss"])}
                             </Typography>
                         </Box>
                     </Box>
-                    <Typography variant="h5" fontWeight="bold" align="center" mt={4}>
-                        PHIẾU THU THANH TOÁN
+                    <Typography className="uppercase" variant="h5" fontWeight="bold" align="center" mt={4}>
+                        {t(i18n.translationKey.receiptTitle)}
                     </Typography>
                 </Box>
 
                 <Box mb={6}>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                        THÔNG TIN BỆNH NHÂN
+                    <Typography className="uppercase" variant="subtitle1" fontWeight="bold" gutterBottom>
+                        {t(i18n.translationKey.patientInfo)}
                     </Typography>
                     <Grid container spacing={2}>
                         <Grid size={6}>
                             <Typography>
-                                <strong>Họ và tên:</strong> {name}
+                                <strong>{t(i18n.translationKey.fullName)}:</strong> {name}
                             </Typography>
                             <Typography>
-                                <strong>Mã y tế:</strong> {patientCode}
+                                <strong>{t(i18n.translationKey.medicalCode)}:</strong> {patientCode}
                             </Typography>
                         </Grid>
                         <Grid size={6}>
                             <Typography>
-                                <strong>Ngày sinh:</strong> {dob}
+                                <strong>{t(i18n.translationKey.dateOfBirth)}:</strong> {dob}
                             </Typography>
                             <Typography>
-                                <strong>Tuổi:</strong> {age}
+                                <strong>{t(i18n.translationKey.age)}:</strong> {age}
                             </Typography>
                         </Grid>
                     </Grid>
                     <Typography>
-                        <strong>Địa chỉ:</strong> {address}
+                        <strong>{t(i18n.translationKey.address)}:</strong> {address}
                     </Typography>
                 </Box>
 
                 <Box mb={6}>
                     <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                        CHI TIẾT THANH TOÁN
+                        {t(i18n.translationKey.paymentDetails)}
                     </Typography>
                     <Table size="small">
                         <TableHead>
                             <TableRow sx={{ backgroundColor: "#f3f4f6" }}>
-                                <TableCell>Nội dung</TableCell>
-                                <TableCell align="center">Số lượng</TableCell>
-                                <TableCell align="right">Đơn giá</TableCell>
-                                <TableCell align="right">Thành tiền trước chiết khấu</TableCell>
-                                <TableCell align="right">Số tiền trợ</TableCell>
-                                <TableCell align="right">Thành tiền sau chiết khấu</TableCell>
+                                <TableCell>{t(i18n.translationKey.content)}</TableCell>
+                                <TableCell align="center">{t(i18n.translationKey.quantity)}</TableCell>
+                                <TableCell align="right">{t(i18n.translationKey.unitPrice)}</TableCell>
+                                <TableCell align="right">{t(i18n.translationKey.amountBeforeDiscount)}</TableCell>
+                                <TableCell align="right">{t(i18n.translationKey.discountAmount)}</TableCell>
+                                <TableCell align="right">{t(i18n.translationKey.amountAfterDiscount)}</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -127,46 +133,42 @@ export const ReceiptPrinter = React.forwardRef<HTMLDivElement, ReceiptPrinterPro
                 <Box mb={6} className="flex justify-end">
                     <Box className="w-full">
                         <Box display="flex" justifyContent="space-between" py={1} borderBottom={1}>
-                            <Typography fontWeight="medium">Tổng tiền trước chiết khấu:</Typography>
+                            <Typography fontWeight="medium">{t(i18n.translationKey.totalBeforeDiscount)}:</Typography>
                             <Typography>{formatCurrencyVND(total)}</Typography>
                         </Box>
                         <Box display="flex" justifyContent="space-between" py={1} borderBottom={1}>
-                            <Typography fontWeight="medium">Tổng số tiền trợ:</Typography>
+                            <Typography fontWeight="medium">{t(i18n.translationKey.totalDiscount)}:</Typography>
                             <Typography>{formatCurrencyVND(0)}</Typography>
                         </Box>
                         <Box display="flex" justifyContent="space-between" py={1}>
-                            <Typography fontWeight="medium">Hình thức thanh toán:</Typography>
+                            <Typography fontWeight="medium">{t(i18n.translationKey.paymentMethod)}:</Typography>
                             <Typography>{formatPaidType(paidType)}</Typography>
                         </Box>
                         <Box display="flex" justifyContent="space-between" py={2}>
-                            <Typography fontWeight="bold">Tổng tiền thanh toán:</Typography>
+                            <Typography fontWeight="bold">{t(i18n.translationKey.totalPayment)}:</Typography>
                             <Typography fontWeight="bold">{formatCurrencyVND(total)}</Typography>
                         </Box>
                     </Box>
                 </Box>
-
-                {/* <Box>
-                <Divider sx={{ mb: 2 }} />
-                <Typography align="center" fontStyle="italic" gutterBottom>
-                    Lưu ý: Phiếu thu chỉ có giá trị trong ngày
-                </Typography>
-                <Box className="mt-8 flex justify-between">
-                    <Box textAlign="center" width="33%">
-                        <Typography fontWeight="medium">Người thu tiền</Typography>
-                        <Typography fontSize="0.75rem" fontStyle="italic">
-                            (Ký, ghi rõ họ tên)
-                        </Typography>
-                        <Box height="64px" />
+                {qrCode ? (
+                    <Box
+                        mt={4}
+                        sx={{
+                            textAlign: "center",
+                        }}
+                    >
+                        <Box sx={{ display: "flex", justifyContent: "center" }}>
+                            <QRCode
+                                removeQrCodeBehindLogo
+                                value={qrCode}
+                                size={250}
+                                logoImage={AppLogo}
+                                qrStyle="dots"
+                                eyeRadius={5}
+                            />
+                        </Box>
                     </Box>
-                    <Box textAlign="center" width="33%">
-                        <Typography fontWeight="medium">Người nộp tiền</Typography>
-                        <Typography fontSize="0.75rem" fontStyle="italic">
-                            (Ký, ghi rõ họ tên)
-                        </Typography>
-                        <Box height="64px" />
-                    </Box>
-                </Box>
-            </Box> */}
+                ) : null}
             </Box>
         );
     },
