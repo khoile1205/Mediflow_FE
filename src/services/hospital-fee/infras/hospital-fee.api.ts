@@ -1,12 +1,15 @@
 import { endpoints } from "~/constants/endpoints";
+import { PaymentStatus } from "~/constants/enums";
 import { callApi } from "~/libs/axios/request";
 import { HttpMethod } from "~/libs/axios/types";
 import { ISearchParam } from "~/services/hospital-service/infras";
 import {
+    CheckPaymentStatusRequest,
+    CreateQRPaymentResponse,
+    CreateReceiptPaymentRequest,
     GetPatientPaymentsResponse,
     GetPaymentDetailsResponse,
     HospitalUnpaidServicesResponse,
-    CreateReceiptPaymentRequest,
     UnpaidPatientSummary,
 } from "./types";
 
@@ -46,10 +49,28 @@ const createReceiptPayment = async (patientId: number, payload: CreateReceiptPay
     });
 };
 
+const createQRPayment = async (patientId: number, payload: CreateReceiptPaymentRequest) => {
+    return await callApi<CreateQRPaymentResponse>({
+        url: endpoints.hospitalFee.createQRPayment(patientId),
+        method: HttpMethod.POST,
+        data: payload,
+    });
+};
+
+const checkPaymentStatus = async (payload: CheckPaymentStatusRequest) => {
+    return await callApi<PaymentStatus>({
+        url: `${endpoints.hospitalFee.checkPaymentStatus}`,
+        method: HttpMethod.GET,
+        params: payload,
+    });
+};
+
 export const hospitalFeeApis = {
     getUnpaidPatientsList,
     getPatientPayment,
     getPaymentDetailByPaymentId,
     getUnpaidServiceByPatientId,
     createReceiptPayment,
+    createQRPayment,
+    checkPaymentStatus,
 };

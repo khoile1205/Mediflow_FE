@@ -16,6 +16,7 @@ import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { PaymentType, ReceiptPaymentType } from "~/constants/enums";
 import { QueryKey } from "~/constants/query-key";
 import { useMutationCreateReceiptPayment } from "~/services/hospital-fee/hooks/mutations";
+import { useMutationCreateQRPayment } from "~/services/hospital-fee/hooks/mutations/use-mutation-create-qr-payment";
 import { useQueryGetUnpaidServiceByPatientId, useQueryUnpaidPatientList } from "~/services/hospital-fee/hooks/queries";
 import { CreateReceiptPaymentRequest, HospitalServiceType, UnpaidPatientSummary } from "~/services/hospital-fee/infras";
 import { useQueryGetAttachHospitalService } from "~/services/hospital-service/hooks/queries";
@@ -24,7 +25,9 @@ import { useQueryGetLatestReceptionIdByPatientId } from "~/services/reception/ho
 import { formatCurrencyVND } from "~/utils/currency";
 import { formatDate, getCurrentAge } from "~/utils/date-time";
 import { ReceiptPrinter } from "./receipt-printer";
+import ReceiptQRCodePayment from "./receipt-qr-code-payment";
 import { HospitalFeeFormValue, HospitalServiceItem } from "./types";
+import { showToast } from "~/utils";
 
 const HospitalFeePage: React.FC = () => {
     const { t } = useTranslation();
@@ -34,6 +37,11 @@ const HospitalFeePage: React.FC = () => {
 
     const [patientId, setPatientId] = React.useState<number | null>(null);
     const [searchUnpaidPatientTerm, setSearchUnpaidPatientTerm] = React.useState("");
+    const [qrCode, setQRCode] = React.useState<string>();
+    const [paymentId, setPaymentId] = React.useState<number | null>(null);
+    const [openQRPaymentModal, setOpenQRPaymentModal] = React.useState<boolean>(false);
+    const [qrPaymentInvoiceNumber, setQrPaymentInvoiceNumber] = React.useState<number | null>(null);
+
     // Queries
     const {
         data: { unpaidPatientList },
@@ -49,7 +57,9 @@ const HospitalFeePage: React.FC = () => {
     } = useQueryGetUnpaidServiceByPatientId(patientId);
 
     // Mutations
-    const { mutateAsync: createReceiptPayment } = useMutationCreateReceiptPayment();
+    const { mutateAsync: createManualReceiptPayment } = useMutationCreateReceiptPayment();
+    const { mutateAsync: createQRPayment } = useMutationCreateQRPayment();
+
     // AG Grid
     const unpaidPatientAgGrid = useAgGrid({});
 
@@ -68,7 +78,7 @@ const HospitalFeePage: React.FC = () => {
             invoiceNumber: "",
             invoiceValue: 0,
             phoneNumber: "",
-            paidType: PaymentType.CASH,
+            paidType: PaymentType.TRANSFER,
             isPaid: true,
             isRefund: false,
             isCancel: false,
@@ -101,10 +111,51 @@ const HospitalFeePage: React.FC = () => {
         setSearchUnpaidPatientTerm(value);
     };
 
+    const handleCloseQRPaymentModal = () => {
+        setOpenQRPaymentModal(false);
+        setQRCode("");
+        setPaymentId(null);
+        setQrPaymentInvoiceNumber(null);
+    };
+
     const handleSubmit = async (data: HospitalFeeFormValue) => {
         const payload = getCreateReceiptPaymentPayload(data);
-        const invoiceNumber = await createReceiptPayment({ patientId: patientId!, payload });
-        hospitalFeeForm.setValue("invoiceNumber", invoiceNumber);
+        let invoiceNumber = "";
+
+        switch (data.paidType) {
+            case PaymentType.CASH: {
+                invoiceNumber = await createManualReceiptPayment({ patientId: patientId!, payload });
+                hospitalFeeForm.setValue("invoiceNumber", invoiceNumber);
+                break;
+            }
+            case PaymentType.TRANSFER: {
+                handleQRPayment(payload);
+                break;
+            }
+        }
+    };
+
+    const handleQRPayment = async (payload: CreateReceiptPaymentRequest) => {
+        const response = await createQRPayment({ patientId: patientId!, payload });
+        setOpenQRPaymentModal(true);
+        setQRCode(response.qrCode);
+        setPaymentId(response.paymentId);
+        setQrPaymentInvoiceNumber(response.invoiceNumber);
+    };
+
+    const handleRegenerateQR = async () => {
+        const payload = getCreateReceiptPaymentPayload(hospitalFeeForm.watch());
+        const response = await createQRPayment({ patientId: patientId!, payload });
+
+        setQRCode(response.qrCode);
+        setPaymentId(response.paymentId);
+        setQrPaymentInvoiceNumber(response.invoiceNumber);
+    };
+
+    const handleQRPaymentSuccess = () => {
+        hospitalFeeForm.setValue("invoiceNumber", qrPaymentInvoiceNumber.toString() || "");
+        handleCloseQRPaymentModal();
+        showToast.success("Thanh toán thành công");
     };
 
     const handleCancel = () => {
@@ -112,6 +163,7 @@ const HospitalFeePage: React.FC = () => {
         setPatientId(null);
         hospitalServiceFeeAgGrid.gridApi.deselectAll();
         unpaidPatientAgGrid.gridApi.deselectAll();
+
         queryClient.invalidateQueries({ queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_PATIENT_LIST] });
         queryClient.invalidateQueries({
             queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_SERVICE_BY_PATIENT_ID, patientId],
@@ -609,6 +661,14 @@ const HospitalFeePage: React.FC = () => {
                         />
                     </Box>
                 </Stack>
+                <ReceiptQRCodePayment
+                    qrCode={qrCode}
+                    open={openQRPaymentModal}
+                    paymentId={paymentId}
+                    onClose={handleCloseQRPaymentModal}
+                    onSuccess={handleQRPaymentSuccess}
+                    onRegenerate={handleRegenerateQR}
+                />
             </DynamicForm>
 
             <Box style={{ display: "none" }}>
