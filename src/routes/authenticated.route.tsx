@@ -27,6 +27,7 @@ import AuthenticatedGuard from "../guards/authenticated.guard";
 import { ExpiredReturnManagementPage } from "~/pages/pharmacy/expired-return-form";
 import MedicineQuantityStatisticsPage from "~/pages/management/medicine/medicine-quantity-statistics.page";
 import MedicineBatchesByMedicineIdPage from "~/pages/management/medicine/medicine-batches-by-medicine-id.page";
+import { OverviewManagement } from "~/pages/management/overview/overview-management.page";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -79,6 +80,7 @@ export const AuthenticatedRoutes = (
         <Route path="/management">
             <Route path="users" element={<UserManagement />} />
             <Route path="departments" element={<DepartmentManagement />} />
+            <Route path="overview" element={<OverviewManagement />} />
         </Route>
 
         <Route path="/service">

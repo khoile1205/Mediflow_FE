@@ -1009,5 +1009,20 @@
     "CONFIRM_REJECT_INJECTED_SUCCESSFULLY": "Xác nhận từ chối tiêm thành công.",
     "CONFIRM_CLOSING_RECEPTION_SUCCESSFULLY": "Đã đóng tiếp nhận thành công.",
     "DOCTOR_PRESCRIBED_VACCINES": "Vắc xin do bác sĩ chỉ định",
-    "CUSTOMER_WAREHOUSE_VACCINES": "Vắc xin kho khách"
+    "CUSTOMER_WAREHOUSE_VACCINES": "Vắc xin kho khách",
+    "OVERVIEW": "Tổng quan",
+    "CURRENT_PATIENTS": "Số bệnh nhân hiện tại",
+    "TODAY_INJECTIONS": "Số mũi tiêm hôm nay",
+    "CURRENT_REVENUE": "Doanh thu hiện tại",
+    "PROCESSED_ORDERS": "Tổng đơn đã xử lý",
+    "PATIENTS_TREND_BY_MONTH": "Xu hướng bệnh nhân theo tháng",
+    "VACCINE_TRAFFIC_CHART": "Lưu lượng vắc xin",
+    "REVENUE_TREND_BY_MONTH": "Xu hướng doanh thu theo tháng",
+    "MONTH": "Tháng",
+    "YEAR": "Năm",
+    "PATIENTS_UNIT": "bệnh nhân",
+    "DOSES_UNIT": "liều",
+    "USED_DOSES": "Đã sử dụng",
+    "REVENUE_OF_MONTH": "Doanh thu tháng",
+    "REVENUE": "Doanh thu"
 }

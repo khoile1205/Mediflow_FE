@@ -25,8 +25,14 @@ const roleEndpoints = {
     getRoleNames: `${roleEndpointPrefix}/names`,
 };
 
+const statisticEndpointPrefix = `${managementEndpointPrefix}/statistics`;
+const statisticEndpoints = {
+    getOverview: `${statisticEndpointPrefix}/overview`,
+};
+
 export const managementEndpoints = {
     departmentEndpoints,
     userEndpoints,
     roleEndpoints,
+    statisticEndpoints,
 };

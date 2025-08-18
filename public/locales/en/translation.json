@@ -1006,5 +1006,20 @@
     "CONFIRM_REJECT_INJECTED_SUCCESSFULLY": "Injection rejection confirmed successfully.",
     "CONFIRM_CLOSING_RECEPTION_SUCCESSFULLY": "Reception closed successfully.",
     "DOCTOR_PRESCRIBED_VACCINES": "Doctor prescribed vaccines",
-    "CUSTOMER_WAREHOUSE_VACCINES": "Customer warehouse vaccines"
+    "CUSTOMER_WAREHOUSE_VACCINES": "Customer warehouse vaccines",
+    "OVERVIEW": "Overview",
+    "CURRENT_PATIENTS": "Current Patients",
+    "TODAY_INJECTIONS": "Today's Injections",
+    "CURRENT_REVENUE": "Current Revenue",
+    "PROCESSED_ORDERS": "Processed Orders",
+    "PATIENTS_TREND_BY_MONTH": "Patient Trend by Month",
+    "VACCINE_TRAFFIC_CHART": "Vaccine Traffic",
+    "REVENUE_TREND_BY_MONTH": "Revenue Trend by Month",
+    "MONTH": "Month",
+    "YEAR": "Year",
+    "PATIENTS_UNIT": "patients",
+    "DOSES_UNIT": "doses",
+    "USED_DOSES": "Used",
+    "REVENUE_OF_MONTH": "Revenue of month",
+    "REVENUE": "Revenue"
 }

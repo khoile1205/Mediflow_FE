@@ -94,6 +94,7 @@ export const routePermissions: RoutePermissionMap = {
         Role.HeadOfDepartment,
         Role.ITSupport,
     ]),
+    "/management/overview": createRoute(ResourceType.Management, managementRequiredRoles),
 
     "/service/hospital-service": createRoute(ResourceType.HospitalService, managementRequiredRoles),
     "/service/examination-service": createRoute(ResourceType.HospitalService, managementRequiredRoles),

@@ -10,6 +10,7 @@ import {
     FactCheck,
     Healing,
     Home,
+    HomeOutlined,
     Inventory,
     Inventory2,
     ListAlt,
@@ -38,7 +39,13 @@ export const sidebarTree: SidebarTabProps[] = [
         pathName: "/",
     },
     {
-        icon: <LocalHospital />, // Reception
+        icon: <HomeOutlined />,
+        labelKey: i18n.translationKey.overview,
+        pathName: "/management/overview",
+        ...getRoutePermissions("/management/overview"),
+    },
+    {
+        icon: <LocalHospital />,
         labelKey: i18n.translationKey.reception,
         children: [
             {
