@@ -5,6 +5,7 @@ import Highcharts from "highcharts";
 import { Chart as HighchartsReact } from "@highcharts/react";
 import { TotalRevenueByYearMonth } from "~/entities";
 import i18n from "~/configs/i18n";
+import { buildSeries, months } from "~/utils/chartUtils";
 
 interface RevenueTrendChartProps {
     data: TotalRevenueByYearMonth[];
@@ -17,22 +18,16 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ data }) =>
             return {};
         }
 
-        // Create month mapping and sort in correct order
-        const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        // Display all 12 months
-        const availableMonths = monthOrder;
-
-        const series = data.map((yearData) => ({
-            type: "line" as const,
-            name: `${yearData.year}`,
-            data: availableMonths.map((monthName) => {
-                const monthData = yearData.monthlyRevenues.find((m) => m.month === monthName);
-                return monthData ? monthData.totalRevenue : 0;
-            }),
-        }));
-
-        const categories = availableMonths;
+        const series = buildSeries(
+            data.map((d) => ({
+                year: d.year,
+                monthly: d.monthlyRevenues.map((m) => ({
+                    ...m,
+                    value: m.totalRevenue,
+                })),
+            })),
+            (m) => m.value,
+        );
 
         return {
             chart: {
@@ -48,7 +43,7 @@ export const RevenueTrendChart: React.FC<RevenueTrendChartProps> = ({ data }) =>
                 },
             },
             xAxis: {
-                categories,
+                categories: months,
                 title: {
                     text: t(i18n.translationKey.month),
                 },

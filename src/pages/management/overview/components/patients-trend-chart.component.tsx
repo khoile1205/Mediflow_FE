@@ -5,6 +5,7 @@ import Highcharts from "highcharts";
 import { Chart as HighchartsReact } from "@highcharts/react";
 import { TotalPatientsByYearMonth } from "~/entities";
 import i18n from "~/configs/i18n";
+import { buildSeries, months } from "~/utils/chartUtils";
 
 interface PatientsTrendChartProps {
     data: TotalPatientsByYearMonth[];
@@ -17,20 +18,16 @@ export const PatientsTrendChart: React.FC<PatientsTrendChartProps> = ({ data }) 
             return {};
         }
 
-        // Create month mapping and sort in correct order
-        const monthOrder = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        // Display all 12 months
-        const availableMonths = monthOrder;
-
-        const series = data.map((yearData) => ({
-            type: "line" as const,
-            name: `${yearData.year}`,
-            data: availableMonths.map((monthName) => {
-                const monthData = yearData.monthlyPatients.find((m) => m.month === monthName);
-                return monthData ? monthData.totalPatients : 0;
-            }),
-        }));
+        const series = buildSeries(
+            data.map((d) => ({
+                year: d.year,
+                monthly: d.monthlyPatients.map((m) => ({
+                    ...m,
+                    value: m.totalPatients,
+                })),
+            })),
+            (m) => m.value,
+        );
 
         return {
             chart: {
@@ -46,7 +43,7 @@ export const PatientsTrendChart: React.FC<PatientsTrendChartProps> = ({ data }) 
                 },
             },
             xAxis: {
-                categories: availableMonths,
+                categories: months,
                 title: {
                     text: t(i18n.translationKey.month),
                 },

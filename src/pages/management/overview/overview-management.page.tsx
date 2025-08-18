@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Container, Typography, CircularProgress } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import i18n from "~/configs/i18n";
 import { useDocumentTitle } from "~/hooks";
@@ -14,18 +14,7 @@ export const OverviewManagement: React.FC = () => {
 
     const {
         data: { statisticOverview },
-        isLoading,
     } = useQueryOverview();
-
-    if (isLoading) {
-        return (
-            <Container maxWidth="xl" sx={{ py: 4 }}>
-                <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-                    <CircularProgress />
-                </Box>
-            </Container>
-        );
-    }
 
     if (!statisticOverview) {
         return (
@@ -34,7 +23,7 @@ export const OverviewManagement: React.FC = () => {
                     {t(i18n.translationKey.overview)}
                 </Typography>
                 <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-                    <Typography color="text.secondary">Không có dữ liệu</Typography>
+                    <Typography color="text.secondary">{t(i18n.translationKey.noData)}</Typography>
                 </Box>
             </Container>
         );
