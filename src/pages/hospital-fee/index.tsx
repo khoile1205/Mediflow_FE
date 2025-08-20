@@ -40,7 +40,7 @@ const HospitalFeePage: React.FC = () => {
     const [qrCode, setQRCode] = React.useState<string>();
     const [paymentId, setPaymentId] = React.useState<number | null>(null);
     const [openQRPaymentModal, setOpenQRPaymentModal] = React.useState<boolean>(false);
-    const [qrPaymentInvoiceNumber, setQrPaymentInvoiceNumber] = React.useState<number | null>(null);
+    const [qrPaymentInvoiceNumber, setQrPaymentInvoiceNumber] = React.useState<string | null>(null);
 
     // Queries
     const {
@@ -78,13 +78,13 @@ const HospitalFeePage: React.FC = () => {
             invoiceNumber: "",
             invoiceValue: 0,
             phoneNumber: "",
-            paidType: PaymentType.TRANSFER,
+            paidType: PaymentType.CASH,
             isPaid: true,
             isRefund: false,
             isCancel: false,
             name: "",
             dob: "",
-            age: 0,
+            age: null,
             address: "",
             taxCode: "",
             atmCode: "",
@@ -120,12 +120,11 @@ const HospitalFeePage: React.FC = () => {
 
     const handleSubmit = async (data: HospitalFeeFormValue) => {
         const payload = getCreateReceiptPaymentPayload(data);
-        let invoiceNumber = "";
 
         switch (data.paidType) {
             case PaymentType.CASH: {
-                invoiceNumber = await createManualReceiptPayment({ patientId: patientId!, payload });
-                hospitalFeeForm.setValue("invoiceNumber", invoiceNumber);
+                const response = await createManualReceiptPayment({ patientId: patientId!, payload });
+                hospitalFeeForm.setValue("invoiceNumber", response.invoiceNumber);
                 break;
             }
             case PaymentType.TRANSFER: {
@@ -153,9 +152,9 @@ const HospitalFeePage: React.FC = () => {
     };
 
     const handleQRPaymentSuccess = () => {
-        hospitalFeeForm.setValue("invoiceNumber", qrPaymentInvoiceNumber.toString() || "");
+        hospitalFeeForm.setValue("invoiceNumber", qrPaymentInvoiceNumber);
         handleCloseQRPaymentModal();
-        showToast.success("Thanh toán thành công");
+        showToast.success(t(i18n.translationKey.paymentSuccessfully));
     };
 
     const handleCancel = () => {
@@ -236,7 +235,20 @@ const HospitalFeePage: React.FC = () => {
             return selectedRows.some((row) => row.requestNumber === service.requestNumber);
         });
 
-        return [...result, ...attachedService].filter(Boolean);
+        const combined = [...result, ...attachedService].filter(Boolean);
+
+        const grouped = combined.reduce<Record<number, HospitalServiceItem>>((acc, item) => {
+            if (!item.serviceId) return acc;
+            if (!acc[item.serviceId]) {
+                acc[item.serviceId] = { ...item };
+            } else {
+                acc[item.serviceId].quantity += item.quantity;
+                acc[item.serviceId].unitPrice = item.unitPrice;
+            }
+            return acc;
+        }, {});
+
+        return Object.values(grouped);
     }, [hospitalServiceFeeAgGrid, attachHospitalServices, patientPaymentList]);
 
     const currentReceiptSummary = React.useMemo(() => {
@@ -432,6 +444,7 @@ const HospitalFeePage: React.FC = () => {
                                                 <FormItem
                                                     render="text-input"
                                                     name="age"
+                                                    placeholder="30"
                                                     label={t(i18n.translationKey.age)}
                                                     slotProps={{ input: { readOnly: true } }}
                                                 />
@@ -452,6 +465,7 @@ const HospitalFeePage: React.FC = () => {
                                             name="address"
                                             label={t(i18n.translationKey.address)}
                                             multiline
+                                            slotProps={{ input: { readOnly: true } }}
                                             rows={4}
                                         />
                                     </Grid>
@@ -622,6 +636,13 @@ const HospitalFeePage: React.FC = () => {
                                             params.data?.unitPrice ? formatCurrencyVND(params.data.unitPrice) : "",
                                     },
                                     {
+                                        headerName: t(i18n.translationKey.amountBeforeDiscount),
+                                        cellClass: "ag-cell-center",
+                                        flex: 1,
+                                        valueGetter: (params) =>
+                                            formatCurrencyVND(params.data?.unitPrice * params.data?.quantity),
+                                    },
+                                    {
                                         field: "support",
                                         headerName: t(i18n.translationKey.discountAmount),
                                         cellClass: "ag-cell-center",
@@ -634,30 +655,13 @@ const HospitalFeePage: React.FC = () => {
                                         headerName: t(i18n.translationKey.amountAfterDiscount),
                                         cellClass: "ag-cell-center",
                                         flex: 1,
-                                        // valueGetter: (params) =>
-                                        //     params.data?.cost !== undefined
-                                        //         ? formatCurrencyVND(params.data.cost)
-                                        //         : formatCurrencyVND(params.data.unitPrice * params.data.quantity),
-                                    },
-                                    {
-                                        field: "createdAt",
-                                        headerName: t(i18n.translationKey.invoiceDate),
-                                        valueGetter: (params) => {
-                                            if (!params.data.createdAt) return "";
-
-                                            return formatDate(
-                                                params.data.createdAt,
-                                                DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"],
-                                            );
-                                        },
-                                        cellClass: "ag-cell-center",
-                                        flex: 1,
+                                        valueGetter: (params) =>
+                                            formatCurrencyVND(params.data?.unitPrice * params.data?.quantity),
                                     },
                                 ] as ColDef<HospitalServiceItem>[]
                             }
                             rowData={attachedHospitalServiceFee}
                             {...attachedServiceFeeAgGrid}
-                            // pinnedBottomRowData={unpaidHospitalServiceFee}
                         />
                     </Box>
                 </Stack>

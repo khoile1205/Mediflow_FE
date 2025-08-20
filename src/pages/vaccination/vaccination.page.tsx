@@ -12,11 +12,8 @@ import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { TestResultStatus } from "~/constants/enums";
 import { useAuth } from "~/contexts/auth.context";
 import { useMutationAddVaccineToPreExamination } from "~/services/pre-examination/hooks/mutations";
-import {
-    useMutationConfirmVaccinationToday,
-    useMutationInjectVaccine,
-    useMutationUpdateVaccinationStatus,
-} from "~/services/vaccination/hooks/mutations";
+import { useQueryPreExaminationMedicines } from "~/services/pre-examination/hooks/queries";
+import { useMutationConfirmVaccinationToday, useMutationInjectVaccine } from "~/services/vaccination/hooks/mutations";
 import {
     useQueryGetMedicineVaccinationByReceptionId,
     useQueryGetNearestExpiryMedicineBatch,
@@ -25,7 +22,6 @@ import {
 import {
     MedicineVaccinationInformation,
     NearestExpiryMedicineBatch,
-    UpdateVaccinationStatusRequest,
     WaitingPatientVaccination,
 } from "~/services/vaccination/infras";
 import { showToast } from "~/utils";
@@ -47,7 +43,7 @@ const VaccinationPage: React.FC = () => {
     const [selectedVaccinationMedicineCount, setSelectedVaccinationMedicineCount] = React.useState<number>(0);
     const [searchWaitingPatientTerm, setSearchWaitingPatientTerm] = React.useState<string>("");
     const [isOpenTestingModal, setIsOpenTestingModal] = React.useState<boolean>(false);
-    const [isStartEnabled, setIsStartEnabled] = React.useState(false);
+    // const [isStartEnabled, setIsStartEnabled] = React.useState(false);
     const [isOpenRejectModal, setIsOpenRejectModal] = React.useState<boolean>(false);
     const [isAllowReject, setIsAllowReject] = React.useState<boolean>(false);
     // Queries
@@ -61,23 +57,25 @@ const VaccinationPage: React.FC = () => {
     const {
         data: { nearestExpiryMedicineBatch },
     } = useQueryGetNearestExpiryMedicineBatch(vaccinationForm.watch("medicineId"));
+    const { medicines: preTestingVaccines } = useQueryPreExaminationMedicines(patientForm.watch("receptionId"));
 
     // Mutations
     const { mutateAsync: addVaccineToPreExamination } = useMutationAddVaccineToPreExamination();
-    const { mutateAsync: updateVaccinationStatus } = useMutationUpdateVaccinationStatus();
+    // const { mutateAsync: updateVaccinationStatus } = useMutationUpdateVaccinationStatus();
     const { mutateAsync: injectVaccine } = useMutationInjectVaccine();
     const { mutateAsync: confirmVaccinationToday } = useMutationConfirmVaccinationToday();
 
     const patientColumnDefs = React.useMemo(
         () =>
             [
-                { field: "patientCode", headerName: t(i18n.translationKey.medicalCode) },
-                { field: "patientName", headerName: t(i18n.translationKey.patientName) },
+                { field: "patientCode", headerName: t(i18n.translationKey.medicalCode), flex: 1 },
+                { field: "patientName", headerName: t(i18n.translationKey.patientName), flex: 1 },
                 {
                     field: "dateOfBirth",
                     headerName: t(i18n.translationKey.dateOfBirth),
                     valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy"]),
                     cellClass: "ag-cell-center",
+                    flex: 1,
                 },
             ] as ColDef<WaitingPatientVaccination>[],
         [t],
@@ -232,7 +230,7 @@ const VaccinationPage: React.FC = () => {
         });
 
         vaccinationForm.setValue("startTestingTime", new Date());
-        setIsStartEnabled(true);
+        // setIsStartEnabled(true);
     };
 
     const handleInjectVaccine = async () => {
@@ -255,25 +253,25 @@ const VaccinationPage: React.FC = () => {
             return;
         }
 
-        await injectVaccine(vaccinationForm.watch());
+        await injectVaccine({ data: vaccinationForm.watch(), receptionId: patientForm.watch("receptionId") });
     };
 
-    const handleUpdateVaccinationStatus = async (status: boolean) => {
-        if (selectedVaccinationMedicineCount === 0) {
-            showToast.warning(t(i18n.translationKey.selectAtLeastOneDose));
-            return;
-        }
+    // const handleUpdateVaccinationStatus = async (status: boolean) => {
+    //     if (selectedVaccinationMedicineCount === 0) {
+    //         showToast.warning(t(i18n.translationKey.selectAtLeastOneDose));
+    //         return;
+    //     }
 
-        const receptionId = patientForm.watch("receptionId");
-        const data: UpdateVaccinationStatusRequest = getUpdateVaccinationStatusBody(status);
+    //     const receptionId = patientForm.watch("receptionId");
+    //     const data: UpdateVaccinationStatusRequest = getUpdateVaccinationStatusBody(status);
 
-        await updateVaccinationStatus({ receptionId, data });
-    };
+    //     await updateVaccinationStatus({ receptionId, data });
+    // };
 
-    const getUpdateVaccinationStatusBody = (status: boolean): UpdateVaccinationStatusRequest => ({
-        receptionVaccinationId: vaccinationForm.watch("receptionVaccinationId"),
-        status,
-    });
+    // const getUpdateVaccinationStatusBody = (status: boolean): UpdateVaccinationStatusRequest => ({
+    //     receptionVaccinationId: vaccinationForm.watch("receptionVaccinationId"),
+    //     status,
+    // });
 
     const handleConfirmVaccinationToday = async () => {
         const receptionId = patientForm.watch("receptionId");
@@ -326,13 +324,6 @@ const VaccinationPage: React.FC = () => {
             <DynamicForm form={patientForm}>
                 <Box className="flex h-full basis-1/3 flex-col bg-[#F6F8D5] p-3">
                     <Stack spacing={2} className="flex-grow">
-                        <FormItem
-                            render="text-input"
-                            name="patientVaccinationCode"
-                            label={t(i18n.translationKey.vaccinationNumber)}
-                            slotProps={{ input: { readOnly: true } }}
-                        />
-
                         <Grid container spacing={2} alignItems="center">
                             <Grid size={12}>
                                 <SearchBox
@@ -352,12 +343,6 @@ const VaccinationPage: React.FC = () => {
                             />
                         </Box>
 
-                        <FormItem
-                            render="text-input"
-                            name="patientVaccinationCode"
-                            label={t(i18n.translationKey.vaccinationNumber)}
-                            slotProps={{ input: { readOnly: true } }}
-                        />
                         <FormItem
                             render="text-input"
                             name="patientCode"
@@ -476,7 +461,13 @@ const VaccinationPage: React.FC = () => {
                         </Grid>
 
                         <Grid size={4}>
-                            <Stack spacing={2.5} height="100%">
+                            <Stack
+                                height="100%"
+                                display="flex"
+                                flexDirection="column"
+                                spacing={2.5}
+                                justifyContent={"space-evenly"}
+                            >
                                 <Button disabled={isDisablePreTesting} onClick={handleConfirmTesting}>
                                     {t(i18n.translationKey.confirmStart)}
                                 </Button>
@@ -486,9 +477,9 @@ const VaccinationPage: React.FC = () => {
                                 >
                                     {t(i18n.translationKey.confirmInjectedToday)}
                                 </Button>
-                                <Button disabled={selectedVaccinationMedicineCount === 0}>
+                                {/* <Button disabled={selectedVaccinationMedicineCount === 0}>
                                     {t(i18n.translationKey.saveNote)}
-                                </Button>
+                                </Button> */}
                                 <Button
                                     disabled={
                                         selectedVaccinationMedicineCount === 0 || vaccinationForm.watch("isInjected")
@@ -497,14 +488,14 @@ const VaccinationPage: React.FC = () => {
                                 >
                                     {t(i18n.translationKey.confirmSelectedDose)}
                                 </Button>
-                                <Button
+                                {/* <Button
                                     disabled={
                                         selectedVaccinationMedicineCount === 0 || !vaccinationForm.watch("isInjected")
                                     }
                                     onClick={() => handleUpdateVaccinationStatus(false)}
                                 >
                                     {t(i18n.translationKey.cancelConfirm)}
-                                </Button>
+                                </Button> */}
                             </Stack>
                         </Grid>
 
@@ -516,7 +507,7 @@ const VaccinationPage: React.FC = () => {
                                 spacing={2.5}
                                 justifyContent={"space-evenly"}
                             >
-                                <Button onClick={handleConfirmStart} disabled={!isStartEnabled}>
+                                <Button onClick={handleConfirmStart} disabled={!preTestingVaccines.length}>
                                     {t(i18n.translationKey.inputTestResult)}
                                 </Button>
                                 <Button
@@ -572,6 +563,8 @@ const VaccinationPage: React.FC = () => {
                     setIsOpenTestingModal(false);
                 }}
                 receptionId={patientForm.watch("receptionId")}
+                plannedInjectVaccines={doctorPrescribedVaccines}
+                preTestingVaccines={preTestingVaccines}
             />
             <RejectVaccinationModal
                 receptionVaccinationId={vaccinationForm.watch("receptionVaccinationId")}
@@ -579,6 +572,7 @@ const VaccinationPage: React.FC = () => {
                 onClose={() => {
                     setIsOpenRejectModal(false);
                 }}
+                receptionId={patientForm.watch("receptionId")}
             />
         </Box>
     );

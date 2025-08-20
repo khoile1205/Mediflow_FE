@@ -10,7 +10,8 @@ import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
 import { QueryKey } from "~/constants/query-key";
 import { useMutationUpdatePreExaminationResult } from "~/services/pre-examination/hooks/mutations/use-mutation-update-pre-examination-result";
-import { useQueryPreExaminationMedicines } from "~/services/pre-examination/hooks/queries/useQueryPreExaminationMedicines";
+import { PreExaminationMedicine } from "~/services/pre-examination/infras/types";
+import { MedicineVaccinationInformation } from "~/services/vaccination/infras";
 import { showToast } from "~/utils";
 import { PreExaminationRow } from "./types";
 
@@ -18,16 +19,23 @@ interface PreExaminationTestingPageProps {
     open: boolean;
     onClose: () => void;
     receptionId: number;
+    plannedInjectVaccines: MedicineVaccinationInformation[];
+    preTestingVaccines: PreExaminationMedicine[];
 }
 
-const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ open, onClose, receptionId }) => {
+const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({
+    open,
+    onClose,
+    receptionId,
+    // plannedInjectVaccines,
+    preTestingVaccines,
+}) => {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
     const resultForm = useForm();
     const resultAgGrid = useAgGrid<PreExaminationRow>({ rowSelection: "multiple" });
 
     const { mutateAsync: updateTestResult } = useMutationUpdatePreExaminationResult();
-    const { medicines, isLoading } = useQueryPreExaminationMedicines(receptionId);
 
     const handleSubmitResult = async () => {
         const selectedRows = resultAgGrid.gridApi?.getSelectedRows?.();
@@ -38,6 +46,10 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
         }
 
         const testResult = resultForm.getValues("testResult");
+
+        // const vaccineWithSamePreTest = plannedInjectVaccines.filter(
+        //     (vaccine) => vaccine.medicineId === selectedRows[0].
+        // );
 
         try {
             await Promise.all(
@@ -174,13 +186,12 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({ o
 
                     <AgDataGrid
                         columnDefs={columnDefs}
-                        rowData={medicines}
+                        rowData={preTestingVaccines}
                         {...resultAgGrid}
                         onGridReady={(params) => {
                             resultAgGrid.gridApi = params.api;
                             params.api.sizeColumnsToFit();
                         }}
-                        loading={isLoading}
                     />
                 </DynamicForm>
             </DialogContent>
