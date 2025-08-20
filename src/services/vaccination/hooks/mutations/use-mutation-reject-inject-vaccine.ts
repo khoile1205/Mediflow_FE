@@ -9,10 +9,10 @@ export const useMutationRejectInjectVaccine = () => {
 
     return useMutation({
         mutationKey: [QueryKey.VACCINATION.REJECT_INJECT_VACCINE],
-        mutationFn: async (data: RejectVaccinationRequest) => {
+        mutationFn: async ({ data }: { data: RejectVaccinationRequest; receptionId: number }) => {
             return await vaccinationApis.rejectInject(data.receptionVaccinationId, data);
         },
-        onSuccess: () => {
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.VACCINATION.GET_WAITING_PATIENT_VACCINATION_LIST],
             });
@@ -21,6 +21,9 @@ export const useMutationRejectInjectVaccine = () => {
             });
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.VACCINATION.GET_MEDICINE_VACCINATION_LIST_BY_RECEPTION_ID],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.VACCINATION.GET_PENDING_VACCINATIONS_TODAY, variables.receptionId],
             });
 
             showToast.success(i18n.t(i18n.translationKey.confirmRejectInjectedSuccessfully));

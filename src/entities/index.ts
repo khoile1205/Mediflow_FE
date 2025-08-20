@@ -9,3 +9,4 @@ export * from "./service-type.entity";
 export * from "./examination";
 export * from "./medicine-batch.entity";
 export * from "./medicine-batch-return.entity";
+export * from "./statistic.entity";

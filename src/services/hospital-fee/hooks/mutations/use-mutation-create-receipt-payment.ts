@@ -12,7 +12,7 @@ export function useMutationCreateReceiptPayment() {
             const response = await hospitalFeeApis.createReceiptPayment(patientId, payload);
             return response.Data;
         },
-        onSuccess: (invoiceNumber: string) => {
+        onSuccess: (response) => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.HOSPITAL_FEE.GET_PATIENT_PAYMENT_LIST],
             });
@@ -30,7 +30,7 @@ export function useMutationCreateReceiptPayment() {
             });
             showToast.success(i18n.t(i18n.translationKey.createReceiptPaymentSuccessfully));
 
-            return invoiceNumber;
+            return response;
         },
     });
 }

@@ -30,6 +30,7 @@ import {
 import { ExaminationFormValue } from "./types";
 import { showToast } from "~/utils";
 import { useMutationUpsertExaminationResult } from "~/services/examination/hooks/mutations";
+import i18next from "i18next";
 
 export const ExaminationPage: React.FC = () => {
     const { t } = useTranslation();
@@ -76,7 +77,7 @@ export const ExaminationPage: React.FC = () => {
                     ),
                 },
             ] as ColDef<PatientForExamination>[],
-        [],
+        [i18next.language],
     );
 
     const {
@@ -126,7 +127,7 @@ export const ExaminationPage: React.FC = () => {
                     ),
                 },
             ] as ColDef<ServiceTestParameter>[],
-        [],
+        [i18next.language],
     );
 
     const examinationIds = React.useMemo(() => {
@@ -465,7 +466,6 @@ export const ExaminationPage: React.FC = () => {
                                 render="select"
                                 name="sampleQuality"
                                 label={t(i18n.translationKey.sampleQuality)}
-                                required
                                 options={[
                                     { label: t(i18n.translationKey.high), value: SampleQuality.HIGH },
                                     { label: t(i18n.translationKey.medium), value: SampleQuality.MEDIUM },

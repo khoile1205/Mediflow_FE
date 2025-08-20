@@ -16,6 +16,7 @@ import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { PaymentType, ReceiptPaymentType } from "~/constants/enums";
 import { QueryKey } from "~/constants/query-key";
 import { useMutationCreateReceiptPayment } from "~/services/hospital-fee/hooks/mutations";
+import { useMutationCreateQRPayment } from "~/services/hospital-fee/hooks/mutations/use-mutation-create-qr-payment";
 import { useQueryGetUnpaidServiceByPatientId, useQueryUnpaidPatientList } from "~/services/hospital-fee/hooks/queries";
 import { CreateReceiptPaymentRequest, HospitalServiceType, UnpaidPatientSummary } from "~/services/hospital-fee/infras";
 import { useQueryGetAttachHospitalService } from "~/services/hospital-service/hooks/queries";
@@ -24,7 +25,9 @@ import { useQueryGetLatestReceptionIdByPatientId } from "~/services/reception/ho
 import { formatCurrencyVND } from "~/utils/currency";
 import { formatDate, getCurrentAge } from "~/utils/date-time";
 import { ReceiptPrinter } from "./receipt-printer";
+import ReceiptQRCodePayment from "./receipt-qr-code-payment";
 import { HospitalFeeFormValue, HospitalServiceItem } from "./types";
+import { showToast } from "~/utils";
 
 const HospitalFeePage: React.FC = () => {
     const { t } = useTranslation();
@@ -34,6 +37,11 @@ const HospitalFeePage: React.FC = () => {
 
     const [patientId, setPatientId] = React.useState<number | null>(null);
     const [searchUnpaidPatientTerm, setSearchUnpaidPatientTerm] = React.useState("");
+    const [qrCode, setQRCode] = React.useState<string>();
+    const [paymentId, setPaymentId] = React.useState<number | null>(null);
+    const [openQRPaymentModal, setOpenQRPaymentModal] = React.useState<boolean>(false);
+    const [qrPaymentInvoiceNumber, setQrPaymentInvoiceNumber] = React.useState<string | null>(null);
+
     // Queries
     const {
         data: { unpaidPatientList },
@@ -49,7 +57,9 @@ const HospitalFeePage: React.FC = () => {
     } = useQueryGetUnpaidServiceByPatientId(patientId);
 
     // Mutations
-    const { mutateAsync: createReceiptPayment } = useMutationCreateReceiptPayment();
+    const { mutateAsync: createManualReceiptPayment } = useMutationCreateReceiptPayment();
+    const { mutateAsync: createQRPayment } = useMutationCreateQRPayment();
+
     // AG Grid
     const unpaidPatientAgGrid = useAgGrid({});
 
@@ -74,7 +84,7 @@ const HospitalFeePage: React.FC = () => {
             isCancel: false,
             name: "",
             dob: "",
-            age: 0,
+            age: null,
             address: "",
             taxCode: "",
             atmCode: "",
@@ -101,10 +111,50 @@ const HospitalFeePage: React.FC = () => {
         setSearchUnpaidPatientTerm(value);
     };
 
+    const handleCloseQRPaymentModal = () => {
+        setOpenQRPaymentModal(false);
+        setQRCode("");
+        setPaymentId(null);
+        setQrPaymentInvoiceNumber(null);
+    };
+
     const handleSubmit = async (data: HospitalFeeFormValue) => {
         const payload = getCreateReceiptPaymentPayload(data);
-        const invoiceNumber = await createReceiptPayment({ patientId: patientId!, payload });
-        hospitalFeeForm.setValue("invoiceNumber", invoiceNumber);
+
+        switch (data.paidType) {
+            case PaymentType.CASH: {
+                const response = await createManualReceiptPayment({ patientId: patientId!, payload });
+                hospitalFeeForm.setValue("invoiceNumber", response.invoiceNumber);
+                break;
+            }
+            case PaymentType.TRANSFER: {
+                handleQRPayment(payload);
+                break;
+            }
+        }
+    };
+
+    const handleQRPayment = async (payload: CreateReceiptPaymentRequest) => {
+        const response = await createQRPayment({ patientId: patientId!, payload });
+        setOpenQRPaymentModal(true);
+        setQRCode(response.qrCode);
+        setPaymentId(response.paymentId);
+        setQrPaymentInvoiceNumber(response.invoiceNumber);
+    };
+
+    const handleRegenerateQR = async () => {
+        const payload = getCreateReceiptPaymentPayload(hospitalFeeForm.watch());
+        const response = await createQRPayment({ patientId: patientId!, payload });
+
+        setQRCode(response.qrCode);
+        setPaymentId(response.paymentId);
+        setQrPaymentInvoiceNumber(response.invoiceNumber);
+    };
+
+    const handleQRPaymentSuccess = () => {
+        hospitalFeeForm.setValue("invoiceNumber", qrPaymentInvoiceNumber);
+        handleCloseQRPaymentModal();
+        showToast.success(t(i18n.translationKey.paymentSuccessfully));
     };
 
     const handleCancel = () => {
@@ -112,6 +162,7 @@ const HospitalFeePage: React.FC = () => {
         setPatientId(null);
         hospitalServiceFeeAgGrid.gridApi.deselectAll();
         unpaidPatientAgGrid.gridApi.deselectAll();
+
         queryClient.invalidateQueries({ queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_PATIENT_LIST] });
         queryClient.invalidateQueries({
             queryKey: [QueryKey.HOSPITAL_FEE.GET_UNPAID_SERVICE_BY_PATIENT_ID, patientId],
@@ -184,7 +235,20 @@ const HospitalFeePage: React.FC = () => {
             return selectedRows.some((row) => row.requestNumber === service.requestNumber);
         });
 
-        return [...result, ...attachedService].filter(Boolean);
+        const combined = [...result, ...attachedService].filter(Boolean);
+
+        const grouped = combined.reduce<Record<number, HospitalServiceItem>>((acc, item) => {
+            if (!item.serviceId) return acc;
+            if (!acc[item.serviceId]) {
+                acc[item.serviceId] = { ...item };
+            } else {
+                acc[item.serviceId].quantity += item.quantity;
+                acc[item.serviceId].unitPrice = item.unitPrice;
+            }
+            return acc;
+        }, {});
+
+        return Object.values(grouped);
     }, [hospitalServiceFeeAgGrid, attachHospitalServices, patientPaymentList]);
 
     const currentReceiptSummary = React.useMemo(() => {
@@ -380,6 +444,7 @@ const HospitalFeePage: React.FC = () => {
                                                 <FormItem
                                                     render="text-input"
                                                     name="age"
+                                                    placeholder="30"
                                                     label={t(i18n.translationKey.age)}
                                                     slotProps={{ input: { readOnly: true } }}
                                                 />
@@ -400,6 +465,7 @@ const HospitalFeePage: React.FC = () => {
                                             name="address"
                                             label={t(i18n.translationKey.address)}
                                             multiline
+                                            slotProps={{ input: { readOnly: true } }}
                                             rows={4}
                                         />
                                     </Grid>
@@ -570,6 +636,13 @@ const HospitalFeePage: React.FC = () => {
                                             params.data?.unitPrice ? formatCurrencyVND(params.data.unitPrice) : "",
                                     },
                                     {
+                                        headerName: t(i18n.translationKey.amountBeforeDiscount),
+                                        cellClass: "ag-cell-center",
+                                        flex: 1,
+                                        valueGetter: (params) =>
+                                            formatCurrencyVND(params.data?.unitPrice * params.data?.quantity),
+                                    },
+                                    {
                                         field: "support",
                                         headerName: t(i18n.translationKey.discountAmount),
                                         cellClass: "ag-cell-center",
@@ -582,33 +655,24 @@ const HospitalFeePage: React.FC = () => {
                                         headerName: t(i18n.translationKey.amountAfterDiscount),
                                         cellClass: "ag-cell-center",
                                         flex: 1,
-                                        // valueGetter: (params) =>
-                                        //     params.data?.cost !== undefined
-                                        //         ? formatCurrencyVND(params.data.cost)
-                                        //         : formatCurrencyVND(params.data.unitPrice * params.data.quantity),
-                                    },
-                                    {
-                                        field: "createdAt",
-                                        headerName: t(i18n.translationKey.invoiceDate),
-                                        valueGetter: (params) => {
-                                            if (!params.data.createdAt) return "";
-
-                                            return formatDate(
-                                                params.data.createdAt,
-                                                DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"],
-                                            );
-                                        },
-                                        cellClass: "ag-cell-center",
-                                        flex: 1,
+                                        valueGetter: (params) =>
+                                            formatCurrencyVND(params.data?.unitPrice * params.data?.quantity),
                                     },
                                 ] as ColDef<HospitalServiceItem>[]
                             }
                             rowData={attachedHospitalServiceFee}
                             {...attachedServiceFeeAgGrid}
-                            // pinnedBottomRowData={unpaidHospitalServiceFee}
                         />
                     </Box>
                 </Stack>
+                <ReceiptQRCodePayment
+                    qrCode={qrCode}
+                    open={openQRPaymentModal}
+                    paymentId={paymentId}
+                    onClose={handleCloseQRPaymentModal}
+                    onSuccess={handleQRPaymentSuccess}
+                    onRegenerate={handleRegenerateQR}
+                />
             </DynamicForm>
 
             <Box style={{ display: "none" }}>

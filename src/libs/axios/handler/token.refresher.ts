@@ -4,6 +4,7 @@ import { authService } from "~/services/auth";
 import { showToast } from "~/utils";
 import { IBaseApiResponse } from "../types";
 import i18n from "~/configs/i18n";
+import { NavigateFunction } from "react-router";
 
 interface RetryableAxiosRequestConfig extends InternalAxiosRequestConfig {
     _retry?: boolean;
@@ -18,9 +19,15 @@ export class TokenRefresher {
     private readonly axiosInstance: AxiosInstance;
     private isRefreshing = false;
     private failedRequestsQueue: QueuedRequest<unknown>[] = [];
+    private readonly _loginPageUrl = "/login";
+    private navigate: NavigateFunction;
 
     constructor(axiosInstance: AxiosInstance) {
         this.axiosInstance = axiosInstance;
+    }
+
+    public setNavigateFunction(navigate: NavigateFunction): void {
+        this.navigate = navigate;
     }
 
     public setupInterceptor(): void {
@@ -29,8 +36,14 @@ export class TokenRefresher {
             async (error: AxiosError) => {
                 const originalRequest = error.config as RetryableAxiosRequestConfig;
                 const isUnauthorizedResponse = error.response?.status === HttpStatusCode.Unauthorized;
+                console.log(originalRequest);
+                const isLoginPage = location.pathname === this._loginPageUrl;
+                console.log(isLoginPage);
                 const isRetryable =
-                    originalRequest && originalRequest._retry && error.config?.url !== endpoints.auth.refreshToken;
+                    originalRequest &&
+                    !originalRequest._retry &&
+                    error.config?.url !== endpoints.auth.refreshToken &&
+                    !isLoginPage;
 
                 if (isUnauthorizedResponse && isRetryable) {
                     if (this.isRefreshing) {
@@ -49,11 +62,10 @@ export class TokenRefresher {
                     } catch (error) {
                         const refreshError = error as AxiosError<IBaseApiResponse<unknown>>;
                         const messageKey = refreshError.response.data.MessageKey || i18n.translationKey.tokenExpired;
+                        showToast.error(i18n.t(messageKey));
 
                         this.processQueue(refreshError);
                         this.redirectToLoginPage();
-
-                        showToast.error(i18n.t(messageKey));
 
                         return Promise.reject(refreshError);
                     } finally {
@@ -82,7 +94,6 @@ export class TokenRefresher {
     }
 
     private redirectToLoginPage(): void {
-        const LOGIN_PAGE_URL = "/login";
-        window.location.href = LOGIN_PAGE_URL;
+        this.navigate(this._loginPageUrl);
     }
 }

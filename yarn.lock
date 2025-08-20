@@ -460,6 +460,11 @@
   resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-5.2.5.tgz#b2d869075277e2cba31694951a2d355a8965d763"
   integrity sha512-70r2UZ0raqLn5W+sPeKhqlf8wGvUXFWlofaDlcbt/S3d06+17gXKr3VNqDODB0I1ASme3dGT5OJj9NABt7OTZQ==
 
+"@highcharts/react@^4.0.0-beta.5":
+  version "4.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@highcharts/react/-/react-4.0.0-beta.5.tgz#0b325041e1af8f4407e5c6d1682d396366ece791"
+  integrity sha512-KoCy6Q2QQqSZo0v2dCB32HVgL5vrQL0E17PPAuATFaxStunY3N54YvcnjMt71omqfJtc0xRhik0uQvGEBPJLLg==
+
 "@humanfs/core@^0.19.1":
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/@humanfs/core/-/core-0.19.1.tgz#17c55ca7d426733fe3c561906b8173c336b40a77"
@@ -2186,6 +2191,11 @@ hasown@^2.0.2:
   dependencies:
     function-bind "^1.1.2"
 
+highcharts@^12.3.0:
+  version "12.3.0"
+  resolved "https://registry.yarnpkg.com/highcharts/-/highcharts-12.3.0.tgz#aa1c12cc98072ab5fde187d93806c58493506e44"
+  integrity sha512-QIKmaemgheRa1K2Ia9MLj1KLtBU1Tu/VQ6KAMqtMBMsAC4NzcFq6g96LF03ZO3IFFiSifmZx8ItEyRcz4w75cg==
+
 hoist-non-react-statics@^3.3.1:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
@@ -2880,6 +2890,11 @@ punycode@^2.1.0:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.3.1.tgz#027422e2faec0b25e1549c3e1bd8309b9133b6e5"
   integrity sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==
 
+qrcode-generator@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/qrcode-generator/-/qrcode-generator-2.0.4.tgz#e8b3f30922577eba52078aa9c0d5a2a74fe1fd94"
+  integrity sha512-mZSiP6RnbHl4xL2Ap5HfkjLnmxfKcPWpWe/c+5XxCuetEenqmNFf1FH/ftXPCtFG5/TDobjsjz6sSNL0Sr8Z9g==
+
 queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
@@ -2932,6 +2947,13 @@ react-is@^19.1.0:
   version "19.1.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.1.0.tgz#805bce321546b7e14c084989c77022351bbdd11b"
   integrity sha512-Oe56aUPnkHyyDxxkvqtd7KkdQP5uIUfHxd5XTb3wE9d/kRnZLmKbDB0GWk919tdQ+mxxPtG6EAs6RMT6i1qtHg==
+
+react-qrcode-logo@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/react-qrcode-logo/-/react-qrcode-logo-4.0.0.tgz#e26558ed16cc4f5aa3a8e84cdd39844bb9fc669f"
+  integrity sha512-TcDdsJQe7P0OY7uA7Do4Z0DfIIjjqx81RbBGQY+90T2Ba42pUCx/cSI2UTwPPoH9WwE0StLb8A98mFgKIAI4JQ==
+  dependencies:
+    qrcode-generator "^2.0.4"
 
 react-router@^7.5.3:
   version "7.5.3"

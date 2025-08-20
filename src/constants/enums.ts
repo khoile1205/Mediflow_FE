@@ -39,3 +39,10 @@ export enum HospitalServiceType {
     Injection,
     Test,
 }
+
+export enum PaymentStatus {
+    COMPLETED,
+    CANCELLED,
+    ADJUSTED,
+    PENDING,
+}

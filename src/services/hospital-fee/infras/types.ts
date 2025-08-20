@@ -1,4 +1,4 @@
-import { PaymentStatus } from "~/services/reception/infras/types";
+import { PaymentStatus } from "~/constants/enums";
 
 export interface UnpaidPatientSummary {
     id: number;
@@ -83,4 +83,21 @@ export interface CreateReceiptPaymentRequest {
     note?: string;
     receptionVaccinationIds?: number[];
     serviceRequestDetailIds?: number[];
+}
+
+export interface CreateReceiptPaymentResponse {
+    invoiceNumber: string;
+    paymentId: number;
+}
+
+export interface CreateQRPaymentResponse {
+    paymentId: number;
+    invoiceNumber: string;
+    checkoutUrl: string;
+    qrCode: string;
+}
+
+export interface CheckPaymentStatusRequest {
+    paymentId?: number;
+    paymentContractId?: number;
 }
