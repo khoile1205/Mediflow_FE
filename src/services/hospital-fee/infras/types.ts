@@ -85,9 +85,14 @@ export interface CreateReceiptPaymentRequest {
     serviceRequestDetailIds?: number[];
 }
 
+export interface CreateReceiptPaymentResponse {
+    invoiceNumber: string;
+    paymentId: number;
+}
+
 export interface CreateQRPaymentResponse {
     paymentId: number;
-    invoiceNumber: number;
+    invoiceNumber: string;
     checkoutUrl: string;
     qrCode: string;
 }
@@ -96,6 +101,3 @@ export interface CheckPaymentStatusRequest {
     paymentId?: number;
     paymentContractId?: number;
 }
-// export interface CheckPaymentStatusResponse {
-//     status: PaymentStatus;
-// }

@@ -10,7 +10,7 @@ export const useMutationInjectVaccine = () => {
 
     return useMutation({
         mutationKey: [QueryKey.VACCINATION.INJECT_VACCINATION],
-        mutationFn: async (data: VaccinationFormValue) => {
+        mutationFn: async ({ data }: { data: VaccinationFormValue; receptionId: number }) => {
             return await vaccinationApis.injectVaccine({
                 patientId: data.patientId,
                 receptionVaccinationId: data.receptionVaccinationId,
@@ -32,7 +32,7 @@ export const useMutationInjectVaccine = () => {
             queryClient.invalidateQueries({
                 queryKey: [
                     QueryKey.RECEPTION.GET_VACCINATION_RECEPTION_BY_RECEPTION_ID,
-                    variables.receptionVaccinationId,
+                    variables.data.receptionVaccinationId,
                 ],
             });
             queryClient.invalidateQueries({
@@ -41,7 +41,9 @@ export const useMutationInjectVaccine = () => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.POST_VACCINATION.GET_MEDICINE_LIST],
             });
-
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.VACCINATION.GET_PENDING_VACCINATIONS_TODAY, variables.receptionId],
+            });
             showToast.success(i18n.t(i18n.translationKey.confirmInjectedSuccessfully));
         },
     });

@@ -6,7 +6,7 @@ import { PreExaminationMedicine } from "../../infras/types";
 import { preExaminationApis } from "../../infras/pre-vaccination.api";
 
 const transformData = (res: IBaseApiResponse<PreExaminationMedicine[]>): PreExaminationMedicine[] => {
-    return res.Data;
+    return res.Data.filter((item) => !item.testResultEntry);
 };
 
 export const useQueryPreExaminationMedicines = (receptionId?: number) => {

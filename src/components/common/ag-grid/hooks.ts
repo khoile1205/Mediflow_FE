@@ -76,7 +76,7 @@ export const useAgGrid = <T>({
                 }
             },
         }),
-        [rowSelection, suppressRowClickSelection, defaultColDef, initialColumnDefs],
+        [],
     );
 
     // Handle grid ready event
@@ -84,10 +84,6 @@ export const useAgGrid = <T>({
         (params: GridReadyEvent) => {
             if (!gridApi.current) {
                 gridApi.current = params.api;
-            }
-
-            if (autoSizeColumns) {
-                gridApi.current?.sizeColumnsToFit();
             }
 
             // Apply default sort if provided

@@ -11,10 +11,16 @@ import { useMutationRejectInjectVaccine } from "~/services/vaccination/hooks/mut
 
 interface RejectVaccinationModalProps {
     receptionVaccinationId: number;
+    receptionId: number;
     open: boolean;
     onClose: () => void;
 }
-const RejectVaccinationModal: React.FC<RejectVaccinationModalProps> = ({ receptionVaccinationId, open, onClose }) => {
+const RejectVaccinationModal: React.FC<RejectVaccinationModalProps> = ({
+    receptionVaccinationId,
+    open,
+    onClose,
+    receptionId,
+}) => {
     const { t } = useTranslation();
     const form = useForm<RejectVaccinationFormValues>({
         defaultValues: {
@@ -25,8 +31,11 @@ const RejectVaccinationModal: React.FC<RejectVaccinationModalProps> = ({ recepti
 
     const handleRejectVaccination = async (data: RejectVaccinationFormValues) => {
         await rejectInjectVaccine({
-            receptionVaccinationId,
-            issueNote: data.issueNote,
+            data: {
+                receptionVaccinationId,
+                issueNote: data.issueNote,
+            },
+            receptionId,
         });
         form.reset();
         onClose();

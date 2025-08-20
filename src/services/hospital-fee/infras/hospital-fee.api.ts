@@ -7,6 +7,7 @@ import {
     CheckPaymentStatusRequest,
     CreateQRPaymentResponse,
     CreateReceiptPaymentRequest,
+    CreateReceiptPaymentResponse,
     GetPatientPaymentsResponse,
     GetPaymentDetailsResponse,
     HospitalUnpaidServicesResponse,
@@ -42,7 +43,7 @@ const getUnpaidServiceByPatientId = async (patientId: number) => {
 };
 
 const createReceiptPayment = async (patientId: number, payload: CreateReceiptPaymentRequest) => {
-    return await callApi<string>({
+    return await callApi<CreateReceiptPaymentResponse>({
         url: endpoints.hospitalFee.createReceiptPayment(patientId),
         method: HttpMethod.POST,
         data: payload,

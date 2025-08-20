@@ -5,12 +5,14 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import { I18N_LANGUAGE } from "./types";
 import { TRANSLATION_KEY } from "./translation_key";
 
+const LANG_KEY = "lang";
+
 reactI18n
     .use(HttpBackend)
     .use(LanguageDetector)
     .use(initReactI18next)
     .init({
-        lng: I18N_LANGUAGE.VIETNAMESE,
+        // lng: savedLang || I18N_LANGUAGE.VIETNAMESE,
         fallbackLng: I18N_LANGUAGE.VIETNAMESE,
         debug: import.meta.env.MODE === "development",
         interpolation: { escapeValue: false },
@@ -18,6 +20,11 @@ reactI18n
         ns: ["translation"],
         defaultNS: "translation",
         supportedLngs: [I18N_LANGUAGE.ENGLISH, I18N_LANGUAGE.VIETNAMESE],
+        detection: {
+            order: ["localStorage", "navigator"],
+            caches: ["localStorage"],
+            lookupLocalStorage: LANG_KEY,
+        },
     });
 
 const i18n = {

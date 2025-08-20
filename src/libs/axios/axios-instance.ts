@@ -7,5 +7,5 @@ export const axiosInstance = axios.create({
     withCredentials: true,
 });
 
-const tokenRefresher = new TokenRefresher(axiosInstance);
+export const tokenRefresher = new TokenRefresher(axiosInstance);
 tokenRefresher.setupInterceptor();

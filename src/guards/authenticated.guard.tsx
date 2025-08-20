@@ -9,12 +9,17 @@ import { routePermissions } from "~/configs/route-permission";
 import { showToast } from "~/utils";
 import { getRequiredPermissionForPath, hasPermission } from "~/utils/permission.utils";
 import { useAuth } from "../contexts/auth.context";
+import { tokenRefresher } from "~/libs/axios/axios-instance";
 
 const AuthenticatedGuard: React.FC = () => {
     const { t } = useTranslation();
     const { user, isLoading, isInitialized, userPermission } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+
+    React.useEffect(() => {
+        tokenRefresher.setNavigateFunction(navigate);
+    }, [navigate]);
 
     React.useEffect(() => {
         if (!isInitialized || isLoading) {
