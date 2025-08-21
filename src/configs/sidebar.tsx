@@ -11,6 +11,7 @@ import {
     Healing,
     Home,
     HomeOutlined,
+    InsertChart,
     Inventory,
     Inventory2,
     ListAlt,
@@ -34,7 +35,7 @@ const getRoutePermissions = (path: string) => routePermissions[path];
 
 export const sidebarTree: SidebarTabProps[] = [
     {
-        icon: <Home />, // Dashboard / Home
+        icon: <Home />,
         labelKey: i18n.translationKey.home,
         pathName: "/",
     },
@@ -45,13 +46,19 @@ export const sidebarTree: SidebarTabProps[] = [
         ...getRoutePermissions("/management/overview"),
     },
     {
+        icon: <InsertChart />,
+        labelKey: i18n.translationKey.reportAndStatistic,
+        pathName: "/reports",
+        ...getRoutePermissions("/reports"),
+    },
+    {
         icon: <LocalHospital />,
         labelKey: i18n.translationKey.reception,
         children: [
             {
                 labelKey: i18n.translationKey.vaccination,
                 pathName: "/reception/vaccination",
-                icon: <MedicalServices />, // More general medical service icon
+                icon: <MedicalServices />,
                 ...getRoutePermissions("/reception/vaccination"),
             },
         ],
@@ -141,7 +148,12 @@ export const sidebarTree: SidebarTabProps[] = [
                 ...getRoutePermissions("/vaccination/post-injection"),
             },
         ],
-        ...getRoutePermissions("/vaccination"),
+        ...Object.assign(
+            {},
+            getRoutePermissions("/vaccination"),
+            getRoutePermissions("/vaccination/history"),
+            getRoutePermissions("/vaccination/post-injection"),
+        ),
     },
     {
         icon: <LocalPharmacy />, // Pharmacy

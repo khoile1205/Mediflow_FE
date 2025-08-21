@@ -16,26 +16,18 @@ export type RoutePermissionMap = {
     };
 };
 
-const inventoryRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.PharmacyStaff, Role.WarehouseStaff];
+const inventoryRequiredRoles = [Role.HeadOfDepartment, Role.PharmacyStaff, Role.WarehouseStaff];
 const managementRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport];
-const vaccinationReceptionRequiredRoles = [
-    Role.Administrator,
-    Role.HeadOfDepartment,
-    Role.Doctor,
-    Role.Nurse,
-    Role.Receptionist,
-];
-const vaccinationRequiredRoles = [Role.Administrator, Role.Doctor, Role.HeadOfDepartment];
-const postVaccinationRequiredRoles = [Role.Administrator, Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
-const appointmentsRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.Doctor];
-const examinationRequiredRoles = [
-    Role.Administrator,
-    Role.HeadOfDepartment,
-    Role.Doctor,
-    Role.LaboratoryStaff,
-    Role.ImagingTechnician,
-];
-const financeRequiredRoles = [Role.Administrator, Role.Accountant, Role.Receptionist, Role.Nurse];
+const vaccinationReceptionRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, Role.Nurse, Role.Receptionist];
+
+const reportsRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.Accountant];
+
+const vaccinationRequiredRoles = [Role.Doctor, Role.HeadOfDepartment];
+const postVaccinationRequiredRoles = [Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
+const appointmentsRequiredRoles = [Role.HeadOfDepartment, Role.Doctor];
+const examinationRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician];
+
+const financeRequiredRoles = [Role.Accountant, Role.Receptionist, Role.Nurse];
 const contractRequiredRoles = [Role.Administrator, Role.Accountant];
 
 const createRoute = (permission: ResourceType, roles: Role[]): RoutePermissionMap[string] => ({
@@ -61,17 +53,14 @@ export const routePermissions: RoutePermissionMap = {
     // Examination
     "/examination": createRoute(ResourceType.VaccinationReception, examinationRequiredRoles),
     "/examination/history/patients": createRoute(ResourceType.VaccinationReception, examinationRequiredRoles),
-    "/examination/history/patient/:id": createRoute(ResourceType.VaccinationReception, examinationRequiredRoles),
+    "/examination/history/patient": createRoute(ResourceType.VaccinationReception, examinationRequiredRoles),
 
     // Pharmacy
     "/pharmacy/import": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/pharmacy/expired-medicine": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/pharmacy/expired-return-form": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/pharmacy/limit-stock": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
-    "/pharmacy/medicine-quantity-statistics/medicines/:medicineId/medicine-batches": createRoute(
-        ResourceType.Inventory,
-        inventoryRequiredRoles,
-    ),
+    "/pharmacy/medicine-quantity-statistics/medicines/": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/pharmacy/medicine-import-list": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
 
     // Medicine Management
@@ -82,7 +71,6 @@ export const routePermissions: RoutePermissionMap = {
     "/medicine/medicine-price-list": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/medicine/create-medicine-price": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
     "/medicine/medicine-statistics": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
-    // Inventory Management
 
     // Contract Management
     "/contract/supplier": createRoute(ResourceType.Management, contractRequiredRoles),
@@ -99,4 +87,6 @@ export const routePermissions: RoutePermissionMap = {
 
     "/service/hospital-service": createRoute(ResourceType.HospitalService, managementRequiredRoles),
     "/service/examination-service": createRoute(ResourceType.HospitalService, managementRequiredRoles),
+
+    "/reports": createRoute(ResourceType.FileStorage, reportsRequiredRoles),
 };
