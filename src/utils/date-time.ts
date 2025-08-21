@@ -80,6 +80,8 @@ export const formatDate = (date: Date | string, format: DATE_TIME_FORMAT): strin
             return formatDateToHHMMSS(date);
         case DATE_TIME_FORMAT["yyyy-MM-dd"]:
             return formatDateToYYYYMMDD(date);
+        case DATE_TIME_FORMAT["yyyyMMdd"]:
+            return formatDateToYYYYMMDD(date).replace(/-/g, "");
     }
 };
 

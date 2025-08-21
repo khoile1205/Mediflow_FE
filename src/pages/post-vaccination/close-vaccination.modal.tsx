@@ -15,10 +15,16 @@ import { CloseVaccinationFormValues } from "./types";
 
 interface CloseVaccinationModalProps {
     open: boolean;
+    onClose?: () => void;
     onSubmit?: (data: CloseVaccinationFormValues) => Promise<void>;
     pendingVaccinations: PendingVaccinationTodayResponse;
 }
-const CloseVaccinationModal: React.FC<CloseVaccinationModalProps> = ({ open, onSubmit, pendingVaccinations }) => {
+const CloseVaccinationModal: React.FC<CloseVaccinationModalProps> = ({
+    open,
+    onSubmit,
+    pendingVaccinations,
+    onClose,
+}) => {
     const { t } = useTranslation();
     const agGrid = useAgGrid<PendingVaccination>({});
 
@@ -34,8 +40,8 @@ const CloseVaccinationModal: React.FC<CloseVaccinationModalProps> = ({ open, onS
     };
 
     return (
-        <Dialog open={open} maxWidth="sm">
-            <Dialog.Header title={t(i18n.translationKey.closeVaccinationConfirmation)} />
+        <Dialog open={open} maxWidth="md" onClose={onClose}>
+            <Dialog.Header title={t(i18n.translationKey.closeVaccinationConfirmation)} onClose={onClose} />
             <Dialog.Body>
                 <Box className="mt-3">
                     <Typography fontWeight={500} fontSize={16} sx={{ mb: 1 }}>
@@ -112,6 +118,9 @@ const CloseVaccinationModal: React.FC<CloseVaccinationModalProps> = ({ open, onS
                 </Box>
             </Dialog.Body>
             <Dialog.Action>
+                <Button onClick={onClose} color="inherit">
+                    {t(i18n.translationKey.close)}
+                </Button>
                 <Button onClick={form.handleSubmit(handleCloseVaccination)}>{t(i18n.translationKey.confirm)}</Button>
             </Dialog.Action>
         </Dialog>

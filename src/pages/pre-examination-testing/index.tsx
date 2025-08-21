@@ -27,7 +27,7 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({
     open,
     onClose,
     receptionId,
-    // plannedInjectVaccines,
+    plannedInjectVaccines,
     preTestingVaccines,
 }) => {
     const { t } = useTranslation();
@@ -47,13 +47,15 @@ const PreExaminationTestingPage: React.FC<PreExaminationTestingPageProps> = ({
 
         const testResult = resultForm.getValues("testResult");
 
-        // const vaccineWithSamePreTest = plannedInjectVaccines.filter(
-        //     (vaccine) => vaccine.medicineId === selectedRows[0].
-        // );
+        const selectedVaccineIds = selectedRows.map((row) => row.vaccineId);
+
+        const vaccineWithSamePreTest = plannedInjectVaccines.filter((vaccine) =>
+            selectedVaccineIds.includes(vaccine.medicineId),
+        );
 
         try {
-            await Promise.all(
-                selectedRows.map(
+            await Promise.allSettled(
+                vaccineWithSamePreTest.map(
                     async (row) =>
                         await updateTestResult({
                             receptionVaccinationId: row.receptionVaccinationId,

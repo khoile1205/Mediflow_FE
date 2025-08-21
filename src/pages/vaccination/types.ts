@@ -20,6 +20,7 @@ export interface VaccinationFormValue {
     medicineExpiryDate?: string;
     medicineBatchNumber?: string;
     isInjected?: boolean;
+    isRejected?: boolean;
     testResult?: string;
     startTestingTime: Date;
     isRequiredTesting?: boolean;

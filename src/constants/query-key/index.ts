@@ -180,6 +180,17 @@ const StatisticQueryKey = {
     GET_OVERVIEW: "getOverview",
 };
 
+const ReportQueryKey = {
+    GET_PATIENT_STATISTIC: "getPatientStatisticReport",
+    EXPORT_PATIENT_STATISTIC: "exportPatientStatisticReport",
+    GET_HOSPITAL_REVENUE: "getHospitalRevenueReport",
+    EXPORT_HOSPITAL_REVENUE: "exportHospitalRevenueReport",
+    GET_INVENTORY_STATISTIC: "getInventoryStatisticReport",
+    EXPORT_INVENTORY_STATISTIC: "exportInventoryStatisticReport",
+    GET_MEDICINE_REVENUE: "getMedicineRevenueReport",
+    EXPORT_MEDICINE_REVENUE: "exportMedicineRevenueReport",
+};
+
 export const QueryKey = {
     SUPPLIER: SupplierQueryKey,
     UPLOAD_FILE: UploadFileQueryKey,
@@ -197,4 +208,5 @@ export const QueryKey = {
     EXAMINATION: ExaminationQueryKey,
     AUTH: AuthQueryKey,
     STATISTIC: StatisticQueryKey,
+    REPORT: ReportQueryKey,
 };

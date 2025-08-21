@@ -4,6 +4,7 @@ export interface PreExaminationMedicine {
     vaccineName: string;
     isConfirmed: boolean;
     vaccinationTestDate: string;
+    vaccineId?: number;
     testResultEntry: string;
     doctorName: string;
 }

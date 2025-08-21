@@ -67,6 +67,13 @@ export const getRequiredPermissionForPath = (
     path: string,
     permissionMap: RoutePermissionMap,
 ): { requiredPermissions: string[] | undefined; requiredRoles: Role[] | undefined } => {
+    if (permissionMap[path]) {
+        return {
+            requiredPermissions: permissionMap[path].requiredPermissions,
+            requiredRoles: permissionMap[path].requiredRoles,
+        };
+    }
+
     const entry = Object.entries(permissionMap).find(([prefix]) => path.startsWith(prefix));
     return {
         requiredPermissions: entry?.[1].requiredPermissions,
