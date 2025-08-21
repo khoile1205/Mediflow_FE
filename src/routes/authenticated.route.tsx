@@ -28,6 +28,7 @@ import { ExpiredReturnManagementPage } from "~/pages/pharmacy/expired-return-for
 import MedicineQuantityStatisticsPage from "~/pages/management/medicine/medicine-quantity-statistics.page";
 import MedicineBatchesByMedicineIdPage from "~/pages/management/medicine/medicine-batches-by-medicine-id.page";
 import { OverviewManagement } from "~/pages/management/overview/overview-management.page";
+import { ReportPage } from "~/pages/reports";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -92,6 +93,10 @@ export const AuthenticatedRoutes = (
             <Route path="history/patients" element={<ListPatientsExaminationHistoryPage />} />
             <Route path="history/patient/:id" element={<ExaminationPatientHistoryPage />} />
             <Route index element={<ExaminationPage />} />
+        </Route>
+
+        <Route path="/reports">
+            <Route index element={<ReportPage />} />
         </Route>
 
         <Route path="*" element={<div>Developing</div>} />

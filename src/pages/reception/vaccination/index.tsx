@@ -44,7 +44,11 @@ const ReceptionVaccination: React.FC = () => {
 
     // Queries hooks
     const { data: serviceTypes } = useQueryServiceTypes();
-    const { data: availablePatientReceptions, totalItems } = useQueryGetAvailablePatientReceptions({
+    const {
+        data: availablePatientReceptions,
+        totalItems,
+        isLoading,
+    } = useQueryGetAvailablePatientReceptions({
         pageIndex,
         pageSize,
         searchTerm: searchPatientReception,
@@ -249,6 +253,7 @@ const ReceptionVaccination: React.FC = () => {
                                 setReceptionId(row.data.receptionId);
                                 handlePopulatePatientReception(row.data);
                             }}
+                            loading={isLoading}
                             {...patientReceptionAgGrid}
                         />
                     </Box>
