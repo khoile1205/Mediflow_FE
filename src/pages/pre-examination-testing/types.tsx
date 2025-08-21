@@ -5,6 +5,7 @@ export interface PreExaminationRow {
     isConfirmed: boolean;
     vaccinationTestDate: string;
     testResultEntry: string;
+    vaccineId: number;
     doctorName: string;
 }
 

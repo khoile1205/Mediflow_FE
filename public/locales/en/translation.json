@@ -1106,5 +1106,7 @@
     "NO_DATA_AVAILABLE": "No data available",
     "REPORT_AND_STATISTIC": "Report and Statistic",
     "PATIENT_STATISTIC_REPORT": "Patient Statistics Report",
-    "SUPPLY_INVENTORIES_REPORT": "Supply Inventories Report"
+    "SUPPLY_INVENTORIES_REPORT": "Supply Inventories Report",
+    "CONTAINS_VACCINE_NEED_TO_REACTION": "Contains vaccine that require reaction follow-up after injection",
+    "PRINT_DOCUMENT": "Print document"
 }

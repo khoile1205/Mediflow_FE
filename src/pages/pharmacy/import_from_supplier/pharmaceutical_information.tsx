@@ -61,6 +61,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
         pageSize,
         searchKeyword: searchMedicineTerm,
     });
+
     const {
         data: { manufacturers },
     } = useQueryGetAllManufacturers();
@@ -124,6 +125,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
     const handleSelectedMedicine = (event: RowSelectedEvent<Medicine>) => {
         pharmaceuticalInformationForm.setValue("medicineId", event.data.id);
         pharmaceuticalInformationForm.setValue("medicineName", event.data.medicineName);
+        pharmaceuticalInformationForm.setValue("medicineCode", event.data.medicineCode);
         pharmaceuticalInformationForm.setValue("unit", event.data.unit);
     };
 
@@ -235,7 +237,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                         <Grid size={{ xs: 12, md: 6, lg: 3 }}>
                             <FormItem
                                 render="data-grid"
-                                name="medicineId"
+                                name="medicineName"
                                 label={t(i18n.translationKey.medicineName)}
                                 placeholder={t(i18n.translationKey.medicineName)}
                                 onRowSelected={handleSelectedMedicine}
@@ -419,6 +421,7 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                         rowData={details}
                         onRowSelected={handleSelectedPharmaceuticalInformation}
                         suppressCellFocus={disabled}
+                        readOnlyEdit={disabled}
                         {...pharmaceuticalInformationAgGrid}
                     />
                 </Box>

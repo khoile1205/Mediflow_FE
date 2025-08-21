@@ -36,9 +36,7 @@ export class TokenRefresher {
             async (error: AxiosError) => {
                 const originalRequest = error.config as RetryableAxiosRequestConfig;
                 const isUnauthorizedResponse = error.response?.status === HttpStatusCode.Unauthorized;
-                console.log(originalRequest);
                 const isLoginPage = location.pathname === this._loginPageUrl;
-                console.log(isLoginPage);
                 const isRetryable =
                     originalRequest &&
                     !originalRequest._retry &&
@@ -61,8 +59,8 @@ export class TokenRefresher {
                         return this.axiosInstance(originalRequest);
                     } catch (error) {
                         const refreshError = error as AxiosError<IBaseApiResponse<unknown>>;
-                        const messageKey = refreshError.response.data.MessageKey || i18n.translationKey.tokenExpired;
-                        showToast.error(i18n.t(messageKey));
+                        // const messageKey = refreshError.response.data.MessageKey || i18n.translationKey.tokenExpired;
+                        // showToast.error(i18n.t(messageKey));
 
                         this.processQueue(refreshError);
                         this.redirectToLoginPage();

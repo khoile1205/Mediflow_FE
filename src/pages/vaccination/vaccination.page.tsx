@@ -29,6 +29,8 @@ import { formatDate } from "~/utils/date-time";
 import PreExaminationTestingPage from "../pre-examination-testing";
 import { useCreateVaccinationForm } from "./hooks/use-create-vaccination-form";
 import RejectVaccinationModal from "./reject-vaccination.modal";
+import { useQueryPostVaccinationMedicines } from "~/services/post-vaccination/hooks/queries";
+import { PreExaminationMedicine } from "~/services/pre-examination/infras/types";
 
 const VaccinationPage: React.FC = () => {
     const { t } = useTranslation();
@@ -45,7 +47,7 @@ const VaccinationPage: React.FC = () => {
     const [isOpenTestingModal, setIsOpenTestingModal] = React.useState<boolean>(false);
     // const [isStartEnabled, setIsStartEnabled] = React.useState(false);
     const [isOpenRejectModal, setIsOpenRejectModal] = React.useState<boolean>(false);
-    const [isAllowReject, setIsAllowReject] = React.useState<boolean>(false);
+    const [isAllowTakeAction, setIsAllowTakeAction] = React.useState<boolean>(false);
     // Queries
     const {
         data: { waitingPatientList },
@@ -58,6 +60,9 @@ const VaccinationPage: React.FC = () => {
         data: { nearestExpiryMedicineBatch },
     } = useQueryGetNearestExpiryMedicineBatch(vaccinationForm.watch("medicineId"));
     const { medicines: preTestingVaccines } = useQueryPreExaminationMedicines(patientForm.watch("receptionId"));
+    const { medicines: postVaccinationMedicines = [] } = useQueryPostVaccinationMedicines(
+        patientForm.watch("receptionId"),
+    );
 
     // Mutations
     const { mutateAsync: addVaccineToPreExamination } = useMutationAddVaccineToPreExamination();
@@ -209,7 +214,7 @@ const VaccinationPage: React.FC = () => {
                 vaccinationForm.setValue("testResult", selectedMedicine.testResultEntry);
                 vaccinationForm.setValue("doctorId", user.id);
                 vaccinationForm.setValue("injectionDate", new Date());
-                setIsAllowReject(selectedMedicine.isRejected || selectedMedicine.isConfirmed);
+                setIsAllowTakeAction(selectedMedicine.isRejected || selectedMedicine.isConfirmed);
             } else {
                 const currentPatientId = vaccinationForm.getValues("patientId");
                 vaccinationForm.reset();
@@ -253,25 +258,13 @@ const VaccinationPage: React.FC = () => {
             return;
         }
 
+        if (postVaccinationMedicines.length > 0) {
+            showToast.error(t(i18n.translationKey.containsVaccineNeedToReaction));
+            return;
+        }
+
         await injectVaccine({ data: vaccinationForm.watch(), receptionId: patientForm.watch("receptionId") });
     };
-
-    // const handleUpdateVaccinationStatus = async (status: boolean) => {
-    //     if (selectedVaccinationMedicineCount === 0) {
-    //         showToast.warning(t(i18n.translationKey.selectAtLeastOneDose));
-    //         return;
-    //     }
-
-    //     const receptionId = patientForm.watch("receptionId");
-    //     const data: UpdateVaccinationStatusRequest = getUpdateVaccinationStatusBody(status);
-
-    //     await updateVaccinationStatus({ receptionId, data });
-    // };
-
-    // const getUpdateVaccinationStatusBody = (status: boolean): UpdateVaccinationStatusRequest => ({
-    //     receptionVaccinationId: vaccinationForm.watch("receptionVaccinationId"),
-    //     status,
-    // });
 
     const handleConfirmVaccinationToday = async () => {
         const receptionId = patientForm.watch("receptionId");
@@ -295,6 +288,14 @@ const VaccinationPage: React.FC = () => {
             return true;
         }
 
+        if (
+            preTestingVaccines.find(
+                (vaccine: PreExaminationMedicine) => vaccine.vaccineId === vaccinationForm.watch("medicineId"),
+            )
+        ) {
+            return true;
+        }
+
         return false;
     }, [
         vaccinationForm.watch("isInjected"),
@@ -309,7 +310,6 @@ const VaccinationPage: React.FC = () => {
             vaccinationForm.setValue("medicineExpiryDate", firstBatch.expiryDate);
             vaccinationForm.setValue("medicineBatchId", firstBatch.medicineBatchId);
             vaccinationForm.setValue("medicineBatchNumber", firstBatch.medicineBatchNumber);
-            console.log(vaccinationForm.watch());
         } else {
             // Clear fields if no batch available
             vaccinationForm.setValue("medicineBatchCode", "");
@@ -481,9 +481,7 @@ const VaccinationPage: React.FC = () => {
                                     {t(i18n.translationKey.saveNote)}
                                 </Button> */}
                                 <Button
-                                    disabled={
-                                        selectedVaccinationMedicineCount === 0 || vaccinationForm.watch("isInjected")
-                                    }
+                                    disabled={selectedVaccinationMedicineCount === 0 || isAllowTakeAction}
                                     onClick={() => handleInjectVaccine()}
                                 >
                                     {t(i18n.translationKey.confirmSelectedDose)}
@@ -525,7 +523,7 @@ const VaccinationPage: React.FC = () => {
                                         !(
                                             selectedVaccinationMedicineCount != 0 &&
                                             vaccinationForm.watch("receptionVaccinationId")
-                                        ) || isAllowReject
+                                        ) || isAllowTakeAction
                                     }
                                 >
                                     {t(i18n.translationKey.rejectInjection)}

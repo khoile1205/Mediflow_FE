@@ -1,6 +1,7 @@
 export type ImportMedicineFromSupplierDetail = {
     index?: number;
     medicineId: number;
+    medicineCode?: string;
     batchNumber: string;
     sgk_CPNK: string;
     note: string;

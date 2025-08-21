@@ -217,6 +217,17 @@ const PostVaccinationPage: React.FC = () => {
         [isFollowUpEnabled, reactionOccurred],
     );
 
+    React.useEffect(() => {
+        if (followUpForm.watch("testResult") === TestResultStatus.NEGATIVE) {
+            followUpForm.setValue("reactionOccurred", false);
+            followUpForm.setValue("reactionAfterInjectionTime", null);
+            followUpForm.setValue("postVaccinationDate", null);
+            followUpForm.setValue("commonReactions", []);
+            followUpForm.setValue("otherSymptoms", "");
+            followUpForm.setValue("postVaccinationDate", null);
+        }
+    }, [followUpForm.watch("testResult")]);
+
     return (
         <Box className="flex h-full">
             <DynamicForm form={patientForm}>
@@ -480,6 +491,7 @@ const PostVaccinationPage: React.FC = () => {
             </Box>
             <CloseVaccinationModal
                 open={openCloseReceptionModal}
+                onClose={() => setOpenCloseReceptionModal(false)}
                 onSubmit={handleCloseVaccination}
                 pendingVaccinations={pendingVaccinations}
             />
