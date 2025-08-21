@@ -1,4 +1,4 @@
-import { AddCircle, Save, Undo } from "@mui/icons-material";
+import { AddCircle, Print, Save, Undo } from "@mui/icons-material";
 import { Box, Grid, Stack } from "@mui/material";
 import { RowSelectedEvent } from "ag-grid-community";
 import React from "react";
@@ -22,6 +22,8 @@ import { formatDate } from "~/utils/date-time";
 import ImportPharmaceuticalInformation from "./pharmaceutical_information";
 import { ImportMedicineFromSupplierFormValues } from "./types";
 import { useQueryGetListSupplier } from "~/services/supplier/hooks/queries";
+import ReceiptPrinter from "./receipt-printer";
+import { useReactToPrint } from "react-to-print";
 
 const defaultValues: ImportMedicineFromSupplierFormValues = {
     documentCode: "",
@@ -39,6 +41,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
     const { t } = useTranslation();
     const { user } = useAuth();
     const { pageIndex, pageSize, handlePageChange } = usePagination();
+    const receiptRef = React.useRef<HTMLDivElement>(null);
 
     // Query
 
@@ -53,6 +56,8 @@ const ImportInventoryFromSupplier: React.FC = () => {
     const { mutateAsync: generateDocumentCode } = useMutationGenerateImportDocumentCode();
     const { mutateAsync: saveImportDocument } = useMutationSaveImportDocument();
     const [isAddNew, setIsAddNew] = React.useState<boolean>(false);
+    const [isPrinting, setIsPrinting] = React.useState<boolean>(false);
+
     const form = useForm<ImportMedicineFromSupplierFormValues>({
         defaultValues: {
             ...defaultValues,
@@ -64,6 +69,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
     const handleCancel = () => {
         setIsAddNew(false);
         form.reset(form.formState.defaultValues);
+        setIsPrinting(false);
     };
 
     const handleAddNew = () => {
@@ -71,6 +77,10 @@ const ImportInventoryFromSupplier: React.FC = () => {
         handleGenerateDocumentCode();
         form.resetField("details");
     };
+
+    const handlePrintReceipt = useReactToPrint({
+        contentRef: receiptRef,
+    });
 
     const handleGenerateDocumentCode = async () => {
         const response = await generateDocumentCode();
@@ -101,7 +111,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
             onSuccess: () => {
                 showToast.success(t(i18n.translationKey.documentCreateSuccessfully));
                 setIsAddNew(false);
-                form.reset(form.formState.defaultValues);
+                setIsPrinting(true);
             },
             onError: async () => {
                 if (!isRetry) {
@@ -112,28 +122,11 @@ const ImportInventoryFromSupplier: React.FC = () => {
                     await onSaveImportDocument(form.getValues(), true);
 
                     setIsAddNew(false);
-                    form.reset(form.formState.defaultValues);
+                    setIsPrinting(true);
                     return;
                 }
             },
         });
-        // try {
-        //     setIsAddNew(false);
-        //     form.reset(form.formState.defaultValues);
-        // } catch (_) {
-        //     if (!isRetry) {
-        //         const response = await generateDocumentCode();
-        //         form.setValue("documentCode", response.documentCode);
-        //         form.setValue("documentNumber", response.documentNumber);
-
-        //         // Retry once automatically
-        //         await onSaveImportDocument(form.getValues(), true);
-
-        //         setIsAddNew(false);
-        //         form.reset(form.formState.defaultValues);
-        //         return;
-        //     }
-        // }
     };
 
     const getDocumentRequest = (
@@ -176,19 +169,21 @@ const ImportInventoryFromSupplier: React.FC = () => {
                         label={t(i18n.translationKey.addNewDocument)}
                         startIcon={<AddCircle />}
                         onClick={handleAddNew}
+                        disabled={isPrinting}
                     />
                     <ActionButton
                         label={t(i18n.translationKey.save)}
                         startIcon={<Save />}
-                        disabled={!isAddNew}
+                        disabled={!isAddNew || isPrinting}
                         onClick={form.handleSubmit((values) => onSaveImportDocument(values))}
                     />
                     <ActionButton
-                        label={t(i18n.translationKey.cancel)}
-                        startIcon={<Undo />}
-                        onClick={handleCancel}
-                        disabled={!isAddNew}
+                        label={t(i18n.translationKey.printDocument)}
+                        startIcon={<Print />}
+                        onClick={handlePrintReceipt}
+                        disabled={!isPrinting}
                     />
+                    <ActionButton label={t(i18n.translationKey.cancel)} startIcon={<Undo />} onClick={handleCancel} />
                 </Stack>
 
                 <Box
@@ -210,7 +205,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                         slotProps={{ input: { readOnly: true } }}
                                         placeholder={t(i18n.translationKey.documentCode)}
                                         label={t(i18n.translationKey.documentCode)}
-                                        disabled={!isAddNew}
+                                        disabled={!isAddNew || isPrinting}
                                         required
                                     />
                                 </Grid>
@@ -220,7 +215,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                         render="date-picker"
                                         placeholder={t(i18n.translationKey.importDate)}
                                         label={t(i18n.translationKey.importDate)}
-                                        disabled={!isAddNew}
+                                        disabled={!isAddNew || isPrinting}
                                         required
                                     />
                                 </Grid>
@@ -230,7 +225,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                         render="data-grid"
                                         placeholder={t(i18n.translationKey.supplier)}
                                         label={t(i18n.translationKey.supplier)}
-                                        disabled={!isAddNew}
+                                        disabled={!isAddNew || isPrinting}
                                         columnDefs={[
                                             { field: "supplierName", headerName: t(i18n.translationKey.supplier) },
                                             { field: "supplierCode", headerName: t(i18n.translationKey.supplierCode) },
@@ -252,7 +247,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                         render="text-input"
                                         placeholder={t(i18n.translationKey.note)}
                                         label={t(i18n.translationKey.note)}
-                                        disabled={!isAddNew}
+                                        disabled={!isAddNew || isPrinting}
                                     />
                                 </Grid>
                             </Grid>
@@ -266,7 +261,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                         render="text-area"
                                         label={t(i18n.translationKey.basedOn)}
                                         placeholder={t(i18n.translationKey.basedOn)}
-                                        disabled={!isAddNew}
+                                        disabled={!isAddNew || isPrinting}
                                         required
                                     />
                                 </Grid>
@@ -276,7 +271,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                         render="text-input"
                                         label={t(i18n.translationKey.receiver)}
                                         placeholder={t(i18n.translationKey.receiver)}
-                                        disabled={!isAddNew}
+                                        disabled={!isAddNew || isPrinting}
                                         slotProps={{ input: { readOnly: true } }}
                                     />
                                 </Grid>
@@ -292,7 +287,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                         slotProps={{ input: { readOnly: true } }}
                                         label={t(i18n.translationKey.documentNumber)}
                                         placeholder={t(i18n.translationKey.documentNumber)}
-                                        disabled={!isAddNew}
+                                        disabled={!isAddNew || isPrinting}
                                         required
                                     />
                                 </Grid>
@@ -302,7 +297,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
                                         render="date-picker"
                                         placeholder={t(i18n.translationKey.endAt)}
                                         label={t(i18n.translationKey.endAt)}
-                                        disabled={!isAddNew}
+                                        disabled={!isAddNew || isPrinting}
                                         minDate={(form.watch("importDate") as Date) ?? new Date()}
                                         required
                                     />
@@ -316,8 +311,11 @@ const ImportInventoryFromSupplier: React.FC = () => {
                 <ImportPharmaceuticalInformation
                     details={form.watch("details") ?? []}
                     updateDetails={updateDetails}
-                    disabled={!isAddNew}
+                    disabled={!isAddNew || isPrinting}
                 />
+            </Box>
+            <Box display={"none"}>
+                <ReceiptPrinter receiptInformation={form.watch()} ref={receiptRef} />
             </Box>
         </Box>
     );

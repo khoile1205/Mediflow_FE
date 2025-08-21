@@ -760,6 +760,8 @@ const applicationTranslationKey = {
     reportAndStatistic: "REPORT_AND_STATISTIC",
     patientStatisticReport: "PATIENT_STATISTIC_REPORT",
     supplyInventoriesReport: "SUPPLY_INVENTORIES_REPORT",
+    containsVaccineNeedToReaction: "CONTAINS_VACCINE_NEED_TO_REACTION",
+    printDocument: "PRINT_DOCUMENT",
 };
 
 const exceptionTranslationKey = {

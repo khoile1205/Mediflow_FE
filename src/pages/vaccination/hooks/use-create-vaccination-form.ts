@@ -20,6 +20,7 @@ export const useCreateVaccinationForm = () => {
             medicineBatchCode: "",
             medicineExpiryDate: null,
             isInjected: false,
+            isRejected: false,
             testResult: null,
             startTestingTime: null,
             isRequiredTesting: false,

@@ -1,10 +1,8 @@
 import { AxiosError, AxiosInstance, HttpStatusCode, InternalAxiosRequestConfig } from "axios";
+import { NavigateFunction } from "react-router";
 import { endpoints } from "~/constants/endpoints";
 import { authService } from "~/services/auth";
-import { showToast } from "~/utils";
 import { IBaseApiResponse } from "../types";
-import i18n from "~/configs/i18n";
-import { NavigateFunction } from "react-router";
 
 interface RetryableAxiosRequestConfig extends InternalAxiosRequestConfig {
     _retry?: boolean;
@@ -36,9 +34,7 @@ export class TokenRefresher {
             async (error: AxiosError) => {
                 const originalRequest = error.config as RetryableAxiosRequestConfig;
                 const isUnauthorizedResponse = error.response?.status === HttpStatusCode.Unauthorized;
-                console.log(originalRequest);
                 const isLoginPage = location.pathname === this._loginPageUrl;
-                console.log(isLoginPage);
                 const isRetryable =
                     originalRequest &&
                     !originalRequest._retry &&
@@ -61,8 +57,8 @@ export class TokenRefresher {
                         return this.axiosInstance(originalRequest);
                     } catch (error) {
                         const refreshError = error as AxiosError<IBaseApiResponse<unknown>>;
-                        const messageKey = refreshError.response.data.MessageKey || i18n.translationKey.tokenExpired;
-                        showToast.error(i18n.t(messageKey));
+                        // const messageKey = refreshError.response.data.MessageKey || i18n.translationKey.tokenExpired;
+                        // showToast.error(i18n.t(messageKey));
 
                         this.processQueue(refreshError);
                         this.redirectToLoginPage();

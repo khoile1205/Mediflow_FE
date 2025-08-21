@@ -1109,5 +1109,7 @@
     "NO_DATA_AVAILABLE": "Không có dữ liệu",
     "REPORT_AND_STATISTIC": "Báo cáo & Thống kê",
     "PATIENT_STATISTIC_REPORT": "Báo cáo thống kê bệnh nhân",
-    "SUPPLY_INVENTORIES_REPORT": "Báo cáo tồn kho vật tư"
+    "SUPPLY_INVENTORIES_REPORT": "Báo cáo tồn kho vật tư",
+    "CONTAINS_VACCINE_NEED_TO_REACTION": "Có vắc xin cần theo dõi phản ứng sau tiêm",
+    "PRINT_DOCUMENT": "In chứng từ"
 }
