@@ -1,10 +1,8 @@
 import { AxiosError, AxiosInstance, HttpStatusCode, InternalAxiosRequestConfig } from "axios";
+import { NavigateFunction } from "react-router";
 import { endpoints } from "~/constants/endpoints";
 import { authService } from "~/services/auth";
-import { showToast } from "~/utils";
 import { IBaseApiResponse } from "../types";
-import i18n from "~/configs/i18n";
-import { NavigateFunction } from "react-router";
 
 interface RetryableAxiosRequestConfig extends InternalAxiosRequestConfig {
     _retry?: boolean;
