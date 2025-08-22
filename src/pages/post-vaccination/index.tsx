@@ -17,6 +17,10 @@ import {
 } from "~/services/post-vaccination/hooks/queries";
 import { PostVaccinationMedicine, PostVaccinationPatient } from "~/services/post-vaccination/infras/types";
 import { formatDate } from "~/utils/date-time";
+import CloseVaccinationModal from "./close-vaccination.modal";
+import { useMutationCloseReception } from "~/services/vaccination/hooks/mutations";
+import { CloseVaccinationFormValues } from "./types";
+import { useQueryGetPendingVaccinationTodayByReceptionId } from "~/services/vaccination/hooks/queries";
 
 const PostVaccinationPage: React.FC = () => {
     const { t } = useTranslation();
@@ -50,11 +54,16 @@ const PostVaccinationPage: React.FC = () => {
 
     const [selectedReceptionId, setSelectedReceptionId] = React.useState<number | null>(null);
     const [searchName, setSearchName] = React.useState<string>("");
+    const [openCloseReceptionModal, setOpenCloseReceptionModal] = React.useState<boolean>(false);
 
     const { patients: listPatients = [] } = useQueryPostVaccinationPatients(searchName);
     const { medicines: postVaccinationMedicines = [] } = useQueryPostVaccinationMedicines(selectedReceptionId);
+    const {
+        data: { pendingVaccinations },
+    } = useQueryGetPendingVaccinationTodayByReceptionId(selectedReceptionId);
 
     const { mutateAsync: updatePostVaccination } = useMutationUpdatePostVaccinationResult();
+    const { mutateAsync: closeVaccination } = useMutationCloseReception();
 
     const isPatientSelected = !!patientForm.watch("receptionId");
 
@@ -78,12 +87,14 @@ const PostVaccinationPage: React.FC = () => {
 
     const handleSelectMedicine = (selectedMedicine: RowClickedEvent<PostVaccinationMedicine>) => {
         const selectedRows = selectedMedicine.data;
+
         followUpForm.setValue("vaccinationId", selectedRows.vaccinationId);
         followUpForm.setValue("vaccinationDate", selectedRows.vaccinationDate);
     };
 
     const handleSave = async () => {
         const followUpData = followUpForm.getValues();
+
         await updatePostVaccination({
             receptionId: selectedReceptionId,
             data: {
@@ -93,6 +104,7 @@ const PostVaccinationPage: React.FC = () => {
                 reactionDate: followUpData.reactionAfterInjectionTime || null,
                 postVaccinationResult: followUpData.testResult,
                 postVaccinationDate: followUpData.postVaccinationDate || new Date(),
+
                 hasFeverAbove39: followUpData.commonReactions?.includes("FEVER_ABOVE_39") ?? false,
                 hasInjectionSiteReaction: followUpData.commonReactions?.includes("INJECTION_SITE_REACTION") ?? false,
                 hasOtherReaction: followUpData.commonReactions?.includes("OTHER") ?? false,
@@ -101,6 +113,7 @@ const PostVaccinationPage: React.FC = () => {
                     : null,
             },
         });
+
         patientForm.reset();
         followUpForm.reset();
     };
@@ -108,9 +121,21 @@ const PostVaccinationPage: React.FC = () => {
     const handleCancelProcess = () => {
         patientForm.reset();
         followUpForm.reset();
+
         setSelectedReceptionId(null);
+
         patientAgGrid.gridApi.deselectAll();
         postVaccinationMedicineAgGrid.gridApi.deselectAll();
+    };
+
+    const handleCloseVaccination = async (data: CloseVaccinationFormValues) => {
+        await closeVaccination({
+            receptionId: selectedReceptionId,
+            issueNote: data.issueNote,
+            reScheduleDate: data.reScheduleDate ? new Date(data.reScheduleDate) : null,
+        });
+        await handleSave();
+        setOpenCloseReceptionModal(false);
     };
 
     const patientColumnDefs: ColDef[] = [
@@ -123,7 +148,12 @@ const PostVaccinationPage: React.FC = () => {
             cellClass: "text-center",
         },
         { headerName: t(i18n.translationKey.patientName), field: "patientName", cellClass: "ag-cell-center" },
-        { headerName: t(i18n.translationKey.dateOfBirth), field: "yearOfBirth", cellClass: "ag-cell-center" },
+        {
+            headerName: t(i18n.translationKey.dateOfBirth),
+            field: "yearOfBirth",
+            cellClass: "ag-cell-center",
+            valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy"]),
+        },
     ];
 
     const postVaccinationMedicinesColumnDefs: ColDef[] = React.useMemo(
@@ -190,6 +220,17 @@ const PostVaccinationPage: React.FC = () => {
         [isFollowUpEnabled, reactionOccurred],
     );
 
+    React.useEffect(() => {
+        if (followUpForm.watch("testResult") === TestResultStatus.NEGATIVE) {
+            followUpForm.setValue("reactionOccurred", false);
+            followUpForm.setValue("reactionAfterInjectionTime", null);
+            followUpForm.setValue("postVaccinationDate", null);
+            followUpForm.setValue("commonReactions", []);
+            followUpForm.setValue("otherSymptoms", "");
+            followUpForm.setValue("postVaccinationDate", null);
+        }
+    }, [followUpForm.watch("testResult")]);
+
     return (
         <Box className="flex h-full">
             <DynamicForm form={patientForm}>
@@ -249,14 +290,30 @@ const PostVaccinationPage: React.FC = () => {
                         </Grid>
                     </Stack>
 
-                    <Box className="mt-4 flex gap-2">
-                        <Button fullWidth variant="contained" color="primary" onClick={handleSave}>
-                            {t(i18n.translationKey.save)}
-                        </Button>
-                        <Button fullWidth variant="contained" color="error" onClick={handleCancelProcess}>
-                            {t(i18n.translationKey.cancel)}
-                        </Button>
-                    </Box>
+                    <Stack spacing={2} className="mt-4">
+                        <Box className="flex gap-2">
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={() => {
+                                    if (
+                                        followUpForm.watch("testResult") === TestResultStatus.POSITIVE &&
+                                        pendingVaccinations.totalPendingDoses > 0
+                                    ) {
+                                        setOpenCloseReceptionModal(true);
+                                    } else {
+                                        handleSave();
+                                    }
+                                }}
+                            >
+                                {t(i18n.translationKey.save)}
+                            </Button>
+                            <Button fullWidth variant="contained" color="error" onClick={handleCancelProcess}>
+                                {t(i18n.translationKey.cancel)}
+                            </Button>
+                        </Box>
+                    </Stack>
                 </Box>
             </DynamicForm>
 
@@ -438,6 +495,12 @@ const PostVaccinationPage: React.FC = () => {
                     </Box>
                 </DynamicForm>
             </Box>
+            <CloseVaccinationModal
+                open={openCloseReceptionModal}
+                onClose={() => setOpenCloseReceptionModal(false)}
+                onSubmit={handleCloseVaccination}
+                pendingVaccinations={pendingVaccinations}
+            />
         </Box>
     );
 };
