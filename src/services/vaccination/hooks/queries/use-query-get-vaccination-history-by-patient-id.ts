@@ -13,7 +13,7 @@ export const useQueryGetVaccinationHistoryByPatientId = (patientId?: number) => 
     } = useQuery<IBaseApiResponse<VaccinationHistoryResponse>>({
         queryKey: [QueryKey.VACCINATION.GET_VACCINATION_HISTORY_BY_PATIENT_ID, patientId],
         queryFn: async () => {
-            const response = await vaccinationApis.getVaccinationHistory(patientId);
+            const response = await vaccinationApis.getVaccinationHistoryByPatientId(patientId);
             return response;
         },
         enabled: !!patientId,

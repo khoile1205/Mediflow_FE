@@ -20,6 +20,7 @@ export const PAGE_TITLES = {
     // Vaccination
     "/vaccination": i18n.translationKey.pageTitle.vaccination,
     "/vaccination/history": i18n.translationKey.pageTitle.vaccinationHistory,
+    "/vaccination/patient-history": i18n.translationKey.pageTitle.patientVaccinationHistory,
     "/vaccination/post-injection": i18n.translationKey.pageTitle.postVaccination,
 
     // Finance

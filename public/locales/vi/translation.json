@@ -852,6 +852,7 @@
     "PAGE_TITLE_APPOINTMENTS_FOLLOW_UP": "Lịch hẹn tái khám",
     "PAGE_TITLE_VACCINATION": "Tiêm chủng",
     "PAGE_TITLE_VACCINATION_HISTORY": "Lịch sử tiêm chủng",
+    "PAGE_TITLE_PATIENT_VACCINATION_HISTORY": "Lịch sử tiêm chủng của bệnh nhân",
     "PAGE_TITLE_POST_VACCINATION": "Theo dõi sau tiêm",
     "PAGE_TITLE_HOSPITAL_FEE": "Quản lý viện phí",
     "PAGE_TITLE_PHARMACY_IMPORT": "Nhập dược từ nhà cung cấp",
@@ -1113,5 +1114,12 @@
     "CONTAINS_VACCINE_NEED_TO_REACTION": "Có vắc xin cần theo dõi phản ứng sau tiêm",
     "PRINT_DOCUMENT": "In chứng từ",
     "EXAMINATION_SERVICE_CREATED_SUCCESSFULLY": "Tạo dịch vụ khám thành công",
-    "FAILED_TO_UPDATE_EXAMINATION_SERVICE": "Cập nhật dịch vụ khám thất bại"
+    "FAILED_TO_UPDATE_EXAMINATION_SERVICE": "Cập nhật dịch vụ khám thất bại",
+    "PATIENT_VACCINATION_HISTORY": "Lịch sử tiêm chủng của bệnh nhân",
+    "HAS_ISSUE": "Có vấn đề",
+    "NO_ISSUE": "Không có vấn đề",
+    "ISSUE_DATE": "Ngày ghi chú",
+    "FILTER": "Bộ lọc",
+    "TO_DATE": "Đến ngày",
+    "FROM_DATE": "Từ ngày"
 }

@@ -552,6 +552,7 @@ const applicationTranslationKey = {
         appointmentsFollowUp: "PAGE_TITLE_APPOINTMENTS_FOLLOW_UP",
         vaccination: "PAGE_TITLE_VACCINATION",
         vaccinationHistory: "PAGE_TITLE_VACCINATION_HISTORY",
+        patientVaccinationHistory: "PAGE_TITLE_PATIENT_VACCINATION_HISTORY",
         postVaccination: "PAGE_TITLE_POST_VACCINATION",
         hospitalFee: "PAGE_TITLE_HOSPITAL_FEE",
         pharmacyImport: "PAGE_TITLE_PHARMACY_IMPORT",
@@ -762,6 +763,13 @@ const applicationTranslationKey = {
     supplyInventoriesReport: "SUPPLY_INVENTORIES_REPORT",
     containsVaccineNeedToReaction: "CONTAINS_VACCINE_NEED_TO_REACTION",
     printDocument: "PRINT_DOCUMENT",
+    patientVaccinationHistory: "PATIENT_VACCINATION_HISTORY",
+    hasIssue: "HAS_ISSUE",
+    noIssue: "NO_ISSUE",
+    issueDate: "ISSUE_DATE",
+    filter: "FILTER",
+    toDate: "TO_DATE",
+    fromDate: "FROM_DATE",
 };
 
 const exceptionTranslationKey = {

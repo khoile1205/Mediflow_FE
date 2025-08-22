@@ -916,6 +916,7 @@
     "PAGE_TITLE_APPOINTMENTS_FOLLOW_UP": "Appointment Management",
     "PAGE_TITLE_VACCINATION": "Vaccination",
     "PAGE_TITLE_VACCINATION_HISTORY": "Vaccination History",
+    "PAGE_TITLE_PATIENT_VACCINATION_HISTORY": "Patient Vaccination History",
     "PAGE_TITLE_POST_VACCINATION": "Follow-up After Injection",
     "PAGE_TITLE_HOSPITAL_FEE": "Hospital Fee Management",
     "PAGE_TITLE_PHARMACY_IMPORT": "Pharmacy Import from Supplier",
@@ -1110,5 +1111,12 @@
     "CONTAINS_VACCINE_NEED_TO_REACTION": "Contains vaccine that require reaction follow-up after injection",
     "PRINT_DOCUMENT": "Print document",
     "EXAMINATION_SERVICE_CREATED_SUCCESSFULLY": "Examination service created successfully",
-    "FAILED_TO_UPDATE_EXAMINATION_SERVICE": "Failed to update examination service"
+    "FAILED_TO_UPDATE_EXAMINATION_SERVICE": "Failed to update examination service",
+    "PATIENT_VACCINATION_HISTORY": "Patient Vaccination History",
+    "HAS_ISSUE": "Has issue",
+    "NO_ISSUE": "No issue",
+    "ISSUE_DATE": "Issue date",
+    "FILTER": "Filter",
+    "TO_DATE": "To date",
+    "FROM_DATE": "From date"
 }

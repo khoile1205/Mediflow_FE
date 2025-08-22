@@ -4,11 +4,11 @@ import { callApi } from "~/libs/axios/request";
 import { HttpMethod, IPagination, IPaginationRequest } from "~/libs/axios/types";
 import { DepartmentFormValues } from "~/pages/management/departments/types";
 
-const getDepartmentWithPagination = async ({ pageIndex = 1, pageSize = 10 }: IPaginationRequest) => {
+const getDepartmentWithPagination = async ({ pageIndex = 1, pageSize = 10 }: IPaginationRequest, keyword?: string) => {
     return await callApi<IPagination<Department>>({
         url: endpoints.management.departmentEndpoints.getDepartmentWithPagination,
         method: HttpMethod.GET,
-        params: { pageIndex, pageSize },
+        params: { pageIndex, pageSize, keyword },
     });
 };
 

@@ -9,19 +9,22 @@ const transformData = (response: IBaseApiResponse<IPagination<Department>>) => {
     return response.Data.data.map((item) => ({ ...item })) as Department[];
 };
 
-export const useQueryDepartmentsWithPagination = (params: IPaginationRequest) => {
+export const useQueryDepartmentsWithPagination = (params: IPaginationRequest, keyword?: string) => {
     const {
         data: response,
         isLoading,
         isError,
         refetch,
     } = useQuery<IBaseApiResponse<IPagination<Department>>>({
-        queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION, params],
+        queryKey: [QueryKey.DEPARTMENT.GET_LIST_DEPARTMENT_WITH_PAGINATION, params, keyword],
         queryFn: async () => {
-            const response = await departmentApis.getDepartmentWithPagination({
-                pageIndex: params.pageIndex,
-                pageSize: params.pageSize,
-            });
+            const response = await departmentApis.getDepartmentWithPagination(
+                {
+                    pageIndex: params.pageIndex,
+                    pageSize: params.pageSize,
+                },
+                keyword,
+            );
             return response;
         },
     });
