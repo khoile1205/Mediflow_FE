@@ -16,7 +16,7 @@ import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { useQueryGetVaccinationHistoryByPatientId } from "~/services/vaccination/hooks/queries";
 import { VaccinationHistoryItem } from "../types";
 
-export const VaccinationHistory: React.FC = () => {
+export const PatientVaccinationHistory: React.FC = () => {
     const { t } = useTranslation();
     const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null);
 
@@ -64,6 +64,8 @@ export const VaccinationHistory: React.FC = () => {
                 backgroundColor: "#98d2c0",
                 borderColor: "#98d2c0",
             },
+            width: 200,
+            pinned: "left",
         },
         {
             field: "doseNumber",
@@ -75,6 +77,7 @@ export const VaccinationHistory: React.FC = () => {
                 borderColor: "#98d2c0",
             },
             cellClass: "ag-cell-center",
+            width: 100,
         },
         {
             field: "vaccinationTestDate",
@@ -86,6 +89,7 @@ export const VaccinationHistory: React.FC = () => {
                 borderColor: "#98d2c0",
             },
             cellClass: "ag-cell-center",
+            width: 120,
             cellRenderer: (param: { value: Date }) => {
                 const date = param.value as Date;
                 return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
@@ -101,6 +105,7 @@ export const VaccinationHistory: React.FC = () => {
                 borderColor: "#98d2c0",
             },
             cellClass: "ag-cell-center",
+            width: 120,
             cellRenderer: (param: { value: Date }) => {
                 const date = param.value as Date;
                 return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
@@ -116,6 +121,7 @@ export const VaccinationHistory: React.FC = () => {
                 borderColor: "#98d2c0",
             },
             cellClass: "ag-cell-center",
+            width: 150,
             cellRenderer: (param: boolean) => {
                 return param ? t(i18n.translationKey.isInjected) : t(i18n.translationKey.notInjected);
             },
@@ -129,6 +135,49 @@ export const VaccinationHistory: React.FC = () => {
                 backgroundColor: "#98d2c0",
                 borderColor: "#98d2c0",
             },
+            width: 200,
+        },
+        {
+            field: "hasIssue",
+            headerName: t(i18n.translationKey.hasIssue),
+            headerStyle: {
+                textAlign: "center",
+                fontWeight: "bold",
+                backgroundColor: "#98d2c0",
+                borderColor: "#98d2c0",
+            },
+            cellClass: "ag-cell-center",
+            width: 150,
+            cellRenderer: (param: { value: boolean }) => {
+                return param.value ? t(i18n.translationKey.hasIssue) : t(i18n.translationKey.noIssue);
+            },
+        },
+        {
+            field: "issueNote",
+            headerName: t(i18n.translationKey.issueNote),
+            headerStyle: {
+                textAlign: "center",
+                fontWeight: "bold",
+                backgroundColor: "#98d2c0",
+                borderColor: "#98d2c0",
+            },
+            width: 300,
+        },
+        {
+            field: "issueDate",
+            headerName: t(i18n.translationKey.issueDate),
+            headerStyle: {
+                textAlign: "center",
+                fontWeight: "bold",
+                backgroundColor: "#98d2c0",
+                borderColor: "#98d2c0",
+            },
+            cellClass: "ag-cell-center",
+            width: 120,
+            cellRenderer: (param: { value: Date }) => {
+                const date = param.value as Date;
+                return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
+            },
         },
     ];
 
@@ -141,7 +190,7 @@ export const VaccinationHistory: React.FC = () => {
                             <Box>
                                 <Grid container spacing={2} alignItems="center" marginBottom={2}>
                                     <Typography variant="subtitle2" className="w-2/3 text-xl font-bold">
-                                        {t(i18n.translationKey.vaccinationHistory)}
+                                        {t(i18n.translationKey.patientVaccinationHistory)}
                                     </Typography>
                                     <ActionButton
                                         label={t(i18n.translationKey.searchPatient)}
@@ -261,4 +310,4 @@ export const VaccinationHistory: React.FC = () => {
     );
 };
 
-export default VaccinationHistory;
+export default PatientVaccinationHistory;

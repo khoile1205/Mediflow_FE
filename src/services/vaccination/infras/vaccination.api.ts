@@ -1,6 +1,6 @@
 import { endpoints } from "~/constants/endpoints";
 import { callApi } from "~/libs/axios/request";
-import { HttpMethod } from "~/libs/axios/types";
+import { HttpMethod, IPagination, IPaginationRequest } from "~/libs/axios/types";
 import { ISearchParam } from "~/services/hospital-service/infras";
 import {
     InjectVaccineRequest,
@@ -12,6 +12,7 @@ import {
     RejectVaccinationRequest,
     PendingVaccinationTodayResponse,
     ClosingReceptionRequest,
+    VaccinationHistoryItem,
 } from "./types";
 
 const getWaitingPatientVaccinationList = async ({ searchTerm = "" }: ISearchParam) => {
@@ -62,7 +63,20 @@ const confirmVaccinationToday = async (receptionId: number) => {
     });
 };
 
-const getVaccinationHistory = async (patientId: number) => {
+const getAllVaccinationHistory = async (
+    { pageIndex = 1, pageSize = 10 }: IPaginationRequest,
+    fromDate?: string,
+    toDate?: string,
+    searchTerm?: string,
+) => {
+    return await callApi<IPagination<VaccinationHistoryItem>>({
+        url: endpoints.vaccination.getAllVaccinationHistory,
+        method: HttpMethod.GET,
+        params: { pageIndex, pageSize, fromDate, toDate, searchTerm },
+    });
+};
+
+const getVaccinationHistoryByPatientId = async (patientId: number) => {
     return await callApi<VaccinationHistoryResponse>({
         url: endpoints.vaccination.getVaccinationHistory(patientId),
         method: HttpMethod.GET,
@@ -99,7 +113,8 @@ export const vaccinationApis = {
     updateVaccinationStatus,
     injectVaccine,
     confirmVaccinationToday,
-    getVaccinationHistory,
+    getAllVaccinationHistory,
+    getVaccinationHistoryByPatientId,
     rejectInject,
     getPendingVaccinationsToday,
     closingReception,

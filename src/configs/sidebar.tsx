@@ -9,6 +9,7 @@ import {
     EventNote,
     FactCheck,
     Healing,
+    History,
     Home,
     HomeOutlined,
     InsertChart,
@@ -140,6 +141,12 @@ export const sidebarTree: SidebarTabProps[] = [
                 pathName: "/vaccination/history",
                 icon: <AccessTime />,
                 ...getRoutePermissions("/vaccination/history"),
+            },
+            {
+                labelKey: i18n.translationKey.patientVaccinationHistory,
+                pathName: "/vaccination/patient-history",
+                icon: <History />,
+                ...getRoutePermissions("/vaccination/patient-history"),
             },
             {
                 labelKey: i18n.translationKey.AfterInjection,
