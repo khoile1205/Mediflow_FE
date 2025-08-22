@@ -1,5 +1,4 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { ColDef } from "ag-grid-community";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
@@ -14,7 +13,7 @@ import { ActionButton } from "~/components/common/action-button";
 import { formatDate } from "~/utils/date-time";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { useQueryGetVaccinationHistoryByPatientId } from "~/services/vaccination/hooks/queries";
-import { VaccinationHistoryItem } from "../types";
+import { createVaccinationHistoryColumns } from "./utils/vaccination-history-columns.util";
 
 export const PatientVaccinationHistory: React.FC = () => {
     const { t } = useTranslation();
@@ -44,142 +43,17 @@ export const PatientVaccinationHistory: React.FC = () => {
             form.setValue("province", vaccinationHistory.province || "");
             form.setValue("vaccinationHistoryItems", vaccinationHistory.vaccinationHistoryItems || []);
         }
-    }, [vaccinationHistory]);
+    }, [vaccinationHistory, form]);
 
     const vaccinationHistoryGrid = useAgGrid({ rowSelection: "multiple" });
-    const vaccinationHistoryColumnDefs: ColDef<VaccinationHistoryItem>[] = [
-        {
-            checkboxSelection: true,
-            headerCheckboxSelection: true,
-            width: 50,
-            pinned: true,
-            resizable: false,
-        },
-        {
-            field: "medicineName",
-            headerName: t(i18n.translationKey.vaccineSerumName),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            width: 200,
-            pinned: "left",
-        },
-        {
-            field: "doseNumber",
-            headerName: t(i18n.translationKey.doseNumber),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 100,
-        },
-        {
-            field: "vaccinationTestDate",
-            headerName: t(i18n.translationKey.testDate),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 120,
-            cellRenderer: (param: { value: Date }) => {
-                const date = param.value as Date;
-                return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
-            },
-        },
-        {
-            field: "vaccinationDate",
-            headerName: t(i18n.translationKey.injectionDate),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 120,
-            cellRenderer: (param: { value: Date }) => {
-                const date = param.value as Date;
-                return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
-            },
-        },
-        {
-            field: "vaccinationConfirmation",
-            headerName: t(i18n.translationKey.vaccinationConfirmation),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 150,
-            cellRenderer: (param: boolean) => {
-                return param ? t(i18n.translationKey.isInjected) : t(i18n.translationKey.notInjected);
-            },
-        },
-        {
-            field: "doctorName",
-            headerName: t(i18n.translationKey.instructedDoctor),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            width: 200,
-        },
-        {
-            field: "hasIssue",
-            headerName: t(i18n.translationKey.hasIssue),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 150,
-            cellRenderer: (param: { value: boolean }) => {
-                return param.value ? t(i18n.translationKey.hasIssue) : t(i18n.translationKey.noIssue);
-            },
-        },
-        {
-            field: "issueNote",
-            headerName: t(i18n.translationKey.issueNote),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            width: 300,
-        },
-        {
-            field: "issueDate",
-            headerName: t(i18n.translationKey.issueDate),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 120,
-            cellRenderer: (param: { value: Date }) => {
-                const date = param.value as Date;
-                return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
-            },
-        },
-    ];
+
+    // Use shared column definitions without patient info
+    const vaccinationHistoryColumnDefs = React.useMemo(() => {
+        return createVaccinationHistoryColumns(t, {
+            includePatientInfo: false,
+            includeSelection: true,
+        });
+    }, [t]);
 
     return (
         <>

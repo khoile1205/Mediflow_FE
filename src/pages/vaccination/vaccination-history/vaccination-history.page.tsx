@@ -1,5 +1,4 @@
 import { Box, Grid, Stack, Typography, Button } from "@mui/material";
-import { ColDef } from "ag-grid-community";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
@@ -9,11 +8,11 @@ import { formatDate } from "~/utils/date-time";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { QueryKey } from "~/constants/query-key";
 import { useQueryGetAllVaccinationHistory } from "~/services/vaccination/hooks/queries";
-import { VaccinationHistoryItem } from "../types";
 import { usePagination } from "~/hooks";
 import FormItem from "~/components/form/form-item";
 import DynamicForm from "~/components/form/dynamic-form";
 import { useForm } from "~/components/form/hooks/use-form";
+import { createVaccinationHistoryColumns } from "./utils/vaccination-history-columns.util";
 
 interface VaccinationHistoryFilterForm {
     fromDate: string;
@@ -54,162 +53,13 @@ export const VaccinationHistory: React.FC = () => {
         rowSelection: "multiple",
     });
 
-    // Enhanced column definitions with patient name
-    const vaccinationHistoryColumnDefs: ColDef<VaccinationHistoryItem>[] = [
-        {
-            checkboxSelection: true,
-            headerCheckboxSelection: true,
-            width: 50,
-            pinned: true,
-            resizable: false,
-        },
-        {
-            field: "patientName",
-            headerName: t(i18n.translationKey.patientName),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            width: 200,
-            pinned: "left",
-        },
-        {
-            field: "patientCode",
-            headerName: t(i18n.translationKey.medicalCode),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            width: 200,
-        },
-        {
-            field: "medicineName",
-            headerName: t(i18n.translationKey.vaccineSerumName),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            width: 200,
-        },
-        {
-            field: "doseNumber",
-            headerName: t(i18n.translationKey.doseNumber),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 100,
-        },
-        {
-            field: "vaccinationTestDate",
-            headerName: t(i18n.translationKey.testDate),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 120,
-            cellRenderer: (param: { value: Date }) => {
-                const date = param.value as Date;
-                return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
-            },
-        },
-        {
-            field: "vaccinationDate",
-            headerName: t(i18n.translationKey.injectionDate),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 120,
-            cellRenderer: (param: { value: Date }) => {
-                const date = param.value as Date;
-                return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
-            },
-        },
-        {
-            field: "vaccinationConfirmation",
-            headerName: t(i18n.translationKey.vaccinationConfirmation),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 150,
-            cellRenderer: (param: { value: boolean }) => {
-                return param.value ? t(i18n.translationKey.isInjected) : t(i18n.translationKey.notInjected);
-            },
-        },
-        {
-            field: "doctorName",
-            headerName: t(i18n.translationKey.instructedDoctor),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            width: 200,
-        },
-        {
-            field: "hasIssue",
-            headerName: t(i18n.translationKey.hasIssue),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 150,
-            cellRenderer: (param: { value: boolean }) => {
-                return param.value ? t(i18n.translationKey.hasIssue) : t(i18n.translationKey.noIssue);
-            },
-        },
-        {
-            field: "issueNote",
-            headerName: t(i18n.translationKey.issueNote),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            width: 200,
-        },
-        {
-            field: "issueDate",
-            headerName: t(i18n.translationKey.issueDate),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            width: 120,
-            cellRenderer: (param: { value: Date }) => {
-                const date = param.value as Date;
-                return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
-            },
-        },
-    ];
+    // Use shared column definitions with patient info included
+    const vaccinationHistoryColumnDefs = React.useMemo(() => {
+        return createVaccinationHistoryColumns(t, {
+            includePatientInfo: true,
+            includeSelection: true,
+        });
+    }, [t]);
 
     // Sort data by vaccination date descending (newest first)
     const sortedVaccinationHistory = React.useMemo(() => {
