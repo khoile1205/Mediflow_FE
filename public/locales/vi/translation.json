@@ -1111,5 +1111,7 @@
     "PATIENT_STATISTIC_REPORT": "Báo cáo thống kê bệnh nhân",
     "SUPPLY_INVENTORIES_REPORT": "Báo cáo tồn kho vật tư",
     "CONTAINS_VACCINE_NEED_TO_REACTION": "Có vắc xin cần theo dõi phản ứng sau tiêm",
-    "PRINT_DOCUMENT": "In chứng từ"
+    "PRINT_DOCUMENT": "In chứng từ",
+    "EXAMINATION_SERVICE_CREATED_SUCCESSFULLY": "Tạo dịch vụ khám thành công",
+    "FAILED_TO_UPDATE_EXAMINATION_SERVICE": "Cập nhật dịch vụ khám thất bại"
 }
