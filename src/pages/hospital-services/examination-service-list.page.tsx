@@ -243,8 +243,12 @@ export default function ExaminationServicePage() {
                         refetch();
                         queryClient.invalidateQueries({ queryKey: ["examinationServices"] });
                     },
-                    onError: () => {
-                        showToast.error(t(i18n.translationKey.updateExaminationServiceFailed));
+                    onError: (error: any) => {
+                        if (error?.response?.data?.message?.includes("already exists")) {
+                            showToast.error(t(i18n.translationKey.duplicateServiceCodeError));
+                        } else {
+                            showToast.error(t(i18n.translationKey.updateExaminationServiceFailed));
+                        }
                     },
                 },
             );
@@ -257,8 +261,12 @@ export default function ExaminationServicePage() {
                     refetch();
                     queryClient.invalidateQueries({ queryKey: ["examinationServices"] });
                 },
-                onError: () => {
-                    showToast.error(t(i18n.translationKey.createExaminationServiceFailed));
+                onError: (error: any) => {
+                    if (error?.response?.data?.message?.includes("already exists")) {
+                        showToast.error(t(i18n.translationKey.duplicateServiceCodeError));
+                    } else {
+                        showToast.error(t(i18n.translationKey.createExaminationServiceFailed));
+                    }
                 },
             });
         }
