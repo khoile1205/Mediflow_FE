@@ -13,7 +13,7 @@ import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import i18n from "~/configs/i18n";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
-import { PaymentType, ReceiptPaymentType } from "~/constants/enums";
+import { PaymentMethod, ReceiptPaymentType } from "~/constants/enums";
 import { QueryKey } from "~/constants/query-key";
 import { useMutationCreateReceiptPayment } from "~/services/hospital-fee/hooks/mutations";
 import { useMutationCreateQRPayment } from "~/services/hospital-fee/hooks/mutations/use-mutation-create-qr-payment";
@@ -78,7 +78,7 @@ const HospitalFeePage: React.FC = () => {
             invoiceNumber: "",
             invoiceValue: 0,
             phoneNumber: "",
-            paidType: PaymentType.CASH,
+            paidType: PaymentMethod.CASH,
             isPaid: true,
             isRefund: false,
             isCancel: false,
@@ -122,12 +122,12 @@ const HospitalFeePage: React.FC = () => {
         const payload = getCreateReceiptPaymentPayload(data);
 
         switch (data.paidType) {
-            case PaymentType.CASH: {
+            case PaymentMethod.CASH: {
                 const response = await createManualReceiptPayment({ patientId: patientId!, payload });
                 hospitalFeeForm.setValue("invoiceNumber", response.invoiceNumber);
                 break;
             }
-            case PaymentType.TRANSFER: {
+            case PaymentMethod.TRANSFER: {
                 handleQRPayment(payload);
                 break;
             }
@@ -271,7 +271,7 @@ const HospitalFeePage: React.FC = () => {
             <DynamicForm form={hospitalFeeForm}>
                 <Stack spacing={1} direction="row" width="100%" className="px-4 py-5">
                     <ActionButton
-                        label={t(i18n.translationKey.payment)}
+                        label={t(i18n.translationKey.payAReceipt)}
                         startIcon={<AddCircle />}
                         onClick={hospitalFeeForm.handleSubmit(handleSubmit)}
                         disabled={
@@ -377,15 +377,15 @@ const HospitalFeePage: React.FC = () => {
                                     options={[
                                         {
                                             label: t(i18n.translationKey.payByCash),
-                                            value: PaymentType.CASH,
+                                            value: PaymentMethod.CASH,
                                         },
                                         {
                                             label: t(i18n.translationKey.payByAtm),
-                                            value: PaymentType.ATM,
+                                            value: PaymentMethod.ATM,
                                         },
                                         {
                                             label: t(i18n.translationKey.payByTransfer),
-                                            value: PaymentType.TRANSFER,
+                                            value: PaymentMethod.TRANSFER,
                                         },
                                     ]}
                                 />

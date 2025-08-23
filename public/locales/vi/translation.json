@@ -1040,7 +1040,7 @@
     "RECEIPT_TITLE": "PHIẾU THU THANH TOÁN",
     "PATIENT_INFO": "THÔNG TIN BỆNH NHÂN",
     "DOB": "Ngày sinh",
-    "PAYMENT_DETAILS": "CHI TIẾT THANH TOÁN",
+    "PAYMENT_DETAILS": "Chi tiết thanh toán",
     "TOTAL_BEFORE_DISCOUNT": "Tổng tiền trước chiết khấu",
     "TOTAL_DISCOUNT": "Tổng số tiền trợ",
     "PAYMENT_TYPE": "Hình thức thanh toán",
@@ -1121,5 +1121,15 @@
     "ISSUE_DATE": "Ngày ghi chú",
     "FILTER": "Bộ lọc",
     "TO_DATE": "Đến ngày",
-    "FROM_DATE": "Từ ngày"
+    "FROM_DATE": "Từ ngày",
+    "PAYMENT_STATUS": "Trạng thái thanh toán",
+    "TRANSACTION_DETAIL": "Chi tiết giao dịch",
+    "PAYMENT_INFORMATION": "Thông tin thanh toán",
+    "ATM_TRANSACTION_CODE": "Mã giao dịch ATM",
+    "TRANSACTION_HISTORY": "Lịch sử giao dịch",
+    "TRANSACTION_HISTORY_DESCRIPTION": "Xem lịch sử giao dịch thanh toán của bạn",
+    "TRANSACTION_HISTORY_SEARCH_PLACEHOLDER": "Tìm kiếm theo mã giao dịch, mã y tế, CCCD hoặc tên bệnh nhân",
+    "PATIENT_ALREADY_RECEPTED": "Bệnh nhân đã được tiếp nhận.",
+    "PAY_A_RECEIPT": "Thanh toán phiếu thu",
+    "CONFIRMED": "Đã xác nhận"
 }

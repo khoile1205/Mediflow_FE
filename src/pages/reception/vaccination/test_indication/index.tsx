@@ -152,20 +152,6 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
                     </Typography>
                     <Box className="mt-2 border p-5" sx={{ borderColor: "primary.main", borderRadius: 2 }}>
                         <Grid container spacing={2.5}>
-                            {/* <Grid size={12}>
-                                <FormItem
-                                    render="autocomplete"
-                                    label={t(i18n.translationKey.orderByDiseaseGroup)}
-                                    name="groupId"
-                                    placeholder={t(i18n.translationKey.selectDiseaseGroup)}
-                                    disabled={disabled}
-                                    options={toBaseOption<DiseaseGroup>(hospitalDiseaseGroups, {
-                                        label: "groupName",
-                                        value: "id",
-                                    })}
-                                />
-                            </Grid> */}
-
                             <Grid size={9}>
                                 <FormItem
                                     render="select"
@@ -179,38 +165,6 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
                                     })}
                                 />
                             </Grid>
-
-                            {/* <Grid size={4}>
-                                <FormItem
-                                    render="data-grid"
-                                    label={t(i18n.translationKey.department)}
-                                    placeholder={t(i18n.translationKey.selectDepartment)}
-                                    name="department"
-                                    disabled={disabled}
-                                    columnDefs={[
-                                        { field: "code", headerName: t(i18n.translationKey.departmentCode) },
-                                        {
-                                            field: "departmentName",
-                                            headerName: t(i18n.translationKey.department),
-                                            valueGetter: (params) => {
-                                                const lang = reactI18n.language;
-                                                return lang === I18N_LANGUAGE.VIETNAMESE
-                                                    ? params.data.name
-                                                    : params.data.nameInEnglish;
-                                            },
-                                        },
-                                    ]}
-                                    pagination
-                                    rowData={listDepartments}
-                                    pageIndex={pageIndex}
-                                    pageSize={pageSize}
-                                    totalItems={totalItems}
-                                    onPageChange={handlePageChange}
-                                    valueField={
-                                        reactI18n.language === I18N_LANGUAGE.VIETNAMESE ? "name" : "nameInEnglish"
-                                    }
-                                />
-                            </Grid> */}
 
                             <Grid size={3}>
                                 <FormItem
@@ -226,17 +180,6 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
 
                             <Grid size={12}>
                                 <Stack direction="row" spacing={2}>
-                                    {/* <ActionButton
-                                        label={t(i18n.translationKey.addByGroup)}
-                                        startIcon={<AddCircle />}
-                                        onClick={form.handleSubmit((data) =>
-                                            onSubmitVaccinationPrescreening(
-                                                data,
-                                                TestExaminationGroupType.DISEASE_GROUP,
-                                            ),
-                                        )}
-                                        disabled={disabled}
-                                    /> */}
                                     <ActionButton
                                         label={t(i18n.translationKey.addHospitalService)}
                                         startIcon={<AddCircle />}
@@ -321,17 +264,9 @@ export const TestIndication: React.FC<TestIndicationProps> = ({
                                     },
                                 },
                             ]}
-                            // rowData={listServiceReception.filter((item) => {
-                            //     const hospitalService = [...examHospitalServices, ...injectHospitalServices].map(
-                            //         (service) => service.serviceCode,
-                            //     );
-
-                            //     return !hospitalService.includes(item.serviceCode);
-                            // })}
                             rowData={examinationHospitalServices}
-                            {...agGrid}
                             onSelectionChanged={handleSelectionChanged}
-                            // pinnedBottomRowData={[]}
+                            {...agGrid}
                         />
                     </Box>
                 </Box>

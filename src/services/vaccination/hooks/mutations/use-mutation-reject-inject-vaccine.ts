@@ -25,6 +25,16 @@ export const useMutationRejectInjectVaccine = () => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.VACCINATION.GET_PENDING_VACCINATIONS_TODAY, variables.receptionId],
             });
+            queryClient.invalidateQueries({
+                predicate: (query) => {
+                    return query.queryKey[0] === QueryKey.RECEPTION.GET_VACCINATION_RECEPTION_BY_RECEPTION_ID;
+                },
+            });
+            queryClient.invalidateQueries({
+                predicate: (query) => {
+                    return query.queryKey[0] === QueryKey.RECEPTION.GET_UNPAID_SERVICES;
+                },
+            });
 
             showToast.success(i18n.t(i18n.translationKey.confirmRejectInjectedSuccessfully));
         },

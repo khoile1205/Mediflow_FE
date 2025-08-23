@@ -10,11 +10,11 @@ import { EMAIL_PATTERN, PHONE_NUMBER_PATTERN } from "~/components/form/validatio
 import i18n from "~/configs/i18n";
 import { UploadedFileType } from "~/constants/enums";
 import { useAuth } from "~/contexts/auth.context";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 import { useMutationDeleteFile, useMutationUploadFile } from "~/services/public-api/upload-file/hooks/mutation";
 import { UploadedFile } from "~/services/public-api/upload-file/infras";
 import { useMutationCreateSupplier, useMutationUpdateSupplier } from "~/services/supplier/hooks/mutation";
 import { useQueryGetSupplierById } from "~/services/supplier/hooks/queries";
-import { ConfirmPasswordDialog } from "../management/medicine/ConfirmPasswordDialog";
 import { SupplierFormValues } from "./types";
 
 type CreateSupplierModalProps = {
@@ -35,6 +35,7 @@ type UpsertSupplierModalProps = CreateSupplierModalProps | EditSupplierModalProp
 export const UpsertSupplierModal: React.FC<UpsertSupplierModalProps> = ({ open, onClose, mode, ...props }) => {
     const { t } = useTranslation();
     const { userPermission } = useAuth();
+    const { requestPasswordConfirmation } = usePasswordConfirm();
 
     const { mutateAsync: uploadFile } = useMutationUploadFile();
     const { mutateAsync: deleteFile } = useMutationDeleteFile();
@@ -44,8 +45,6 @@ export const UpsertSupplierModal: React.FC<UpsertSupplierModalProps> = ({ open, 
     const { data: supplier } = useQueryGetSupplierById(
         "supplierId" in props && mode === "edit" ? props.supplierId : undefined,
     );
-
-    const [isConfirmPasswordDialogOpen, setConfirmPasswordDialogOpen] = React.useState<boolean>(false);
 
     const form = useForm<SupplierFormValues>({
         defaultValues: {
@@ -94,7 +93,7 @@ export const UpsertSupplierModal: React.FC<UpsertSupplierModalProps> = ({ open, 
                 form.reset();
             }
         }
-    }, [mode, open]);
+    }, [mode, open, supplier]);
 
     return (
         <>
@@ -260,22 +259,15 @@ export const UpsertSupplierModal: React.FC<UpsertSupplierModalProps> = ({ open, 
                                     form.trigger();
                                     return;
                                 }
-                                setConfirmPasswordDialogOpen(true);
+                                requestPasswordConfirmation(() => {
+                                    form.handleSubmit(handleSubmit)();
+                                });
                             }}
                         >
                             {mode === "edit" ? t(i18n.translationKey.update) : t(i18n.translationKey.create)}
                         </Button>
                     </Dialog.Action>
                 </Dialog>
-
-                <ConfirmPasswordDialog
-                    open={isConfirmPasswordDialogOpen}
-                    onClose={() => setConfirmPasswordDialogOpen(false)}
-                    onConfirmed={() => {
-                        form.handleSubmit(handleSubmit)();
-                        setConfirmPasswordDialogOpen(false);
-                    }}
-                />
             </DynamicForm>
         </>
     );

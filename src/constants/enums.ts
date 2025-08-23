@@ -8,7 +8,7 @@ export enum TestResultStatus {
     NEGATIVE = "negative",
 }
 
-export enum PaymentType {
+export enum PaymentMethod {
     CASH,
     ATM,
     TRANSFER,

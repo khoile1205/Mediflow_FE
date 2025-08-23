@@ -30,6 +30,7 @@ import MedicineBatchesByMedicineIdPage from "~/pages/management/medicine/medicin
 import { OverviewManagement } from "~/pages/management/overview/overview-management.page";
 import { ReportPage } from "~/pages/reports";
 import { PatientVaccinationHistory } from "~/pages/vaccination/vaccination-history/patient-vaccination-history.page";
+import { TransactionHistoryPage } from "~/pages/transaction-history";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -51,7 +52,10 @@ export const AuthenticatedRoutes = (
             <Route path="post-injection" element={<PostVaccinationPage />} />
         </Route>
 
-        <Route path="/finance" element={<HospitalFeePage />} />
+        <Route path="/finance">
+            <Route index element={<HospitalFeePage />} />
+            <Route path="transaction-history" element={<TransactionHistoryPage />} />
+        </Route>
 
         <Route path="/pharmacy">
             <Route path="import" element={<ImportInventoryFromSupplier />} />

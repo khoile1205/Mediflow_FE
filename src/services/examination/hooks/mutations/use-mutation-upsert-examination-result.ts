@@ -19,6 +19,16 @@ export function useMutationUpsertExaminationResult() {
                     return query.queryKey[0] === QueryKey.EXAMINATION.GET_PATIENTS_FOR_EXAMINATION;
                 },
             });
+            queryClient.invalidateQueries({
+                predicate: (query) => {
+                    return query.queryKey[0] === QueryKey.RECEPTION.GET_SERVICE_RECEPTION_BY_RECEPTION_ID;
+                },
+            });
+            queryClient.invalidateQueries({
+                predicate: (query) => {
+                    return query.queryKey[0] === QueryKey.RECEPTION.GET_UNPAID_SERVICES;
+                },
+            });
             payload.forEach((examination) => {
                 queryClient.invalidateQueries({
                     queryKey: [

@@ -50,3 +50,8 @@ export interface IPagination<T> {
     hasNextPage: boolean;
     data: T[];
 }
+
+export interface IDateRangeRequest {
+    fromDate?: Date | string;
+    toDate?: Date | string;
+}

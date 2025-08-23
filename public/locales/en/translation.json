@@ -1037,7 +1037,7 @@
     "RECEIPT_TITLE": "PAYMENT RECEIPT",
     "PATIENT_INFO": "PATIENT INFORMATION",
     "DOB": "Date of birth",
-    "PAYMENT_DETAILS": "PAYMENT DETAILS",
+    "PAYMENT_DETAILS": "Payment details",
     "TOTAL_BEFORE_DISCOUNT": "Total before discount",
     "TOTAL_DISCOUNT": "Total discount",
     "PAYMENT_TYPE": "Payment method",
@@ -1118,5 +1118,15 @@
     "ISSUE_DATE": "Issue date",
     "FILTER": "Filter",
     "TO_DATE": "To date",
-    "FROM_DATE": "From date"
+    "FROM_DATE": "From date",
+    "PAYMENT_STATUS": "Payment Status",
+    "TRANSACTION_DETAIL": "Transaction Detail",
+    "PAYMENT_INFORMATION": "Payment Information",
+    "ATM_TRANSACTION_CODE": "ATM Transaction Code",
+    "TRANSACTION_HISTORY": "Transaction History",
+    "TRANSACTION_HISTORY_DESCRIPTION": "View your payment transaction history",
+    "TRANSACTION_HISTORY_SEARCH_PLACEHOLDER": "Search by transaction code, medical code, identity card, or patient name",
+    "PATIENT_ALREADY_RECEPTED": "Patient has already been received.",
+    "PAY_A_RECEIPT": "Pay a receipt",
+    "CONFIRMED": "Confirmed"
 }

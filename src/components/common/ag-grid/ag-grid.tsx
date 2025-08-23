@@ -8,6 +8,7 @@ import { DEFAULT_PAGINATION_PARAMS } from "~/constants/pagination";
 import "./ag-grid.scss";
 import { GRID_STYLE_CONFIG } from "./config";
 import { useAgGrid } from "./hooks";
+import NoRowsOverlay from "./no-rows-template";
 
 type AgDataGridProps = Omit<AgGridReactProps, "columnDefs" | "rowData"> & {
     columnDefs: NonNullable<AgGridReactProps["columnDefs"]>;
@@ -70,7 +71,8 @@ const AgDataGrid: React.FC<AgDataGridProps> = ({
                     ensureDomOrder
                     rowHeight={GRID_STYLE_CONFIG.GRID_DIMENSIONS.ROW_HEIGHT}
                     headerHeight={GRID_STYLE_CONFIG.GRID_DIMENSIONS.HEADER_HEIGHT}
-                    overlayNoRowsTemplate={t(i18n.translationKey.noDataToDisplay)}
+                    overlayNoRowsTemplate={undefined}
+                    noRowsOverlayComponent={NoRowsOverlay}
                     {...props}
                     pagination={false}
                 />

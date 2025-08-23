@@ -10,6 +10,7 @@ import { publicApiEndpoints } from "./public-api";
 import { receptionEndpoints } from "./reception";
 import { reportEndpoints } from "./reports";
 import { supplierEndpoints } from "./supplier";
+import { transactionHistoryEndpoints } from "./transaction-history";
 import { uploadFileEndpoints } from "./upload-file";
 import { vaccinationEndpoints } from "./vaccination";
 
@@ -28,4 +29,5 @@ export const endpoints = {
     examination: examinationEndpoints,
     supplier: supplierEndpoints,
     reports: reportEndpoints,
+    transactionHistory: transactionHistoryEndpoints,
 };
