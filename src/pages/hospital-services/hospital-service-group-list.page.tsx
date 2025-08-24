@@ -17,8 +17,8 @@ import { useMutationDeleteHospitalServiceGroup } from "~/services/hospital-servi
 import { useQueryGetHospitalServiceGroupList } from "~/services/hospital-service/hooks/queries/use-query-get-hospital-service-group-list";
 import { useQueryServicesByGroupId } from "~/services/hospital-service/hooks/queries/use-query-services-by-group-id";
 import { showToast } from "~/utils";
-import { ConfirmPasswordDialog } from "../management/medicine/ConfirmPasswordDialog";
 import { HospitalServiceGroup } from "./types";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 
 interface SearchFormValues {
     serviceGroupId: number | null;
@@ -27,10 +27,10 @@ interface SearchFormValues {
 export default function HospitalServiceGroupPage() {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
+    const { requestPasswordConfirmation } = usePasswordConfirm(); // Use the context hook
 
     const [selectedRow, setSelectedRow] = useState<HospitalServiceGroup | null>(null);
     const [, setIsEditOpen] = useState(false);
-    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
     const searchForm = useForm<SearchFormValues>({ defaultValues: { serviceGroupId: null } });
     const [groupName, setGroupName] = useState("");
@@ -80,7 +80,22 @@ export default function HospitalServiceGroupPage() {
     };
 
     const handleDelete = () => {
-        if (selectedRow) setIsDeleteConfirmOpen(true);
+        if (!selectedRow) return;
+        requestPasswordConfirmation(() => {
+            // This runs after password confirmation
+            deleteGroup.mutate(selectedRow.id, {
+                onSuccess: () => {
+                    showToast.success(t(i18n.translationKey.deleteHospitalServiceGroupSuccess));
+                    refetch();
+                    queryClient.invalidateQueries({ queryKey: ["hospitalServiceGroups"] });
+                    setSelectedRow(null);
+                    searchForm.setValue("serviceGroupId", null);
+                },
+                onError: () => {
+                    showToast.error(t(i18n.translationKey.deleteHospitalServiceGroupFailed));
+                },
+            });
+        });
     };
 
     const handleSelectedServiceGroup = (e: any) => {
@@ -167,27 +182,6 @@ export default function HospitalServiceGroupPage() {
                     onGridReady={onGridReady}
                 />
             </Box>
-
-            <ConfirmPasswordDialog
-                open={isDeleteConfirmOpen}
-                onClose={() => setIsDeleteConfirmOpen(false)}
-                onConfirmed={() => {
-                    if (!selectedRow) return;
-                    deleteGroup.mutate(selectedRow.id, {
-                        onSuccess: () => {
-                            showToast.success(t(i18n.translationKey.deleteHospitalServiceGroupSuccess));
-                            refetch();
-                            queryClient.invalidateQueries({ queryKey: ["hospitalServiceGroups"] });
-                            setSelectedRow(null);
-                            searchForm.setValue("serviceGroupId", null);
-                            setIsDeleteConfirmOpen(false);
-                        },
-                        onError: () => {
-                            showToast.error(t(i18n.translationKey.deleteHospitalServiceGroupFailed));
-                        },
-                    });
-                }}
-            />
         </Box>
     );
 }

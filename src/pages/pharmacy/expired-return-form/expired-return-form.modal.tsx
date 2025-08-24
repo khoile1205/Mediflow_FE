@@ -9,8 +9,8 @@ import FormItem from "~/components/form/form-item";
 import { useForm } from "~/components/form/hooks/use-form";
 import { EMAIL_PATTERN, PHONE_NUMBER_PATTERN } from "~/components/form/validation/pattern";
 import i18n from "~/configs/i18n";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 import { MedicineBatch } from "~/entities";
-import { ConfirmPasswordDialog } from "~/pages/management/medicine/ConfirmPasswordDialog";
 import { useMutationCreateExpiredForm } from "~/services/inventory/hooks/mutations";
 import { useQueryGenerateExpiredReturnCode } from "~/services/inventory/hooks/queries";
 import { ExpiredReturnFormValues } from "./types";
@@ -31,7 +31,7 @@ export const CreateExpiredReturnModal: React.FC<CreateExpiredReturnModalProps> =
         data: { expiredReturnCode },
     } = useQueryGenerateExpiredReturnCode(open);
     const { mutateAsync: createExpiredForm } = useMutationCreateExpiredForm();
-    const [isConfirmPasswordDialogOpen, setConfirmPasswordDialogOpen] = React.useState<boolean>(false);
+    const { requestPasswordConfirmation } = usePasswordConfirm();
     const medicineBatchAgGrid = useAgGrid<MedicineBatch>({});
 
     const form = useForm<ExpiredReturnFormValues>({
@@ -55,7 +55,6 @@ export const CreateExpiredReturnModal: React.FC<CreateExpiredReturnModalProps> =
                 expirationDate: batch.expiryDate,
             })),
         });
-        setConfirmPasswordDialogOpen(false);
         onClose();
         form.reset();
     };
@@ -199,21 +198,16 @@ export const CreateExpiredReturnModal: React.FC<CreateExpiredReturnModalProps> =
                                     form.trigger();
                                     return;
                                 }
-                                setConfirmPasswordDialogOpen(true);
+
+                                requestPasswordConfirmation(() => {
+                                    form.handleSubmit(handleSubmit)();
+                                });
                             }}
                         >
                             {t(i18n.translationKey.create)}
                         </Button>
                     </Dialog.Action>
                 </Dialog>
-
-                <ConfirmPasswordDialog
-                    open={isConfirmPasswordDialogOpen}
-                    onClose={() => setConfirmPasswordDialogOpen(false)}
-                    onConfirmed={() => {
-                        form.handleSubmit(handleSubmit)();
-                    }}
-                />
             </DynamicForm>
         </>
     );

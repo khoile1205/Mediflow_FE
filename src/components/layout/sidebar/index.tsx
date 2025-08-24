@@ -8,9 +8,16 @@ import { useAuth } from "~/contexts/auth.context";
 import { hasPermission } from "~/utils/permission.utils";
 import { ChangeLanguageTab } from "./tabs/change-lang.tab";
 import { SidebarTabItem, SidebarTabProps } from "./tabs/sidebar.tab";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 
 export const Sidebar: React.FC = () => {
     const { logout, userPermission } = useAuth();
+    const { resetPasswordConfirmationSession } = usePasswordConfirm();
+
+    const handleLogout = () => {
+        resetPasswordConfirmationSession();
+        logout();
+    };
 
     const filteredSidebarTree = React.useMemo(() => {
         const filterTree = (items: SidebarTabProps[]): SidebarTabProps[] =>
@@ -61,7 +68,11 @@ export const Sidebar: React.FC = () => {
                 </Box>
                 <Stack direction={"column"} sx={{ flexShrink: 0 }} className="border-t border-gray-300 p-2">
                     <ChangeLanguageTab />
-                    <SidebarTabItem icon={<ExitToApp />} labelKey={i18n.translationKey.signOut} onClick={logout} />
+                    <SidebarTabItem
+                        icon={<ExitToApp />}
+                        labelKey={i18n.translationKey.signOut}
+                        onClick={handleLogout}
+                    />
                 </Stack>
             </Stack>
         </Drawer>

@@ -25,6 +25,7 @@ import {
     PermContactCalendar,
     PriceChange,
     Science,
+    Timeline,
     Vaccines,
     WarningAmber,
 } from "@mui/icons-material";
@@ -83,6 +84,12 @@ export const sidebarTree: SidebarTabProps[] = [
         labelKey: i18n.translationKey.hospitalFee,
         pathName: "/finance",
         ...getRoutePermissions("/finance"),
+    },
+    {
+        icon: <Timeline />,
+        labelKey: i18n.translationKey.transactionHistory,
+        pathName: "/finance/transaction-history",
+        ...getRoutePermissions("/finance/transaction-history"),
     },
     {
         icon: <Biotech />, // Examination

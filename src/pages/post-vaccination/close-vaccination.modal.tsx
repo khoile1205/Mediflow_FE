@@ -44,76 +44,85 @@ const CloseVaccinationModal: React.FC<CloseVaccinationModalProps> = ({
             <Dialog.Header title={t(i18n.translationKey.closeVaccinationConfirmation)} onClose={onClose} />
             <Dialog.Body>
                 <Box className="mt-3">
-                    <Typography fontWeight={500} fontSize={16} sx={{ mb: 1 }}>
-                        {t(i18n.translationKey.step, { step: 1 })}
-                    </Typography>{" "}
-                    <Typography variant="body1" fontSize={14} sx={{ mb: 2 }}>
-                        {t(i18n.translationKey.pendingVaccinationToday, {
-                            count: pendingVaccinations.totalPendingDoses,
-                        })}
-                        {". "}
-                        {t(i18n.translationKey.checkBeforeConfirm)}
-                    </Typography>
-                    <AgDataGrid
-                        columnDefs={
-                            [
-                                {
-                                    field: "vaccineName",
-                                    headerName: t(i18n.translationKey.vaccine),
-                                    flex: 1,
-                                    cellClass: "ag-cell-center",
-                                },
-                                {
-                                    field: "pendingDoses",
-                                    headerName: t(i18n.translationKey.pendingDoses),
-                                    flex: 0.5,
-                                    cellClass: "ag-cell-center",
-                                },
-                                {
-                                    field: "scheduledDate",
-                                    headerName: t(i18n.translationKey.appointmentDate),
-                                    flex: 1,
-                                    valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy"]),
-                                    cellClass: "ag-cell-center",
-                                },
-                            ] as ColDef<PendingVaccination>[]
-                        }
-                        rowData={pendingVaccinations.pendingVaccinations}
-                        {...agGrid}
-                    />
-                    <Divider sx={{ my: 2 }} />
-                    <Typography fontWeight={500} fontSize={16} sx={{ mb: 1 }}>
-                        {t(i18n.translationKey.step, { step: 2 })}
-                    </Typography>{" "}
+                    {pendingVaccinations.totalPendingDoses ? (
+                        <>
+                            <Typography fontWeight={500} fontSize={16} sx={{ mb: 1 }}>
+                                {t(i18n.translationKey.step, { step: 1 })}
+                            </Typography>{" "}
+                            <Typography variant="body1" fontSize={14} sx={{ mb: 2 }}>
+                                {t(i18n.translationKey.pendingVaccinationToday, {
+                                    count: pendingVaccinations.totalPendingDoses,
+                                })}
+                                {". "}
+                                {t(i18n.translationKey.checkBeforeConfirm)}
+                            </Typography>
+                            <AgDataGrid
+                                columnDefs={
+                                    [
+                                        {
+                                            field: "vaccineName",
+                                            headerName: t(i18n.translationKey.vaccine),
+                                            flex: 1,
+                                            cellClass: "ag-cell-center",
+                                        },
+                                        {
+                                            field: "pendingDoses",
+                                            headerName: t(i18n.translationKey.pendingDoses),
+                                            flex: 0.5,
+                                            cellClass: "ag-cell-center",
+                                        },
+                                        {
+                                            field: "scheduledDate",
+                                            headerName: t(i18n.translationKey.appointmentDate),
+                                            flex: 1,
+                                            valueFormatter: ({ value }) =>
+                                                formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy"]),
+                                            cellClass: "ag-cell-center",
+                                        },
+                                    ] as ColDef<PendingVaccination>[]
+                                }
+                                rowData={pendingVaccinations.pendingVaccinations}
+                                {...agGrid}
+                            />
+                            <Divider sx={{ my: 2 }} />
+                        </>
+                    ) : null}
+                    {pendingVaccinations.totalPendingDoses ? (
+                        <Typography fontWeight={500} fontSize={16} sx={{ mb: 1 }}>
+                            {t(i18n.translationKey.step, { step: 2 })}
+                        </Typography>
+                    ) : null}
+
                     <Typography variant="body1" fontSize={14} sx={{ mb: 2 }}>
                         {t(i18n.translationKey.provideCloseVaccinationInfo)}:
                     </Typography>
                     <DynamicForm form={form}>
                         <FormItem name="issueNote" render="text-area" required label={t(i18n.translationKey.note)} />
-
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                            <Typography variant="body1" className="mb-2" fontWeight={500}>
-                                {t(i18n.translationKey.rescheduleVaccinationAfter)}:
-                            </Typography>
-                            <FormItem
-                                name="reScheduleDate"
-                                render="radio-group"
-                                options={[
-                                    {
-                                        label: t(i18n.translationKey.notAvailable),
-                                        value: "",
-                                    },
-                                    {
-                                        label: t(i18n.translationKey.numberOfDays, { day: 7 }),
-                                        value: addDaysToDate(new Date(), 7).toISOString(),
-                                    },
-                                    {
-                                        label: t(i18n.translationKey.numberOfDays, { day: 30 }),
-                                        value: addDaysToDate(new Date(), 30).toISOString(),
-                                    },
-                                ]}
-                            />
-                        </Box>
+                        {pendingVaccinations.totalPendingDoses ? (
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                <Typography variant="body1" className="mb-2" fontWeight={500}>
+                                    {t(i18n.translationKey.rescheduleVaccinationAfter)}:
+                                </Typography>
+                                <FormItem
+                                    name="reScheduleDate"
+                                    render="radio-group"
+                                    options={[
+                                        {
+                                            label: t(i18n.translationKey.notAvailable),
+                                            value: null,
+                                        },
+                                        {
+                                            label: t(i18n.translationKey.numberOfDays, { day: 7 }),
+                                            value: addDaysToDate(new Date(), 7).toISOString(),
+                                        },
+                                        {
+                                            label: t(i18n.translationKey.numberOfDays, { day: 30 }),
+                                            value: addDaysToDate(new Date(), 30).toISOString(),
+                                        },
+                                    ]}
+                                />
+                            </Box>
+                        ) : null}
                     </DynamicForm>
                 </Box>
             </Dialog.Body>

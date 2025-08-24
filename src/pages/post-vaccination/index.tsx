@@ -178,6 +178,7 @@ const PostVaccinationPage: React.FC = () => {
                 headerName: t(i18n.translationKey.quantity),
                 headerStyle: { backgroundColor: "#98D2C0" },
                 cellClass: "ag-cell-center",
+                flex: 0.5,
             },
             {
                 field: "vaccinationDate",
@@ -185,6 +186,7 @@ const PostVaccinationPage: React.FC = () => {
                 headerStyle: { backgroundColor: "#98D2C0" },
                 valueFormatter: ({ value }) =>
                     value ? formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"]) : "",
+                flex: 1,
             },
             {
                 field: "observationConfirmed",
@@ -195,6 +197,7 @@ const PostVaccinationPage: React.FC = () => {
                     value
                         ? t(i18n.translationKey.observationConfirmed)
                         : t(i18n.translationKey.observationNotConfirmed),
+                flex: 1,
             },
             {
                 field: "reactionDate",
@@ -203,6 +206,7 @@ const PostVaccinationPage: React.FC = () => {
                 cellRenderer: "ag-cell-center",
                 valueFormatter: ({ value }) =>
                     value ? formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"]) : "",
+                flex: 1,
             },
         ],
         [t],
@@ -297,10 +301,7 @@ const PostVaccinationPage: React.FC = () => {
                                 variant="contained"
                                 color="primary"
                                 onClick={() => {
-                                    if (
-                                        followUpForm.watch("testResult") === TestResultStatus.POSITIVE &&
-                                        pendingVaccinations.totalPendingDoses > 0
-                                    ) {
+                                    if (followUpForm.watch("testResult") === TestResultStatus.POSITIVE) {
                                         setOpenCloseReceptionModal(true);
                                     } else {
                                         handleSave();

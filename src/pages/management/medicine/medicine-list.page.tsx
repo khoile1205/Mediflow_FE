@@ -20,9 +20,9 @@ import { useQueryGetMedicines } from "~/services/inventory/hooks/queries/use-que
 import { inventoryApis } from "~/services/inventory/infras/inventory.api";
 import { UpdateMedicineDto, VaccineType } from "~/services/inventory/infras/types";
 import { showToast } from "~/utils";
-import { ConfirmPasswordDialog } from "./ConfirmPasswordDialog";
 import { useMutationDeleteMedicine } from "~/services/inventory/hooks/mutations/use-mutation-delete-medicine";
 import useDebounce from "~/hooks/use-debounce";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 
 interface SearchFormValues {
     name: string;
@@ -43,8 +43,7 @@ export default function MedicineListPage() {
     const [isAdding] = useState(false);
     const [, setIsEditing] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-    const { mutate: deleteMedicine } = useMutationDeleteMedicine();
+    const { requestPasswordConfirmation } = usePasswordConfirm();
 
     const queryClient = useQueryClient();
 
@@ -81,6 +80,7 @@ export default function MedicineListPage() {
     const [vaccineTypes, setVaccineTypes] = useState<VaccineType[]>([]);
 
     const { mutate: updateMedicine } = useMutationUpdateMedicine();
+    const { mutate: deleteMedicine } = useMutationDeleteMedicine();
 
     const navigate = useNavigate();
 
@@ -208,7 +208,22 @@ export default function MedicineListPage() {
 
     const handleDelete = () => {
         if (!selectedMedicineId) return;
-        setIsPasswordDialogOpen(true);
+        requestPasswordConfirmation(() => {
+            deleteMedicine(selectedMedicineId, {
+                onSuccess: () => {
+                    showToast.success(t(i18n.translationKey.deleteMedicineSuccess));
+                    queryClient.invalidateQueries({
+                        queryKey: ["getMedicineList"],
+                    });
+                    setSelectedMedicineId(null);
+                    setIsFormEnabled(false);
+                    refetch();
+                },
+                onError: () => {
+                    showToast.error(t(i18n.translationKey.deleteMedicineFailed));
+                },
+            });
+        });
     };
 
     useEffect(() => {
@@ -441,31 +456,6 @@ export default function MedicineListPage() {
                     </Button>
                 </DialogActions>
             </Dialog>
-
-            <ConfirmPasswordDialog
-                open={isPasswordDialogOpen}
-                onClose={() => setIsPasswordDialogOpen(false)}
-                onConfirmed={() => {
-                    if (!selectedMedicineId) return;
-
-                    deleteMedicine(selectedMedicineId, {
-                        onSuccess: () => {
-                            showToast.success(t(i18n.translationKey.deleteMedicineSuccess));
-                            queryClient.invalidateQueries({
-                                queryKey: ["getMedicineList"],
-                            });
-                            setSelectedMedicineId(null);
-                            setIsFormEnabled(false);
-                            setIsPasswordDialogOpen(false);
-                            refetch();
-                        },
-                        onError: () => {
-                            showToast.error(t(i18n.translationKey.deleteMedicineFailed));
-                            setIsPasswordDialogOpen(false);
-                        },
-                    });
-                }}
-            />
         </Box>
     );
 }

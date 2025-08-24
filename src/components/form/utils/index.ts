@@ -79,33 +79,39 @@ export const mapValidationRules = <TFieldValues extends FieldValues, TName exten
     }
 
     if (rules.minDate) {
-        validation.validate.minDate = (value: Date) =>
-            new Date(value) >= new Date(rules.minDate)
+        validation.validate.minDate = (value: Date) => {
+            if (!value) return true;
+
+            return new Date(value) >= new Date(rules.minDate)
                 ? true
                 : t(i18n.translationKey.pleaseSelectADateAfter, {
                       date: formatDate(rules.minDate, DATE_TIME_FORMAT["dd/MM/yyyy"]),
                   });
+        };
     }
 
     if (rules.maxDate) {
-        validation.validate.maxDate = (value: Date) =>
-            new Date(value) <= new Date(rules.maxDate)
+        validation.validate.maxDate = (value: Date) => {
+            if (!value) return true;
+            return new Date(value) <= new Date(rules.maxDate)
                 ? true
                 : t(i18n.translationKey.pleaseSelectADateBefore, {
                       date: formatDate(rules.maxDate, DATE_TIME_FORMAT["dd/MM/yyyy"]),
                   });
+        };
     }
 
     if (rules.noPastDate) {
         validation.validate.noPastDate = (value: Date) => {
+            if (!value) return true;
             const today = normalizeStartDate(new Date());
-
             return new Date(value) >= today ? true : t(i18n.translationKey.dateMustNotBeInThePast);
         };
     }
 
     if (rules.noFutureDate) {
         validation.validate.noFutureDate = (value: Date) => {
+            if (!value) return true;
             const today = normalizeStartDate(new Date());
             return new Date(value) <= today ? true : t(i18n.translationKey.dateMustNotBeInTheFuture);
         };

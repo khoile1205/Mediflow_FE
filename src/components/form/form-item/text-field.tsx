@@ -112,7 +112,7 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
                     <TextField
                         {...field}
                         value={field.value ?? ""}
-                        label={label || placeholder}
+                        label={label}
                         placeholder={placeholder}
                         required={required}
                         fullWidth={fullWidth}

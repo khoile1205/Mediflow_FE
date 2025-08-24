@@ -13,13 +13,13 @@ import Dialog from "~/components/common/dialog/dialog";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import i18n from "~/configs/i18n";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 import usePagination from "~/hooks/use-pagination";
 import { useMutationDeleteMedicinePrice } from "~/services/inventory/hooks/mutations/use-mutation-delete-medicine-price";
 import { useMutationUpdateMedicinePrice } from "~/services/inventory/hooks/mutations/use-mutation-update-medicine-price";
 import { useQueryGetMedicinePrices } from "~/services/inventory/hooks/queries/use-query-get-medicine-prices";
 import { useQueryGetMedicinePriceById } from "~/services/inventory/hooks/queries/use-query-get-medicine-prices-by-id";
 import { showToast } from "~/utils";
-import { ConfirmPasswordDialog } from "./ConfirmPasswordDialog";
 
 interface MedicinePriceFormValues {
     id: number;
@@ -44,7 +44,7 @@ export default function MedicinePriceListPage() {
     const [columnDefs, setColumnDefs] = useState<ColDef<MedicinePriceFormValues>[]>([]);
     const [selectedMedicinePriceId, setSelectedMedicinePriceId] = useState<number | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+    const { requestPasswordConfirmation } = usePasswordConfirm();
     const queryClient = useQueryClient();
 
     const form = useForm<MedicinePriceFormValues>({
@@ -243,7 +243,21 @@ export default function MedicinePriceListPage() {
 
     const handleDelete = () => {
         if (!selectedMedicinePriceId) return;
-        setIsPasswordDialogOpen(true);
+        requestPasswordConfirmation(() => {
+            mutationDeleteMedicinePrice.mutate(selectedMedicinePriceId, {
+                onSuccess: () => {
+                    showToast.success(t(i18n.translationKey.deleteMedicineSuccess));
+                    queryClient.invalidateQueries({
+                        queryKey: ["getMedicinePrices"],
+                    });
+                    setSelectedMedicinePriceId(null);
+                    refetch();
+                },
+                onError: () => {
+                    showToast.error(t(i18n.translationKey.deleteMedicineFailed));
+                },
+            });
+        });
     };
 
     return (
@@ -376,29 +390,6 @@ export default function MedicinePriceListPage() {
                     </Button>
                 </DialogActions>
             </Dialog>
-
-            <ConfirmPasswordDialog
-                open={isPasswordDialogOpen}
-                onClose={() => setIsPasswordDialogOpen(false)}
-                onConfirmed={() => {
-                    if (!selectedMedicinePriceId) return;
-                    mutationDeleteMedicinePrice.mutate(selectedMedicinePriceId, {
-                        onSuccess: () => {
-                            showToast.success(t(i18n.translationKey.deleteMedicineSuccess));
-                            queryClient.invalidateQueries({
-                                queryKey: ["getMedicinePrices"],
-                            });
-                            setSelectedMedicinePriceId(null);
-                            setIsPasswordDialogOpen(false);
-                            refetch();
-                        },
-                        onError: () => {
-                            showToast.error(t(i18n.translationKey.deleteMedicineFailed));
-                            setIsPasswordDialogOpen(false);
-                        },
-                    });
-                }}
-            />
         </Box>
     );
 }

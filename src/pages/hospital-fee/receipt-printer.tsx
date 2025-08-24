@@ -3,7 +3,7 @@ import React from "react";
 import QRCode from "react-qrcode-logo";
 import AppLogo from "~/assets/images/logo.png";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
-import { PaymentType } from "~/constants/enums";
+import { PaymentMethod } from "~/constants/enums";
 import { formatCurrencyVND } from "~/utils/currency";
 import { formatDate } from "~/utils/date-time";
 import { HospitalFeeFormValue, HospitalServiceItem } from "./types";
@@ -21,13 +21,13 @@ export const ReceiptPrinter = React.forwardRef<HTMLDivElement, ReceiptPrinterPro
         const { t } = useTranslation();
         const { name, patientCode, dob, age, address, invoiceNumber, paidType, hospitalServiceItems = [] } = formValue;
 
-        const formatPaidType = (type?: PaymentType) => {
+        const formatPaidType = (type?: PaymentMethod) => {
             switch (type) {
-                case PaymentType.CASH:
+                case PaymentMethod.CASH:
                     return t(i18n.translationKey.cash);
-                case PaymentType.ATM:
+                case PaymentMethod.ATM:
                     return t(i18n.translationKey.atm);
-                case PaymentType.TRANSFER:
+                case PaymentMethod.TRANSFER:
                     return t(i18n.translationKey.transfer);
                 default:
                     return t(i18n.translationKey.notAvailable);
@@ -97,7 +97,7 @@ export const ReceiptPrinter = React.forwardRef<HTMLDivElement, ReceiptPrinterPro
                 </Box>
 
                 <Box mb={6}>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                    <Typography variant="subtitle1" textTransform="uppercase" fontWeight="bold" gutterBottom>
                         {t(i18n.translationKey.paymentDetails)}
                     </Typography>
                     <Table size="small">

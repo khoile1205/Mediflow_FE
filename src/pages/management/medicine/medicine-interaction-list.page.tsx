@@ -18,10 +18,10 @@ import { showToast } from "~/utils";
 import { useQueryGetMedicineInteractions } from "~/services/inventory/hooks/queries/use-query-get-medicine-interactions";
 import { useQueryGetMedicines } from "~/services/inventory/hooks/queries/use-query-get-medicines";
 import { useMutationUpdateMedicineInteraction } from "~/services/inventory/hooks/mutations/use-mutation-update-medicine-interaction";
+import { useMutationDeleteMedicineInteraction } from "~/services/inventory/hooks/mutations/use-mutation-delete-medicine-interaction";
 import { QueryKey } from "~/constants/query-key";
 import { MedicineInteraction } from "~/services/inventory/infras/types";
-import { ConfirmPasswordDialog } from "./ConfirmPasswordDialog";
-import { useMutationDeleteMedicineInteraction } from "~/services/inventory/hooks/mutations/use-mutation-delete-medicine-interaction";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 
 type FormValues = Pick<
     MedicineInteraction,
@@ -42,11 +42,10 @@ export default function MedicineInteractionListPage() {
     const { onGridReady } = useAgGrid({ rowSelection: "single" });
     const { handlePageChange, pageIndex, pageSize } = usePagination();
     const navigate = useNavigate();
+    const { requestPasswordConfirmation } = usePasswordConfirm();
 
     const [selectedRow, setSelectedRow] = useState<MedicineInteraction | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-    const { mutate: deleteInteraction } = useMutationDeleteMedicineInteraction();
 
     const editForm = useForm<FormValues>({
         defaultValues: {
@@ -68,6 +67,7 @@ export default function MedicineInteractionListPage() {
     });
 
     const { mutate: updateInteraction } = useMutationUpdateMedicineInteraction();
+    const { mutate: deleteInteraction } = useMutationDeleteMedicineInteraction();
 
     const query = useMemo(() => ({ pageIndex, pageSize }), [pageIndex, pageSize]);
 
@@ -151,7 +151,22 @@ export default function MedicineInteractionListPage() {
             return;
         }
 
-        setIsPasswordDialogOpen(true);
+        requestPasswordConfirmation(() => {
+            if (!selectedRow?.id) return;
+            deleteInteraction(selectedRow.id, {
+                onSuccess: () => {
+                    showToast.success(t(i18n.translationKey.deleteMedicineInteractionSuccess));
+                    setSelectedRow(null);
+                    queryClient.invalidateQueries({
+                        queryKey: [QueryKey.INVENTORY.GET_MEDICINE_INTERACTIONS_WITH_PAGINATION],
+                    });
+                    refetch();
+                },
+                onError: () => {
+                    showToast.error(t(i18n.translationKey.deleteMedicineInteractionFailed));
+                },
+            });
+        });
     };
 
     return (
@@ -282,29 +297,6 @@ export default function MedicineInteractionListPage() {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <ConfirmPasswordDialog
-                open={isPasswordDialogOpen}
-                onClose={() => setIsPasswordDialogOpen(false)}
-                onConfirmed={() => {
-                    if (!selectedRow?.id) return;
-
-                    deleteInteraction(selectedRow.id, {
-                        onSuccess: () => {
-                            showToast.success(t(i18n.translationKey.deleteMedicineInteractionSuccess));
-                            setSelectedRow(null);
-                            setIsPasswordDialogOpen(false);
-                            queryClient.invalidateQueries({
-                                queryKey: [QueryKey.INVENTORY.GET_MEDICINE_INTERACTIONS_WITH_PAGINATION],
-                            });
-                            refetch();
-                        },
-                        onError: () => {
-                            showToast.error(t(i18n.translationKey.deleteMedicineInteractionFailed));
-                            setIsPasswordDialogOpen(false);
-                        },
-                    });
-                }}
-            />
         </Box>
     );
 }

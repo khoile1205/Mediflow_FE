@@ -302,6 +302,7 @@ const applicationTranslationKey = {
     confirmResetPassword: "CONFIRM_RESET_PASSWORD",
     confirmResetPasswordMessage: "CONFIRM_RESET_PASSWORD_MESSAGE",
     confirm: "CONFIRM",
+    confirmed: "CONFIRMED",
     resetPasswordSuccessfully: "RESET_PASSWORD_SUCCESSFULLY",
     confirmTesting: "CONFIRM_TESTING",
     vaccineGridNotReady: "VACCINE_GRID_NOT_READY",
@@ -770,6 +771,15 @@ const applicationTranslationKey = {
     filter: "FILTER",
     toDate: "TO_DATE",
     fromDate: "FROM_DATE",
+    paymentStatus: "PAYMENT_STATUS",
+    transactionDetail: "TRANSACTION_DETAIL",
+    paymentInformation: "PAYMENT_INFORMATION",
+    atmTransactionCode: "ATM_TRANSACTION_CODE",
+    transactionHistory: "TRANSACTION_HISTORY",
+    transactionHistoryDescription: "TRANSACTION_HISTORY_DESCRIPTION",
+    transactionHistorySearchPlaceholder: "TRANSACTION_HISTORY_SEARCH_PLACEHOLDER",
+    patientAlreadyRecepted: "PATIENT_ALREADY_RECEPTED",
+    payAReceipt: "PAY_A_RECEIPT",
 };
 
 const exceptionTranslationKey = {

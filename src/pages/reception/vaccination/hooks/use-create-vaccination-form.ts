@@ -68,6 +68,7 @@ export const useCreateVaccinationForm = () => {
 
     const testExaminationIndicationForm = useForm<TestExaminationIndicationFormValue>({
         defaultValues: {
+            serviceId: null,
             services: [],
             groupId: 0,
             defaultQuantity: 1,

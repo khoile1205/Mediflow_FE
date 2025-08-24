@@ -192,6 +192,11 @@ const ReportQueryKey = {
     EXPORT_MEDICINE_REVENUE: "exportMedicineRevenueReport",
 };
 
+const TransactionHistoryQueryKey = {
+    GET_LIST_TRANSACTION_HISTORY: "getListTransactionHistory",
+    GET_TRANSACTION_HISTORY_BY_ID: "getTransactionHistoryById",
+};
+
 export const QueryKey = {
     SUPPLIER: SupplierQueryKey,
     UPLOAD_FILE: UploadFileQueryKey,
@@ -210,4 +215,5 @@ export const QueryKey = {
     AUTH: AuthQueryKey,
     STATISTIC: StatisticQueryKey,
     REPORT: ReportQueryKey,
+    TRANSACTION_HISTORY: TransactionHistoryQueryKey,
 };

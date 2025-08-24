@@ -30,10 +30,14 @@ export const useMutationInjectVaccine = () => {
                 queryKey: [QueryKey.VACCINATION.GET_NEAREST_EXPIRY_MEDICINE_BATCH],
             });
             queryClient.invalidateQueries({
-                queryKey: [
-                    QueryKey.RECEPTION.GET_VACCINATION_RECEPTION_BY_RECEPTION_ID,
-                    variables.data.receptionVaccinationId,
-                ],
+                predicate: (query) => {
+                    return query.queryKey[0] === QueryKey.RECEPTION.GET_VACCINATION_RECEPTION_BY_RECEPTION_ID;
+                },
+            });
+            queryClient.invalidateQueries({
+                predicate: (query) => {
+                    return query.queryKey[0] === QueryKey.RECEPTION.GET_UNPAID_SERVICES;
+                },
             });
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.POST_VACCINATION.GET_PATIENT_LIST],

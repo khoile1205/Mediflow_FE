@@ -18,11 +18,11 @@ import { useMutationCreateInventoryLimitStock } from "~/services/inventory/hooks
 import { useMutationDeleteInventoryLimitStock } from "~/services/inventory/hooks/mutations/use-mutation-delete-inventory-limit-stock";
 import { useMutationUpdateInventoryLimitStock } from "~/services/inventory/hooks/mutations/use-mutation-update-inventory-limit-stock";
 import { useQueryGetInventoryLimitStocks } from "~/services/inventory/hooks/queries/use-query-get-list-inventory-limit-stock";
-import { InventoryLimitStock } from "~/services/inventory/infras/types";
-import { showToast } from "~/utils";
-import { ConfirmPasswordDialog } from "../medicine/ConfirmPasswordDialog";
 import { useQueryGetMedicinesWithPagination } from "~/services/medicine/hooks/queries/use-query-get-medicines-with-pagination";
+import { showToast } from "~/utils";
 import ModalAddInventoryLimitStock from "./modal-add-inventory-limit-stock";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
+import { InventoryLimitStock } from "~/services/inventory/infras";
 import { InventoryLimitStockFormValues } from "./types";
 
 interface SearchFormValues {
@@ -41,11 +41,11 @@ interface FormValues {
 export default function InventoryLimitStockPage() {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
+    const { requestPasswordConfirmation } = usePasswordConfirm();
 
     const [selectedRow, setSelectedRow] = useState<InventoryLimitStock | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-    const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
     const [medicinePageIndex, setMedicinePageIndex] = useState(1);
     const [medicinePageSize] = useState(10);
 
@@ -157,7 +157,19 @@ export default function InventoryLimitStockPage() {
 
     const handleDelete = () => {
         if (!selectedRow) return;
-        setIsPasswordDialogOpen(true);
+        requestPasswordConfirmation(() => {
+            deleteLimitStock(selectedRow.id, {
+                onSuccess: () => {
+                    showToast.success(t(i18n.translationKey.deleteInventoryLimitStockSuccess));
+                    queryClient.invalidateQueries();
+                    setSelectedRow(null);
+                    refetch();
+                },
+                onError: () => {
+                    showToast.error(t(i18n.translationKey.deleteInventoryLimitStockFailed));
+                },
+            });
+        });
     };
 
     const handleSave = () => {
@@ -431,27 +443,6 @@ export default function InventoryLimitStockPage() {
                 open={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
                 onSubmit={handleSubmitAddModal}
-            />
-
-            <ConfirmPasswordDialog
-                open={isPasswordDialogOpen}
-                onClose={() => setIsPasswordDialogOpen(false)}
-                onConfirmed={() => {
-                    if (!selectedRow) return;
-                    deleteLimitStock(selectedRow.id, {
-                        onSuccess: () => {
-                            showToast.success(t(i18n.translationKey.deleteInventoryLimitStockSuccess));
-                            queryClient.invalidateQueries();
-                            setSelectedRow(null);
-                            setIsPasswordDialogOpen(false);
-                            refetch();
-                        },
-                        onError: () => {
-                            showToast.error(t(i18n.translationKey.deleteInventoryLimitStockFailed));
-                            setIsPasswordDialogOpen(false);
-                        },
-                    });
-                }}
             />
         </Box>
     );

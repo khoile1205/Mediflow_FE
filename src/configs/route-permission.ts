@@ -49,6 +49,11 @@ export const routePermissions: RoutePermissionMap = {
 
     // Finance
     "/finance": createRoute(ResourceType.VaccinationReception, financeRequiredRoles),
+    "/finance/transaction-history": createRoute(ResourceType.VaccinationReception, [
+        Role.Administrator,
+        Role.Receptionist,
+        Role.Accountant,
+    ]),
 
     // Examination
     "/examination": createRoute(ResourceType.VaccinationReception, examinationRequiredRoles),
