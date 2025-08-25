@@ -23,8 +23,8 @@ const TransactionHistoryPage: React.FC = () => {
 
     const transactionFilterForm = useForm<TransactionHistoryFilterForm>({
         defaultValues: {
-            toDate: null,
-            fromDate: null,
+            toDate: new Date(),
+            fromDate: new Date(),
             searchTerm: "",
         },
     });
@@ -33,28 +33,21 @@ const TransactionHistoryPage: React.FC = () => {
         fromDate?: Date | null;
         toDate?: Date | null;
         searchTerm?: string;
-        pageIndex?: number;
-        pageSize?: number;
     }>({
-        fromDate: null,
-        toDate: null,
+        fromDate: new Date(),
+        toDate: new Date(),
         searchTerm: "",
-        pageIndex,
-        pageSize,
     });
     const {
         data: { totalItems, transactions },
         isLoading,
-    } = useQueryGetTransactionHistory(searchParams);
+    } = useQueryGetTransactionHistory({ ...searchParams, pageIndex, pageSize });
 
     const handleSearch = (data: TransactionHistoryFilterForm) => {
-        // const formValues = transactionFilterForm.getValues();
         setSearchParams({
             toDate: data.toDate,
             fromDate: data.fromDate,
             searchTerm: data.searchTerm,
-            pageIndex,
-            pageSize,
         });
     };
 
