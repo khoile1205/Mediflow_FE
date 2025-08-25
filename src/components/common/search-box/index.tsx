@@ -13,7 +13,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onChange, delay = 500, ...props }
     const debouncedSearchValue = useDebounce(searchValue, delay);
 
     React.useEffect(() => {
-        onChange(debouncedSearchValue);
+        onChange(debouncedSearchValue.trim());
     }, [debouncedSearchValue, onChange]);
 
     return (
