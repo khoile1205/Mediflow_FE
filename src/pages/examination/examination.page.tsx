@@ -72,8 +72,8 @@ export const ExaminationPage: React.FC = () => {
                     field: "yearOfBirth",
                     headerName: t(i18n.translationKey.yearOfBirth),
                     cellClass: "ag-cell-center",
-                    width: 90,
-                    minWidth: 80,
+                    width: 100,
+                    minWidth: 85,
                     flex: 0,
                 },
                 {
