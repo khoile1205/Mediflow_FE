@@ -24,7 +24,6 @@ interface PreVaccinationProps {
 
 const ADULT_MONTH_AGE = 18 * 12;
 
-// TODO: research for under 1 month old children pre-screening form
 export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, form, patientDOB }) => {
     const { t } = useTranslation();
     const patientReceptionForm = useFormContext<PatientReceptionFormValue>();
@@ -89,12 +88,9 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
 
     const patientMonthAge = React.useMemo(() => {
         if (!patientDOB) return null;
-
         const MILISECOND_OF_MONTH = 1000 * 60 * 60 * 24 * 30;
-
         const ageInMilliseconds = Date.now() - patientReceptionForm.watch("dob").getTime();
         const monthAge = Math.floor(ageInMilliseconds / MILISECOND_OF_MONTH);
-
         return monthAge;
     }, [patientReceptionForm.watch("dob")]);
 
@@ -136,6 +132,7 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
             form.setValue("hasOtherContraindications", prevaccinationData.hasOtherContraindications);
         }
     }, [prevaccinationData]);
+
     return (
         <DynamicForm form={form}>
             <Stack className="pt-3" spacing={2} direction="column">
@@ -145,7 +142,27 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                             ? t(i18n.translationKey.screeningForChildrenUnder1Month)
                             : t(i18n.translationKey.screeningForChildrenOver1Month)}
                     </Typography>
-                    <Box sx={{ borderColor: "primary.main", borderRadius: 2 }} className="mt-2 border p-5">
+                    <Box
+                        sx={{
+                            borderColor: "primary.main",
+                            borderRadius: 2,
+                            "& .MuiFormHelperText-root": {
+                                minHeight: 24,
+                                maxHeight: 24,
+                                lineHeight: "18px",
+                                whiteSpace: "normal",
+                                overflow: "visible",
+                                textOverflow: "clip",
+                                margin: 0,
+                            },
+                            "& .MuiFormLabel-root": {
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                                overflow: "hidden",
+                            },
+                        }}
+                        className="mt-2 border p-5"
+                    >
                         <Grid container spacing={2.5}>
                             <Grid size={12 / 5}>
                                 <FormItem
@@ -206,26 +223,42 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                 />
                             </Grid>
                             <Grid size={12 / 5}>
-                                <Stack direction="row" spacing={2} alignItems="center">
-                                    <FormItem
-                                        render="input-number"
-                                        label={t(i18n.translationKey.bloodPressure)}
-                                        name="bloodPressureSystolic"
-                                        required
-                                        minNumber={1}
-                                        disabled={!receptionId}
-                                    />
-                                    <Typography>/</Typography>
-                                    <FormItem
-                                        render="input-number"
-                                        label={t(i18n.translationKey.bloodPressure)}
-                                        name="bloodPressureDiastolic"
-                                        required
-                                        minNumber={1}
-                                        disabled={!receptionId}
-                                    />
-                                    <Typography>{t(i18n.translationKey.unitMmhg)}</Typography>
-                                </Stack>
+                                <Grid container spacing={2} alignItems="flex-start">
+                                    <Grid size={6}>
+                                        <FormItem
+                                            render="input-number"
+                                            label={t(i18n.translationKey.bloodPressure)}
+                                            name="bloodPressureSystolic"
+                                            required
+                                            minNumber={1}
+                                            disabled={!receptionId}
+                                            slotProps={{
+                                                input: {
+                                                    endAdornment: <InputAdornment position="end">/</InputAdornment>,
+                                                },
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid size={6}>
+                                        <FormItem
+                                            render="input-number"
+                                            label={t(i18n.translationKey.bloodPressure)}
+                                            name="bloodPressureDiastolic"
+                                            required
+                                            minNumber={1}
+                                            disabled={!receptionId}
+                                            slotProps={{
+                                                input: {
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            {t(i18n.translationKey.unitMmhg)}
+                                                        </InputAdornment>
+                                                    ),
+                                                },
+                                            }}
+                                        />
+                                    </Grid>
+                                </Grid>
                             </Grid>
                             {/* <Grid size={12}>
                                 <Grid container spacing={2}>
@@ -374,8 +407,8 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                     </Grid>
                                 </Grid>
                             </Grid> */}
-                            <Grid size={12}>
-                                {/* <Grid container spacing={2}>
+                            {/* <Grid size={12}>
+                                <Grid container spacing={2}>
                                     {patientMonthAge !== null && patientMonthAge < 1 ? (
                                         <>
                                             <Grid size={4}>
@@ -452,7 +485,6 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                             </Grid>
                                         </>
                                     ) : (
-                                        // ----- PHỤ LỤC III: 1 MONTH AND OLDER -----
                                         <>
                                             <Grid size={4}>
                                                 <FormItem
@@ -528,7 +560,9 @@ export const PreVaccination: React.FC<PreVaccinationProps> = ({ receptionId, for
                                             </Grid>
                                         </>
                                     )}
-                                </Grid> */}
+                                </Grid>
+                            </Grid> */}
+                            <Grid size={12}>
                                 <Grid container spacing={2}>
                                     {optionsToRender.map((opt) => (
                                         <Grid key={opt.name} size={4}>

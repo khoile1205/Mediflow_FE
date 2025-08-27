@@ -215,7 +215,7 @@ export default function MedicineInteractionListPage() {
             />
 
             <Dialog open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} maxWidth="md" fullWidth>
-                <DialogTitle>{t("inventory.medicineInteractionList.editInteraction")}</DialogTitle>
+                <DialogTitle>{t(i18n.translationKey.editInteraction)}</DialogTitle>
                 <DialogContent dividers>
                     <DynamicForm form={editForm}>
                         <Grid container spacing={2}>

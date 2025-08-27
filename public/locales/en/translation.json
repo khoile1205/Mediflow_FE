@@ -12,7 +12,7 @@
     "MEDICAL_CODE": "Medical code",
     "VACCINATION_NUMBER": "Vaccination Number",
     "PATIENT_NAME": "Patient name",
-    "YEAR_OF_BIRTH": "Year of birth",
+    "YEAR_OF_BIRTH": "YOB",
     "CONTENT": "Content",
     "QUANTITY": "Quantity",
     "AMOUNT_BEFORE_DISCOUNT": "Amount before discount",
@@ -1128,5 +1128,6 @@
     "TRANSACTION_HISTORY_SEARCH_PLACEHOLDER": "Search by transaction code, medical code, identity card, or patient name",
     "PATIENT_ALREADY_RECEPTED": "Patient has already been received.",
     "PAY_A_RECEIPT": "Pay a receipt",
-    "CONFIRMED": "Confirmed"
+    "CONFIRMED": "Confirmed",
+    "EDIT_MEDICINE_INTERACTION": "Edit Medicine Interaction"
 }

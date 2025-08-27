@@ -1131,5 +1131,6 @@
     "TRANSACTION_HISTORY_SEARCH_PLACEHOLDER": "Tìm kiếm theo mã giao dịch, mã y tế, CCCD hoặc tên bệnh nhân",
     "PATIENT_ALREADY_RECEPTED": "Bệnh nhân đã được tiếp nhận.",
     "PAY_A_RECEIPT": "Thanh toán phiếu thu",
-    "CONFIRMED": "Đã xác nhận"
+    "CONFIRMED": "Đã xác nhận",
+    "EDIT_MEDICINE_INTERACTION": "Chỉnh sửa tương tác thuốc"
 }
