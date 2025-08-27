@@ -1,15 +1,33 @@
-export type TVnPublicApiResponse = {
-    data: {
-        nItems: number;
-        data: TAdministrativeUnit[];
-        nPages: number;
-    };
-    exitcode: number;
-    message: string;
+export type TOApiProvinceResponse<T> = {
+    code: "success";
+    message: null;
+    total: 63;
+    data: T[];
 };
 
-export type TAdministrativeUnit = {
+export type TProvince = {
+    id: string;
     name: string;
-    code: string;
-    name_with_type: string;
+    type: number;
+    normalizedName: string;
+    typeText: string;
+    slug: string;
+};
+
+export type TDistrict = {
+    id: string;
+    name: string;
+    provinceId: string;
+    normalizedName: string;
+    type: number;
+    typeText: string;
+};
+
+export type TWard = {
+    id: string;
+    name: string;
+    districtId: string;
+    normalizedName: string;
+    type: number;
+    typeText: string;
 };
