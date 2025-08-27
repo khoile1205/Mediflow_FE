@@ -30,14 +30,19 @@ export const DepartmentMangement: React.FC = () => {
     const [isAddingNewDepartment, setIsAddingNewDepartment] = useState(false);
     const [isEditingDepartment, setIsEditingDepartment] = useState(false);
 
+    const [searchKeyword, setSearchKeyword] = useState<string | null>(null);
+
     const { handlePageChange, pageIndex, pageSize } = usePagination();
 
     const {
         data: { listDepartments, totalItems },
-    } = useQueryDepartmentsWithPagination({
-        pageIndex: pageIndex,
-        pageSize: pageSize,
-    });
+    } = useQueryDepartmentsWithPagination(
+        {
+            pageIndex: pageIndex,
+            pageSize: pageSize,
+        },
+        searchKeyword == null || searchKeyword.trim() === "" ? null : searchKeyword.trim(),
+    );
 
     const {
         data: { listDepartmentTypes },
@@ -109,6 +114,10 @@ export const DepartmentMangement: React.FC = () => {
         departmentGrid.gridApi.deselectAll();
     };
 
+    const handleSearch = (searchValue: string): void => {
+        setSearchKeyword(searchValue);
+    };
+
     return (
         <>
             <DynamicForm form={form}>
@@ -147,6 +156,7 @@ export const DepartmentMangement: React.FC = () => {
                             pageSize={pageSize}
                             totalItems={totalItems}
                             onPageChange={handlePageChange}
+                            onSearch={handleSearch}
                             {...departmentGrid}
                         />
                     </Grid>

@@ -1,5 +1,5 @@
 import { AddCircle, Delete, Update } from "@mui/icons-material";
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Box, Grid, Stack, Tooltip, Typography } from "@mui/material";
 import { ColDef, RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -27,13 +27,15 @@ import { VaccinationIndicateReceptionFormValues } from "./types";
 
 interface VaccinationIndicationProps {
     receptionId?: number;
+    isPrescreening?: boolean;
     isAllowedToVaccinate?: boolean;
     form: UseFormReturn<VaccinationIndicateReceptionFormValues>;
 }
 
 export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
     receptionId,
-    // isAllowedToVaccinate,
+    isPrescreening,
+    isAllowedToVaccinate,
     form,
 }) => {
     const { t } = useTranslation();
@@ -64,16 +66,6 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
         { field: "vaccineTypeName", headerName: t(i18n.translationKey.vaccineSerumType) },
         { field: "vaccineName", headerName: t(i18n.translationKey.vaccineSerumName) },
         { field: "quantity", headerName: t(i18n.translationKey.quantity), cellClass: "ag-cell-center", width: 150 },
-        // {
-        //     field: "testResultEntry",
-        //     headerName: t(i18n.translationKey.doseNumber),
-        //     valueGetter: (params) => {
-        //         if (params.data.testResultEntry) {
-        //             return params.data.testResultEntry;
-        //         }
-        //         return t(i18n.translationKey.notAvailable);
-        //     },
-        // },
         {
             field: "isReadyToUse",
             headerName: t(i18n.translationKey.allowUsage),
@@ -99,14 +91,17 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
         {
             field: "appointmentDate",
             headerName: t(i18n.translationKey.appointmentDate),
-            valueFormatter: ({ value }) => formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]),
+            valueFormatter: ({ value }) => {
+                if (!value) return t(i18n.translationKey.notAvailable);
+                return formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"]);
+            },
             cellClass: "ag-cell-center",
         },
         {
             field: "isConfirmed",
             headerName: t(i18n.translationKey.vaccinationConfirmation),
             valueGetter: (params) => {
-                return params.data.isConfirmed ? t(i18n.translationKey.isInjected) : t(i18n.translationKey.notInjected);
+                return params.data.isConfirmed ? t(i18n.translationKey.confirmed) : t(i18n.translationKey.notInjected);
             },
             cellClass: "ag-cell-center",
         },
@@ -119,8 +114,8 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
         //     return;
         // }
 
-        if (data.isReadyToUse) {
-            data.scheduledDate = new Date(Date.now() + 60 * 1000);
+        if (!data.isReadyToUse) {
+            data.appointmentDate = data.scheduledDate;
         }
 
         await addVaccinationReception({ receptionId, data });
@@ -155,15 +150,20 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
         //     showToast.error(t(i18n.translationKey.vaccinationNotAllowed));
         //     return;
         // }
+        let appointmentDate = form.getValues("appointmentDate");
+
+        if (!appointmentDate) {
+            appointmentDate = !form.getValues("isReadyToUse") ? form.getValues("scheduledDate") : null;
+        }
 
         const data: VaccinationIndicateReceptionFormValues = {
             vaccineId: form.getValues("vaccineId"),
             id: form.getValues("id"),
             quantity: form.getValues("quantity"),
-            appointmentDate: form.getValues("appointmentDate"),
+            appointmentDate,
             note: form.getValues("note"),
             isReadyToUse: form.getValues("isReadyToUse"),
-            scheduledDate: form.getValues("isReadyToUse") ? new Date() : null,
+            scheduledDate: form.getValues("scheduledDate"),
         };
 
         await updateVaccinationReception({
@@ -206,6 +206,12 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
         }
     };
 
+    React.useEffect(() => {
+        if (form.watch("isReadyToUse")) {
+            form.setValue("scheduledDate", new Date(Date.now() + 30 * 60 * 1000));
+            form.formState.errors.scheduledDate = undefined;
+        }
+    }, [form.watch("isReadyToUse")]);
     return (
         <DynamicForm form={form}>
             <Stack spacing={2} className="pt-3">
@@ -294,27 +300,17 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                     minNumber={1}
                                 />
                             </Grid>
-                            {/* <Grid size={1}>
-                                <FormItem
-                                    disabled={!receptionId}
-                                    render="select"
-                                    name="dose"
-                                    label={t(i18n.translationKey.doseNumber)}
-                                    placeholder={t(i18n.translationKey.selectDose)}
-                                    options={[]}
-                                />
-                            </Grid> */}
                             <Grid size={3}>
                                 <FormItem
-                                    disabled={!receptionId}
+                                    disabled={!receptionId || form.watch("isReadyToUse")}
                                     render="date-time-picker"
                                     required
-                                    name="appointmentDate"
+                                    name="scheduledDate"
                                     minDate={new Date()}
                                     datePickerProps={{
                                         dateFormat: DATE_TIME_FORMAT["dd/MM/yyyy HH:mm"],
                                     }}
-                                    label={t(i18n.translationKey.appointmentDate)}
+                                    label={t(i18n.translationKey.injectionDate)}
                                 />
                             </Grid>
                             <Grid size={3}>
@@ -341,7 +337,7 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                             label={t(i18n.translationKey.addNew)}
                                             startIcon={<AddCircle />}
                                             size="small"
-                                            disabled={!receptionId}
+                                            disabled={!receptionId || (form.watch("isReadyToUse") && !isPrescreening)}
                                             variant="outlined"
                                             onClick={form.handleSubmit(handleAddNewVaccination)}
                                             sx={{
@@ -356,7 +352,12 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                             color="secondary"
                                             onClick={handleUpdateVaccinationIndication}
                                             variant="outlined"
-                                            disabled={!receptionId || !selectedRow}
+                                            disabled={
+                                                !receptionId ||
+                                                !selectedRow ||
+                                                selectedRow?.isConfirmed ||
+                                                (form.watch("isReadyToUse") && !isPrescreening)
+                                            }
                                             sx={{
                                                 borderRadius: 4,
                                                 px: 2,
@@ -366,7 +367,7 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                             label={t(i18n.translationKey.deleteSelectedIndications)}
                                             startIcon={<Delete />}
                                             size="small"
-                                            disabled={!receptionId || !selectedRow}
+                                            disabled={!receptionId || !selectedRow || selectedRow?.isConfirmed}
                                             color="error"
                                             variant="outlined"
                                             onClick={handleDeleteVaccination}
@@ -374,22 +375,22 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                         />
                                     </Stack>
                                     <Box>
-                                        {/* <Tooltip
+                                        <Tooltip
                                             title={
                                                 !isAllowedToVaccinate
                                                     ? t(i18n.translationKey.vaccinationNotAllowed)
                                                     : ""
                                             }
-                                        > */}
-                                        <Box>
-                                            <FormItem
-                                                render="checkbox"
-                                                name="isReadyToUse"
-                                                label={t(i18n.translationKey.useToday)}
-                                                disabled={!receptionId}
-                                            />
-                                        </Box>
-                                        {/* </Tooltip> */}
+                                        >
+                                            <Box>
+                                                <FormItem
+                                                    render="checkbox"
+                                                    name="isReadyToUse"
+                                                    label={t(i18n.translationKey.useToday)}
+                                                    disabled={!receptionId || !isAllowedToVaccinate}
+                                                />
+                                            </Box>
+                                        </Tooltip>
                                     </Box>
 
                                     <Stack direction="row" spacing={1}></Stack>

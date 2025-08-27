@@ -74,12 +74,14 @@ const ModalAddInventoryLimitStock: React.FC<Props> = ({ open, onClose, onSubmit,
     };
 
     const handleSubmit = form.handleSubmit((values) => {
-        const selectedMedicine = listMedicines.find((m) => m.id === values.medicineId);
+        const selectedById = listMedicines.find((m) => m.id === values.medicineId);
+        const selectedByName = listMedicines.find((m) => m.medicineName === values.medicineName);
+        const selectedMedicine = selectedById ?? selectedByName;
 
         if (!selectedMedicine) {
             showToast.error(
-                t(i18n.translationKey.notFoundMedicineWithId as string, {
-                    id: values.medicineId,
+                t(i18n.translationKey.notFoundMedicineWithName as string, {
+                    name: values.medicineName || "",
                 }),
             );
             return;
@@ -95,7 +97,8 @@ const ModalAddInventoryLimitStock: React.FC<Props> = ({ open, onClose, onSubmit,
             return;
         }
 
-        onSubmit(values);
+        form.setValue("medicineId", selectedMedicine.id);
+        onSubmit({ ...values, medicineId: selectedMedicine.id, medicineName: selectedMedicine.medicineName });
         onClose();
     });
 
@@ -108,9 +111,9 @@ const ModalAddInventoryLimitStock: React.FC<Props> = ({ open, onClose, onSubmit,
                         <Grid size={12}>
                             <FormItem
                                 render="data-grid"
-                                name="medicineId"
-                                label={t(i18n.translationKey.medicineId)}
-                                placeholder={t(i18n.translationKey.medicineId)}
+                                name="medicineName"
+                                label={t(i18n.translationKey.medicineName)}
+                                placeholder={t(i18n.translationKey.medicineName)}
                                 columnDefs={[
                                     {
                                         field: "medicineCode",
@@ -128,7 +131,7 @@ const ModalAddInventoryLimitStock: React.FC<Props> = ({ open, onClose, onSubmit,
                                     .filter((m) => !m.isSuspended)
                                     .sort((a, b) => a.medicineCode.localeCompare(b.medicineCode))}
                                 displayField="medicineName"
-                                valueField="id"
+                                valueField="medicineName"
                                 pageIndex={pageIndex}
                                 pageSize={pageSize}
                                 totalItems={totalItems}

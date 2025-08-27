@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { HttpStatusCode } from "axios";
 import React from "react";
 import { PaymentStatus } from "~/constants/enums";
@@ -11,6 +11,8 @@ const transformData = (response: IBaseApiResponse<PaymentStatus>): PaymentStatus
 };
 
 export const useQueryCheckPaymentStatus = (params: CheckPaymentStatusRequest) => {
+    const queryClient = useQueryClient();
+
     const startTimeRef = React.useRef<number | null>(null);
 
     React.useEffect(() => {
@@ -35,10 +37,11 @@ export const useQueryCheckPaymentStatus = (params: CheckPaymentStatusRequest) =>
             const isHttpOk = lastData.StatusCode === HttpStatusCode.Ok;
             const isCompleted = lastData.Data === PaymentStatus.COMPLETED;
             if (isHttpOk && isCompleted) {
+                queryClient.invalidateQueries({ queryKey: [QueryKey.RECEPTION.GET_UNPAID_SERVICES] });
                 return false;
             }
 
-            return 5000; // retry every 5s otherwise
+            return 5000;
         },
         enabled: !!params.paymentId || !!params.paymentContractId,
         gcTime: 0,

@@ -68,7 +68,7 @@ const PostVaccinationPage: React.FC = () => {
     const isPatientSelected = !!patientForm.watch("receptionId");
 
     const commonReactions = followUpForm.watch("commonReactions") || [];
-    const isOtherSelected = commonReactions.includes("other");
+    const isOtherSelected = commonReactions.includes("OTHER");
 
     const handleRowClick = (e: RowClickedEvent<PostVaccinationPatient>) => {
         const selected = e.data;
@@ -104,10 +104,13 @@ const PostVaccinationPage: React.FC = () => {
                 reactionDate: followUpData.reactionAfterInjectionTime || null,
                 postVaccinationResult: followUpData.testResult,
                 postVaccinationDate: followUpData.postVaccinationDate || new Date(),
+
                 hasFeverAbove39: followUpData.commonReactions?.includes("FEVER_ABOVE_39") ?? false,
                 hasInjectionSiteReaction: followUpData.commonReactions?.includes("INJECTION_SITE_REACTION") ?? false,
-                hasOtherReaction: !!followUpData.otherSymptoms,
-                otherReactionDescription: followUpData.otherSymptoms || null,
+                hasOtherReaction: followUpData.commonReactions?.includes("OTHER") ?? false,
+                otherReactionDescription: followUpData.commonReactions?.includes("OTHER")
+                    ? followUpData.otherSymptoms || null
+                    : null,
             },
         });
 
@@ -175,6 +178,7 @@ const PostVaccinationPage: React.FC = () => {
                 headerName: t(i18n.translationKey.quantity),
                 headerStyle: { backgroundColor: "#98D2C0" },
                 cellClass: "ag-cell-center",
+                flex: 0.5,
             },
             {
                 field: "vaccinationDate",
@@ -182,6 +186,7 @@ const PostVaccinationPage: React.FC = () => {
                 headerStyle: { backgroundColor: "#98D2C0" },
                 valueFormatter: ({ value }) =>
                     value ? formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"]) : "",
+                flex: 1,
             },
             {
                 field: "observationConfirmed",
@@ -192,6 +197,7 @@ const PostVaccinationPage: React.FC = () => {
                     value
                         ? t(i18n.translationKey.observationConfirmed)
                         : t(i18n.translationKey.observationNotConfirmed),
+                flex: 1,
             },
             {
                 field: "reactionDate",
@@ -200,6 +206,7 @@ const PostVaccinationPage: React.FC = () => {
                 cellRenderer: "ag-cell-center",
                 valueFormatter: ({ value }) =>
                     value ? formatDate(value, DATE_TIME_FORMAT["dd/MM/yyyy HH:mm:ss"]) : "",
+                flex: 1,
             },
         ],
         [t],
@@ -294,10 +301,7 @@ const PostVaccinationPage: React.FC = () => {
                                 variant="contained"
                                 color="primary"
                                 onClick={() => {
-                                    if (
-                                        followUpForm.watch("testResult") === TestResultStatus.POSITIVE &&
-                                        pendingVaccinations.totalPendingDoses > 0
-                                    ) {
+                                    if (followUpForm.watch("testResult") === TestResultStatus.POSITIVE) {
                                         setOpenCloseReceptionModal(true);
                                     } else {
                                         handleSave();
@@ -458,9 +462,12 @@ const PostVaccinationPage: React.FC = () => {
                                         render="checkbox-group"
                                         name="commonReactions"
                                         options={[
-                                            { label: t(i18n.translationKey.feverOver39), value: "fever" },
-                                            { label: t(i18n.translationKey.painAtInjectionSite), value: "pain" },
-                                            { label: t(i18n.translationKey.other), value: "other" },
+                                            { label: t(i18n.translationKey.feverOver39), value: "FEVER_ABOVE_39" },
+                                            {
+                                                label: t(i18n.translationKey.painAtInjectionSite),
+                                                value: "INJECTION_SITE_REACTION",
+                                            },
+                                            { label: t(i18n.translationKey.other), value: "OTHER" },
                                         ]}
                                         disabled={!isReactionEnabled}
                                     />

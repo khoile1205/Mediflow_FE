@@ -134,6 +134,7 @@ const VaccinationQueryKey = {
     UPDATE_VACCINATION_STATUS: "updateVaccinationStatus",
     INJECT_VACCINATION: "injectVaccination",
     CONFIRM_VACCINATION_TODAY: "confirmVaccinationToday",
+    GET_ALL_VACCINATION_HISTORY: "getAllVaccinationHistory",
     GET_VACCINATION_HISTORY_BY_PATIENT_ID: "getVaccinationHistoryByPatientId",
     REJECT_INJECT_VACCINE: "rejectInjectVaccine",
     GET_PENDING_VACCINATIONS_TODAY: "getPendingVaccinationsToday",
@@ -191,6 +192,11 @@ const ReportQueryKey = {
     EXPORT_MEDICINE_REVENUE: "exportMedicineRevenueReport",
 };
 
+const TransactionHistoryQueryKey = {
+    GET_LIST_TRANSACTION_HISTORY: "getListTransactionHistory",
+    GET_TRANSACTION_HISTORY_BY_ID: "getTransactionHistoryById",
+};
+
 export const QueryKey = {
     SUPPLIER: SupplierQueryKey,
     UPLOAD_FILE: UploadFileQueryKey,
@@ -209,4 +215,5 @@ export const QueryKey = {
     AUTH: AuthQueryKey,
     STATISTIC: StatisticQueryKey,
     REPORT: ReportQueryKey,
+    TRANSACTION_HISTORY: TransactionHistoryQueryKey,
 };

@@ -28,6 +28,8 @@ export function useMutationCreateReceiptPayment() {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.EXAMINATION.GET_ALL_EXAMINATION_OF_RECEPTION_BY_RECEPTION_ID],
             });
+            queryClient.invalidateQueries({ queryKey: [QueryKey.TRANSACTION_HISTORY.GET_LIST_TRANSACTION_HISTORY] });
+
             showToast.success(i18n.t(i18n.translationKey.createReceiptPaymentSuccessfully));
 
             return response;

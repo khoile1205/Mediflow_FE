@@ -12,6 +12,7 @@ import Dialog from "~/components/common/dialog/dialog";
 import DynamicForm from "~/components/form/dynamic-form";
 import FormItem from "~/components/form/form-item";
 import i18n from "~/configs/i18n";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 import useDebounce from "~/hooks/use-debounce";
 import usePagination from "~/hooks/use-pagination";
 import { useMutationCreateExaminationService } from "~/services/hospital-service/hooks/mutations/use-mutation-create-examination-service";
@@ -20,7 +21,6 @@ import { useMutationUpdateExaminationService } from "~/services/hospital-service
 import { useQueryExaminationService } from "~/services/hospital-service/hooks/queries/use-query-get-all-examination-service";
 import { ExaminationService, ServiceTestParameter } from "~/services/hospital-service/infras/types";
 import { showToast } from "~/utils";
-import { ConfirmPasswordDialog } from "../management/medicine/ConfirmPasswordDialog";
 import ModalEditExaminationService from "./ModalEditExaminationService";
 
 interface ServiceTestParameterAPI {
@@ -127,10 +127,11 @@ function ModalServiceTestParametersDetails({ open, service, onClose }: ModalServ
 export default function ExaminationServicePage() {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
+    const { requestPasswordConfirmation } = usePasswordConfirm();
+
     const { handlePageChange, pageIndex, pageSize } = usePagination();
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [isEditOpen, setIsEditOpen] = useState(false);
-    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const [selectedRecord, setSelectedRecord] = useState<ExaminationServiceWithParams | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const { onGridReady } = useAgGrid({ rowSelection: "single" });
@@ -207,7 +208,20 @@ export default function ExaminationServicePage() {
 
     const handleDelete = () => {
         if (!selectedId) return;
-        setIsDeleteConfirmOpen(true);
+
+        requestPasswordConfirmation(() => {
+            deleteMutation.mutate(selectedId, {
+                onSuccess: () => {
+                    showToast.success(t(i18n.translationKey.deleteExaminationServiceSuccess));
+                    setSelectedId(null);
+                    refetch();
+                    queryClient.invalidateQueries({ queryKey: ["examinationServices"] });
+                },
+                onError: () => {
+                    showToast.error(t(i18n.translationKey.deleteExaminationServiceFailed));
+                },
+            });
+        });
     };
 
     const handleDetails = (record: ExaminationServiceWithParams) => {
@@ -243,8 +257,12 @@ export default function ExaminationServicePage() {
                         refetch();
                         queryClient.invalidateQueries({ queryKey: ["examinationServices"] });
                     },
-                    onError: () => {
-                        showToast.error(t(i18n.translationKey.updateExaminationServiceFailed));
+                    onError: (error: any) => {
+                        if (error?.response?.data?.message?.includes("already exists")) {
+                            showToast.error(t(i18n.translationKey.duplicateServiceCodeError));
+                        } else {
+                            showToast.error(t(i18n.translationKey.updateExaminationServiceFailed));
+                        }
                     },
                 },
             );
@@ -257,8 +275,12 @@ export default function ExaminationServicePage() {
                     refetch();
                     queryClient.invalidateQueries({ queryKey: ["examinationServices"] });
                 },
-                onError: () => {
-                    showToast.error(t(i18n.translationKey.createExaminationServiceFailed));
+                onError: (error: any) => {
+                    if (error?.response?.data?.message?.includes("already exists")) {
+                        showToast.error(t(i18n.translationKey.duplicateServiceCodeError));
+                    } else {
+                        showToast.error(t(i18n.translationKey.createExaminationServiceFailed));
+                    }
                 },
             });
         }
@@ -365,25 +387,28 @@ export default function ExaminationServicePage() {
                 onClose={() => setIsEditOpen(false)}
                 onSave={handleSave}
             />
-            <ConfirmPasswordDialog
+            {/* <ConfirmPasswordDialog
                 open={isDeleteConfirmOpen}
                 onClose={() => setIsDeleteConfirmOpen(false)}
                 onConfirmed={() => {
                     if (!selectedId) return;
-                    deleteMutation.mutate(selectedId, {
-                        onSuccess: () => {
-                            showToast.success(t(i18n.translationKey.deleteExaminationServiceSuccess));
-                            setSelectedId(null);
-                            setIsDeleteConfirmOpen(false);
-                            refetch();
-                            queryClient.invalidateQueries({ queryKey: ["examinationServices"] });
-                        },
-                        onError: () => {
-                            showToast.error(t(i18n.translationKey.deleteExaminationServiceFailed));
-                        },
+
+                    requestPasswordConfirmation(() => {
+                        deleteMutation.mutate(selectedId, {
+                            onSuccess: () => {
+                                showToast.success(t(i18n.translationKey.deleteExaminationServiceSuccess));
+                                setSelectedId(null);
+                                setIsDeleteConfirmOpen(false);
+                                refetch();
+                                queryClient.invalidateQueries({ queryKey: ["examinationServices"] });
+                            },
+                            onError: () => {
+                                showToast.error(t(i18n.translationKey.deleteExaminationServiceFailed));
+                            },
+                        });
                     });
                 }}
-            />
+            /> */}
             <ModalServiceTestParametersDetails
                 open={isDetailsOpen}
                 service={selectedRecord}

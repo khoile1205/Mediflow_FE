@@ -15,7 +15,11 @@ import { Gender } from "~/constants/enums";
 import { Patient } from "~/entities";
 import { ServiceType } from "~/entities/service-type.entity";
 import { useGeneratePatientCode, useMutationPatientReception } from "~/services/reception/hooks/mutations";
-import { useQueryGetAvailablePatientReceptions, useQueryServiceTypes } from "~/services/reception/hooks/queries";
+import {
+    useQueryGetAvailablePatientReceptions,
+    useQueryGetPrevaccinationByReceptionId,
+    useQueryServiceTypes,
+} from "~/services/reception/hooks/queries";
 import { AvailablePatientReception, PatientReceptionRequest } from "~/services/reception/infras/types";
 import { PreVaccination } from "./pre-vaccination";
 import { TestIndication } from "./test_indication";
@@ -25,6 +29,7 @@ import { useCreateVaccinationForm } from "./hooks";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import { usePagination } from "~/hooks";
 import SearchBox from "~/components/common/search-box";
+import { showToast } from "~/utils";
 
 type TabType = "pre_vaccination" | "vaccination_indication" | "examination_indication" | "unpaid_costs";
 
@@ -53,6 +58,8 @@ const ReceptionVaccination: React.FC = () => {
         pageSize,
         searchTerm: searchPatientReception,
     });
+    const { data: prevaccinationData } = useQueryGetPrevaccinationByReceptionId(receptionId);
+
     const patientReceptionAgGrid = useAgGrid({});
 
     // Form setup
@@ -133,6 +140,13 @@ const ReceptionVaccination: React.FC = () => {
 
     const onSavePatient = async () => {
         const patientReceptionBody: PatientReceptionRequest = getPatientReceptionBody();
+        const listPatientReceptingCode = availablePatientReceptions.map((item) => item.code);
+
+        if (listPatientReceptingCode.includes(patientReceptionForm.getValues("code"))) {
+            showToast.error(t(i18n.translationKey.patientAlreadyRecepted));
+            return;
+        }
+
         const { patientId, receptionId } = await createPatientReception(patientReceptionBody);
         patientReceptionForm.setValue("patientId", patientId);
         setReceptionId(receptionId);
@@ -394,7 +408,7 @@ const ReceptionVaccination: React.FC = () => {
                                             readOnly: receptionId != null,
                                         }}
                                         label={t(i18n.translationKey.pregnant)}
-                                        disabled={isRecepting || patientReceptionForm.watch("gender") === Gender.MALE}
+                                        disabled={!isRecepting || patientReceptionForm.watch("gender") === Gender.MALE}
                                     />
                                 </Box>
                             </Grid>
@@ -499,6 +513,7 @@ const ReceptionVaccination: React.FC = () => {
 
             <Box sx={{ display: tab === "vaccination_indication" ? "block" : "none" }}>
                 <VaccinationIndication
+                    isPrescreening={!!prevaccinationData}
                     receptionId={receptionId}
                     isAllowedToVaccinate={vaccinationPrescreeningForm.watch("isEligibleForVaccination")}
                     form={vaccinationIndicationForm}

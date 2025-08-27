@@ -9,6 +9,7 @@ import {
     EventNote,
     FactCheck,
     Healing,
+    History,
     Home,
     HomeOutlined,
     InsertChart,
@@ -24,6 +25,7 @@ import {
     PermContactCalendar,
     PriceChange,
     Science,
+    Timeline,
     Vaccines,
     WarningAmber,
 } from "@mui/icons-material";
@@ -84,6 +86,12 @@ export const sidebarTree: SidebarTabProps[] = [
         ...getRoutePermissions("/finance"),
     },
     {
+        icon: <Timeline />,
+        labelKey: i18n.translationKey.transactionHistory,
+        pathName: "/finance/transaction-history",
+        ...getRoutePermissions("/finance/transaction-history"),
+    },
+    {
         icon: <Biotech />, // Examination
         labelKey: i18n.translationKey.examination,
         children: [
@@ -140,6 +148,12 @@ export const sidebarTree: SidebarTabProps[] = [
                 pathName: "/vaccination/history",
                 icon: <AccessTime />,
                 ...getRoutePermissions("/vaccination/history"),
+            },
+            {
+                labelKey: i18n.translationKey.patientVaccinationHistory,
+                pathName: "/vaccination/patient-history",
+                icon: <History />,
+                ...getRoutePermissions("/vaccination/patient-history"),
             },
             {
                 labelKey: i18n.translationKey.AfterInjection,

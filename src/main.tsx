@@ -16,6 +16,7 @@ import { MaterialUIThemeProvider } from "./libs/material-ui/theme.provider.tsx";
 import { ReactQueryProvider } from "./libs/query-client/provider.tsx";
 import { ApplicationRoutes } from "./routes/index.tsx";
 import "~/utils/string.exts.ts";
+import { PasswordConfirmProvider } from "./contexts/password-confirmation.context.tsx";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -25,21 +26,23 @@ createRoot(document.getElementById("root")!).render(
             <HttpContextProvider>
                 <AuthContextProvider>
                     <MaterialUIThemeProvider>
-                        <GlobalSpinnerQuery />
-                        <ApplicationRoutes />
-                        <ToastContainer
-                            position="top-right"
-                            autoClose={3000}
-                            hideProgressBar={false}
-                            newestOnTop={false}
-                            closeOnClick
-                            rtl={false}
-                            pauseOnFocusLoss
-                            draggable
-                            pauseOnHover
-                            theme="light"
-                            transition={Zoom}
-                        />
+                        <PasswordConfirmProvider>
+                            <GlobalSpinnerQuery />
+                            <ApplicationRoutes />
+                            <ToastContainer
+                                position="top-right"
+                                autoClose={3000}
+                                hideProgressBar={false}
+                                newestOnTop={false}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
+                                pauseOnHover
+                                theme="light"
+                                transition={Zoom}
+                            />
+                        </PasswordConfirmProvider>
                     </MaterialUIThemeProvider>
                 </AuthContextProvider>
             </HttpContextProvider>

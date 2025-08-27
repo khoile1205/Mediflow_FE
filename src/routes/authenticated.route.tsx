@@ -22,13 +22,15 @@ import PostVaccinationPage from "~/pages/post-vaccination";
 import ReceptionVaccination from "~/pages/reception/vaccination";
 import { SupplierManagementPage } from "~/pages/supplier";
 import VaccinationPage from "~/pages/vaccination";
-import VaccinationHistory from "~/pages/vaccination/vaccination-history/vaccination-history";
+import VaccinationHistory from "~/pages/vaccination/vaccination-history/vaccination-history.page";
 import AuthenticatedGuard from "../guards/authenticated.guard";
 import { ExpiredReturnManagementPage } from "~/pages/pharmacy/expired-return-form";
 import MedicineQuantityStatisticsPage from "~/pages/management/medicine/medicine-quantity-statistics.page";
 import MedicineBatchesByMedicineIdPage from "~/pages/management/medicine/medicine-batches-by-medicine-id.page";
 import { OverviewManagement } from "~/pages/management/overview/overview-management.page";
 import { ReportPage } from "~/pages/reports";
+import { PatientVaccinationHistory } from "~/pages/vaccination/vaccination-history/patient-vaccination-history.page";
+import { TransactionHistoryPage } from "~/pages/transaction-history";
 
 export const AuthenticatedRoutes = (
     <Route element={<AuthenticatedGuard />}>
@@ -46,10 +48,14 @@ export const AuthenticatedRoutes = (
         <Route path="/vaccination">
             <Route index element={<VaccinationPage />} />
             <Route path="history" element={<VaccinationHistory />} />
+            <Route path="patient-history" element={<PatientVaccinationHistory />} />
             <Route path="post-injection" element={<PostVaccinationPage />} />
         </Route>
 
-        <Route path="/finance" element={<HospitalFeePage />} />
+        <Route path="/finance">
+            <Route index element={<HospitalFeePage />} />
+            <Route path="transaction-history" element={<TransactionHistoryPage />} />
+        </Route>
 
         <Route path="/pharmacy">
             <Route path="import" element={<ImportInventoryFromSupplier />} />

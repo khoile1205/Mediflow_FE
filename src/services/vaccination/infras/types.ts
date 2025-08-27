@@ -63,7 +63,7 @@ export interface InjectVaccineRequest {
     doctorId: number;
 }
 
-type VaccinationHistoryItem = {
+export interface VaccinationHistoryItem {
     id: number;
     medicineTypeName: string;
     medicineName: string;
@@ -72,7 +72,13 @@ type VaccinationHistoryItem = {
     vaccinationDate: Date;
     vaccinationConfirmation: boolean;
     doctorName: string;
-};
+    hasIssue: boolean;
+    issueNote: string;
+    issueDate: Date | null;
+    patientId?: number;
+    patientCode?: string;
+    patientName?: string;
+}
 
 export interface VaccinationHistoryResponse {
     patientCode: string;

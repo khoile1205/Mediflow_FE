@@ -1,5 +1,4 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import { ColDef } from "ag-grid-community";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
@@ -14,9 +13,9 @@ import { ActionButton } from "~/components/common/action-button";
 import { formatDate } from "~/utils/date-time";
 import { DATE_TIME_FORMAT } from "~/constants/date-time.format";
 import { useQueryGetVaccinationHistoryByPatientId } from "~/services/vaccination/hooks/queries";
-import { VaccinationHistoryItem } from "../types";
+import { createVaccinationHistoryColumns } from "./utils/vaccination-history-columns.util";
 
-export const VaccinationHistory: React.FC = () => {
+export const PatientVaccinationHistory: React.FC = () => {
     const { t } = useTranslation();
     const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null);
 
@@ -44,93 +43,17 @@ export const VaccinationHistory: React.FC = () => {
             form.setValue("province", vaccinationHistory.province || "");
             form.setValue("vaccinationHistoryItems", vaccinationHistory.vaccinationHistoryItems || []);
         }
-    }, [vaccinationHistory]);
+    }, [vaccinationHistory, form]);
 
     const vaccinationHistoryGrid = useAgGrid({ rowSelection: "multiple" });
-    const vaccinationHistoryColumnDefs: ColDef<VaccinationHistoryItem>[] = [
-        {
-            checkboxSelection: true,
-            headerCheckboxSelection: true,
-            width: 50,
-            pinned: true,
-            resizable: false,
-        },
-        {
-            field: "medicineName",
-            headerName: t(i18n.translationKey.vaccineSerumName),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-        },
-        {
-            field: "doseNumber",
-            headerName: t(i18n.translationKey.doseNumber),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-        },
-        {
-            field: "vaccinationTestDate",
-            headerName: t(i18n.translationKey.testDate),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            cellRenderer: (param: { value: Date }) => {
-                const date = param.value as Date;
-                return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
-            },
-        },
-        {
-            field: "vaccinationDate",
-            headerName: t(i18n.translationKey.injectionDate),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            cellRenderer: (param: { value: Date }) => {
-                const date = param.value as Date;
-                return date ? formatDate(date, DATE_TIME_FORMAT["dd/MM/yyyy"]) : "";
-            },
-        },
-        {
-            field: "vaccinationConfirmation",
-            headerName: t(i18n.translationKey.vaccinationConfirmation),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-            cellClass: "ag-cell-center",
-            cellRenderer: (param: boolean) => {
-                return param ? t(i18n.translationKey.isInjected) : t(i18n.translationKey.notInjected);
-            },
-        },
-        {
-            field: "doctorName",
-            headerName: t(i18n.translationKey.instructedDoctor),
-            headerStyle: {
-                textAlign: "center",
-                fontWeight: "bold",
-                backgroundColor: "#98d2c0",
-                borderColor: "#98d2c0",
-            },
-        },
-    ];
+
+    // Use shared column definitions without patient info
+    const vaccinationHistoryColumnDefs = React.useMemo(() => {
+        return createVaccinationHistoryColumns(t, {
+            includePatientInfo: false,
+            includeSelection: true,
+        });
+    }, [t]);
 
     return (
         <>
@@ -141,7 +64,7 @@ export const VaccinationHistory: React.FC = () => {
                             <Box>
                                 <Grid container spacing={2} alignItems="center" marginBottom={2}>
                                     <Typography variant="subtitle2" className="w-2/3 text-xl font-bold">
-                                        {t(i18n.translationKey.vaccinationHistory)}
+                                        {t(i18n.translationKey.patientVaccinationHistory)}
                                     </Typography>
                                     <ActionButton
                                         label={t(i18n.translationKey.searchPatient)}
@@ -261,4 +184,4 @@ export const VaccinationHistory: React.FC = () => {
     );
 };
 
-export default VaccinationHistory;
+export default PatientVaccinationHistory;

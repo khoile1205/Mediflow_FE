@@ -23,9 +23,12 @@ export const useMutationUpdateSupplier = () => {
             };
             return await supplierApi.updateSupplier(id, body);
         },
-        onSuccess: () => {
+        onSuccess: (_, variables) => {
             queryClient.invalidateQueries({
                 queryKey: [QueryKey.SUPPLIER.GET_LIST_SUPPLIER],
+            });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKey.SUPPLIER.GET_SUPPLIER_BY_ID, variables.id],
             });
             showToast.success(i18n.t(i18n.translationKey.updateSupplierSuccess));
         },

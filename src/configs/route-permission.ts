@@ -23,6 +23,8 @@ const vaccinationReceptionRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, R
 const reportsRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.Accountant];
 
 const vaccinationRequiredRoles = [Role.Doctor, Role.HeadOfDepartment];
+const vaccinationHistoryequiredRoles = [Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
+const vaccinationPatientHistoryequiredRoles = [Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
 const postVaccinationRequiredRoles = [Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
 const appointmentsRequiredRoles = [Role.HeadOfDepartment, Role.Doctor];
 const examinationRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician];
@@ -41,7 +43,11 @@ export const routePermissions: RoutePermissionMap = {
 
     // Vaccination
     "/vaccination": createRoute(ResourceType.VaccinationReception, vaccinationRequiredRoles),
-    "/vaccination/history": createRoute(ResourceType.VaccinationReception, vaccinationRequiredRoles),
+    "/vaccination/history": createRoute(ResourceType.VaccinationReception, vaccinationHistoryequiredRoles),
+    "/vaccination/patient-history": createRoute(
+        ResourceType.VaccinationReception,
+        vaccinationPatientHistoryequiredRoles,
+    ),
     "/vaccination/post-injection": createRoute(ResourceType.VaccinationReception, postVaccinationRequiredRoles),
 
     // Appointments
@@ -49,6 +55,11 @@ export const routePermissions: RoutePermissionMap = {
 
     // Finance
     "/finance": createRoute(ResourceType.VaccinationReception, financeRequiredRoles),
+    "/finance/transaction-history": createRoute(ResourceType.VaccinationReception, [
+        Role.Administrator,
+        Role.Receptionist,
+        Role.Accountant,
+    ]),
 
     // Examination
     "/examination": createRoute(ResourceType.VaccinationReception, examinationRequiredRoles),

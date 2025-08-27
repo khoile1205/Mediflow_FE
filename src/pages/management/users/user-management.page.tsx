@@ -34,17 +34,19 @@ export const UserManagement: React.FC = () => {
     const [isAddingNewUser, setIsAddingNewUser] = useState(false);
     const [isEditingUser, setIsEditingUser] = useState(false);
 
-    const [, setSelectedRoleName] = useState<string>(null);
-    const [, setSelectedDepartmentId] = useState<number>(null);
+    const [searchKeyword, setSearchKeyword] = useState<string | null>(null);
 
     const { handlePageChange, pageIndex, pageSize } = usePagination();
 
     const {
         data: { listUsers, totalItems },
-    } = useQueryUsersWithPagination({
-        pageIndex,
-        pageSize,
-    });
+    } = useQueryUsersWithPagination(
+        {
+            pageIndex,
+            pageSize,
+        },
+        searchKeyword == null || searchKeyword.trim() === "" ? null : searchKeyword.trim(),
+    );
 
     const {
         data: { roleNames },
@@ -89,9 +91,6 @@ export const UserManagement: React.FC = () => {
             form.setValue("isSuspended", user.isSuspended);
             setIsFormEnabled(true);
             setIsEditingUser(true);
-
-            setSelectedRoleName(user.roles[0]);
-            setSelectedDepartmentId(user.departments[0].id);
         }
     }, [user]);
 
@@ -174,6 +173,10 @@ export const UserManagement: React.FC = () => {
         setDialogType(null);
     };
 
+    const handleSearch = (searchValue: string): void => {
+        setSearchKeyword(searchValue);
+    };
+
     return (
         <>
             <DynamicForm form={form}>
@@ -211,6 +214,7 @@ export const UserManagement: React.FC = () => {
                             pageSize={pageSize}
                             totalItems={totalItems}
                             onPageChange={handlePageChange}
+                            onSearch={handleSearch}
                             {...userGrid}
                         />
                     </Grid>

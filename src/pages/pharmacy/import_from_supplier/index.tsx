@@ -24,6 +24,7 @@ import { ImportMedicineFromSupplierFormValues } from "./types";
 import { useQueryGetListSupplier } from "~/services/supplier/hooks/queries";
 import ReceiptPrinter from "./receipt-printer";
 import { useReactToPrint } from "react-to-print";
+import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 
 const defaultValues: ImportMedicineFromSupplierFormValues = {
     documentCode: "",
@@ -42,7 +43,7 @@ const ImportInventoryFromSupplier: React.FC = () => {
     const { user } = useAuth();
     const { pageIndex, pageSize, handlePageChange } = usePagination();
     const receiptRef = React.useRef<HTMLDivElement>(null);
-
+    const { requestPasswordConfirmation } = usePasswordConfirm();
     // Query
 
     const {
@@ -175,7 +176,9 @@ const ImportInventoryFromSupplier: React.FC = () => {
                         label={t(i18n.translationKey.save)}
                         startIcon={<Save />}
                         disabled={!isAddNew || isPrinting}
-                        onClick={form.handleSubmit((values) => onSaveImportDocument(values))}
+                        onClick={form.handleSubmit((values) =>
+                            requestPasswordConfirmation(() => onSaveImportDocument(values)),
+                        )}
                     />
                     <ActionButton
                         label={t(i18n.translationKey.printDocument)}

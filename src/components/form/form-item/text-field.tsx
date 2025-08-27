@@ -48,23 +48,31 @@ const getAdornmentProps = ({
     let end: React.ReactNode | undefined = undefined;
 
     if (startAdornment) {
-        start = <InputAdornment position="start">{startAdornment}</InputAdornment>;
+        start = (
+            <InputAdornment position="start" tabIndex={-1}>
+                {startAdornment}
+            </InputAdornment>
+        );
     }
 
     if (endAdornment) {
-        end = <InputAdornment position="end">{endAdornment}</InputAdornment>;
+        end = (
+            <InputAdornment position="end" tabIndex={-1}>
+                {endAdornment}
+            </InputAdornment>
+        );
     } else if (isPassword) {
         end = (
-            <InputAdornment position="end">
-                <IconButton aria-label="toggle password visibility" onClick={onTogglePassword} edge="end">
+            <InputAdornment position="end" tabIndex={-1}>
+                <IconButton aria-label="toggle password visibility" onClick={onTogglePassword} edge="end" tabIndex={-1}>
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
             </InputAdornment>
         );
     } else if (hasValue) {
         end = (
-            <InputAdornment position="end">
-                <IconButton aria-label="clear input" onClick={onClear} edge="end">
+            <InputAdornment position="end" tabIndex={-1}>
+                <IconButton aria-label="clear input" onClick={onClear} edge="end" tabIndex={-1}>
                     <HighlightOff />
                 </IconButton>
             </InputAdornment>
@@ -112,7 +120,7 @@ export const TextFieldFormItem: React.FC<TextFieldFormItemProps> = ({
                     <TextField
                         {...field}
                         value={field.value ?? ""}
-                        label={label || placeholder}
+                        label={label}
                         placeholder={placeholder}
                         required={required}
                         fullWidth={fullWidth}

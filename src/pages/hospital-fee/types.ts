@@ -1,4 +1,4 @@
-import { PaymentType, ReceiptPaymentType } from "~/constants/enums";
+import { PaymentMethod, ReceiptPaymentType } from "~/constants/enums";
 import { HospitalServiceType } from "~/services/hospital-fee/infras";
 
 export interface HospitalFeeFormValue {
@@ -6,7 +6,7 @@ export interface HospitalFeeFormValue {
     invoiceNumber?: string;
     invoiceValue?: number;
     phoneNumber?: string;
-    paidType?: PaymentType;
+    paidType?: PaymentMethod;
     isPaid?: boolean;
     isRefund?: boolean;
     isCancel?: boolean;

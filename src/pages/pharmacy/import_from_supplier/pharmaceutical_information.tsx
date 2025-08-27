@@ -207,6 +207,10 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
         setSearchMedicineTerm(searchValue);
     };
 
+    React.useEffect(() => {
+        pharmaceuticalInformationForm.formState.errors.unitPrice = undefined;
+    }, [pharmaceuticalInformationForm.watch("isFree")]);
+
     return (
         <DynamicForm form={pharmaceuticalInformationForm}>
             <Box sx={{ mt: { xs: 2, sm: 3 } }}>
@@ -296,8 +300,8 @@ const ImportPharmaceuticalInformation: React.FC<ImportPharmaceuticalInformationP
                                         sx: { "& .MuiInputBase-root": { fontSize: { xs: "0.875rem", sm: "1rem" } } },
                                     },
                                 }}
-                                required
-                                disabled={disabled}
+                                required={!pharmaceuticalInformationForm.watch("isFree")}
+                                disabled={disabled || pharmaceuticalInformationForm.watch("isFree")}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, md: 6, lg: 2 }}>
