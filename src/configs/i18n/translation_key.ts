@@ -780,6 +780,7 @@ const applicationTranslationKey = {
     transactionHistorySearchPlaceholder: "TRANSACTION_HISTORY_SEARCH_PLACEHOLDER",
     patientAlreadyRecepted: "PATIENT_ALREADY_RECEPTED",
     payAReceipt: "PAY_A_RECEIPT",
+    editInteraction: "EDIT_MEDICINE_INTERACTION",
 };
 
 const exceptionTranslationKey = {

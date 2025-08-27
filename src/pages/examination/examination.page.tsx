@@ -54,30 +54,46 @@ export const ExaminationPage: React.FC = () => {
     const examinationColumnDefs = React.useMemo(
         () =>
             [
-                { field: "patientCode", headerName: t(i18n.translationKey.medicalCode), cellClass: "ag-cell-center" },
-                { field: "patientName", headerName: t(i18n.translationKey.patientName) },
+                {
+                    field: "patientCode",
+                    headerName: t(i18n.translationKey.medicalCode),
+                    cellClass: "ag-cell-center",
+                    width: 120,
+                    minWidth: 100,
+                    flex: 0,
+                },
+                {
+                    field: "patientName",
+                    headerName: t(i18n.translationKey.patientName),
+                    flex: 1,
+                    minWidth: 140,
+                },
                 {
                     field: "yearOfBirth",
                     headerName: t(i18n.translationKey.yearOfBirth),
                     cellClass: "ag-cell-center",
+                    width: 90,
+                    minWidth: 80,
+                    flex: 0,
                 },
                 {
                     headerName: t(isDiagnosed ? i18n.translationKey.detail : i18n.translationKey.call),
                     cellClass: "ag-cell-center",
+                    width: 120,
+                    minWidth: 110,
+                    flex: 0,
                     cellRenderer: (params: ICellRendererParams<PatientForExamination>) => (
-                        <>
-                            <ActionButton
-                                label={t(isDiagnosed ? i18n.translationKey.detail : i18n.translationKey.call)}
-                                size="small"
-                                variant="outlined"
-                                sx={{ borderRadius: 4, px: 2, py: 0, height: "70%" }}
-                                onClick={() => handleSelectPatient(params.data)}
-                            />
-                        </>
+                        <ActionButton
+                            label={t(isDiagnosed ? i18n.translationKey.detail : i18n.translationKey.call)}
+                            size="small"
+                            variant="outlined"
+                            sx={{ borderRadius: 4, px: 2, py: 0, height: 32 }}
+                            onClick={() => handleSelectPatient(params.data)}
+                        />
                     ),
                 },
             ] as ColDef<PatientForExamination>[],
-        [i18next.language],
+        [i18next.language, isDiagnosed],
     );
 
     const {
