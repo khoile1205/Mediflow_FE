@@ -380,10 +380,6 @@ const HospitalFeePage: React.FC = () => {
                                             value: PaymentMethod.CASH,
                                         },
                                         {
-                                            label: t(i18n.translationKey.payByAtm),
-                                            value: PaymentMethod.ATM,
-                                        },
-                                        {
                                             label: t(i18n.translationKey.payByTransfer),
                                             value: PaymentMethod.TRANSFER,
                                         },
