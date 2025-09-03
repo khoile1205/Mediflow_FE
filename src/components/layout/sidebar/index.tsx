@@ -10,13 +10,46 @@ import { ChangeLanguageTab } from "./tabs/change-lang.tab";
 import { SidebarTabItem, SidebarTabProps } from "./tabs/sidebar.tab";
 import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 
+const UserInfoSummary: React.FC = () => {
+    const auth = useAuth() as any;
+
+    const fullName: string = auth?.user?.fullName ?? auth?.user?.name ?? auth?.userName ?? "—";
+
+    const roles: string[] = auth?.userPermission?.roles ?? auth?.user?.roles ?? [];
+
+    const primaryRole = roles?.[0] ?? "—";
+
+    const initials =
+        fullName
+            .split(" ")
+            .filter(Boolean)
+            .map((p: string) => p[0])
+            .slice(0, 2)
+            .join("")
+            .toUpperCase() || "U";
+
+    return (
+        <Box className="mb-2 flex items-center rounded-xl bg-gray-100 px-3 py-2">
+            <Avatar sx={{ width: 36, height: 36 }}>{initials}</Avatar>
+            <Box className="ml-3 min-w-0">
+                <Typography fontWeight={600} className="truncate">
+                    {fullName}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" className="truncate">
+                    {primaryRole}
+                </Typography>
+            </Box>
+        </Box>
+    );
+};
+
 export const Sidebar: React.FC = () => {
-    const { logout, userPermission } = useAuth();
+    const auth = useAuth() as any;
     const { resetPasswordConfirmationSession } = usePasswordConfirm();
 
     const handleLogout = () => {
         resetPasswordConfirmationSession();
-        logout();
+        auth.logout();
     };
 
     const filteredSidebarTree = React.useMemo(() => {
@@ -25,11 +58,11 @@ export const Sidebar: React.FC = () => {
                 .filter((item) => {
                     if (!item.requiredPermissions) return true;
                     return hasPermission({
-                        resourceTypes: userPermission?.resourceTypes,
+                        resourceTypes: auth?.userPermission?.resourceTypes,
                         requiredPermissions: item.requiredPermissions,
-                        userRoles: userPermission?.roles || [],
+                        userRoles: auth?.userPermission?.roles || [],
                         requiredRoles: item.requiredRoles,
-                        accessModifier: userPermission?.resourceTypes[item.requiredPermissions[0]],
+                        accessModifier: auth?.userPermission?.resourceTypes?.[item.requiredPermissions[0]],
                     });
                 })
                 .map((item) => ({
@@ -38,7 +71,7 @@ export const Sidebar: React.FC = () => {
                 }));
 
         return filterTree(sidebarTree);
-    }, [userPermission]);
+    }, [auth?.userPermission]);
 
     return (
         <Drawer
@@ -61,12 +94,15 @@ export const Sidebar: React.FC = () => {
                     <Avatar src={AppLogo}>H</Avatar>
                     <Typography className="ml-3 truncate text-[16px] font-bold">MediFlow</Typography>
                 </Box>
+
                 <Box className="no-scrollbar mx-6 w-full flex-1 overflow-y-auto overflow-x-hidden pb-4 pt-2">
                     {filteredSidebarTree.map((sideBar, idx) => (
                         <SidebarTabItem key={sideBar.labelKey + idx} {...sideBar} level={0} />
                     ))}
                 </Box>
+
                 <Stack direction={"column"} sx={{ flexShrink: 0 }} className="border-t border-gray-300 p-2">
+                    <UserInfoSummary />
                     <ChangeLanguageTab />
                     <SidebarTabItem
                         icon={<ExitToApp />}

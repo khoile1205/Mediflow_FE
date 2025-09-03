@@ -1132,5 +1132,6 @@
     "PATIENT_ALREADY_RECEPTED": "Bệnh nhân đã được tiếp nhận.",
     "PAY_A_RECEIPT": "Thanh toán phiếu thu",
     "CONFIRMED": "Đã xác nhận",
-    "EDIT_MEDICINE_INTERACTION": "Chỉnh sửa tương tác thuốc"
+    "EDIT_MEDICINE_INTERACTION": "Chỉnh sửa tương tác thuốc",
+    "VIEW_ONLY_DUE_TO_ROLE": "Chỉ được xem, không có quyền thao tác"
 }

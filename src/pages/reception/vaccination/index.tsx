@@ -1,5 +1,5 @@
 import { AddCircle, Clear, Edit, RestartAlt, Save, Search, Undo } from "@mui/icons-material";
-import { Box, Grid, Stack } from "@mui/material";
+import { Box, Grid, Stack, Tooltip } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActionButton } from "~/components/common/action-button";
@@ -30,8 +30,29 @@ import { AgDataGrid, useAgGrid } from "~/components/common/ag-grid";
 import { usePagination } from "~/hooks";
 import SearchBox from "~/components/common/search-box";
 import { showToast } from "~/utils";
+import { useAuth } from "~/contexts/auth.context";
+import { Role } from "~/constants/roles";
 
 type TabType = "pre_vaccination" | "vaccination_indication" | "examination_indication" | "unpaid_costs";
+
+const LockedSection: React.FC<{ locked: boolean; reason?: string; children: React.ReactNode }> = ({
+    locked,
+    reason,
+    children,
+}) => {
+    if (!locked) return <Box position="relative">{children}</Box>;
+    return (
+        <Tooltip title={reason ?? "View only"}>
+            <Box position="relative" sx={{ opacity: 0.5, filter: "grayscale(100%)" }}>
+                {children}
+                <Box
+                    onClick={(e) => e.stopPropagation()}
+                    sx={{ position: "absolute", inset: 0, zIndex: 1, cursor: "not-allowed" }}
+                />
+            </Box>
+        </Tooltip>
+    );
+};
 
 const ReceptionVaccination: React.FC = () => {
     const [tab, setTab] = React.useState<TabType>("pre_vaccination");
@@ -187,6 +208,10 @@ const ReceptionVaccination: React.FC = () => {
     // const isEnableProcessSubtask = React.useMemo(() => {
     //     return isRecepting && receptionId != null;
     // }, [isRecepting, receptionId]);
+
+    const { userPermission } = useAuth();
+    const roles = (userPermission?.roles ?? []) as Role[];
+    const isNurseOnly = roles.length > 0 && roles.every((r) => r === Role.Nurse);
 
     return (
         <>
@@ -503,32 +528,40 @@ const ReceptionVaccination: React.FC = () => {
                     </Stack>
                 </Box>
                 <Box sx={{ display: tab === "pre_vaccination" ? "block" : "none" }}>
-                    <PreVaccination
-                        receptionId={receptionId}
-                        form={vaccinationPrescreeningForm}
-                        patientDOB={patientReceptionForm.getValues("dob")}
-                    />
+                    <LockedSection locked={isNurseOnly} reason={t(i18n.translationKey.viewOnlyDueToRole)}>
+                        <PreVaccination
+                            receptionId={receptionId}
+                            form={vaccinationPrescreeningForm}
+                            patientDOB={patientReceptionForm.getValues("dob")}
+                        />
+                    </LockedSection>
                 </Box>
             </DynamicForm>
 
             <Box sx={{ display: tab === "vaccination_indication" ? "block" : "none" }}>
-                <VaccinationIndication
-                    isPrescreening={!!prevaccinationData}
-                    receptionId={receptionId}
-                    isAllowedToVaccinate={vaccinationPrescreeningForm.watch("isEligibleForVaccination")}
-                    form={vaccinationIndicationForm}
-                />
+                <LockedSection locked={isNurseOnly} reason={t(i18n.translationKey.viewOnlyDueToRole)}>
+                    <VaccinationIndication
+                        isPrescreening={!!prevaccinationData}
+                        receptionId={receptionId}
+                        isAllowedToVaccinate={vaccinationPrescreeningForm.watch("isEligibleForVaccination")}
+                        form={vaccinationIndicationForm}
+                    />
+                </LockedSection>
             </Box>
             <Box sx={{ display: tab === "examination_indication" ? "block" : "none" }}>
-                <TestIndication
-                    // disabled={!isEnableProcessSubtask}
-                    receptionId={receptionId}
-                    isReferredToHospital={vaccinationPrescreeningForm.watch("isReferredToHospital")}
-                    form={testExaminationIndicationForm}
-                />
+                <LockedSection locked={isNurseOnly} reason={t(i18n.translationKey.viewOnlyDueToRole)}>
+                    <TestIndication
+                        // disabled={!isEnableProcessSubtask}
+                        receptionId={receptionId}
+                        isReferredToHospital={vaccinationPrescreeningForm.watch("isReferredToHospital")}
+                        form={testExaminationIndicationForm}
+                    />
+                </LockedSection>
             </Box>
             <Box sx={{ display: tab === "unpaid_costs" ? "block" : "none" }}>
-                <UnpaidCosts receptionId={receptionId} />
+                <LockedSection locked={isNurseOnly} reason={t(i18n.translationKey.viewOnlyDueToRole)}>
+                    <UnpaidCosts receptionId={receptionId} />
+                </LockedSection>
             </Box>
             <PatientSelectModal
                 open={isOpenPatientSelectModal}
