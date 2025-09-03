@@ -108,7 +108,12 @@ export const sidebarTree: SidebarTabProps[] = [
                 ...getRoutePermissions("/examination/history/patients"),
             },
         ],
-        ...getRoutePermissions("/examination"),
+        ...Object.assign(
+            {},
+            getRoutePermissions("/examination"),
+            getRoutePermissions("/examination/history/patients"),
+            getRoutePermissions("/examination/history/patient"),
+        ),
     },
     {
         icon: <MedicalServices />, // Services

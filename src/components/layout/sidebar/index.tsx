@@ -11,13 +11,12 @@ import { SidebarTabItem, SidebarTabProps } from "./tabs/sidebar.tab";
 import { usePasswordConfirm } from "~/contexts/password-confirmation.context";
 
 const UserInfoSummary: React.FC = () => {
-    const auth = useAuth() as any;
+    const auth = useAuth();
 
-    const fullName: string = auth?.user?.fullName ?? auth?.user?.name ?? auth?.userName ?? "—";
-
+    const fullName: string = auth?.user?.name ?? "N/A";
     const roles: string[] = auth?.userPermission?.roles ?? auth?.user?.roles ?? [];
-
-    const primaryRole = roles?.[0] ?? "—";
+    const department = auth?.userPermission?.departments[0] ?? "N/A";
+    const primaryRole = roles?.[0] ?? "N/A";
 
     const initials =
         fullName
@@ -36,7 +35,7 @@ const UserInfoSummary: React.FC = () => {
                     {fullName}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" className="truncate">
-                    {primaryRole}
+                    {`${primaryRole} - ${department}`}
                 </Typography>
             </Box>
         </Box>
@@ -44,7 +43,7 @@ const UserInfoSummary: React.FC = () => {
 };
 
 export const Sidebar: React.FC = () => {
-    const auth = useAuth() as any;
+    const auth = useAuth();
     const { resetPasswordConfirmationSession } = usePasswordConfirm();
 
     const handleLogout = () => {

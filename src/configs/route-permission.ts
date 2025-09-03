@@ -17,17 +17,33 @@ export type RoutePermissionMap = {
 };
 
 const inventoryRequiredRoles = [Role.HeadOfDepartment, Role.PharmacyStaff, Role.WarehouseStaff];
+
 const managementRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.ITSupport];
+
 const vaccinationReceptionRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, Role.Nurse, Role.Receptionist];
+const vaccinationRequiredRoles = [Role.Doctor, Role.HeadOfDepartment];
+const vaccinationHistoryRequiredRoles = [
+    Role.Doctor,
+    Role.ImagingTechnician,
+    Role.LaboratoryStaff,
+    Role.HeadOfDepartment,
+    Role.Nurse,
+];
+const vaccinationPatientHistoryRequiredRoles = [
+    Role.Doctor,
+    Role.HeadOfDepartment,
+    Role.Nurse,
+    Role.ImagingTechnician,
+    Role.LaboratoryStaff,
+];
 
 const reportsRequiredRoles = [Role.Administrator, Role.HeadOfDepartment, Role.Accountant];
 
-const vaccinationRequiredRoles = [Role.Doctor, Role.HeadOfDepartment];
-const vaccinationHistoryequiredRoles = [Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
-const vaccinationPatientHistoryequiredRoles = [Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
-const postVaccinationRequiredRoles = [Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
 const appointmentsRequiredRoles = [Role.HeadOfDepartment, Role.Doctor];
-const examinationRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician];
+
+const examinationRequiredRoles = [Role.HeadOfDepartment, Role.LaboratoryStaff, Role.ImagingTechnician];
+const viewExaminationRequiredRoles = [Role.HeadOfDepartment, Role.Doctor, Role.LaboratoryStaff, Role.ImagingTechnician];
+const postVaccinationRequiredRoles = [Role.Doctor, Role.HeadOfDepartment, Role.Nurse];
 
 const financeRequiredRoles = [Role.Accountant, Role.Receptionist, Role.Nurse];
 const contractRequiredRoles = [Role.Administrator, Role.Accountant];
@@ -43,10 +59,10 @@ export const routePermissions: RoutePermissionMap = {
 
     // Vaccination
     "/vaccination": createRoute(ResourceType.VaccinationReception, vaccinationRequiredRoles),
-    "/vaccination/history": createRoute(ResourceType.VaccinationReception, vaccinationHistoryequiredRoles),
+    "/vaccination/history": createRoute(ResourceType.VaccinationReception, vaccinationHistoryRequiredRoles),
     "/vaccination/patient-history": createRoute(
         ResourceType.VaccinationReception,
-        vaccinationPatientHistoryequiredRoles,
+        vaccinationPatientHistoryRequiredRoles,
     ),
     "/vaccination/post-injection": createRoute(ResourceType.VaccinationReception, postVaccinationRequiredRoles),
 
@@ -62,9 +78,9 @@ export const routePermissions: RoutePermissionMap = {
     ]),
 
     // Examination
+    "/examination/history/patient": createRoute(ResourceType.VaccinationReception, viewExaminationRequiredRoles),
+    "/examination/history/patients": createRoute(ResourceType.VaccinationReception, viewExaminationRequiredRoles),
     "/examination": createRoute(ResourceType.VaccinationReception, examinationRequiredRoles),
-    "/examination/history/patients": createRoute(ResourceType.VaccinationReception, examinationRequiredRoles),
-    "/examination/history/patient": createRoute(ResourceType.VaccinationReception, examinationRequiredRoles),
 
     // Pharmacy
     "/pharmacy/import": createRoute(ResourceType.Inventory, inventoryRequiredRoles),
