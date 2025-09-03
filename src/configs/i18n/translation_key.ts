@@ -781,6 +781,7 @@ const applicationTranslationKey = {
     patientAlreadyRecepted: "PATIENT_ALREADY_RECEPTED",
     payAReceipt: "PAY_A_RECEIPT",
     editInteraction: "EDIT_MEDICINE_INTERACTION",
+    viewOnlyDueToRole: "VIEW_ONLY_DUE_TO_ROLE",
 };
 
 const exceptionTranslationKey = {

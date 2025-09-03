@@ -1129,5 +1129,6 @@
     "PATIENT_ALREADY_RECEPTED": "Patient has already been received.",
     "PAY_A_RECEIPT": "Pay a receipt",
     "CONFIRMED": "Confirmed",
-    "EDIT_MEDICINE_INTERACTION": "Edit Medicine Interaction"
+    "EDIT_MEDICINE_INTERACTION": "Edit Medicine Interaction",
+    "VIEW_ONLY_DUE_TO_ROLE": "View only, no permission to perform actions"
 }
