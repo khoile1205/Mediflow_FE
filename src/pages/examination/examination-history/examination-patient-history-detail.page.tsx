@@ -51,7 +51,7 @@ const ExaminationPatientHistoryPage: React.FC = () => {
             {/* Patient Info Card */}
             <Paper elevation={0} sx={{ borderRadius: 3, p: 3, mb: 4, bgcolor: "#f6f7fa" }}>
                 <Typography fontWeight={600} mb={2} fontSize={18}>
-                    Patient Information
+                    {t(i18n.translationKey.patientInformation)}
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
