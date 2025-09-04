@@ -277,7 +277,7 @@
     "CONFIRM_INJECTED_TODAY": "Confirm vaccinated today",
     "CANCEL_CONFIRMATION": "Cancel vaccination confirmation",
     "SAVE_NOTE": "Save note",
-    "CONFIRM_SELECTED_DOSE": "Confirm selected dose(s)",
+    "CONFIRM_SELECTED_DOSE": "Confirm selected dose",
     "TRANSFER_SELECTED_DOSE": "Transfer selected dose(s) to customer inventory",
     "FIND_PATIENT": "Find patient",
     "EMAIL": "Email",
@@ -1130,5 +1130,11 @@
     "PAY_A_RECEIPT": "Pay a receipt",
     "CONFIRMED": "Confirmed",
     "EDIT_MEDICINE_INTERACTION": "Edit Medicine Interaction",
-    "VIEW_ONLY_DUE_TO_ROLE": "View only, no permission to perform actions"
+    "VIEW_ONLY_DUE_TO_ROLE": "View only, no permission to perform actions",
+    "RECEPTION_HAS_BEEN_CLOSED": "The reception has already been closed",
+    "REQUIRED_ISSUE_NOTE": "Issue note is required",
+    "THIS_VACCINE_HAS_BEEN_TAKEN": "This vaccine has already been administered",
+    "CANNOT_TAKE_ISSUE_VACCINE_IF_HAS_ISSUE": "Cannot issue vaccine if there is already an issue note.",
+    "FROMDATE_CANNOT_BE_GREATER_THAN_TODATE": "From date cannot be later than To date",
+    "CANNOT_UPDATE_PRE_EXAMINATION_RESULT_AFTER_VACCINATION_CONFIRMED": "Cannot update pre-examination result after vaccination has been confirmed"
 }
