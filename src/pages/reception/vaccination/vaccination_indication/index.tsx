@@ -1,5 +1,5 @@
 import { AddCircle, Delete, Update } from "@mui/icons-material";
-import { Box, Grid, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import { ColDef, RowSelectedEvent } from "ag-grid-community";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -32,12 +32,7 @@ interface VaccinationIndicationProps {
     form: UseFormReturn<VaccinationIndicateReceptionFormValues>;
 }
 
-export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
-    receptionId,
-    isPrescreening,
-    isAllowedToVaccinate,
-    form,
-}) => {
+export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({ receptionId, isPrescreening, form }) => {
     const { t } = useTranslation();
     const { handlePageChange, pageIndex, pageSize } = usePagination();
 
@@ -375,22 +370,22 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                         />
                                     </Stack>
                                     <Box>
-                                        <Tooltip
+                                        {/* <Tooltip
                                             title={
                                                 !isAllowedToVaccinate
                                                     ? t(i18n.translationKey.vaccinationNotAllowed)
                                                     : ""
                                             }
-                                        >
-                                            <Box>
-                                                <FormItem
-                                                    render="checkbox"
-                                                    name="isReadyToUse"
-                                                    label={t(i18n.translationKey.useToday)}
-                                                    disabled={!receptionId || !isAllowedToVaccinate}
-                                                />
-                                            </Box>
-                                        </Tooltip>
+                                        > */}
+                                        <Box>
+                                            <FormItem
+                                                render="checkbox"
+                                                name="isReadyToUse"
+                                                label={t(i18n.translationKey.useToday)}
+                                                disabled={!receptionId}
+                                            />
+                                        </Box>
+                                        {/* </Tooltip> */}
                                     </Box>
 
                                     <Stack direction="row" spacing={1}></Stack>
