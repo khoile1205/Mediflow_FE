@@ -45,11 +45,33 @@ const AuthenticatedGuard: React.FC = () => {
             accessModifier: userPermission?.resourceTypes[requiredPermissions[0]],
         });
 
-        if (requiredPermissions && !hasAccess) {
+        const userResourceTypes = userPermission?.resourceTypes || {};
+        const hasExamination = !!userResourceTypes["examination"];
+        const hasVaccinationReception = !!userResourceTypes["vaccination-reception"];
+
+        let finalAccess = hasAccess;
+
+        if (location.pathname.startsWith("/examination")) {
+            if (hasVaccinationReception) {
+                if (location.pathname === "/examination") {
+                    finalAccess = false;
+                } else if (location.pathname.startsWith("/examination/history")) {
+                    finalAccess = true;
+                } else {
+                    finalAccess = false;
+                }
+            } else if (hasExamination) {
+                finalAccess = true;
+            } else {
+                finalAccess = false;
+            }
+        }
+
+        if (!finalAccess) {
             showToast.warning(t(i18n.translationKey.accessDenied));
             navigate("/");
         }
-    }, [navigate, location.pathname, isInitialized, isLoading, userPermission, user]);
+    }, [navigate, location.pathname, isInitialized, isLoading, userPermission, user, t]);
 
     if (!isInitialized || isLoading) {
         return <Spinner />;

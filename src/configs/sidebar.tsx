@@ -31,7 +31,7 @@ import {
 } from "@mui/icons-material";
 import { SidebarTabProps } from "~/components/layout/sidebar/tabs/sidebar.tab";
 import i18n from "./i18n";
-import { routePermissions } from "./route-permission";
+import { ResourceType, routePermissions } from "./route-permission";
 
 const getRoutePermissions = (path: string) => routePermissions[path];
 
@@ -108,11 +108,19 @@ export const sidebarTree: SidebarTabProps[] = [
                 ...getRoutePermissions("/examination/history/patients"),
             },
         ],
-        ...Object.assign(
-            {},
-            getRoutePermissions("/examination"),
-            getRoutePermissions("/examination/history/patients"),
-            getRoutePermissions("/examination/history/patient"),
+        requiredPermissions: Array.from(
+            new Set([
+                ...getRoutePermissions("/examination/history/patients").requiredPermissions,
+                ...getRoutePermissions("/examination/history/patient").requiredPermissions,
+                ...getRoutePermissions("/examination").requiredPermissions,
+            ]),
+        ),
+        requiredRoles: Array.from(
+            new Set([
+                ...getRoutePermissions("/examination/history/patients").requiredRoles,
+                ...getRoutePermissions("/examination/history/patient").requiredRoles,
+                ...getRoutePermissions("/examination").requiredRoles,
+            ]),
         ),
     },
     {
