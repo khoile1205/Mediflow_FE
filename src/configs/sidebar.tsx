@@ -31,7 +31,7 @@ import {
 } from "@mui/icons-material";
 import { SidebarTabProps } from "~/components/layout/sidebar/tabs/sidebar.tab";
 import i18n from "./i18n";
-import { ResourceType, routePermissions } from "./route-permission";
+import { routePermissions } from "./route-permission";
 
 const getRoutePermissions = (path: string) => routePermissions[path];
 
