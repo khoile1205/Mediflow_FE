@@ -108,11 +108,19 @@ export const sidebarTree: SidebarTabProps[] = [
                 ...getRoutePermissions("/examination/history/patients"),
             },
         ],
-        ...Object.assign(
-            {},
-            getRoutePermissions("/examination"),
-            getRoutePermissions("/examination/history/patients"),
-            getRoutePermissions("/examination/history/patient"),
+        requiredPermissions: Array.from(
+            new Set([
+                ...getRoutePermissions("/examination/history/patients").requiredPermissions,
+                ...getRoutePermissions("/examination/history/patient").requiredPermissions,
+                ...getRoutePermissions("/examination").requiredPermissions,
+            ]),
+        ),
+        requiredRoles: Array.from(
+            new Set([
+                ...getRoutePermissions("/examination/history/patients").requiredRoles,
+                ...getRoutePermissions("/examination/history/patient").requiredRoles,
+                ...getRoutePermissions("/examination").requiredRoles,
+            ]),
         ),
     },
     {

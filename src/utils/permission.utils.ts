@@ -42,7 +42,7 @@ export const hasPermission = ({
 
     // Check resource-based permissions (allow 'read' or 'read_write')
     const hasResourceAccess = resourceTypes
-        ? requiredPermissions.every((key) => {
+        ? requiredPermissions.some((key) => {
               const userAccess = resourceTypes[key];
               if (!userAccess || userAccess === ResourceTypePermission.None) return false;
 
@@ -55,10 +55,8 @@ export const hasPermission = ({
               );
           })
         : false;
-
     // Check role-based permissions (allow if any user role is in requiredRoles)
     const hasRoleAccess = userRoles.some((role) => requiredRoles.includes(role));
-
     // Grant access if either condition is met
     return hasResourceAccess && hasRoleAccess;
 };
