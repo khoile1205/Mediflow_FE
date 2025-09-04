@@ -54,24 +54,41 @@ export const Sidebar: React.FC = () => {
     const filteredSidebarTree = React.useMemo(() => {
         const filterTree = (items: SidebarTabProps[]): SidebarTabProps[] =>
             items
-                .filter((item) => {
-                    if (!item.requiredPermissions) return true;
-                    return hasPermission({
-                        resourceTypes: auth?.userPermission?.resourceTypes,
-                        requiredPermissions: item.requiredPermissions,
-                        userRoles: auth?.userPermission?.roles || [],
-                        requiredRoles: item.requiredRoles,
-                        accessModifier: auth?.userPermission?.resourceTypes?.[item.requiredPermissions[0]],
-                    });
+                .map((item) => {
+                    const filteredChildren = item.children ? filterTree(item.children) : undefined;
+
+                    const userResourceTypes = auth?.userPermission?.resourceTypes || {};
+                    const hasExamination = !!userResourceTypes["examination"];
+                    const hasVaccinationReception = !!userResourceTypes["vaccination-reception"];
+
+                    let isAccessible =
+                        !item.requiredPermissions ||
+                        hasPermission({
+                            resourceTypes: userResourceTypes,
+                            requiredPermissions: item.requiredPermissions,
+                            userRoles: auth?.userPermission?.roles || [],
+                            requiredRoles: item.requiredRoles,
+                            accessModifier: userResourceTypes[item.requiredPermissions?.[0] || ""],
+                        });
+
+                    if (item.pathName === "/examination") {
+                        if (hasVaccinationReception) {
+                            isAccessible = false;
+                        } else if (hasExamination) {
+                            isAccessible = true;
+                        }
+                    }
+
+                    if (isAccessible || (filteredChildren && filteredChildren.length > 0)) {
+                        return { ...item, children: filteredChildren };
+                    }
+
+                    return null;
                 })
-                .map((item) => ({
-                    ...item,
-                    children: item.children ? filterTree(item.children) : undefined,
-                }));
+                .filter(Boolean) as SidebarTabProps[];
 
         return filterTree(sidebarTree);
     }, [auth?.userPermission]);
-
     return (
         <Drawer
             variant="permanent"
