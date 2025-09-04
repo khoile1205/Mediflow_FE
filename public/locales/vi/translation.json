@@ -278,7 +278,7 @@
     "CONFIRM_INJECTED_TODAY": "Xác nhận đã tiêm hôm nay",
     "CANCEL_CONFIRMATION": "Hủy xác nhận tiêm",
     "SAVE_NOTE": "Lưu ghi chú",
-    "CONFIRM_SELECTED_DOSE": "Tiêm các mũi đã chọn",
+    "CONFIRM_SELECTED_DOSE": "Tiêm mũi đã chọn",
     "TRANSFER_SELECTED_DOSE": "Chuyển kho khách các mũi đã chọn",
     "FIND_PATIENT": "Tìm bệnh nhân",
     "EMAIL": "Email",
@@ -1133,5 +1133,11 @@
     "PAY_A_RECEIPT": "Thanh toán phiếu thu",
     "CONFIRMED": "Đã xác nhận",
     "EDIT_MEDICINE_INTERACTION": "Chỉnh sửa tương tác thuốc",
-    "VIEW_ONLY_DUE_TO_ROLE": "Chỉ được xem, không có quyền thao tác"
+    "VIEW_ONLY_DUE_TO_ROLE": "Chỉ được xem, không có quyền thao tác",
+    "RECEPTION_HAS_BEEN_CLOSED": "Tiếp nhận đã được đóng",
+    "REQUIRED_ISSUE_NOTE": "Ghi chú vấn đề là bắt buộc",
+    "THIS_VACCINE_HAS_BEEN_TAKEN": "Vắc xin này đã được tiêm",
+    "CANNOT_TAKE_ISSUE_VACCINE_IF_HAS_ISSUE": "Không thể tiêm vắc xin nếu đã có ghi chú vấn đề.",
+    "FROMDATE_CANNOT_BE_GREATER_THAN_TODATE": "Ngày bắt đầu không được lớn hơn ngày kết thúc",
+    "CANNOT_UPDATE_PRE_EXAMINATION_RESULT_AFTER_VACCINATION_CONFIRMED": "Không thể cập nhật kết quả khám sàng lọc sau khi đã xác nhận tiêm chủng"
 }

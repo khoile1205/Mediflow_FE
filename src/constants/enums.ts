@@ -9,9 +9,9 @@ export enum TestResultStatus {
 }
 
 export enum PaymentMethod {
-    CASH,
+    CASH = 0,
     ATM,
-    TRANSFER,
+    TRANSFER = 3,
 }
 
 export enum ReceiptPaymentType {

@@ -375,22 +375,22 @@ export const VaccinationIndication: React.FC<VaccinationIndicationProps> = ({
                                         />
                                     </Stack>
                                     <Box>
-                                        <Tooltip
+                                        {/* <Tooltip
                                             title={
                                                 !isAllowedToVaccinate
                                                     ? t(i18n.translationKey.vaccinationNotAllowed)
                                                     : ""
                                             }
-                                        >
-                                            <Box>
-                                                <FormItem
-                                                    render="checkbox"
-                                                    name="isReadyToUse"
-                                                    label={t(i18n.translationKey.useToday)}
-                                                    disabled={!receptionId || !isAllowedToVaccinate}
-                                                />
-                                            </Box>
-                                        </Tooltip>
+                                        > */}
+                                        <Box>
+                                            <FormItem
+                                                render="checkbox"
+                                                name="isReadyToUse"
+                                                label={t(i18n.translationKey.useToday)}
+                                                disabled={!receptionId}
+                                            />
+                                        </Box>
+                                        {/* </Tooltip> */}
                                     </Box>
 
                                     <Stack direction="row" spacing={1}></Stack>
